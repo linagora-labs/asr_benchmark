@@ -1,0 +1,228 @@
+# input_folder: data/audios
+ref_folder: data/refs
+output_folder: whisper/output
+plot_monitoring: False
+skip_errors: True
+
+benchmarks:
+  - backend: transformers
+    vad: false
+    model: 
+    - large-v3
+    - large-v2
+    - medium
+    - small
+    - base
+    - tiny
+    - bofenghuang/whisper-large-v3-french
+    - bofenghuang/whisper-large-v3-french-distil-dec16
+    - bofenghuang/whisper-large-v3-french-distil-dec8
+    - bofenghuang/whisper-large-v3-french-distil-dec4
+    - bofenghuang/whisper-large-v3-french-distil-dec2
+    precision: float16
+    audios_folder:
+    - data/audios
+    attn: sdpa
+    batch_size: 16
+    do_sample: false
+    num_beams: 1
+
+  - backend: transformers
+    vad: 
+    - false
+    - auditok
+    - silero
+    model: large-v3
+    precision: float16
+    audios_folder:
+    - data/audios
+    - data/audios_long
+    - data/audios_silenced
+    attn: sdpa
+    batch_size: 8
+    do_sample: false
+    num_beams: 1
+
+  - backend: openai
+    model: large-v3
+    vad: false
+    audios_folder:
+    - data/audios
+
+  - backend: linto-stt
+    model: large-v3
+    server: localhost
+    port: 8080
+    docker_image:
+    - linto-stt-whisper:1.0.4
+    - linto-stt-whisper-torch:1.0.4
+    vad: false
+    audios_folder:
+    - data/audios
+    accurate: false
+
+  - backend: linto-stt
+    model: large-v3
+    server: localhost
+    port: 8080
+    docker_image:
+    - linto-stt-whisper:1.0.4
+    vad: 
+    - false
+    - auditok
+    - silero
+    audios_folder:
+    - data/audios
+    - data/audios_silenced
+    accurate: false
+
+  - backend: faster-whisper
+    model: large-v3
+    vad: false
+    audios_folder:
+    - data/audios
+    precision: 
+    - float16
+    - float32
+    - int8
+    previous_text: false
+    accurate: false
+
+  - backend: faster-whisper
+    model: large-v3
+    vad: false
+    audios_folder:
+    - data/audios
+    precision: 
+    - float16
+    previous_text: true
+    accurate: false
+
+
+  - backend: linto-stt
+    model: large-v3
+    server: localhost
+    port: 8080
+    docker_image: linto-stt-whisper:1.0.4
+    vad: false
+    audios_folder:
+    - data/audios
+    accurate: true
+
+  - backend: linto-stt
+    model:     
+    - large-v3
+    - large-v2
+    - medium
+    - small
+    - base
+    - tiny
+    - bofenghuang/whisper-large-v3-french
+    - bofenghuang/whisper-large-v3-french-distil-dec16
+    - bofenghuang/whisper-large-v3-french-distil-dec8
+    - bofenghuang/whisper-large-v3-french-distil-dec4
+    - bofenghuang/whisper-large-v3-french-distil-dec2
+    - large-v3-turbo
+    server: localhost
+    port: 8088
+    device: cuda
+    docker_image: 
+    - linto-stt-whisper:1.0.4
+    vad: 
+    - false
+    audios_folder:
+    - data/audios
+    accurate: false
+
+  - backend: linto-stt
+    model: large-v3
+    server: localhost
+    port: 8080
+    docker_image: linto-stt-whisper:1.0.4
+    streaming: true
+    vad: auditok
+    audios_folder:
+    - data/audios_long
+    - data/audios_silenced
+    - data/audios
+    accurate: false
+    streaming_min_chunk_size: 0.5
+    streaming_buffer_trimming_sec: 10
+    streaming_wait: 0.0
+    streaming_chunk: 0.0
+
+  - backend: linto-stt
+    model: large-v3
+    server: localhost
+    port: 8080
+    docker_image: linto-stt-whisper:1.0.4
+    streaming: true
+    vad:
+    - false
+    - auditok
+    audios_folder: 
+    - data/audios
+    - data/audios_silenced
+    accurate: false
+    streaming_min_chunk_size: 0.5
+    streaming_buffer_trimming_sec: 10
+    streaming_wait: 0.0
+    streaming_chunk: 0.0
+
+  - backend: linto-stt
+    model: large-v3
+    server: localhost
+    port: 8080
+    docker_image: linto-stt-whisper:1.0.4
+    streaming: true
+    vad: auditok
+    audios_folder:
+    - data/audios_long
+    - data/audios_silenced
+    - data/audios
+    accurate: false
+    streaming_min_chunk_size: 26
+    streaming_buffer_trimming_sec: 8
+    streaming_wait: 0.0
+    streaming_chunk: 0.0
+
+  - backend: linto-stt
+    model: large-v3
+    server: localhost
+    port: 8080
+    docker_image: linto-stt-whisper:1.0.4
+    streaming: true
+    vad: 
+    - false
+    - auditok
+    audios_folder: 
+    - data/audios
+    - data/audios_silenced
+    accurate: false
+    streaming_min_chunk_size: 26
+    streaming_buffer_trimming_sec: 8
+    streaming_wait: 0.0
+    streaming_chunk: 0.0
+
+  - backend: transformers
+    model: large-v3
+    precision: float16
+    vad: false
+    audios_folder:
+    - data/audios
+    - data/audios_silenced
+    - data/audios_long
+    attn: 
+    - flash2
+    - sdpa
+    - eager
+    batch_size:
+    - 16
+    - 8
+    - 4
+    - 1
+    - 24
+    do_sample: false
+    num_beams:
+    - 1
+    - 5

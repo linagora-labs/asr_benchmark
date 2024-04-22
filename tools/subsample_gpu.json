@@ -1,0 +1,18 @@
+{
+    "commonvoice": {
+        "subsample": 500
+    },
+    "mls": {
+        "name": "mls_facebook_french",
+        "subsample": 500
+    },
+    "summ-re": {
+        "subsample": 500
+    },
+    "voxpopuli": {
+        "subsample": 500
+    },
+    "youtube": {
+        "name": "youtubefr_split6"
+    }
+}

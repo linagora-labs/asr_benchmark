@@ -1,0 +1,35 @@
+input_folder: data/audios
+ref_folder: data/refs
+output_folder: whisper/output_3
+plot_monitoring: False
+skip_errors: False
+
+benchmarks:
+  - backend: linto-stt
+    model:
+    - large-v3-turbo
+    server: localhost
+    port: 8080
+    device: cuda
+    docker_image: 
+    - lintoai/linto-stt-whisper:latest-unstable
+    vad: 
+    - false
+    audios_folder:
+    - data/audios
+    accurate: false
+  - backend: linto-stt
+    model: large-v3-turbo
+    server: localhost
+    port: 8080
+    device: cpu
+    docker_image:
+    - linto-stt-ctranslate.cpu:dev
+    vad: false
+    audios_folder:
+    - data/audios
+    accurate: false
+  - backend: http-api
+    model: kaldi-Big-v2.2.1
+    device: cpu
+    audios_folder: data/audios

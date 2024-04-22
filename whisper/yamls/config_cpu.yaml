@@ -1,0 +1,71 @@
+# input_folder: data/audios
+ref_folder: data/refs
+output_folder: whisper/output
+plot_monitoring: False
+skip_errors: False
+
+benchmarks:
+  - backend: linto-stt
+    model: large-v3
+    server: localhost
+    port: 8088
+    device: cpu
+    docker_image:
+    - whisper/Dockerfile.ctranslate2.cpu
+    - whisper/Dockerfile.torch.cpu
+    linto-stt_folder: /home/abert/abert/linto-stt
+    vad: false
+    audios_folder:
+    - data/audios
+    accurate: false
+
+  - backend: linto-stt
+    model:     
+    - bofenghuang/whisper-large-v3-french
+    - bofenghuang/whisper-large-v3-french-distil-dec16
+    - bofenghuang/whisper-large-v3-french-distil-dec8
+    - bofenghuang/whisper-large-v3-french-distil-dec4
+    - bofenghuang/whisper-large-v3-french-distil-dec2
+    server: localhost
+    port: 8088
+    device: cpu
+    docker_image: 
+    - whisper/Dockerfile.ctranslate2.cpu
+    linto-stt_folder: /home/abert/abert/linto-stt
+    vad: false
+    audios_folder:
+    - data/audios
+    accurate: false
+
+  - backend: transformers
+    vad: false
+    model: 
+    - large-v3
+    audios_folder:
+    - data/audios
+    attn: sdpa
+    batch_size: 1
+    do_sample: false
+    num_beams: 1
+    device: cpu
+    precision: float32
+    num_threads:
+    - 1
+    - 4
+    - 8
+
+  - backend: intel-transformers
+    vad: false
+    model: 
+    - large-v3
+    audios_folder:
+    - data/audios
+    attn: sdpa
+    batch_size: 1
+    do_sample: false
+    num_beams: 1
+    device: cpu
+    precision: 
+    - float32
+    - float16
+

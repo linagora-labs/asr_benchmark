@@ -1,0 +1,14 @@
+input_manifest: examples/manifest_example.jsonl
+output_folder: examples/output
+compute_rtf: True
+plot_monitoring: False
+skip_errors: False
+
+benchmarks:
+  - backend: nemo
+    model: 
+    - nvidia/stt_fr_conformer_ctc_large
+  - backend: faster-whisper
+    model: 
+    - large-v3-turbo
+    - bofenghuang/whisper-large-v3-french-distil-dec8
