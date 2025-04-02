@@ -27,11 +27,15 @@ Examples are provided in the `examples` folder. There is a audio file to test wi
 
 ## Requirements
 
-Need to install [ssak](https://github.com/linagora-labs/ssak) repo. You can then run:
+You need to install the package so that benchmarker.py can find the source code:
 ```
-pip install ssak
+pip install -e .
 ```
-Then depending on what you want to bench, you will need to install other packages like faster-whisper, nemo, whisper and transformers.
+You also need to install [ssak](https://github.com/linagora-labs/ssak) repo. You can run:
+```
+pip install git+https://github.com/linagora-labs/ssak
+```
+Then depending on what you want to bench, you will need to install other packages like faster-whisper, nemo(nemo_toolkit['asr']), whisper and transformers.
 
 
 
@@ -41,7 +45,7 @@ Some tools are avaialble in the `tools` folder:
 - add_silence.py: a script for adding white noise to audio files
 - subsample_data.py: for selecting a subset of specified datasets
 
-Don't hesitate to submit your tools (for converting datasets to the jsonl format for example)
+Don't hesitate to submit your tools (for converting datasets to the jsonl format for example). I used scripts from ssak to do it but datasets were in kaldi format.
 
 ## Backends (interfaces)
 
