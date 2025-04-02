@@ -1,6 +1,6 @@
 # ASR Benchmark
 
-Toolkit to benchmark various speech recognition APIs (NeMo, Whisper...) and visualize the results. Supported models are mostly french. It can compute WER, RTF (or latencies when streaming) and measure hardware usage.
+Toolkit to benchmark various speech recognition APIs (NeMo, Whisper...) and visualize the results. Supported models are mostly french. It can compute WER, RTF (or latencies when streaming) and measure hardware usage. Despite the name of the repo, it can be used to benchmark english models.
 
 ## How to bench
 
