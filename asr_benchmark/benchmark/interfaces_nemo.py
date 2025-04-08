@@ -17,7 +17,7 @@ class NemoModel(Model):
         if "hybrid" in self.config['model']:
              model_type = nemo_asr.models.EncDecHybridRNNTCTCBPEModel
         elif "rnnt" in self.config['model']:
-            model_type = nemo_asr.models.EncDecRNNTModel
+            model_type = nemo_asr.models.EncDecRNNTBPEModel
         elif "canary" in self.config['model']:
             model_type = nemo_asr.models.EncDecMultiTaskModel
         self.model_type = model_type
