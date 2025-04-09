@@ -45,7 +45,7 @@ class NemoModel(Model):
             audio, _ = ssak.utils.vad.remove_non_speech(audio, method=self.config['vad'])
         output = dict()
         if isinstance(self.model, nemo_asr.models.EncDecMultiTaskModel):
-            predicted_text = self.model.transcribe(
+            result = self.model.transcribe(
                 audio,
                 duration=None,
                 task="asr",
@@ -55,12 +55,8 @@ class NemoModel(Model):
                 answer="na",
                 verbose=False
             )
-            return predicted_text[0]
-        elif isinstance(self.model, nemo_asr.models.EncDecHybridRNNTCTCBPEModel):
+        else:
             result = self.model.transcribe(audio, verbose=False)
-            output['text'] = result[0][0].text
-            return output
-        result = self.model.transcribe(audio, verbose=False)
         output['text'] = result[0].text
         return output
 
@@ -71,7 +67,7 @@ class NemoModel(Model):
         import nemo.collections.asr as nemo_asr
         batch_size = int(self.config.get('batch_size', 16))
         if isinstance(self.model, nemo_asr.models.EncDecMultiTaskModel):
-            predicted_text = self.model.transcribe(
+            result = self.model.transcribe(
                 "tmp.jsonl",
                 duration=None,
                 task="asr",
@@ -82,13 +78,14 @@ class NemoModel(Model):
                 batch_size=batch_size,  # batch size to run the inference with
                 num_workers=4
             )
-            return predicted_text
-        elif isinstance(self.model, nemo_asr.models.EncDecHybridRNNTCTCBPEModel):
-            result_full = self.model.transcribe("tmp.jsonl", batch_size=batch_size, num_workers=4)
-            return result_full[0]
-        result = self.model.transcribe("tmp.jsonl", batch_size=batch_size, num_workers=4)
+        else:
+            result = self.model.transcribe("tmp.jsonl", batch_size=batch_size, num_workers=4)
+        outputs = list()
+        for i in result:
+            output = {'text': i.text}
+            outputs.append(output)
         os.remove("tmp.jsonl")
-        return result
+        return outputs
 
     def can_output_word_timestamps(self):
         return True
