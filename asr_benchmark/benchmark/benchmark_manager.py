@@ -21,7 +21,7 @@ def check_if_benched(output_folder, input_file, config, debug):
             if txt.startswith("CUDA out of memory"):
                 logger.error(f"Skipping, CUDA out of memory error")
                 return data
-    all_data = utils.get_data(input_file)
+    all_data = utils.get_data(input_file, config['input_audios_paths'])
     benched = dict()
     compute_rtf = config.get("compute_rtf", True)
     for dataset in os.listdir(os.path.join(output_folder, "performances")):
@@ -188,6 +188,7 @@ def launch_benchmark(
     save_predictions=False,
     save_alignments=False,
     compute_latency=False,
+    input_audios_paths=""
 ):
     plot_monitoring = configs.pop("plot_monitoring", True)
     configs = make_configs(configs)
@@ -201,6 +202,7 @@ def launch_benchmark(
         config['save_alignments'] = config.get('save_alignments', save_alignments)
         config['compute_latency'] = config.get('compute_latency', compute_latency)
         config['plot_monitoring'] = config.get('plot_monitoring', plot_monitoring)
+        config['input_audios_paths'] = config.get('input_audios_paths', input_audios_paths)
         bench_id = model.get_folder_name()
         logger.info(
             f"Benching {bench_id} (progress {progress_bar.n}/{progress_bar.total})"

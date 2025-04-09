@@ -72,6 +72,8 @@ if __name__ == "__main__":
     
     compute_latency = config.pop("compute_latency", False)
     
+    input_audios_paths = config.pop("input_audios_paths", "")
+    
     launch_benchmark(
         config,
         input_manifest,
@@ -82,4 +84,5 @@ if __name__ == "__main__":
         save_alignments=save_alignments,
         save_predictions=save_predictions,
         compute_latency=compute_latency,
+        input_audios_paths=input_audios_paths
     )
