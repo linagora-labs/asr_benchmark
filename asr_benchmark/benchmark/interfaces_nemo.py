@@ -12,15 +12,15 @@ from asr_benchmark.benchmark.interfaces import Model
 class NemoModel(Model):
     
     def __init__(self, config) -> None:
-        super().__init__(config)
         model_type = nemo_asr.models.EncDecCTCModelBPE
-        if "hybrid" in self.config['model']:
+        if "hybrid" in config['model']:
              model_type = nemo_asr.models.EncDecHybridRNNTCTCBPEModel
-        elif "rnnt" in self.config['model']:
+        elif "rnnt" in config['model']:
             model_type = nemo_asr.models.EncDecRNNTBPEModel
-        elif "canary" in self.config['model']:
+        elif "canary" in config['model']:
             model_type = nemo_asr.models.EncDecMultiTaskModel
         self.model_type = model_type
+        super().__init__(config)
 
 
     def load(self) -> None:
@@ -96,7 +96,8 @@ class NemoModel(Model):
     def add_defaults_to_config(self, config):
         config['vad'] = config.get('vad', 'false')
         config['device'] = config.get('device', 'cuda')
-        config['decoder'] = config.get('decoder', 'ctc')
+        if self.model_type!=nemo_asr.models.EncDecMultiTaskModel:
+            config['decoder'] = config.get('decoder', 'ctc')
         return super().add_defaults_to_config(config)
 
     def get_metadata(self):

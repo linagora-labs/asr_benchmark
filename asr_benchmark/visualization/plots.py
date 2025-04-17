@@ -10,8 +10,7 @@ LABEL_FONTSIZE = 15
 def prepare_data(df, return_format="df", target_wer_column="model"):
     df = df.copy()
     if len(df) == 0:
-        print("ERROR: No data to plot")
-        return False
+        raise RuntimeError(f"No data to plot: {df}")
     mask = df.map(type) != bool
     d = {True: "TRUE", False: "FALSE"}
     df = df.where(mask, df.replace(d))
@@ -21,7 +20,7 @@ def prepare_data(df, return_format="df", target_wer_column="model"):
         wer_scores = {}
         for idx, row in df.iterrows():
             if row["wer_details"] is None or not row["wer_details"]:
-                return False
+                raise RuntimeError(f"Missing wer details for {row}")
             wer_scores[row[target_wer_column]] = row["wer_details"]
         return wer_scores
     raise Exception("Invalid return_format")
@@ -31,8 +30,9 @@ def plot_wer_df(wer_scores, output_folder, x_column="model", title="wer", save_f
     plt.figure(figsize=(10, 6))
     if save_fig==True:
         save_fig = f'{title.replace(" ", "_")}'
-    plot_wer(wer_scores, interval_type="none", show=os.path.join(output_folder, f'{save_fig}.png') if save_fig else None, title=f"{title.upper()}", sort_best=0, label_rotation=45, scale=1, label_fontdict={'size': LABEL_FONTSIZE}, ymax=100, x_axisname=x_column.upper())
-    plot_wer(wer_scores, interval_type="none", show=os.path.join(output_folder, f'{save_fig}_zoomed.png') if save_fig else None, title=f"{title.upper()}", sort_best=0, label_rotation=45, scale=1, label_fontdict={'size': LABEL_FONTSIZE}, ymax=40,x_axisname=x_column.upper())
+    plot_wer(wer_scores, interval_type="none", show=os.path.join(output_folder, f'{save_fig}.png') if save_fig else None, title=f"{title.upper()}", sort_best=0, label_rotation=45, scale=1, label_fontdict={'size': LABEL_FONTSIZE}, ymax=100)
+    plot_wer(wer_scores, interval_type="none", show=os.path.join(output_folder, f'{save_fig}_zoomed50.png') if save_fig else None, title=f"{title.upper()}", sort_best=0, label_rotation=45, scale=1, label_fontdict={'size': LABEL_FONTSIZE}, ymax=50)
+    plot_wer(wer_scores, interval_type="none", show=os.path.join(output_folder, f'{save_fig}_zoomed25.png') if save_fig else None, title=f"{title.upper()}", sort_best=0, label_rotation=45, scale=1, label_fontdict={'size': LABEL_FONTSIZE}, ymax=25)
     plt.close()
 
 def add_plot_detail(output_folder, x_column="VRAM usage", y_column="model", title=None, save_fig=None, limit=None, xlabel=None, ylabel=None):

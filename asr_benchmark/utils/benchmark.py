@@ -40,7 +40,7 @@ def get_data(input_file, input_audio_path=''):
                 else:
                     row['id'] = f"{row['name']}_{basename}"
                 if float(row.get("offset", 0.0)) > 0.0:
-                    row['id'] += f"_{row['offset']}"
+                    row['id'] += f"_{row['offset']:.1f}"
             if input_audio_path:
                 path_filled = input_audio_path
                 if 'split' in row:

@@ -31,11 +31,10 @@ def check_if_benched(output_folder, input_file, config, debug):
     if debug:
         all_data = all_data[:1]
     for row in all_data:
-        basename = os.path.splitext(os.path.basename(row["audio_filepath"]))[0]
-        dataset = row['name']
-        if debug or basename not in benched.get(dataset, {}):
+        dataset, id = row['name'], row['id']
+        if debug or id not in benched.get(dataset, {}):
             data.append(row)
-        elif compute_rtf and "rtf" not in benched[dataset][basename]:
+        elif compute_rtf and "rtf" not in benched[dataset][id]:
             data.append(row)
     return data, benched
 
@@ -75,7 +74,7 @@ def transcribe_with_rtf(model, data, output_folder, config):
         ]
     )
     model.config['device_name'] = monitor.get_device_name()
-    for row in progress_bar:
+    for i, row in enumerate(progress_bar):
         perfs = make_perf_file(row)
         audio_file, dataset, audio_duration = perfs["audio_filepath"], perfs["dataset"], perfs["audio_duration"]
         basename = os.path.splitext(os.path.basename(audio_file))[0]
@@ -91,7 +90,7 @@ def transcribe_with_rtf(model, data, output_folder, config):
         end = time.time()
         output['prediction_duration'] = round(end - start, 5)
         output['rtf'] = round(output['prediction_duration'] / audio_duration, 5)
-        yield output, row
+        yield i, output, row
         monitor.next()
         progress_bar.set_description(f"Finished {model.get_folder_name()}".ljust(45))
     monitor.stop()
@@ -99,20 +98,27 @@ def transcribe_with_rtf(model, data, output_folder, config):
 def transcribe_fast(model, data, output_folder, config):
     outputs = model.transcribe_batch(data)
     for i, row in enumerate(tqdm(data, desc="Computing WER...".ljust(45))):     # keep details for each file 
-        yield outputs[i], row
+        yield i, outputs[i], row
 
-def process_result(iterator, bench_results, output_folder, config):
-    for output, row in iterator:
+def process_result(iterator, bench_results, number_of_data, output_folder, config):
+    save_interval = 1
+    if number_of_data>100:
+        save_interval = number_of_data//10
+    def write_results(results, dataset_name):
+        with open(
+            os.path.join(output_folder, "performances", dataset_name+".json"), "w", encoding="utf-8"
+        ) as f:
+            f.write(json.dumps(results[dataset_name], indent=2, ensure_ascii=False))
+    for i, output, row in iterator:
         prediction = output['text'].strip().encode('utf-8').decode('utf-8')
         output.pop('text')
         perfs = make_perf_file(row)
         perfs.update(output)
-        audio_file, dataset = row["audio_filepath"], row["name"]
-        basename = os.path.splitext(os.path.basename(audio_file))[0]
+        id, dataset = row['id'], row["name"]
         if config.get("save_predictions", True):
             os.makedirs(os.path.join(output_folder, "predictions", dataset), exist_ok=True)
             with open(
-                os.path.join(output_folder, "predictions", dataset, basename + ".txt"), "w", encoding="utf-8"
+                os.path.join(output_folder, "predictions", dataset, id + ".txt"), "w", encoding="utf-8"
             ) as f:
                 f.write(prediction)
         ref = row.get("text", None)
@@ -120,7 +126,7 @@ def process_result(iterator, bench_results, output_folder, config):
             alignment = None
             if config.get("save_alignments", True):
                 os.makedirs(os.path.join(output_folder, "wer", dataset), exist_ok=True)
-                alignment = os.path.join(output_folder, "wer", dataset, basename + ".txt")
+                alignment = os.path.join(output_folder, "wer", dataset, id + ".txt")
             wer_score = compute_wer(
                 [ref],
                 [prediction],
@@ -136,11 +142,15 @@ def process_result(iterator, bench_results, output_folder, config):
             perfs["wer"] = wer_score
         if dataset not in bench_results:
             bench_results[dataset] = dict()
-        bench_results[dataset][basename] = perfs
-        with open(
-            os.path.join(output_folder, "performances", dataset+".json"), "w", encoding="utf-8"
-        ) as f:
-            f.write(json.dumps(bench_results[dataset], indent=2, ensure_ascii=False))
+        bench_results[dataset][id] = perfs
+        if i%save_interval==0:
+            if save_interval==1:
+                write_results(bench_results, dataset)
+            else:
+                for dataset in bench_results:
+                    write_results(bench_results, dataset)
+    for dataset in bench_results:
+        write_results(bench_results, dataset)
 
 def bench_model(config, input_manifest, output_folder, debug=False):
     data, bench_results = check_if_benched(
@@ -160,7 +170,7 @@ def bench_model(config, input_manifest, output_folder, debug=False):
         iterator = transcribe_with_rtf(model, data, output_folder, config)
     else:
         iterator = transcribe_fast(model, data, output_folder, config)
-    process_result(iterator, bench_results, output_folder, config)
+    process_result(iterator, bench_results, len(data), output_folder, config)
     model.cleanup()
     with open(os.path.join(output_folder, "metadata.json"), "w", encoding="utf-8") as f:
         f.write(json.dumps(model.get_metadata(), indent=2, ensure_ascii=False))
