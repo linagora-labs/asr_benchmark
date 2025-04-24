@@ -1,57 +1,64 @@
-input_manifest: bench_fr/manifest_wer_benchmark.jsonl
-output_folder: bench_fr/local_benchmark_results
+input_manifest: bench_fr/manifest_test.jsonl
+output_folder: bench_fr/local_bench_fr
+input_audios_paths: /home/abert/Linagora/parakeet/datasets/nemo_dataset/converted_audios/%n_%s
 compute_rtf: False
 plot_monitoring: False
 skip_errors: False
 
 benchmarks:
-  - backend: http-api
-    model: kaldi
-    device: cpu
+  # - backend: http-api
+  #   model: kaldi
+  #   device: cpu
   - backend: nemo
     model: 
-    - nvidia/stt_fr_conformer_ctc_large
-    - nvidia/stt_fr_fastconformer_hybrid_large_pc
     - nvidia/canary-1b
-    - bofenghuang/stt_fr_fastconformer_hybrid_large
     batch_size: 8
-    decoder: ctc
-  - backend: faster-whisper
-    model: 
-    - large-v3
-    - large-v3-turbo
-    - bofenghuang/whisper-large-v3-french
-    - bofenghuang/whisper-large-v3-french-distil-dec8
-    precision: float16
-  - backend: transformers-facebook
-    vad: false
-    model: facebook/mms-1b-all
-  - backend: transformers-bofenghuang
-    vad: false
-    model: bofenghuang/asr-wav2vec2-ctc-french
-
-  - backend: http-api
-    model: kaldi
-    device: cpu
-    compute_rtf: True
-    input_manifest:
-    - bench_fr/manifest_acsynt.jsonl
   - backend: nemo
     model: 
-    - nvidia/stt_fr_conformer_ctc_large
     - nvidia/stt_fr_fastconformer_hybrid_large_pc
-    - nvidia/canary-1b
     - bofenghuang/stt_fr_fastconformer_hybrid_large
-    compute_rtf: True
-    input_manifest:
-    - bench_fr/manifest_acsynt.jsonl
+    - /mnt/d/linagora/models/stt_fr_fastconformer_hybrid_large_finetuned.nemo
+    - /mnt/d/linagora/models/stt_fr_fastconformer_hybrid_large_finetuned_v2.nemo
+    batch_size: 8
+    decoder: 
+    # - ctc
+    - rnnt
   - backend: faster-whisper
-    model:
+    model: 
     - large-v3
     - large-v3-turbo
     - bofenghuang/whisper-large-v3-french
     - bofenghuang/whisper-large-v3-french-distil-dec8
-    compute_rtf: True
     precision: float16
-    input_manifest:
-    - bench_fr/manifest_acsynt.jsonl
+  # - backend: transformers-facebook
+  #   vad: false
+  #   model: facebook/mms-1b-all
+  # - backend: transformers-bofenghuang
+  #   vad: false
+  #   model: bofenghuang/asr-wav2vec2-ctc-french
+
+  # - backend: http-api
+  #   model: kaldi
+  #   device: cpu
+  #   compute_rtf: True
+  #   input_manifest:
+  #   - bench_fr/manifest_acsynt.jsonl
+  # - backend: nemo
+  #   model: 
+  #   - nvidia/stt_fr_conformer_ctc_large
+  #   - nvidia/stt_fr_fastconformer_hybrid_large_pc
+  #   - nvidia/canary-1b
+  #   - bofenghuang/stt_fr_fastconformer_hybrid_large
+  #   compute_rtf: True
+  #   input_manifest:
+  #   - bench_fr/manifest_acsynt.jsonl
+  # - backend: faster-whisper
+  #   model:
+  #   - large-v3
+  #   - large-v3-turbo
+  #   - bofenghuang/whisper-large-v3-french
+  #   - bofenghuang/whisper-large-v3-french-distil-dec8
+  #   compute_rtf: True
+  #   precision: float16
+  #   input_manifest:
+  #   - bench_fr/manifest_acsynt.jsonl

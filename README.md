@@ -65,3 +65,9 @@ If the available interfaces don't allow to bench a model you want, you can easil
 - You create new class that inherits from `asr_benchmark.benchmark.interfaces.Model`
 - You implement the various functions (load, transcribe, ...)
 - You add your backend in `asr_benchmark.benchmark.backend_to_model`
+
+## French ASR benchmark
+
+Benchmark of ASR models for the french language. The datasets used in the benchmark are : Common Voice, Multilingual LibriSpeech, Voxpopuli, SUMM-RE, TEDx and YouTube.
+
+See the results [here](bench_fr/README.md)

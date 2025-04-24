@@ -158,8 +158,8 @@ out*
 tmp*
 backup*/
 test*/
-internal*/
-local*/
+internal*
+local*
 data/*
 
 # PyCharm
