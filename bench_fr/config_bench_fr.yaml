@@ -1,4 +1,4 @@
-input_manifest: bench_fr/manifest_test.jsonl
+input_manifest: bench_fr/manifest_wer_fr.jsonl
 output_folder: bench_fr/local_bench_fr
 input_audios_paths: /home/abert/Linagora/parakeet/datasets/nemo_dataset/converted_audios/%n_%s
 compute_rtf: False
@@ -6,9 +6,11 @@ plot_monitoring: False
 skip_errors: False
 
 benchmarks:
-  # - backend: http-api
-  #   model: kaldi
-  #   device: cpu
+  - backend: http-api
+    model: kaldi
+    device: cpu
+    am_model: linSTT_AM_fr-FR_v2.2.0
+    lm_model: decoding_graph_fr-FR_Big_v3.0.0
   - backend: nemo
     model: 
     - nvidia/canary-1b

@@ -71,7 +71,8 @@ class HttpAPIModel(Model):
         res = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         text = res.stdout.decode('utf-8')
         text = json.loads(text)['text']
-        return text
+        output = {"text": text}
+        return output
         
     def add_defaults_to_config(self, config):
         config['server'] = config.get('server', 'http://localhost:8080')
