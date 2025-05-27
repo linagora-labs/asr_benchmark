@@ -59,16 +59,21 @@ def prepare_model_name(name):
         return '\n'.join(parts)
     return name.capitalize()
 
-def plot_wer_table(wer_means, output_filename='wer_table.png', show=True):
+def plot_wer_table(wer_means, wer_stds=None, output_filename='wer_table.png', show=True, y_label="WER (%)", best="lowest", color_lims=(0,50)):
     wer_means = wer_means.copy()
     n_rows, n_cols = wer_means.shape
 
-    color_map = mcolors.LinearSegmentedColormap.from_list('green_red_purple', ['green', 'yellow', 'red', 'purple'])
-    normalizer = mcolors.Normalize(vmin=0, vmax=50)
+    if wer_stds is not None:
+        wer_stds = pd.DataFrame(wer_stds, index=wer_means.index, columns=wer_means.columns)
 
-    fig, axis = plt.subplots(figsize=(1.8 * n_cols, 1.2 * n_rows))
-
-    min_indices = wer_means.idxmin()
+    fig, axis = plt.subplots(figsize=(1.8 * n_cols if n_cols>2 else 3*n_cols, 1.2 * n_rows))
+    if best=="highest":
+        min_indices = wer_means.idxmax()
+        color_map = mcolors.LinearSegmentedColormap.from_list('purple_red_yellow_green', ['purple', 'red', 'yellow', 'green'])        
+    else:
+        min_indices = wer_means.idxmin()
+        color_map = mcolors.LinearSegmentedColormap.from_list('green_red_purple', ['green', 'yellow', 'red', 'purple'])
+    normalizer = mcolors.Normalize(vmin=color_lims[0], vmax=color_lims[1])
 
     for i in range(n_rows):
         for j in range(n_cols):
@@ -80,9 +85,14 @@ def plot_wer_table(wer_means, output_filename='wer_table.png', show=True):
                 axis.add_patch(rect)
 
                 fontweight = 'bold' if wer_means.index[i] == min_indices[j] else 'normal'
-
-                axis.text(j + 0.5, i + 0.5, f"{val:.2f}", ha='center', va='center',
+                axis.text(j + 0.5, i + 0.4 if wer_stds is not None else i + 0.5, f"{val:.2f}", ha='center', va='center',
                           fontsize=12, weight=fontweight, color='black')
+
+                if wer_stds is not None:
+                    std_val = wer_stds.iat[i, j]
+                    if not pd.isna(std_val):
+                        axis.text(j + 0.5, i + 0.7, f"±{std_val:.2f}", ha='center', va='center',
+                                  fontsize=9, style='italic', color='black')
 
     axis.set_xlim(0, n_cols)
     axis.set_ylim(0, n_rows)
@@ -102,7 +112,7 @@ def plot_wer_table(wer_means, output_filename='wer_table.png', show=True):
     sm = plt.cm.ScalarMappable(cmap=color_map, norm=normalizer)
     sm.set_array([])
     cbar = plt.colorbar(sm, ax=axis, orientation='vertical', shrink=0.6, pad=0.01)
-    cbar.set_label("WER (%)", fontsize=12)
+    cbar.set_label(y_label, fontsize=12)
 
     plt.tight_layout()
     if output_filename:
