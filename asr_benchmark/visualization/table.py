@@ -4,20 +4,28 @@ import numpy as np
 import pandas as pd
 
 def df_to_wer_table_format(df):
-    
-    df_filtered = df[['model', 'dataset', 'wer']]
-    df_filtered['wer_mean'] = df_filtered['wer'].apply(lambda x: np.mean(x) if isinstance(x, list) and x else None)
-    df_filtered['wer_std'] = df_filtered['wer'].apply(lambda x: np.std(x) if isinstance(x, list) and x else None)
-    df_filtered['wer_ci95'] = df_filtered['wer'].apply(
-        lambda x: 1.96 * np.std(x, ddof=1) / np.sqrt(len(x)) if isinstance(x, list) and len(x) > 1 else None
-    )
+    def compute_weighted_wer(wer_details):
+        if not isinstance(wer_details, list):
+            return None
+        total_del = total_ins = total_sub = total_ref = 0
 
-    # Pivot so each model is a column, each dataset is a row, values are WERs
-    wer_pivot = df_filtered.pivot(index='model', columns='dataset', values='wer_mean')
-    wer_std_pivot = df_filtered.pivot(index='model', columns='dataset', values='wer_std')
-    wer_conf_pivot = df_filtered.pivot(index='model', columns='dataset', values='wer_ci95')
+        for entry in wer_details:
+            count = entry.get('count')
+            total_del += entry.get('del') * count
+            total_ins += entry.get('ins') * count
+            total_sub += entry.get('sub') * count
+            total_ref += entry.get('count')
+
+        if total_ref == 0:
+            return None
+
+        return (total_del + total_ins + total_sub) / total_ref
+
+    df['wer_computed'] = df['wer_details'].apply(compute_weighted_wer)
+
+    wer_pivot = df.pivot(index='model', columns='dataset', values='wer_computed')
     
-    return wer_pivot, wer_std_pivot, wer_conf_pivot
+    return wer_pivot
 
 def reorder_wer_pivot(wer_pivot):
     # Copy to avoid modifying the original
@@ -39,9 +47,11 @@ def reorder_wer_pivot(wer_pivot):
 def prepare_model_name(name):
     if 'whisper' in name.lower() and '/' not in name:
         name = 'OpenAI/' + name
-    if 'finetuned' in name.lower() and '/' not in name:
+    elif 'finetuned' in name.lower() and '/' not in name:
         name = 'LINAGORA/' + name
         name = name.replace("-finetuned", "")
+    elif 'linagora' in name.lower() and '/' not in name:
+        name = name.replace("linagora_", "LINAGORA/")
     name = name.replace("stt-fr-", "")
     if '/' in name:
         parts = name.split('/')
@@ -49,24 +59,20 @@ def prepare_model_name(name):
         return '\n'.join(parts)
     return name.capitalize()
 
-def plot_wer_table(wer_means, wer_ci95, output_filename='wer_table.png', show=True):
+def plot_wer_table(wer_means, output_filename='wer_table.png', show=True):
     wer_means = wer_means.copy()
-    wer_ci95 = wer_ci95.copy()
     n_rows, n_cols = wer_means.shape
 
-    # Colormap : vert → jaune → rouge → violet
     color_map = mcolors.LinearSegmentedColormap.from_list('green_red_purple', ['green', 'yellow', 'red', 'purple'])
     normalizer = mcolors.Normalize(vmin=0, vmax=50)
 
     fig, axis = plt.subplots(figsize=(1.8 * n_cols, 1.2 * n_rows))
 
-    # Trouver les indices des minimas par colonne
     min_indices = wer_means.idxmin()
 
     for i in range(n_rows):
         for j in range(n_cols):
             val = wer_means.iat[i, j]
-            ci_val = wer_ci95.iat[i, j]
 
             if not pd.isna(val):
                 color = color_map(normalizer(val))
@@ -75,16 +81,9 @@ def plot_wer_table(wer_means, wer_ci95, output_filename='wer_table.png', show=Tr
 
                 fontweight = 'bold' if wer_means.index[i] == min_indices[j] else 'normal'
 
-                # Afficher la valeur WER
                 axis.text(j + 0.5, i + 0.5, f"{val:.2f}", ha='center', va='center',
                           fontsize=12, weight=fontweight, color='black')
 
-                # Afficher le CI95
-                if not pd.isna(ci_val):
-                    axis.text(j + 0.5, i + 0.7, f"± {ci_val:.2f}", ha='center', va='center',
-                              fontsize=10, color='black')
-
-    # Ajuster les axes
     axis.set_xlim(0, n_cols)
     axis.set_ylim(0, n_rows)
     axis.set_xticks(np.arange(n_cols) + 0.5)
@@ -111,23 +110,19 @@ def plot_wer_table(wer_means, wer_ci95, output_filename='wer_table.png', show=Tr
     if show:
         plt.show()
 
-def generate_markdown_table_with_std(df_mean, df_std, highlight_best=True):
-    # Format numbers nicely: "mean ± std"
-    def format_cell(mean, std, is_best=False):
-        if pd.isna(mean):
+def generate_markdown_table_with_std(df_mean, highlight_best=True):
+    def format_cell(value, is_best=False):
+        if pd.isna(value):
             return ""
-        formatted = f"{mean:.2f} ± {std:.2f}" if not pd.isna(std) else f"{mean:.2f}"
+        formatted = f"{value:.2f}"
         return f"**{formatted}**" if is_best else formatted
 
-    # Identify best (lowest) mean WER per column
     best_per_column = df_mean.min() if highlight_best else pd.Series([None]*len(df_mean.columns), index=df_mean.columns)
 
-    # Header
     headers = ["Model"] + list(df_mean.columns)
     header_row = "| " + " | ".join(headers) + " |"
     separator_row = "|:--" + "|:--:" * (len(headers) - 1) + "|"
 
-    # Body rows
     body_rows = []
     max_length = max(len(str(idx)) for idx in df_mean.index)
 
@@ -135,12 +130,10 @@ def generate_markdown_table_with_std(df_mean, df_std, highlight_best=True):
         formatted_cells = []
         for col in df_mean.columns:
             mean = df_mean.loc[idx, col]
-            std = df_std.loc[idx, col]
             is_best = highlight_best and mean == best_per_column[col]
-            formatted_cells.append(format_cell(mean, std, is_best))
+            formatted_cells.append(format_cell(mean, is_best))
         row_str = "| " + f"{idx}".ljust(max_length) + " | " + " | ".join(cell.ljust(12) for cell in formatted_cells) + " |"
         body_rows.append(row_str)
 
-    # Combine all
     md_table = "\n".join([header_row, separator_row] + body_rows)
     return md_table
