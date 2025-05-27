@@ -110,4 +110,6 @@ if __name__ == "__main__":
     for dataset, dataset_data in new_data.items():
         duration = sum([i['duration'] for i in dataset_data])
         logger.info(f"{dataset} contains {duration/3600:.2f}h")
+    print()
+    logger.info(f"Total new number of segments: {sum([len(i) for _,i in new_data.items()])}")
     write_manifest(new_data, args.output_manifest)
