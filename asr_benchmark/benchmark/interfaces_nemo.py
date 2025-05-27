@@ -13,7 +13,7 @@ class NemoModel(Model):
     
     def __init__(self, config) -> None:
         model_type = nemo_asr.models.EncDecCTCModelBPE
-        if "hybrid" in config['model']:
+        if "hybrid" in config['model'] or "linto_stt_fr_fastconformer" in config['model']:
              model_type = nemo_asr.models.EncDecHybridRNNTCTCBPEModel
         elif "rnnt" in config['model']:
             model_type = nemo_asr.models.EncDecRNNTBPEModel
@@ -25,11 +25,10 @@ class NemoModel(Model):
 
     def load(self) -> None:
         logging.getLogger("nemo_logger").setLevel(logging.ERROR)
-        model_type = nemo_asr.models.EncDecCTCModelBPE
         if self.config['model'].endswith(".nemo"):
-            self.model = model_type.restore_from(self.config['model'], map_location=self.config['device'])
+            self.model = self.model_type.restore_from(self.config['model'], map_location=self.config['device'])
         else:
-            self.model = model_type.from_pretrained(model_name=self.config['model'], map_location=self.config['device'])
+            self.model = self.model_type.from_pretrained(model_name=self.config['model'], map_location=self.config['device'])
         if self.model_type == nemo_asr.models.EncDecHybridRNNTCTCBPEModel:
             self.model.change_decoding_strategy(decoder_type=self.config['decoder'])
         elif self.model_type == nemo_asr.models.EncDecMultiTaskModel:
