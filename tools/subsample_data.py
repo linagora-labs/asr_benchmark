@@ -69,10 +69,10 @@ def write_manifest(data, path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Takes a sub sample of the data')
     parser.add_argument('--manifest', help="Input manifest", type=str, default="../data/test_manifest.jsonl")
-    parser.add_argument('--subsample_config', type=str, default="../data/subsample_gpu_opt.json")
+    parser.add_argument('--subsample_config', type=str, default="../benchmarks/linto_stt_fr_fastconformer/subsample.json")
     parser.add_argument('--output_manifest', help="Output directory", type=str, default="manifest_subsampled.jsonl")
     parser.add_argument('--remove_others', help="Remove other datasets", action="store_true", default=False)
-    parser.add_argument('--min_duration', default=2.0, type=float)
+    parser.add_argument('--min_duration', default=1.0, type=float)
     parser.add_argument('--max_duration', default=30.0, type=float)
     args = parser.parse_args()
 

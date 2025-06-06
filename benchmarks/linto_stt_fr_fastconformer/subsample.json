@@ -1,0 +1,24 @@
+{
+    "commonvoice": {
+        "subsample": 0.15
+    },
+    "mls": {
+        "name": "mls_facebook_french",
+        "subsample": 0.33
+    },
+    "summ-re": {
+        "subsample": 0.33,
+        "min_duration": 4.0
+    },
+    "voxpopuli": {
+        "subsample": 0.33
+    },
+    "youtube": {
+        "name": "youtubefr_split6",
+        "subsample": -1
+    },
+    "tedx":{
+        "name": "tedx_fr",
+        "subsample": -1
+    }
+}
