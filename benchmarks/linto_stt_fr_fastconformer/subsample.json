@@ -15,7 +15,7 @@
     },
     "youtube": {
         "name": "youtubefr_split6",
-        "subsample": -1
+        "subsample": 0.5
     },
     "tedx":{
         "name": "tedx_fr",
