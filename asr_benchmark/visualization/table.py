@@ -35,11 +35,13 @@ def reorder_wer_pivot(wer_pivot):
     models = wer_pivot.index.to_list()
 
     linagora_models = [m for m in models if m.lower().startswith('linagora')]
+    linto_models = [m for m in models if m.lower().startswith('linto')]
     openai_whisper_models = [m for m in models if 'whisper' in m.lower() and m.lower().startswith('openai')]
     other_whisper_models = [m for m in models if 'whisper' in m.lower() and m not in linagora_models + openai_whisper_models]
-    other_models = [m for m in models if m not in linagora_models + openai_whisper_models + other_whisper_models]
+    nvidia = [m for m in models if m.lower().startswith('nvidia')]
+    other_models = [m for m in models if m not in linagora_models + linto_models + openai_whisper_models + other_whisper_models + nvidia]
 
-    ordered_models = linagora_models + openai_whisper_models + other_whisper_models + other_models
+    ordered_models = linagora_models + openai_whisper_models + other_whisper_models + nvidia + other_models + linto_models
 
     # Reorder the DataFrame
     return wer_pivot.loc[ordered_models]
@@ -47,6 +49,11 @@ def reorder_wer_pivot(wer_pivot):
 def prepare_model_name(name):
     if 'whisper' in name.lower() and '/' not in name:
         name = 'OpenAI/' + name
+    elif 'linto' in name.lower() and '/' not in name:
+        name = name.replace("linto-", "LinTO/")
+    elif 'linto' in name.lower():
+        name = name.replace("linto-", "LinTO/")
+        name = name.replace("linagora/", "")
     elif 'finetuned' in name.lower() and '/' not in name:
         name = 'LINAGORA/' + name
         name = name.replace("-finetuned", "")

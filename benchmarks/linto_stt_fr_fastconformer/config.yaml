@@ -1,6 +1,6 @@
 input_manifest: benchmarks/linto_stt_fr_fastconformer/manifest.jsonl
 output_folder: benchmarks/linto_stt_fr_fastconformer/local_bench
-input_audios_paths: /home/abert/Linagora/parakeet/datasets/nemo_dataset/converted_audios/%n_%s
+input_audios_paths: nemo_dataset/converted_audios/%n_%s
 compute_rtf: False
 plot_monitoring: False
 skip_errors: False
