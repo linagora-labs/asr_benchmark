@@ -66,8 +66,8 @@ If the available interfaces don't allow to bench a model you want, you can easil
 - You implement the various functions (load, transcribe, ...)
 - You add your backend in `asr_benchmark.benchmark.backend_to_model`
 
-## French ASR benchmark
+## LinTO STT FR Fastconformer benchmark
 
-Benchmark of ASR models for the french language. The datasets used in the benchmark are : Common Voice, Multilingual LibriSpeech, Voxpopuli, SUMM-RE, TEDx and YouTube.
+Benchmark of ASR models for the french language used to make the [LinTO STT FR Fastconformer Huggingface page](https://huggingface.co/linagora/linto_stt_fr_fastconformer). The datasets used in the benchmark are : Common Voice, Multilingual LibriSpeech, Voxpopuli, SUMM-RE, TEDx and YouTube.
 
-See the results [here](bench_fr/README.md)
+See the results [here](benchmarks/linto_stt_fr_fastconformer/README.md)
