@@ -1,0 +1,33 @@
+input_manifest: benchmarks/linto_stt_fr_fastconformer/manifest_rtf.jsonl
+output_folder: benchmarks/linto_stt_fr_fastconformer/local_bench_rtf
+input_audios_paths: nemo_dataset/converted_audios/%n_%s
+compute_rtf: True
+save_alignments: False
+plot_monitoring: False
+skip_errors: False
+
+benchmarks:
+  - backend: nemo
+    model: nvidia/canary-1b
+  - backend: nemo
+    model: linagora/linto_stt_fr_fastconformer
+    decoder: 
+    - ctc
+    - rnnt
+  - backend: faster-whisper
+    model: 
+    - large-v3
+    - large-v3-turbo
+    precision: float16
+  - backend: nemo
+    model: linagora/linto_stt_fr_fastconformer
+    decoder: 
+    - ctc
+    - rnnt
+    device: cpu
+  - backend: faster-whisper
+    model: 
+    - large-v3
+    - large-v3-turbo
+    device: cpu
+    precision: int8

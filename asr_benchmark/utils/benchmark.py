@@ -24,7 +24,7 @@ def get_audio_duration(file_path):
     duration = librosa.get_duration(y=y, sr=sr)
     return duration
 
-def get_data(input_file):
+def get_data(input_file, input_audio_path=''):
     all_data = []
     with open(input_file, "r") as f:
         for line in f:
@@ -40,8 +40,19 @@ def get_data(input_file):
                 else:
                     row['id'] = f"{row['name']}_{basename}"
                 if float(row.get("offset", 0.0)) > 0.0:
-                    row['id'] += f"_{row['offset']}"
-            all_data.append(row) 
+                    row['id'] += f"_{row['offset']:.1f}"
+            if input_audio_path:
+                path_filled = input_audio_path
+                if 'split' in row:
+                    path_filled = path_filled.replace('%s', row.get('split'))
+                else:
+                    path_filled = path_filled.replace('_%s', '')
+                if 'name' in row:
+                    path_filled = path_filled.replace('%n', row.get('name'))
+                else:
+                    path_filled = path_filled.replace('_%n','')
+                row['audio_filepath'] = os.path.join(path_filled, row['audio_filepath'])
+            all_data.append(row)
     return all_data
 
 

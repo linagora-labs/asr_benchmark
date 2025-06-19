@@ -12,25 +12,35 @@ from asr_benchmark.benchmark.interfaces import Model
 class NemoModel(Model):
     
     def __init__(self, config) -> None:
-        super().__init__(config)
         model_type = nemo_asr.models.EncDecCTCModelBPE
-        if "hybrid" in self.config['model']:
+        if "hybrid" in config['model'] or "linto_stt_fr_fastconformer" in config['model']:
              model_type = nemo_asr.models.EncDecHybridRNNTCTCBPEModel
-        elif "rnnt" in self.config['model']:
-            model_type = nemo_asr.models.EncDecRNNTModel
-        elif "canary" in self.config['model']:
+        elif "rnnt" in config['model']:
+            model_type = nemo_asr.models.EncDecRNNTBPEModel
+        elif "canary" in config['model']:
             model_type = nemo_asr.models.EncDecMultiTaskModel
         self.model_type = model_type
+        super().__init__(config)
 
 
     def load(self) -> None:
         logging.getLogger("nemo_logger").setLevel(logging.ERROR)
-        model_type = nemo_asr.models.EncDecCTCModelBPE
         if self.config['model'].endswith(".nemo"):
-            self.model = model_type.restore_from(self.config['model'], map_location=self.config['device'])
+            self.model = self.model_type.restore_from(self.config['model'], map_location=self.config['device'])
         else:
-            self.model = model_type.from_pretrained(model_name=self.config['model'], map_location=self.config['device'])
-        if self.model_type == nemo_asr.models.EncDecHybridRNNTCTCBPEModel:
+            self.model = self.model_type.from_pretrained(model_name=self.config['model'], map_location=self.config['device'])
+        if self.config.get("ngram_model", None):
+            import pyctcdecode
+            self.model.change_decoding_strategy(decoder_type="ctc")
+            vocab = self.model.tokenizer.vocab
+            decoder = pyctcdecode.build_ctcdecoder(
+                labels=vocab,
+                kenlm_model_path=self.config["ngram_model"],
+                alpha=0.5,
+                beta=1,
+            )
+            self.decoder = decoder
+        elif self.model_type == nemo_asr.models.EncDecHybridRNNTCTCBPEModel:
             self.model.change_decoding_strategy(decoder_type=self.config['decoder'])
         elif self.model_type == nemo_asr.models.EncDecMultiTaskModel:
             decode_cfg = self.model.cfg.decoding
@@ -45,7 +55,7 @@ class NemoModel(Model):
             audio, _ = ssak.utils.vad.remove_non_speech(audio, method=self.config['vad'])
         output = dict()
         if isinstance(self.model, nemo_asr.models.EncDecMultiTaskModel):
-            predicted_text = self.model.transcribe(
+            result = self.model.transcribe(
                 audio,
                 duration=None,
                 task="asr",
@@ -55,12 +65,8 @@ class NemoModel(Model):
                 answer="na",
                 verbose=False
             )
-            return predicted_text[0]
-        elif isinstance(self.model, nemo_asr.models.EncDecHybridRNNTCTCBPEModel):
+        else:
             result = self.model.transcribe(audio, verbose=False)
-            output['text'] = result[0][0].text
-            return output
-        result = self.model.transcribe(audio, verbose=False)
         output['text'] = result[0].text
         return output
 
@@ -71,7 +77,7 @@ class NemoModel(Model):
         import nemo.collections.asr as nemo_asr
         batch_size = int(self.config.get('batch_size', 16))
         if isinstance(self.model, nemo_asr.models.EncDecMultiTaskModel):
-            predicted_text = self.model.transcribe(
+            result = self.model.transcribe(
                 "tmp.jsonl",
                 duration=None,
                 task="asr",
@@ -82,13 +88,19 @@ class NemoModel(Model):
                 batch_size=batch_size,  # batch size to run the inference with
                 num_workers=4
             )
-            return predicted_text
-        elif isinstance(self.model, nemo_asr.models.EncDecHybridRNNTCTCBPEModel):
-            result_full = self.model.transcribe("tmp.jsonl", batch_size=batch_size, num_workers=4)
-            return result_full[0]
-        result = self.model.transcribe("tmp.jsonl", batch_size=batch_size, num_workers=4)
+        else:
+            result = self.model.transcribe("tmp.jsonl", batch_size=batch_size, num_workers=4, return_hypotheses=True if self.decoder else False)
+        outputs = list()
+        for i in result:
+            if self.decoder:
+                logits = i.alignments
+                text = self.decoder.decode(logits.numpy())
+                outputs.append({'text': text})
+            else:
+                output = {'text': i.text}
+                outputs.append(output)
         os.remove("tmp.jsonl")
-        return result
+        return outputs
 
     def can_output_word_timestamps(self):
         return True
@@ -99,7 +111,8 @@ class NemoModel(Model):
     def add_defaults_to_config(self, config):
         config['vad'] = config.get('vad', 'false')
         config['device'] = config.get('device', 'cuda')
-        config['decoder'] = config.get('decoder', 'ctc')
+        if self.model_type!=nemo_asr.models.EncDecMultiTaskModel:
+            config['decoder'] = config.get('decoder', 'ctc')
         return super().add_defaults_to_config(config)
 
     def get_metadata(self):
@@ -110,6 +123,9 @@ class NemoModel(Model):
             metadata['model'] = self.config['model'].replace("_","-")
         if "batch_size" in metadata:
             del metadata['batch_size']
+        if "ngram_model" in metadata:
+            metadata["decoder"] = os.path.basename(self.config['ngram_model'])
+            del metadata['ngram_model']
         return metadata
     
     def get_folder_name(self):
@@ -120,7 +136,10 @@ class NemoModel(Model):
             model = tot_config['model'].replace(".nemo", "").replace("_","-").replace("/","-")
         name = f"nemo_{model}_device-{tot_config['device']}"
         if self.model_type == nemo_asr.models.EncDecHybridRNNTCTCBPEModel:
-            name += f"_decoder-{tot_config['decoder']}"
+            if tot_config.get('ngram_model', False):
+                name += f"_decoder-{os.path.basename(tot_config['ngram_model'])}"
+            else:
+                name += f"_decoder-{tot_config['decoder']}"
         elif self.model_type == nemo_asr.models.EncDecRNNTModel:
             name += f"_decoder-rnnt"
         elif self.model_type == nemo_asr.models.EncDecCTCModelBPE:

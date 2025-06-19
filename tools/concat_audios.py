@@ -6,8 +6,8 @@ from tqdm import tqdm
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Concatenate multiple audios files into one')
-    parser.add_argument('input_files', help="Input manifest" , nargs='+', type=str)
-    parser.add_argument('output_file', type=str, default="merged.wav")
+    parser.add_argument('input_files', help="Input audio files" , nargs='+', type=str)
+    parser.add_argument('--output_file', type=str, default="merged.wav")
     args = parser.parse_args()
     
     sound = None

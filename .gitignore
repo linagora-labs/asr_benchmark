@@ -158,9 +158,8 @@ out*
 tmp*
 backup*/
 test*/
-plots*/
-internal*/
-local*/
+internal*
+local*
 data/*
 
 # PyCharm
