@@ -29,7 +29,18 @@ class NemoModel(Model):
             self.model = self.model_type.restore_from(self.config['model'], map_location=self.config['device'])
         else:
             self.model = self.model_type.from_pretrained(model_name=self.config['model'], map_location=self.config['device'])
-        if self.model_type == nemo_asr.models.EncDecHybridRNNTCTCBPEModel:
+        if self.config.get("ngram_model", None):
+            import pyctcdecode
+            self.model.change_decoding_strategy(decoder_type="ctc")
+            vocab = self.model.tokenizer.vocab
+            decoder = pyctcdecode.build_ctcdecoder(
+                labels=vocab,
+                kenlm_model_path=self.config["ngram_model"],
+                alpha=0.5,
+                beta=1,
+            )
+            self.decoder = decoder
+        elif self.model_type == nemo_asr.models.EncDecHybridRNNTCTCBPEModel:
             self.model.change_decoding_strategy(decoder_type=self.config['decoder'])
         elif self.model_type == nemo_asr.models.EncDecMultiTaskModel:
             decode_cfg = self.model.cfg.decoding
@@ -78,11 +89,16 @@ class NemoModel(Model):
                 num_workers=4
             )
         else:
-            result = self.model.transcribe("tmp.jsonl", batch_size=batch_size, num_workers=4)
+            result = self.model.transcribe("tmp.jsonl", batch_size=batch_size, num_workers=4, return_hypotheses=True if self.decoder else False)
         outputs = list()
         for i in result:
-            output = {'text': i.text}
-            outputs.append(output)
+            if self.decoder:
+                logits = i.alignments
+                text = self.decoder.decode(logits.numpy())
+                outputs.append({'text': text})
+            else:
+                output = {'text': i.text}
+                outputs.append(output)
         os.remove("tmp.jsonl")
         return outputs
 
@@ -107,6 +123,9 @@ class NemoModel(Model):
             metadata['model'] = self.config['model'].replace("_","-")
         if "batch_size" in metadata:
             del metadata['batch_size']
+        if "ngram_model" in metadata:
+            metadata["decoder"] = os.path.basename(self.config['ngram_model'])
+            del metadata['ngram_model']
         return metadata
     
     def get_folder_name(self):
@@ -117,7 +136,10 @@ class NemoModel(Model):
             model = tot_config['model'].replace(".nemo", "").replace("_","-").replace("/","-")
         name = f"nemo_{model}_device-{tot_config['device']}"
         if self.model_type == nemo_asr.models.EncDecHybridRNNTCTCBPEModel:
-            name += f"_decoder-{tot_config['decoder']}"
+            if tot_config.get('ngram_model', False):
+                name += f"_decoder-{os.path.basename(tot_config['ngram_model'])}"
+            else:
+                name += f"_decoder-{tot_config['decoder']}"
         elif self.model_type == nemo_asr.models.EncDecRNNTModel:
             name += f"_decoder-rnnt"
         elif self.model_type == nemo_asr.models.EncDecCTCModelBPE:
