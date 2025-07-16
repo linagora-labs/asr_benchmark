@@ -9,6 +9,7 @@ logging.getLogger('nemo_logging').setLevel(logging.ERROR)
 from asr_benchmark.utils.benchmark import load_audio
 from asr_benchmark.benchmark.interfaces import Model
 
+DEFAULT_NUM_THREADS = torch.get_num_threads()
 class NemoModel(Model):
     
     def __init__(self, config) -> None:
@@ -24,6 +25,7 @@ class NemoModel(Model):
 
 
     def load(self) -> None:
+        self.decoder = None
         logging.getLogger("nemo_logger").setLevel(logging.ERROR)
         if self.config['model'].endswith(".nemo"):
             self.model = self.model_type.restore_from(self.config['model'], map_location=self.config['device'])
@@ -111,6 +113,7 @@ class NemoModel(Model):
     def add_defaults_to_config(self, config):
         config['vad'] = config.get('vad', 'false')
         config['device'] = config.get('device', 'cuda')
+        config['num_threads'] = config.get('num_threads', DEFAULT_NUM_THREADS) if config['device'] == 'cpu' else None
         if self.model_type!=nemo_asr.models.EncDecMultiTaskModel:
             config['decoder'] = config.get('decoder', 'ctc')
         return super().add_defaults_to_config(config)
@@ -148,6 +151,7 @@ class NemoModel(Model):
             name += f"_vad-{tot_config['vad']}"
         else:
             name += f"_vad-false"
+        name += f"_threads{tot_config['num_threads']}" if tot_config['device'] == 'cpu' else ""
         name = name.replace("/", "-")
         name += "_rtf" if tot_config['compute_rtf'] else ""
         return name

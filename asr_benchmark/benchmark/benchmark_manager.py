@@ -1,6 +1,7 @@
 import os
 import time
 import json
+import torch
 from tqdm import tqdm
 from itertools import product
 
@@ -74,6 +75,8 @@ def transcribe_with_rtf(model, data, output_folder, config):
         ]
     )
     model.config['device_name'] = monitor.get_device_name()
+    if model.config['device_name'] == 'cpu':
+        torch.set_num_threads(model.config.get("num_threads", 4))
     for i, row in enumerate(progress_bar):
         perfs = make_perf_file(row)
         audio_file, dataset, audio_duration = perfs["audio_filepath"], perfs["dataset"], perfs["audio_duration"]
