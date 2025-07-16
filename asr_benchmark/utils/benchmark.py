@@ -26,7 +26,7 @@ def get_audio_duration(file_path):
 
 def get_data(input_file, input_audio_path=''):
     all_data = []
-    with open(input_file, "r") as f:
+    with open(input_file, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line.startswith("/") or line.startswith("#"):
