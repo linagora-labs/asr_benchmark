@@ -8,29 +8,13 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# subsample = {   # for cpu
-#     "commonvoice": 100,
-#     "mls": 200,
-#     "summ-re": 100,
-# }
-# subsample = {
-#     "commonvoice": 500,
-#     "mls": 500,
-#     "summ-re": 500,
-#     "voxpopuli": 500
-# }
-# datasets_names = {
-#     "mls_facebook_french": "MLS",
-#     "youtubefr_split6": "YouTube",
-# }
-
-
 def name_to_dataset(row):
     name = row["name"]
-    name = name.replace("_nocasepunc_max30", "")
-    name = name.replace("_nocasepunc_eval_max30", "")
+    name = name.replace("_eval", "")
     name = name.replace("_nocasepunc", "")
     name = name.replace("_max30", "")
+    name = name.replace("_test", "")
+    name = name.replace("_dev", "")
     return name.lower()
 
 def load_manifest(manifest_path, config, min_duration=0.05, max_duration=30.0):
@@ -59,17 +43,18 @@ def load_manifest(manifest_path, config, min_duration=0.05, max_duration=30.0):
     logger.info(f"total number of datasets: {len(data)}")
     return data
 
-def write_manifest(data, path):
+def write_manifest(data, path, normalize=False):
     with open(path, 'w') as f:
         for d in data:
             for row in data[d]:
-                row['text'] = format_text_latin(row['text'], lang='fr')
+                if normalize:
+                    row['text'] = format_text_latin(row['text'], lang='fr')
                 f.write(json.dumps(row) + '\n')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Takes a sub sample of the data')
-    parser.add_argument('--manifest', help="Input manifest", type=str, default="../data/test_manifest.jsonl")
-    parser.add_argument('--subsample_config', type=str, default="../benchmarks/linto_stt_fr_fastconformer/subsample.json")
+    parser.add_argument('manifest', help="Input manifest", type=str)
+    parser.add_argument('subsample_config', type=str)
     parser.add_argument('--output_manifest', help="Output directory", type=str, default="manifest_subsampled.jsonl")
     parser.add_argument('--remove_others', help="Remove other datasets", action="store_true", default=False)
     parser.add_argument('--min_duration', default=1.0, type=float)

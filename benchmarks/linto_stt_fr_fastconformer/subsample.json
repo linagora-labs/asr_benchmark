@@ -11,6 +11,7 @@
         "min_duration": 4.0
     },
     "voxpopuli": {
+        "name": "voxpopuli_fr",
         "subsample": 0.33
     },
     "youtube": {
