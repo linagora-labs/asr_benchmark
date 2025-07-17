@@ -16,7 +16,7 @@ REPLACEMENTS_WER = {"euh": "", "hum": ""}
 PATH_TO_WARMUP_FILE = "examples/bonjour.wav"
 
 def check_if_benched(output_folder, input_file, config, debug):
-    data = []
+    data = dict()
     if os.path.exists(os.path.join(output_folder, "error.log")):
         with open(os.path.join(output_folder, "error.log"), "r") as f:
             txt = f.read()
@@ -35,11 +35,15 @@ def check_if_benched(output_folder, input_file, config, debug):
         all_data = all_data[:1]
     for row in all_data:
         dataset, id = row['name'], row['id']
+        if dataset not in data:
+            data[dataset] = []
         if debug or id not in benched.get(dataset, {}):
-            data.append(row)
+            data[dataset].append(row)
         elif compute_rtf and "rtf" not in benched[dataset][id]:
             data.append(row)
-    data = sorted(data, key=lambda x: x['name'])
+    data = {k: v for k, v in data.items() if v}
+    for dataset in data:
+        data[dataset] = sorted(data[dataset], key=lambda x: x['id'])
     return data, benched
 
 def make_perf_file(row):
@@ -111,12 +115,12 @@ def transcribe_fast(model, data, output_folder, config):
     for i, row in enumerate(data):
         yield i, outputs[i], row
 
-def process_result(iterator, bench_results, output_folder, config, save_interval=None):
+def process_result(iterator, bench_result, output_folder, config, save_interval=None):
     def write_results(results, dataset_name):
         with open(
             os.path.join(output_folder, "predictions", dataset_name+".json"), "w", encoding="utf-8"
         ) as f:
-            json.dump(results[dataset_name], f, indent=2, ensure_ascii=False)
+            json.dump(results, f, indent=2, ensure_ascii=False)
     for i, output, row in iterator:
         output['prediction'] = output['text'].strip().encode('utf-8').decode('utf-8')
         output.pop('text')
@@ -129,13 +133,10 @@ def process_result(iterator, bench_results, output_folder, config, save_interval
                 os.path.join(output_folder, "detailed_predictions", dataset, id + ".txt"), "w", encoding="utf-8"
             ) as f:
                 f.write(output['prediction'])
-        if dataset not in bench_results:
-            bench_results[dataset] = dict()
-        bench_results[dataset][id] = perfs
+        bench_result[id] = perfs
         if save_interval and i%save_interval==0:
-            write_results(bench_results, dataset)
-    for dataset in bench_results:
-        write_results(bench_results, dataset)
+            write_results(bench_result, dataset)
+    write_results(bench_result, dataset)
 
 def process_wer(output_folder, config):
     for dataset in tqdm(os.listdir(os.path.join(output_folder, "predictions")), desc="Computing WER"):
@@ -183,18 +184,18 @@ def bench_model(config, input_manifest, output_folder, debug=False):
         output_folder, input_manifest, config,  debug
     )
     if len(data)>0:
-        logger.info(
-            f"Benching {len(data)} files, loaded {len(utils.get_data(input_manifest))-len(data)})"
-        )
         model = get_model(config)
         model.load()
         audio = model.load_audio(PATH_TO_WARMUP_FILE)
         _ = model.transcribe(audio)
-        if config.get('compute_rtf', True):
-            iterator = transcribe_with_rtf(model, data, output_folder, config)
-        else:
-            iterator = transcribe_fast(model, data, output_folder, config)
-        process_result(iterator, bench_results, output_folder, config, save_interval=1 if config.get('compute_rtf', True) else None)
+        for dataset in data:
+            dataset_data = data[dataset]
+            bench_dataset_result = bench_results.get(dataset, dict())
+            if config.get('compute_rtf', True):
+                iterator = transcribe_with_rtf(model, dataset_data, output_folder, config)
+            else:
+                iterator = transcribe_fast(model, dataset_data, output_folder, config)
+            process_result(iterator, bench_dataset_result, output_folder, config, save_interval=1 if config.get('compute_rtf', True) else None)
         model.cleanup()
         with open(os.path.join(output_folder, "metadata.json"), "w", encoding="utf-8") as f:
             f.write(json.dumps(model.get_metadata(), indent=2, ensure_ascii=False))
