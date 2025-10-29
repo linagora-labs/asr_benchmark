@@ -9,11 +9,12 @@ logging.getLogger('nemo_logging').setLevel(logging.ERROR)
 from asr_benchmark.utils.benchmark import load_audio
 from asr_benchmark.benchmark.interfaces import Model
 
+DEFAULT_NUM_THREADS = torch.get_num_threads()
 class NemoModel(Model):
     
     def __init__(self, config) -> None:
         model_type = nemo_asr.models.EncDecCTCModelBPE
-        if "hybrid" in config['model'] or "linto_stt_fr_fastconformer" in config['model']:
+        if "hybrid" in config['model'] or "linto_stt" in config['model']:
              model_type = nemo_asr.models.EncDecHybridRNNTCTCBPEModel
         elif "rnnt" in config['model']:
             model_type = nemo_asr.models.EncDecRNNTBPEModel
@@ -24,11 +25,14 @@ class NemoModel(Model):
 
 
     def load(self) -> None:
+        self.decoder = None
         logging.getLogger("nemo_logger").setLevel(logging.ERROR)
         if self.config['model'].endswith(".nemo"):
-            self.model = self.model_type.restore_from(self.config['model'], map_location=self.config['device'])
+            self.model = nemo_asr.models.ASRModel.restore_from(self.config['model'], map_location=self.config['device'])
         else:
-            self.model = self.model_type.from_pretrained(model_name=self.config['model'], map_location=self.config['device'])
+            self.model = nemo_asr.models.ASRModel.from_pretrained(model_name=self.config['model'], map_location=self.config['device'])
+        if self.model_type != type(self.model):
+            raise ValueError(f"Model type mismatch {self.model_type} != {type(self.model)} for model {self.config['model']}")
         if self.config.get("ngram_model", None):
             import pyctcdecode
             self.model.change_decoding_strategy(decoder_type="ctc")
@@ -59,9 +63,9 @@ class NemoModel(Model):
                 audio,
                 duration=None,
                 task="asr",
-                source_lang="fr",
-                target_lang= "fr",
-                pnc="no",
+                source_lang=self.config["language"],
+                target_lang=self.config["language"],
+                pnc="yes",
                 answer="na",
                 verbose=False
             )
@@ -81,9 +85,9 @@ class NemoModel(Model):
                 "tmp.jsonl",
                 duration=None,
                 task="asr",
-                source_lang="fr",
-                target_lang= "fr",
-                pnc="no",
+                source_lang=self.config["language"],
+                target_lang=self.config["language"],
+                pnc="yes",
                 answer="na",
                 batch_size=batch_size,  # batch size to run the inference with
                 num_workers=4
@@ -111,6 +115,7 @@ class NemoModel(Model):
     def add_defaults_to_config(self, config):
         config['vad'] = config.get('vad', 'false')
         config['device'] = config.get('device', 'cuda')
+        config['num_threads'] = config.get('num_threads', DEFAULT_NUM_THREADS) if config['device'] == 'cpu' else None
         if self.model_type!=nemo_asr.models.EncDecMultiTaskModel:
             config['decoder'] = config.get('decoder', 'ctc')
         return super().add_defaults_to_config(config)
@@ -148,6 +153,7 @@ class NemoModel(Model):
             name += f"_vad-{tot_config['vad']}"
         else:
             name += f"_vad-false"
+        name += f"_threads{tot_config['num_threads']}" if tot_config['device'] == 'cpu' else ""
         name = name.replace("/", "-")
         name += "_rtf" if tot_config['compute_rtf'] else ""
         return name

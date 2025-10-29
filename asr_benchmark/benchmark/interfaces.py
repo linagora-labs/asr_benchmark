@@ -9,7 +9,6 @@ logger = logging.getLogger(__name__)
 class Model():
     def __init__(self, config) -> None:
         config = self.add_defaults_to_config(config)
-        self.language = config.pop('language', 'fr')
         self.config = config
         self.transcribe_kwargs = {}
     
@@ -24,7 +23,7 @@ class Model():
     
     def transcribe_batch(self, data: list) -> list[str]:
         predictions = []
-        for row in tqdm(data):
+        for row in tqdm(data, desc=f"Transcribing {data[0]['name']} with {self.config['model']}"):
             audio = self.load_audio(row['audio_filepath'], start=row['offset'], duration=row['duration'])
             predictions.append(self.transcribe(audio))
         return predictions
@@ -38,7 +37,6 @@ class Model():
     
     def get_metadata(self):
         metadata = self.config.copy()
-        metadata['language'] = self.language
         metadata['word_timestamps'] = self.can_output_word_timestamps()
         return metadata
     
@@ -46,6 +44,7 @@ class Model():
         raise NotImplementedError("Not supposed to be called")
     
     def add_defaults_to_config(self, config):
+        config["language"] = config.get("language", "fr")
         return config
     
 class HttpAPIModel(Model):

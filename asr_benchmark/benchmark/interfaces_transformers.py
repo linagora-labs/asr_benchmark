@@ -13,7 +13,7 @@ class TransformersModel(Model):
     
     def __init__(self, config) -> None:
         super().__init__(config)
-        self.transcribe_kwargs['language'] = self.language
+        self.transcribe_kwargs['language'] = self.config["language"]
         self.transcribe_kwargs['task'] = "transcribe"
         self.transcribe_kwargs['do_sample'] = self.config['do_sample']
         if self.config['do_sample']:

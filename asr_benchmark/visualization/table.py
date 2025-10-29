@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 def df_to_wer_table_format(df):
+    """deprecated"""
     def compute_weighted_wer(wer_details):
         if not isinstance(wer_details, list):
             return None
@@ -73,7 +74,7 @@ def plot_wer_table(wer_means, wer_stds=None, output_filename='wer_table.png', sh
     if wer_stds is not None:
         wer_stds = pd.DataFrame(wer_stds, index=wer_means.index, columns=wer_means.columns)
 
-    fig, axis = plt.subplots(figsize=(1.8 * n_cols if n_cols>2 else 3*n_cols, 1.2 * n_rows))
+    fig, axis = plt.subplots(figsize=(1.8 * n_cols if n_cols>4 else 3*n_cols, 1.2 * n_rows))
     if best=="highest":
         min_indices = wer_means.idxmax()
         color_map = mcolors.LinearSegmentedColormap.from_list('purple_red_yellow_green', ['purple', 'red', 'yellow', 'green'])        

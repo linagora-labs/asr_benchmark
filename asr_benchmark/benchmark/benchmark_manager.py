@@ -1,6 +1,8 @@
 import os
+import re
 import time
 import json
+import torch
 from tqdm import tqdm
 from itertools import product
 
@@ -13,8 +15,16 @@ from ssak.utils.monitoring import Monitoring
 REPLACEMENTS_WER = {"euh": "", "hum": ""}
 PATH_TO_WARMUP_FILE = "examples/bonjour.wav"
 
+def separate_punctuation(text):
+    """
+    Example: "Hello,world!" -> "Hello , world !"
+    """
+    text = re.sub(r'([.,!?;:()\"\'\-])', r' \1 ', text)
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
 def check_if_benched(output_folder, input_file, config, debug):
-    data = []
+    data = dict()
     if os.path.exists(os.path.join(output_folder, "error.log")):
         with open(os.path.join(output_folder, "error.log"), "r") as f:
             txt = f.read()
@@ -24,32 +34,43 @@ def check_if_benched(output_folder, input_file, config, debug):
     all_data = utils.get_data(input_file, config['input_audios_paths'])
     benched = dict()
     compute_rtf = config.get("compute_rtf", True)
-    for dataset in os.listdir(os.path.join(output_folder, "performances")):
+    
+    for dataset in os.listdir(os.path.join(output_folder, "predictions")):
         dataset = os.path.splitext(dataset)[0]
-        with open(os.path.join(output_folder, "performances", f"{dataset}.json"), "r") as f:
+        with open(os.path.join(output_folder, "predictions", f"{dataset}.json"), "r") as f:
             benched[dataset] = json.load(f)
     if debug:
         all_data = all_data[:1]
     for row in all_data:
         dataset, id = row['name'], row['id']
+        if dataset not in data:
+            data[dataset] = []
         if debug or id not in benched.get(dataset, {}):
-            data.append(row)
+            data[dataset].append(row)
         elif compute_rtf and "rtf" not in benched[dataset][id]:
             data.append(row)
+    data = {k: v for k, v in data.items() if v}
+    for dataset in data:
+        data[dataset] = sorted(data[dataset], key=lambda x: x['id'])
     return data, benched
 
 def make_perf_file(row):
+    if "name" in row:
+        full_dataset = row["name"]
+        dataset = full_dataset.replace("_max30","").replace("_nocasepunc","").replace("_test","").replace("_devtest","").replace("_dev","")
+    elif "dataset" in row:
+        dataset = row["dataset"]
+        full_dataset = dataset
     perfs = {
         "audio_filepath": row["audio_filepath"],
         "id": row['id'],
         "audio_duration": round(row.get("duration") if row.get("duration") else utils.get_audio_duration(row["audio_filepath"]), 3),
         "audio_offset": round(row.get("offset", 0.0), 3),
+        "dataset": dataset,
+        "full_dataset": full_dataset,
+        "text": row["text"],
     }
-    if "name" in row:
-        perfs["full_dataset"] = row["name"]
-        perfs["dataset"] = row["name"].replace("_max30","").replace("_nocasepunc","").replace("_test","").replace("_devtest","").replace("_dev","")
-    elif "dataset" in row:
-        perfs["dataset"] = row["dataset"]
+
     return perfs
 
 def make_perf_dataset(data):
@@ -74,6 +95,8 @@ def transcribe_with_rtf(model, data, output_folder, config):
         ]
     )
     model.config['device_name'] = monitor.get_device_name()
+    if model.config['device_name'] == 'cpu':
+        torch.set_num_threads(model.config.get("num_threads", 4))
     for i, row in enumerate(progress_bar):
         perfs = make_perf_file(row)
         audio_file, dataset, audio_duration = perfs["audio_filepath"], perfs["dataset"], perfs["audio_duration"]
@@ -97,40 +120,63 @@ def transcribe_with_rtf(model, data, output_folder, config):
 
 def transcribe_fast(model, data, output_folder, config):
     outputs = model.transcribe_batch(data)
-    for i, row in enumerate(tqdm(data, desc="Computing WER...".ljust(45))):     # keep details for each file 
+    for i, row in enumerate(data):
         yield i, outputs[i], row
 
-def process_result(iterator, bench_results, number_of_data, output_folder, config):
-    save_interval = 1
-    if number_of_data>100:
-        save_interval = number_of_data//10
+def process_result(iterator, bench_result, output_folder, config, save_interval=None):
     def write_results(results, dataset_name):
         with open(
-            os.path.join(output_folder, "performances", dataset_name+".json"), "w", encoding="utf-8"
+            os.path.join(output_folder, "predictions", dataset_name+".json"), "w", encoding="utf-8"
         ) as f:
-            f.write(json.dumps(results[dataset_name], indent=2, ensure_ascii=False))
+            json.dump(results, f, indent=2, ensure_ascii=False)
     for i, output, row in iterator:
-        prediction = output['text'].strip().encode('utf-8').decode('utf-8')
+        output['prediction'] = output['text'].strip().encode('utf-8').decode('utf-8')
         output.pop('text')
         perfs = make_perf_file(row)
         perfs.update(output)
         id, dataset = row['id'], row["name"]
-        if config.get("save_predictions", True):
-            os.makedirs(os.path.join(output_folder, "predictions", dataset), exist_ok=True)
+        if config.get("save_predictions", False):
+            os.makedirs(os.path.join(output_folder, "detailed_predictions", dataset), exist_ok=True)
             with open(
-                os.path.join(output_folder, "predictions", dataset, id + ".txt"), "w", encoding="utf-8"
+                os.path.join(output_folder, "detailed_predictions", dataset, id + ".txt"), "w", encoding="utf-8"
             ) as f:
-                f.write(prediction)
-        ref = row.get("text", None)
-        if ref:
+                f.write(output['prediction'])
+        bench_result[id] = perfs
+        if save_interval and i%save_interval==0:
+            write_results(bench_result, dataset)
+    write_results(bench_result, dataset)
+
+def process_wer(output_folder, config):
+    for dataset in tqdm(os.listdir(os.path.join(output_folder, "predictions")), desc="Computing WER"):
+        dataset = os.path.splitext(dataset)[0]
+        if os.path.exists(os.path.join(output_folder, "performances", f"{dataset}.json")):
+            continue
+        with open(os.path.join(output_folder, "predictions", f"{dataset}.json"), "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if not list(data.values())[0].get("text", False):
+            logger.info(f"No reference for {dataset}, skipping WER computation")
+            continue
+        predictions = [data[id]["prediction"] for id in data]
+        references = [data[id]["text"] for id in data]
+        results = dict(num_data=len(predictions), duration=sum([data[id]["audio_duration"] for id in data]))
+        
+        modes = ["wer_nocasepunc", "cer_nocasepunc"]
+        if any(re.search( r"[^\w\s'-]", ref) for ref in references):
+            modes = ["wer", "cer", "wer_nocasepunc", "cer_nocasepunc"]
+        
+        for key in modes:
             alignment = None
             if config.get("save_alignments", True):
-                os.makedirs(os.path.join(output_folder, "wer", dataset), exist_ok=True)
-                alignment = os.path.join(output_folder, "wer", dataset, id + ".txt")
+                os.makedirs(os.path.join(output_folder, "alignments", key), exist_ok=True)
+                alignment = os.path.join(output_folder, "alignments", key, dataset+".txt")
+            if "wer" in modes:
+                references = [separate_punctuation(ref) for ref in references]
+                predictions = [separate_punctuation(pred) for pred in predictions]
             wer_score = compute_wer(
-                [ref],
-                [prediction],
-                normalization="fr",
+                references,
+                predictions,
+                normalization=f"{config.get('language', 'fr')}+" if "nocasepunc" in key else "",
+                character_level="cer" in key,
                 use_percents=True,
                 alignment=alignment,
                 replacements_pred=REPLACEMENTS_WER,
@@ -139,42 +185,33 @@ def process_result(iterator, bench_results, number_of_data, output_folder, confi
             if alignment:
                 del wer_score['alignment']
                 del wer_score['raw_alignement']
-            perfs["wer"] = wer_score
-        if dataset not in bench_results:
-            bench_results[dataset] = dict()
-        bench_results[dataset][id] = perfs
-        if i%save_interval==0:
-            if save_interval==1:
-                write_results(bench_results, dataset)
-            else:
-                for dataset in bench_results:
-                    write_results(bench_results, dataset)
-    for dataset in bench_results:
-        write_results(bench_results, dataset)
+            results[key] = wer_score
+        with open(os.path.join(output_folder, "performances", f"{dataset}.json"), "w", encoding="utf-8") as f:
+            json.dump(results, f, indent=4)
 
 def bench_model(config, input_manifest, output_folder, debug=False):
     data, bench_results = check_if_benched(
         output_folder, input_manifest, config,  debug
     )
-    if len(data) == 0:
-        logger.info(f"Skipping, it has already been benched")
-        return
-    logger.info(
-        f"Benching {len(data)} files, loaded {len(utils.get_data(input_manifest))-len(data)})"
-    )
-    model = get_model(config)
-    model.load()
-    audio = model.load_audio(PATH_TO_WARMUP_FILE)
-    _ = model.transcribe(audio)
-    if config.get('compute_rtf', True):
-        iterator = transcribe_with_rtf(model, data, output_folder, config)
+    if len(data)>0:
+        model = get_model(config)
+        model.load()
+        audio = model.load_audio(PATH_TO_WARMUP_FILE)
+        _ = model.transcribe(audio)
+        for dataset in data:
+            dataset_data = data[dataset]
+            bench_dataset_result = bench_results.get(dataset, dict())
+            if config.get('compute_rtf', True):
+                iterator = transcribe_with_rtf(model, dataset_data, output_folder, config)
+            else:
+                iterator = transcribe_fast(model, dataset_data, output_folder, config)
+            process_result(iterator, bench_dataset_result, output_folder, config, save_interval=1 if config.get('compute_rtf', True) else None)
+        model.cleanup()
+        with open(os.path.join(output_folder, "metadata.json"), "w", encoding="utf-8") as f:
+            f.write(json.dumps(model.get_metadata(), indent=2, ensure_ascii=False))
     else:
-        iterator = transcribe_fast(model, data, output_folder, config)
-    process_result(iterator, bench_results, len(data), output_folder, config)
-    model.cleanup()
-    with open(os.path.join(output_folder, "metadata.json"), "w", encoding="utf-8") as f:
-        f.write(json.dumps(model.get_metadata(), indent=2, ensure_ascii=False))
-
+        logger.info(f"Skipping transcriptions, it has already been transcribed")
+    process_wer(output_folder, config)
 
 def make_configs(configs):
     new_configs = []
@@ -220,6 +257,7 @@ def launch_benchmark(
         progress_bar.set_description(f"Using {bench_id}".ljust(45))
         config_output = os.path.join(output_folder, bench_id)
         os.makedirs(config_output, exist_ok=True)
+        os.makedirs(os.path.join(config_output, "predictions"), exist_ok=True)
         os.makedirs(os.path.join(config_output, "performances"), exist_ok=True)
         try:
             start = time.time()

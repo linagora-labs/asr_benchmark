@@ -21,7 +21,7 @@ def sort_result(list_to_sort, key):
         order = sorted(list_to_sort, key=natural_key)
     return order
 
-def load_data(input_folder, selected_dataset=None):
+def load_data(input_folder, selected_dataset=None, casepunc=False):
     experiments = os.listdir(input_folder)
     data = list()
     for experiment in tqdm(experiments):
@@ -38,37 +38,21 @@ def load_data(input_folder, selected_dataset=None):
                 exp_data['accurate'] = 'greedy'
         datasets = os.listdir(os.path.join(input_folder, experiment, 'performances'))
         for dataset in datasets:
-            names = list()
-            wer_list = list()
-            wer_details = list()
-            audio_duration_list = list()
-            process_duration_list = list()
-            latencies = list()
             if selected_dataset and dataset.lower().replace(".json", "") != selected_dataset:
                 continue
             row = exp_data.copy()
             with open(os.path.join(input_folder, experiment, 'performances', dataset), 'r') as f:
                 json_data = json.load(f)
-            for file in json_data:
-                perf = json_data[file]
-                names.append(file)
-                audio_duration_list.append(perf['audio_duration'])
-                if "prediction_duration" in perf:
-                    process_duration_list.append(perf['prediction_duration'])
-                if "wer" in perf:
-                    wer_list.append(perf["wer"]["wer"])
-                    wer_details.append({k: v for k, v in perf["wer"].items() if k != "alignment"})
-                if "latency" in perf:
-                    latencies.append(perf['latency'])
-            row['dataset'] = json_data[file]['dataset']
-            row['audio_duration'] = audio_duration_list
-            if latencies:
-                row['latency'] = latencies
-            if process_duration_list:
-                row['process_duration'] = process_duration_list
-            row['wer'] = wer_list
-            row['wer_details'] = wer_details
-            row['audio_file'] = names
+            with open(os.path.join(input_folder, experiment, 'predictions', dataset), 'r') as f:
+                json_pred_data = json.load(f)
+            key = 'wer_nocasepunc' if not casepunc else 'wer'
+            if key not in json_data:
+                continue
+            row['duration'] = json_data["duration"] if "duration" in json_data else "durations"
+            row['num_data'] = json_data['num_data']
+            row['dataset'] = json_pred_data[next(iter(json_pred_data))]['dataset']
+            row['wer'] = json_data[key]['wer']
+            row['wer_details'] = json_data[key]
             if os.path.exists(os.path.join(input_folder, experiment, 'monitoring.json')):
                 with open(os.path.join(input_folder, experiment, 'monitoring.json'), 'r') as f:
                     monitoring = json.load(f)

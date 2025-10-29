@@ -23,7 +23,7 @@ class LintoSttModel(Model):
         out = open("docker.log", "w")
         cache_folder = self.config.get('cache_folder',  Path.home() / ".cache")
         build_args = f"-v {str(cache_folder)}:/root/.cache --env SERVICE_MODE={'http' if not self.config['streaming'] else 'websocket'} --env VAD={self.config['vad']} --env DEVICE={self.config['device']} --env USE_ACCURATE={self.config['accurate']} \
---env LANGUAGE={self.language} --env MODEL={self.config['model']} --env NUM_THREADS=4 --env CONCURRENCY=0"
+--env LANGUAGE={self.config['language']} --env MODEL={self.config['model']} --env NUM_THREADS=4 --env CONCURRENCY=0"
         if self.config['streaming']:
             build_args += f" --env STREAMING_MIN_CHUNK_SIZE={self.config['streaming_min_chunk_size']} --env STREAMING_BUFFER_TRIMMING_SEC={self.config['streaming_buffer_trimming_sec']}"
         if self.config['device']!="cpu":
@@ -173,9 +173,9 @@ class FasterWhisperModel(Model):
             audio, _ = ssak.utils.vad.remove_non_speech(audio, method=self.config['vad'])
         output = dict()
         if self.config['batch_size']>1:
-            segments, info = self.model.transcribe(audio, language=self.language, **self.transcribe_kwargs, batch_size=self.config['batch_size'], condition_on_previous_text=self.config['previous_text'])
+            segments, info = self.model.transcribe(audio, language=self.config["language"], **self.transcribe_kwargs, batch_size=self.config['batch_size'], condition_on_previous_text=self.config['previous_text'])
         else:
-            segments, info = self.model.transcribe(audio, language=self.language, **self.transcribe_kwargs, condition_on_previous_text=self.config['previous_text'])
+            segments, info = self.model.transcribe(audio, language=self.config["language"], **self.transcribe_kwargs, condition_on_previous_text=self.config['previous_text'])
         output['text'] = " ".join([seg.text for seg in segments])
         return output
 

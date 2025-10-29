@@ -15,4 +15,4 @@ The following table gives the result of the WER on several french datasets:
 
 ![plot](./plots/wer_table.png)
 
-The code to re create the results and the figure are availble in this folder.
+The code to re create the results and the figure are available in this folder.
