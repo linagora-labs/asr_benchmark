@@ -15,6 +15,14 @@ from ssak.utils.monitoring import Monitoring
 REPLACEMENTS_WER = {"euh": "", "hum": ""}
 PATH_TO_WARMUP_FILE = "examples/bonjour.wav"
 
+def separate_punctuation(text):
+    """
+    Example: "Hello,world!" -> "Hello , world !"
+    """
+    text = re.sub(r'([.,!?;:()\"\'\-])', r' \1 ', text)
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
 def check_if_benched(output_folder, input_file, config, debug):
     data = dict()
     if os.path.exists(os.path.join(output_folder, "error.log")):
@@ -150,8 +158,7 @@ def process_wer(output_folder, config):
             continue
         predictions = [data[id]["prediction"] for id in data]
         references = [data[id]["text"] for id in data]
-        
-        results = dict(num_data=len(predictions))
+        results = dict(num_data=len(predictions), duration=sum([data[id]["audio_duration"] for id in data]))
         
         modes = ["wer_nocasepunc", "cer_nocasepunc"]
         if any(re.search( r"[^\w\s'-]", ref) for ref in references):
@@ -162,6 +169,9 @@ def process_wer(output_folder, config):
             if config.get("save_alignments", True):
                 os.makedirs(os.path.join(output_folder, "alignments", key), exist_ok=True)
                 alignment = os.path.join(output_folder, "alignments", key, dataset+".txt")
+            if "wer" in modes:
+                references = [separate_punctuation(ref) for ref in references]
+                predictions = [separate_punctuation(pred) for pred in predictions]
             wer_score = compute_wer(
                 references,
                 predictions,

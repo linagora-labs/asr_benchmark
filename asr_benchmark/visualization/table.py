@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 def df_to_wer_table_format(df):
+    """deprecated"""
     def compute_weighted_wer(wer_details):
         if not isinstance(wer_details, list):
             return None
