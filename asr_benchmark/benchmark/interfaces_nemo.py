@@ -16,7 +16,7 @@ class NemoModel(Model):
         model_type = nemo_asr.models.EncDecCTCModelBPE
         if "hybrid" in config['model'] or "linto_stt" in config['model']:
              model_type = nemo_asr.models.EncDecHybridRNNTCTCBPEModel
-        elif "rnnt" in config['model']:
+        elif "rnnt" in config['model'] or "tdt" in config['model']:
             model_type = nemo_asr.models.EncDecRNNTBPEModel
         elif "canary" in config['model']:
             model_type = nemo_asr.models.EncDecMultiTaskModel

@@ -1,2 +1,0 @@
-git+https://github.com/linto-ai/faster-whisper
-ctranslate2==4.4.0
