@@ -92,7 +92,7 @@ def plot_wer_table(wer_means, wer_stds=None, output_filename='wer_table.png', sh
                 rect = plt.Rectangle((j, i), 1, 1, facecolor=color, edgecolor='gray')
                 axis.add_patch(rect)
 
-                fontweight = 'bold' if wer_means.index[i] == min_indices[j] else 'normal'
+                fontweight = 'bold' if wer_means.index[i] == min_indices.iloc[j] else 'normal' 
                 axis.text(j + 0.5, i + 0.4 if wer_stds is not None else i + 0.5, f"{val:.2f}", ha='center', va='center',
                           fontsize=12, weight=fontweight, color='black')
 

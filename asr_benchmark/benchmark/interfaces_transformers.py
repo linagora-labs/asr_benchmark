@@ -190,6 +190,65 @@ class TransformersFacebookModel(TransformersModel):
         name += "_rtf" if tot_config['compute_rtf'] else ""
         return name
     
+class TransformersVoxtralRealtimeModel(Model):
+
+    def __init__(self, config) -> None:
+        super().__init__(config)
+
+    def add_defaults_to_config(self, config):
+        config['device'] = config.get('device', 'cuda')
+        config['max_tokens'] = config.get('max_tokens', 512)
+        config['temperature'] = config.get('temperature', 0.0)
+        config['dtype'] = config.get('dtype', 'float16')
+        return super().add_defaults_to_config(config)
+
+    def load(self) -> None:
+        from transformers import VoxtralRealtimeForConditionalGeneration, AutoProcessor
+
+        dtype_map = {
+            'float16': torch.float16,
+            'bfloat16': torch.bfloat16,
+            'float32': torch.float32,
+        }
+        torch_dtype = dtype_map.get(self.config['dtype'], torch.float16)
+
+        self.processor = AutoProcessor.from_pretrained(self.config['model'])
+        self.model = VoxtralRealtimeForConditionalGeneration.from_pretrained(
+            self.config['model'],
+            torch_dtype=torch_dtype,
+            device_map="auto",
+        )
+
+    def load_audio(self, audio, start=0.0, duration=None):
+        audio_array = load_audio(audio, start=start, duration=duration)
+        target_sr = self.processor.feature_extractor.sampling_rate
+        if target_sr != 16000:
+            import librosa
+            audio_array = librosa.resample(audio_array, orig_sr=16000, target_sr=target_sr)
+        return audio_array
+
+    def transcribe(self, audio) -> dict:
+        inputs = self.processor(audio, sampling_rate=self.processor.feature_extractor.sampling_rate, return_tensors="pt")
+        inputs = inputs.to(device=self.model.device, dtype=self.model.dtype)
+        generate_kwargs = dict(max_new_tokens=self.config['max_tokens'])
+        if self.config['temperature'] > 0:
+            generate_kwargs['do_sample'] = True
+            generate_kwargs['temperature'] = self.config['temperature']
+        outputs = self.model.generate(**inputs, **generate_kwargs)
+        text = self.processor.batch_decode(outputs, skip_special_tokens=True)[0]
+        return {"text": text}
+
+    def cleanup(self):
+        torch.cuda.empty_cache()
+
+    def get_folder_name(self):
+        c = self.config
+        name = f"transformers-voxtral-realtime_{c['model']}_device-{c['device']}_dtype-{c['dtype']}_maxtokens-{c['max_tokens']}"
+        name = name.replace("/", "-")
+        name += "_rtf" if c.get('compute_rtf') else ""
+        return name
+
+
 class TransformersBofenghuangModel(TransformersModel):
     
     def __init__(self, config) -> None:

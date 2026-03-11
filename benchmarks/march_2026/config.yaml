@@ -1,0 +1,33 @@
+input_manifest: benchmarks/march_2026/manifest.jsonl
+output_folder: benchmarks/march_2026/local_bench
+compute_rtf: False
+plot_monitoring: False
+skip_errors: False
+save_alignments: True
+save_predictions: False
+
+
+benchmarks:
+  # https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602#vllm-recommended
+  - backend: transformers-voxtral-realtime
+    model: mistralai/Voxtral-Mini-4B-Realtime-2602
+    language: fr
+  - backend: nemo
+    model: 
+    - nvidia/canary-180m-flash
+    - nvidia/canary-1b-v2
+    - nvidia/parakeet-tdt-0.6b-v3
+    batch_size: 16
+  - backend: nemo
+    model: 
+    - nvidia/stt_fr_fastconformer_hybrid_large_pc
+    - bofenghuang/stt_fr_fastconformer_hybrid_large
+    - linagora/linto_stt_fr_fastconformer
+    - linagora/linto_stt_fr_fastconformer_pc
+    batch_size: 16
+    decoder: 
+    - rnnt
+  - backend: faster-whisper
+    model: 
+    - large-v3-turbo
+    precision: float16
