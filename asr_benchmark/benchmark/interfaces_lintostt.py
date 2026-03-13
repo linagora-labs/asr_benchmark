@@ -1,6 +1,5 @@
 import logging
 import time
-import os
 import requests
 import subprocess
 from pathlib import Path
@@ -79,7 +78,7 @@ class LintoSttWhisperModel(Model):
             with open(audio, "rb") as f:
                 res = requests.post(
                     url,
-                    files={"file": (os.path.basename(audio), f, "audio/wav")},
+                    files={"file": (Path(audio).name, f, "audio/wav")},
                     headers={"accept": "application/json"},
                 )
             if res.status_code != 200:
@@ -96,7 +95,7 @@ class LintoSttWhisperModel(Model):
                     f"Transcription response missing 'text' key. Response: {parsed}"
                 )
             output["text"] = parsed["text"]
-        os.remove(audio)
+        Path(audio).unlink()
         return output
 
     def cleanup(self):

@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 import re
 import time
 import json
@@ -25,8 +25,10 @@ def separate_punctuation(text):
 
 def check_if_benched(output_folder, input_file, config, debug):
     data = dict()
-    if os.path.exists(os.path.join(output_folder, "error.log")):
-        with open(os.path.join(output_folder, "error.log"), "r") as f:
+    output_path = Path(output_folder)
+    error_log = output_path / "error.log"
+    if error_log.exists():
+        with open(error_log, "r") as f:
             txt = f.read()
             if txt.startswith("CUDA out of memory"):
                 logger.error(f"Skipping, CUDA out of memory error")
@@ -34,10 +36,11 @@ def check_if_benched(output_folder, input_file, config, debug):
     all_data = utils.get_data(input_file, config['input_audios_paths'])
     benched = dict()
     compute_rtf = config.get("compute_rtf", True)
-    
-    for dataset in os.listdir(os.path.join(output_folder, "predictions")):
-        dataset = os.path.splitext(dataset)[0]
-        with open(os.path.join(output_folder, "predictions", f"{dataset}.json"), "r") as f:
+
+    predictions_dir = output_path / "predictions"
+    for dataset_file in predictions_dir.iterdir():
+        dataset = dataset_file.stem
+        with open(dataset_file, "r") as f:
             benched[dataset] = json.load(f)
     if debug:
         all_data = all_data[:1]
@@ -90,7 +93,7 @@ def transcribe_with_rtf(model, data, output_folder, config):
     )
     monitor.start(
         steps=[
-            os.path.splitext(os.path.basename(row['id']))[0]
+            Path(row['id']).stem
             for row in data
         ]
     )
@@ -100,7 +103,7 @@ def transcribe_with_rtf(model, data, output_folder, config):
     for i, row in enumerate(progress_bar):
         perfs = make_perf_file(row)
         audio_file, dataset, audio_duration = perfs["audio_filepath"], perfs["dataset"], perfs["audio_duration"]
-        basename = os.path.splitext(os.path.basename(audio_file))[0]
+        basename = Path(audio_file).stem
         progress_bar.set_description(f"Transcribing {basename}".ljust(45))
         try:
             audio = model.load_audio(audio_file, start=row.get("offset", 0.0), duration=audio_duration)
@@ -124,9 +127,10 @@ def transcribe_fast(model, data, output_folder, config):
         yield i, outputs[i], row
 
 def process_result(iterator, bench_result, output_folder, config, save_interval=None):
+    output_path = Path(output_folder)
     def write_results(results, dataset_name):
         with open(
-            os.path.join(output_folder, "predictions", dataset_name+".json"), "w", encoding="utf-8"
+            output_path / "predictions" / (dataset_name + ".json"), "w", encoding="utf-8"
         ) as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
     for i, output, row in iterator:
@@ -136,9 +140,9 @@ def process_result(iterator, bench_result, output_folder, config, save_interval=
         perfs.update(output)
         id, dataset = row['id'], row["name"]
         if config.get("save_predictions", False):
-            os.makedirs(os.path.join(output_folder, "detailed_predictions", dataset), exist_ok=True)
+            (output_path / "detailed_predictions" / dataset).mkdir(parents=True, exist_ok=True)
             with open(
-                os.path.join(output_folder, "detailed_predictions", dataset, id + ".txt"), "w", encoding="utf-8"
+                output_path / "detailed_predictions" / dataset / (id + ".txt"), "w", encoding="utf-8"
             ) as f:
                 f.write(output['prediction'])
         bench_result[id] = perfs
@@ -147,11 +151,14 @@ def process_result(iterator, bench_result, output_folder, config, save_interval=
     write_results(bench_result, dataset)
 
 def process_wer(output_folder, config):
-    for dataset in tqdm(os.listdir(os.path.join(output_folder, "predictions")), desc="Computing WER"):
-        dataset = os.path.splitext(dataset)[0]
-        if os.path.exists(os.path.join(output_folder, "performances", f"{dataset}.json")):
+    output_path = Path(output_folder)
+    predictions_dir = output_path / "predictions"
+    for dataset_file in tqdm(list(predictions_dir.iterdir()), desc="Computing WER"):
+        dataset = dataset_file.stem
+        perf_file = output_path / "performances" / f"{dataset}.json"
+        if perf_file.exists():
             continue
-        with open(os.path.join(output_folder, "predictions", f"{dataset}.json"), "r", encoding="utf-8") as f:
+        with open(dataset_file, "r", encoding="utf-8") as f:
             data = json.load(f)
         if not list(data.values())[0].get("text", False):
             logger.info(f"No reference for {dataset}, skipping WER computation")
@@ -159,16 +166,17 @@ def process_wer(output_folder, config):
         predictions = [data[id]["prediction"] for id in data]
         references = [data[id]["text"] for id in data]
         results = dict(num_data=len(predictions), duration=sum([data[id]["audio_duration"] for id in data]))
-        
+
         modes = ["wer_nocasepunc", "cer_nocasepunc"]
         if any(re.search( r"[^\w\s'-]", ref) for ref in references):
             modes = ["wer", "cer", "wer_nocasepunc", "cer_nocasepunc"]
-        
+
         for key in modes:
             alignment = None
             if config.get("save_alignments", True):
-                os.makedirs(os.path.join(output_folder, "alignments", key), exist_ok=True)
-                alignment = os.path.join(output_folder, "alignments", key, dataset+".txt")
+                alignment_dir = output_path / "alignments" / key
+                alignment_dir.mkdir(parents=True, exist_ok=True)
+                alignment = str(alignment_dir / (dataset + ".txt"))
             if "wer" in modes:
                 references = [separate_punctuation(ref) for ref in references]
                 predictions = [separate_punctuation(pred) for pred in predictions]
@@ -186,7 +194,7 @@ def process_wer(output_folder, config):
                 del wer_score['alignment']
                 del wer_score['raw_alignement']
             results[key] = wer_score
-        with open(os.path.join(output_folder, "performances", f"{dataset}.json"), "w", encoding="utf-8") as f:
+        with open(perf_file, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=4)
 
 def bench_model(config, input_manifest, output_folder, debug=False):
@@ -207,7 +215,7 @@ def bench_model(config, input_manifest, output_folder, debug=False):
                 iterator = transcribe_fast(model, dataset_data, output_folder, config)
             process_result(iterator, bench_dataset_result, output_folder, config, save_interval=1 if config.get('compute_rtf', True) else None)
         model.cleanup()
-        with open(os.path.join(output_folder, "metadata.json"), "w", encoding="utf-8") as f:
+        with open(Path(output_folder) / "metadata.json", "w", encoding="utf-8") as f:
             f.write(json.dumps(model.get_metadata(), indent=2, ensure_ascii=False))
     else:
         logger.info(f"Skipping transcriptions, it has already been transcribed")
@@ -255,14 +263,14 @@ def launch_benchmark(
             f"Benching {bench_id} (progress {progress_bar.n}/{progress_bar.total})"
         )
         progress_bar.set_description(f"Using {bench_id}".ljust(45))
-        config_output = os.path.join(output_folder, bench_id)
-        os.makedirs(config_output, exist_ok=True)
-        os.makedirs(os.path.join(config_output, "predictions"), exist_ok=True)
-        os.makedirs(os.path.join(config_output, "performances"), exist_ok=True)
+        config_output = Path(output_folder) / bench_id
+        config_output.mkdir(parents=True, exist_ok=True)
+        (config_output / "predictions").mkdir(parents=True, exist_ok=True)
+        (config_output / "performances").mkdir(parents=True, exist_ok=True)
         try:
             start = time.time()
             bench_model(
-                config, config["input_manifest"], config_output, debug
+                config, config["input_manifest"], str(config_output), debug
             )
             end = time.time()
             logger.info(f"Finished benching {bench_id} after {end-start:.0f}sec")
@@ -280,16 +288,15 @@ def launch_benchmark(
                     if debug or not isinstance(e, torch.cuda.OutOfMemoryError):
                         logger.info(traceback.format_exc())
                     if isinstance(e, torch.cuda.OutOfMemoryError):
-                        with open(os.path.join(config_output, "error.log"), "w") as f:
+                        with open(config_output / "error.log", "w") as f:
                             f.write(f"{e}")
                     torch.cuda.empty_cache()
-                if len(
-                    os.listdir(os.path.join(config_output, "predictions"))
-                ) == 0 and not os.path.exists(os.path.join(config_output, "error.log")):
-                    os.rmdir(os.path.join(config_output, "predictions"))
-                    os.rmdir(os.path.join(config_output, "performances"))
-                    os.rmdir(os.path.join(config_output, "wer"))
-                    os.rmdir(config_output)
+                predictions_dir = config_output / "predictions"
+                if len(list(predictions_dir.iterdir())) == 0 and not (config_output / "error.log").exists():
+                    predictions_dir.rmdir()
+                    (config_output / "performances").rmdir()
+                    (config_output / "wer").rmdir()
+                    config_output.rmdir()
                     logger.error(f"Benched folder is empty, removing it")
                 else:
                     logger.error(f"Benched folder is not empty")

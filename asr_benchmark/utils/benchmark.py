@@ -3,7 +3,7 @@ import json
 import time
 import torchaudio
 import librosa
-import os
+from pathlib import Path
 import subprocess
 import ssak.utils.audio
 
@@ -32,7 +32,7 @@ def get_data(input_file, input_audio_path=''):
             if line.startswith("/") or line.startswith("#"):
                 continue
             row = json.loads(line)
-            basename = os.path.basename(row['audio_filepath']).split('.')[0]
+            basename = Path(row['audio_filepath']).stem
             if "offset" not in row:
                 row["offset"] = 0.0
             if 'id' not in row:
@@ -53,7 +53,7 @@ def get_data(input_file, input_audio_path=''):
                     path_filled = path_filled.replace('%n', row.get('name'))
                 else:
                     path_filled = path_filled.replace('_%n','')
-                row['audio_filepath'] = os.path.join(path_filled, row['audio_filepath'])
+                row['audio_filepath'] = str(Path(path_filled) / row['audio_filepath'])
             all_data.append(row)
     return all_data
 
