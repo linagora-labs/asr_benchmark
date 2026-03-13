@@ -222,11 +222,12 @@ def bench_model(config, input_manifest, output_folder, debug=False):
     process_wer(output_folder, config)
 
 def make_configs(configs):
+    main_config = {k: v for k, v in configs.items() if k != "benchmarks"}
     new_configs = []
     for config in configs["benchmarks"]:
         keys, values = zip(*config.items())
         all_combinations = [
-            dict(zip(keys, prod))
+            main_config | dict(zip(keys, prod))
             for prod in product(*[v if isinstance(v, list) else [v] for v in values])
         ]
         new_configs.extend(all_combinations)
