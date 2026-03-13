@@ -26,16 +26,18 @@ class LintoSttWhisperModel(Model):
             time.sleep(0.5)
         out = open("docker.log", "w")
         cache_folder = self.config.get("cache_folder", Path.home() / ".cache")
-        build_args = f"-v {str(cache_folder)}:/root/.cache --env SERVICE_MODE={'http' if not self.config['streaming'] else 'websocket'} --env VAD={self.config['vad']} --env DEVICE={self.config['device']} --env USE_ACCURATE={self.config['accurate']} \
+        build_args = f"--env SERVICE_MODE={'http' if not self.config['streaming'] else 'websocket'} --env VAD={self.config['vad']} --env DEVICE={self.config['device']} --env USE_ACCURATE={self.config['accurate']} \
 --env LANGUAGE={self.config['language']} --env MODEL={self.config['model']} --env NUM_THREADS=4 --env CONCURRENCY=0"
+        build_args += f" -v {str(cache_folder)}:/home/appuser/.cache --env USER_ID={subprocess.check_output(['id', '-u']).decode().strip()} --env GROUP_ID={subprocess.check_output(['id', '-g']).decode().strip()}"
         if self.config["streaming"]:
             build_args += f" --env STREAMING_MIN_CHUNK_SIZE={self.config['streaming_min_chunk_size']} --env STREAMING_BUFFER_TRIMMING_SEC={self.config['streaming_buffer_trimming_sec']}"
         if self.config["device"] != "cpu":
             build_args += f" --gpus all"
         cmd = f"docker run --rm -p {self.config.get('port', 8080)}:80 --name bench_container {build_args} {self.config['docker_image']}"
         out.write(cmd + "\n")
+        out.flush()
         p = subprocess.Popen(cmd.split(), stdout=out, stderr=out)
-        total_wait_time = 600
+        total_wait_time = 800
         retry_interval = 2
         elapsed_time = 0
         time.sleep(0.5)
@@ -55,7 +57,9 @@ class LintoSttWhisperModel(Model):
                     f"The server container has stopped for an unexpected reason."
                 )
             time.sleep(retry_interval)
+            print(f"Waiting for server to start... ({elapsed_time}/{total_wait_time} seconds elapsed)\r", end="")
             elapsed_time += retry_interval
+        print()
         raise RuntimeError(f"Server did not start in {total_wait_time} seconds")
 
     def load_audio(self, audio, start=0.0, duration=None):
@@ -173,16 +177,18 @@ class LintoSttNemoModel(LintoSttWhisperModel):
             time.sleep(0.5)
         out = open("docker.log", "w")
         cache_folder = self.config.get("cache_folder", Path.home() / ".cache")
-        build_args = f"-v {str(cache_folder)}:/root/.cache --env SERVICE_MODE={'http' if not self.config['streaming'] else 'websocket'} --env VAD={self.config['vad']} --env DEVICE={self.config['device']} --env ARCHITECTURE={self.config['architecture']} \
+        build_args = f"--env SERVICE_MODE={'http' if not self.config['streaming'] else 'websocket'} --env VAD={self.config['vad']} --env DEVICE={self.config['device']} --env ARCHITECTURE={self.config['architecture']} \
 --env MODEL={self.config['model']} --env CONCURRENCY=0"
+        build_args += f" -v {str(cache_folder)}:/home/appuser/.cache --env USER_ID={subprocess.check_output(['id', '-u']).decode().strip()} --env GROUP_ID={subprocess.check_output(['id', '-g']).decode().strip()}"
         if self.config["streaming"]:
             build_args += f" --env STREAMING_MIN_CHUNK_SIZE={self.config['streaming_min_chunk_size']} --env STREAMING_BUFFER_TRIMMING_SEC={self.config['streaming_buffer_trimming_sec']}"
         if self.config["device"] != "cpu":
             build_args += f" --gpus all"
         cmd = f"docker run --rm -p {self.config.get('port', 8080)}:80 --name bench_container {build_args} {self.config['docker_image']}"
         out.write(cmd + "\n")
+        out.flush()
         p = subprocess.Popen(cmd.split(), stdout=out, stderr=out)
-        total_wait_time = 600
+        total_wait_time = 800
         retry_interval = 2
         elapsed_time = 0
         time.sleep(0.5)
@@ -199,7 +205,9 @@ class LintoSttNemoModel(LintoSttWhisperModel):
                     f"The server container has stopped for an unexpected reason. {p}"
                 )
             time.sleep(retry_interval)
+            print(f"Waiting for server to start... ({elapsed_time}/{total_wait_time} seconds elapsed)\r", end="")
             elapsed_time += retry_interval
+        print()
         raise RuntimeError(f"Server did not start in {total_wait_time} seconds")
 
     def add_defaults_to_config(self, config):
