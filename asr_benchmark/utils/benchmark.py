@@ -33,13 +33,15 @@ def get_data(input_file, input_audio_path=''):
                 continue
             row = json.loads(line)
             basename = os.path.basename(row['audio_filepath']).split('.')[0]
+            if "offset" not in row:
+                row["offset"] = 0.0
             if 'id' not in row:
                 if 'name' not in row:
                     row['id'] = basename
                     row['name'] = row.get('dataset', 'unknown')
                 else:
                     row['id'] = f"{row['name']}_{basename}"
-                if float(row.get("offset", 0.0)) > 0.0:
+                if float(row["offset"]) > 0.0:
                     row['id'] += f"_{row['offset']:.1f}"
             if input_audio_path:
                 path_filled = input_audio_path
