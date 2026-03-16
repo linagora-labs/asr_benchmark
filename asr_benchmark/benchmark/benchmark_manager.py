@@ -51,7 +51,7 @@ def check_if_benched(output_folder, input_file, config, debug):
         if debug or id not in benched.get(dataset, {}):
             data[dataset].append(row)
         elif compute_rtf and "rtf" not in benched[dataset][id]:
-            data.append(row)
+            data[dataset].append(row)
     data = {k: v for k, v in data.items() if v}
     for dataset in data:
         data[dataset] = sorted(data[dataset], key=lambda x: x['id'])
