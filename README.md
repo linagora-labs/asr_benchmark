@@ -60,7 +60,7 @@ pip install -e ".[nemo]"      # for nemo backends
 
 ## Tools
 
-Some tools are avaialble in the `tools` folder:
+Some tools are available in the `tools` folder:
 - add_silence.py: a script for adding white noise to audio files
 - subsample_data.py: for selecting a subset of specified datasets
 
