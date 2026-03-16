@@ -1,6 +1,6 @@
 import argparse
 import json
-import os
+from pathlib import Path
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -25,7 +25,9 @@ if __name__ == "__main__":
     data = load_manifest(args.manifest)
     with open(args.output_manifest, "w") as f:
         for row in data:
-            row['audio_filepath'] = os.path.basename(row['audio_filepath'])
+            row['audio_filepath'] = Path(row['audio_filepath']).name
+            row['split'] = "test"
+            row['name'] = row['name'].replace("_nocasepunc", "").replace("_casepunc", "").replace("_test","")
             f.write(json.dumps(row))
             f.write("\n")
     
