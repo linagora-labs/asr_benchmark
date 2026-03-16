@@ -15,6 +15,7 @@ dependencies = [
     "torchaudio>=2.3.1",
     "jiwer>=3.0.4,<4.0.0",
     "num2words",
+    "matplotlib<=3.7.4",
     "psutil",
     "py3nvml",
     "ssak @ git+https://github.com/linagora-labs/ssak",
