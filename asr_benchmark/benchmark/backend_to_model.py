@@ -11,6 +11,9 @@ def get_model(config):
     elif backend == "transformers-bofenghuang":
         import asr_benchmark.benchmark.interfaces_transformers as interfaces_transformers
         model = interfaces_transformers.TransformersBofenghuangModel(config)
+    elif backend == "transformers-voxtral-realtime":
+        import asr_benchmark.benchmark.interfaces_transformers as interfaces_transformers
+        model = interfaces_transformers.TransformersVoxtralRealtimeModel(config)
     elif backend == "intel-transformers":
         import asr_benchmark.benchmark.interfaces_transformers as interfaces_transformers
         model = interfaces_transformers.IntelTransformersModel(config)
@@ -22,9 +25,12 @@ def get_model(config):
         model = interfaces_whisper.OpenAIModel(config)
     elif backend == "http-api":
         model = interfaces.HttpAPIModel(config)
-    elif backend == "linto-stt":
-        import asr_benchmark.benchmark.interfaces_whisper as interfaces_whisper
-        model = interfaces_whisper.LintoSttModel(config)
+    elif backend in ("linto-stt", "linto-stt-whisper"):
+        import asr_benchmark.benchmark.interfaces_lintostt as interfaces_lintostt
+        model = interfaces_lintostt.LintoSttWhisperModel(config)
+    elif backend == "linto-stt-nemo":
+        import asr_benchmark.benchmark.interfaces_lintostt as interfaces_lintostt
+        model = interfaces_lintostt.LintoSttNemoModel(config)
     elif backend == "nemo":
         import asr_benchmark.benchmark.interfaces_nemo as interfaces_nemo
         model = interfaces_nemo.NemoModel(config)

@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import os
+from pathlib import Path
 
 from ssak.utils.wer import plot_wer
 
-LABEL_FONTSIZE = 15     
+LABEL_FONTSIZE = 15
 
 def prepare_data(df, return_format="df", target_wer_column="model"):
     df = df.copy()
@@ -28,11 +28,12 @@ def prepare_data(df, return_format="df", target_wer_column="model"):
 def plot_wer_df(wer_scores, output_folder, x_column="model", title="wer", save_fig=None):
     plt.close()
     plt.figure(figsize=(10, 6))
+    output_path = Path(output_folder)
     if save_fig==True:
         save_fig = f'{title.replace(" ", "_")}'
-    plot_wer(wer_scores, interval_type="none", show=os.path.join(output_folder, f'{save_fig}.png') if save_fig else None, title=f"{title.upper()}", sort_best=0, label_rotation=45, scale=1, label_fontdict={'size': LABEL_FONTSIZE}, ymax=100)
-    plot_wer(wer_scores, interval_type="none", show=os.path.join(output_folder, f'{save_fig}_zoomed50.png') if save_fig else None, title=f"{title.upper()}", sort_best=0, label_rotation=45, scale=1, label_fontdict={'size': LABEL_FONTSIZE}, ymax=50)
-    plot_wer(wer_scores, interval_type="none", show=os.path.join(output_folder, f'{save_fig}_zoomed25.png') if save_fig else None, title=f"{title.upper()}", sort_best=0, label_rotation=45, scale=1, label_fontdict={'size': LABEL_FONTSIZE}, ymax=25)
+    plot_wer(wer_scores, interval_type="none", show=str(output_path / f'{save_fig}.png') if save_fig else None, title=f"{title.upper()}", sort_best=0, label_rotation=45, scale=1, label_fontdict={'size': LABEL_FONTSIZE}, ymax=100)
+    plot_wer(wer_scores, interval_type="none", show=str(output_path / f'{save_fig}_zoomed50.png') if save_fig else None, title=f"{title.upper()}", sort_best=0, label_rotation=45, scale=1, label_fontdict={'size': LABEL_FONTSIZE}, ymax=50)
+    plot_wer(wer_scores, interval_type="none", show=str(output_path / f'{save_fig}_zoomed25.png') if save_fig else None, title=f"{title.upper()}", sort_best=0, label_rotation=45, scale=1, label_fontdict={'size': LABEL_FONTSIZE}, ymax=25)
     plt.close()
 
 def add_plot_detail(output_folder, x_column="VRAM usage", y_column="model", title=None, save_fig=None, limit=None, xlabel=None, ylabel=None):
@@ -62,11 +63,12 @@ def add_plot_detail(output_folder, x_column="VRAM usage", y_column="model", titl
     else:
         plt.title("")
     plt.tight_layout()
+    output_path = Path(output_folder)
     if save_fig:
         if isinstance(save_fig, str):
-            plt.savefig(os.path.join(output_folder, save_fig))
+            plt.savefig(output_path / save_fig)
         else:
-            plt.savefig(os.path.join(output_folder, f'{y_column}_by_{x_column}.png')) 
+            plt.savefig(output_path / f'{y_column}_by_{x_column}.png')
         plt.close()
 
 def plot_violin_df(df, output_folder, x_column="rtf", y_column="model", title=None, save_fig=None, limit=None, xlabel=None, ylabel=None):
@@ -84,7 +86,7 @@ def plot_violin_df(df, output_folder, x_column="rtf", y_column="model", title=No
     sns.violinplot(data=df, x=x_column, y=y_column)
     plt.grid(True)
     add_plot_detail(output_folder=output_folder, x_column=x_column, y_column=y_column, title=title, save_fig=save_fig, limit=limit, xlabel=xlabel, ylabel=ylabel)
-    
+
 def plot_bar_df(df, output_folder, x_column="VRAM usage", y_column="model", title=None, save_fig=None, limit=None, xlabel=None, ylabel=None, hue=None):
     rtf_list= []
     import numpy as np
@@ -98,7 +100,7 @@ def plot_bar_df(df, output_folder, x_column="VRAM usage", y_column="model", titl
         y_column = y_column.replace("/", "_")
         df[y_column] = df[c[0]] + " " + df[c[1]]
     if save_fig==True:
-        save_fig = f"{y_column}_by_{x_column}"  
+        save_fig = f"{y_column}_by_{x_column}"
     fig = plt.figure(figsize=(10, 6))
     ax = sns.barplot(data=df, x=x_column, y=y_column, hue=hue)
     ax.bar_label(ax.containers[0])

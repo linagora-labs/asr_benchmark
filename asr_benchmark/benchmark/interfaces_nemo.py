@@ -1,6 +1,6 @@
 
 import logging
-import os
+from pathlib import Path
 import torch
 import json
 import ssak.utils.vad
@@ -16,7 +16,7 @@ class NemoModel(Model):
         model_type = nemo_asr.models.EncDecCTCModelBPE
         if "hybrid" in config['model'] or "linto_stt" in config['model']:
              model_type = nemo_asr.models.EncDecHybridRNNTCTCBPEModel
-        elif "rnnt" in config['model']:
+        elif "rnnt" in config['model'] or "tdt" in config['model']:
             model_type = nemo_asr.models.EncDecRNNTBPEModel
         elif "canary" in config['model']:
             model_type = nemo_asr.models.EncDecMultiTaskModel
@@ -103,7 +103,7 @@ class NemoModel(Model):
             else:
                 output = {'text': i.text}
                 outputs.append(output)
-        os.remove("tmp.jsonl")
+        Path("tmp.jsonl").unlink()
         return outputs
 
     def can_output_word_timestamps(self):
@@ -129,7 +129,7 @@ class NemoModel(Model):
         if "batch_size" in metadata:
             del metadata['batch_size']
         if "ngram_model" in metadata:
-            metadata["decoder"] = os.path.basename(self.config['ngram_model'])
+            metadata["decoder"] = Path(self.config['ngram_model']).name
             del metadata['ngram_model']
         return metadata
     
@@ -142,7 +142,7 @@ class NemoModel(Model):
         name = f"nemo_{model}_device-{tot_config['device']}"
         if self.model_type == nemo_asr.models.EncDecHybridRNNTCTCBPEModel:
             if tot_config.get('ngram_model', False):
-                name += f"_decoder-{os.path.basename(tot_config['ngram_model'])}"
+                name += f"_decoder-{Path(tot_config['ngram_model']).name}"
             else:
                 name += f"_decoder-{tot_config['decoder']}"
         elif self.model_type == nemo_asr.models.EncDecRNNTModel:

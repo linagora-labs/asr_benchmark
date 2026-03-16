@@ -1,5 +1,5 @@
 import json
-import os
+from pathlib import Path
 import re
 from tqdm import tqdm
 
@@ -17,17 +17,19 @@ def sort_result(list_to_sort, key):
             order = ["low", "high"]
         else:
             order = ["offline", "low", "high"]
-    else: 
+    else:
         order = sorted(list_to_sort, key=natural_key)
     return order
 
 def load_data(input_folder, selected_dataset=None, casepunc=False):
-    experiments = os.listdir(input_folder)
+    input_path = Path(input_folder)
+    experiments = list(input_path.iterdir())
     data = list()
     for experiment in tqdm(experiments):
-        if not os.path.exists(os.path.join(input_folder, experiment, 'metadata.json')):
+        metadata_file = experiment / 'metadata.json'
+        if not metadata_file.exists():
             continue
-        with open(os.path.join(input_folder, experiment, 'metadata.json'), 'r') as f:
+        with open(metadata_file, 'r') as f:
             exp_data = json.load(f)
         if exp_data['backend'] == "faster-whisper" and "whisper" not in exp_data['model']:
             exp_data['model'] = f"whisper-{exp_data['model']}"
@@ -36,14 +38,14 @@ def load_data(input_folder, selected_dataset=None, casepunc=False):
                 exp_data['accurate'] = 'accurate'
             else:
                 exp_data['accurate'] = 'greedy'
-        datasets = os.listdir(os.path.join(input_folder, experiment, 'performances'))
-        for dataset in datasets:
-            if selected_dataset and dataset.lower().replace(".json", "") != selected_dataset:
+        performances_dir = experiment / 'performances'
+        for dataset_file in performances_dir.iterdir():
+            if selected_dataset and dataset_file.stem.lower() != selected_dataset:
                 continue
             row = exp_data.copy()
-            with open(os.path.join(input_folder, experiment, 'performances', dataset), 'r') as f:
+            with open(dataset_file, 'r') as f:
                 json_data = json.load(f)
-            with open(os.path.join(input_folder, experiment, 'predictions', dataset), 'r') as f:
+            with open(experiment / 'predictions' / dataset_file.name, 'r') as f:
                 json_pred_data = json.load(f)
             key = 'wer_nocasepunc' if not casepunc else 'wer'
             if key not in json_data:
@@ -53,8 +55,9 @@ def load_data(input_folder, selected_dataset=None, casepunc=False):
             row['dataset'] = json_pred_data[next(iter(json_pred_data))]['dataset']
             row['wer'] = json_data[key]['wer']
             row['wer_details'] = json_data[key]
-            if os.path.exists(os.path.join(input_folder, experiment, 'monitoring.json')):
-                with open(os.path.join(input_folder, experiment, 'monitoring.json'), 'r') as f:
+            monitoring_file = experiment / 'monitoring.json'
+            if monitoring_file.exists():
+                with open(monitoring_file, 'r') as f:
                     monitoring = json.load(f)
                 row['RAM usage'] = round(max(monitoring['ram_usage']), 2)
                 if 'vram_usage' in monitoring and monitoring['vram_usage']:

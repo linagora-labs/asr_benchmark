@@ -27,21 +27,40 @@ Examples are provided in the `examples` folder. There is a audio file to test wi
 
 ## Requirements
 
-You need to install the package so that benchmarker.py can find the source code:
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/) then install the package:
+
+```bash
+# Install core dependencies
+uv sync
+
+# Install backend-specific dependencies (as needed)
+uv sync --extra whisper
+uv sync --extra nemo
+
+# Or install everything
+uv sync --all-extras
 ```
+
+Then run benchmarks with:
+```bash
+uv run python benchmarker.py CONFIG_FILE
+```
+
+<details>
+<summary>Alternative: pip install</summary>
+
+```bash
 pip install -e .
+pip install -e ".[whisper]"   # for whisper backends
+pip install -e ".[nemo]"      # for nemo backends
 ```
-You also need to install [ssak](https://github.com/linagora-labs/ssak) repo. You can run:
-```
-pip install git+https://github.com/linagora-labs/ssak
-```
-Then depending on what you want to bench, you will need to install other packages like faster-whisper, nemo(nemo_toolkit['asr']), whisper and transformers.
+</details>
 
 
 
 ## Tools
 
-Some tools are avaialble in the `tools` folder:
+Some tools are available in the `tools` folder:
 - add_silence.py: a script for adding white noise to audio files
 - subsample_data.py: for selecting a subset of specified datasets
 
