@@ -174,12 +174,17 @@ async def _linstt_streaming(
                     logger.debug(f'Final (after {duration:.1f}s): "{sentence}"')
                     if text:
                         text += "\n"
-                    for w in sentence:
-                        if w[0] is not None:
-                            text += w[2]
+                    if isinstance(sentence, str):
+                        text += sentence
+                    else:
+                        for w in sentence:
+                            if w[0] is not None:
+                                text += w[2]
                 elif "partial" in message.keys():
                     partial = message["partial"]
                     logger.debug(f'Partial (after {duration:.1f}s): "{partial}"')
+                    if isinstance(partial, str):
+                        continue
                     for i, p in enumerate(partial):
                         word = p[2].strip()
                         if i<len(partial_latencies) and word.lower()!=partial_latencies[i]["word"]:

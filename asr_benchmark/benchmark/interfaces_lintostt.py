@@ -1,6 +1,7 @@
 import logging
 import time
 import requests
+import websockets.sync.client, websockets.exceptions
 import subprocess
 from pathlib import Path
 from asr_benchmark.utils.benchmark import load_audio, linstt_streaming
@@ -9,6 +10,26 @@ from asr_benchmark.benchmark.interfaces import Model
 
 logger = logging.getLogger(__name__)
 
+
+def healthcheck(model_url, streaming, check_transcribe=False):
+    if streaming:
+        try:
+            with websockets.sync.client.connect("ws://localhost:8080") as ws: 
+                ws.close()
+            return True
+        except (websockets.exceptions.WebSocketException, OSError):
+            return False
+    else:
+        try:
+            response = requests.get(f"http://{model_url}/healthcheck")
+            if response.status_code == 200 or response.status_code == 400:
+                if check_transcribe:
+                    transcribe_check = requests.post(f"http://{model_url}/transcribe")
+                    return transcribe_check.status_code == 405
+                return True
+        except requests.ConnectionError:
+            pass
+        return False
 
 class LintoSttWhisperModel(Model):
 
@@ -43,15 +64,8 @@ class LintoSttWhisperModel(Model):
         time.sleep(0.5)
         self.model = f"{self.config['server']}:{self.config['port']}"
         while elapsed_time < total_wait_time:
-            try:
-                response = requests.get(f"http://{self.model}/healthcheck")
-                if response.status_code == 200 or response.status_code == 400:
-                    # Healthcheck passed, now verify /transcribe endpoint is ready
-                    transcribe_check = requests.post(f"http://{self.model}/transcribe")
-                    if transcribe_check.status_code != 405:
-                        return
-            except requests.ConnectionError:
-                pass
+            if healthcheck(self.model, self.config["streaming"], check_transcribe=True):
+                return
             if p.poll() is not None:
                 raise RuntimeError(
                     f"The server container has stopped for an unexpected reason."
@@ -194,12 +208,8 @@ class LintoSttNemoModel(LintoSttWhisperModel):
         time.sleep(0.5)
         self.model = f"{self.config['server']}:{self.config['port']}"
         while elapsed_time < total_wait_time:
-            try:
-                response = requests.get(f"http://{self.model}/healthcheck")
-                if response.status_code == 200:  # or response.status_code == 400:
-                    return
-            except requests.ConnectionError:
-                pass
+            if healthcheck(self.model, self.config["streaming"]):
+                return
             if p.poll() is not None:
                 raise RuntimeError(
                     f"The server container has stopped for an unexpected reason. {p}"
