@@ -18,18 +18,18 @@ def healthcheck(model_url, streaming, check_transcribe=False):
                 ws.close()
             return True
         except (websockets.exceptions.WebSocketException, OSError):
-            return False
+            pass
     else:
         try:
             response = requests.get(f"http://{model_url}/healthcheck")
             if response.status_code == 200 or response.status_code == 400:
                 if check_transcribe:
                     transcribe_check = requests.post(f"http://{model_url}/transcribe")
-                    return transcribe_check.status_code == 405
+                    return transcribe_check.status_code != 405
                 return True
         except requests.ConnectionError:
             pass
-        return False
+    return False
 
 class LintoSttWhisperModel(Model):
 
