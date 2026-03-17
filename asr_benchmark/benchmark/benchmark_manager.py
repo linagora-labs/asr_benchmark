@@ -2,6 +2,8 @@ from pathlib import Path
 import re
 import time
 import json
+import matplotlib
+matplotlib.use("Agg")
 import torch
 from tqdm import tqdm
 from itertools import product
