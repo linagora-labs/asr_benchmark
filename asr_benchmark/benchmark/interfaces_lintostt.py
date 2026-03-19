@@ -48,7 +48,7 @@ class LintoSttWhisperModel(Model):
         out = open("docker.log", "w")
         cache_folder = self.config.get("cache_folder", Path.home() / ".cache")
         build_args = f"--env SERVICE_MODE={'http' if not self.config['streaming'] else 'websocket'} --env VAD={self.config['vad']} --env DEVICE={self.config['device']} --env USE_ACCURATE={self.config['accurate']} \
---env LANGUAGE={self.config['language']} --env MODEL={self.config['model']} --env NUM_THREADS=4 --env CONCURRENCY=0"
+--env LANGUAGE={self.config.get('language', 'fr')} --env MODEL={self.config['model']} --env NUM_THREADS=4 --env CONCURRENCY=0"
         build_args += f" -v {str(cache_folder)}:/home/appuser/.cache --env USER_ID={subprocess.check_output(['id', '-u']).decode().strip()} --env GROUP_ID={subprocess.check_output(['id', '-g']).decode().strip()}"
         if self.config["streaming"]:
             build_args += f" --env STREAMING_MIN_CHUNK_SIZE={self.config['streaming_min_chunk_size']} --env STREAMING_BUFFER_TRIMMING_SEC={self.config['streaming_buffer_trimming_sec']}"
@@ -198,6 +198,8 @@ class LintoSttNemoModel(LintoSttWhisperModel):
             build_args += f" --env STREAMING_MIN_CHUNK_SIZE={self.config['streaming_min_chunk_size']} --env STREAMING_BUFFER_TRIMMING_SEC={self.config['streaming_buffer_trimming_sec']}"
         if self.config["device"] != "cpu":
             build_args += f" --gpus all"
+        if self.config.get("language"):
+            build_args += f" --env LANGUAGE={self.config['language']}"
         cmd = f"docker run --rm -p {self.config.get('port', 8080)}:80 --name bench_container {build_args} {self.config['docker_image']}"
         out.write(cmd + "\n")
         out.flush()
