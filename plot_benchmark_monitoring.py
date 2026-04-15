@@ -55,7 +55,7 @@ def main():
     parser.add_argument("folders", type=Path, nargs="+", help="Result folder(s) containing predictions/ and monitoring.json")
     parser.add_argument("--output", "-o", type=Path, default=None, help="Output folder for saving figures")
     parser.add_argument("--legend", type=str, nargs="+", default=None, help="Custom legend labels for each folder (in order)")
-    parser.add_argument("--complete", action="store_true", help="Whether to plot everything")
+    parser.add_argument("--complete", action="store_true", help="Whether to plot RAM usage and detailed VRAM over time (in addition to processing time and max VRAM)")
     parser.add_argument("--title", type=str, default=None, help="Overall figure title (also used as output filename prefix)")
     parser.add_argument("--num_cols", type=int, default=1, help="Number of columns; folders are split equally across columns")
     parser.add_argument("--same_scale", action="store_true", help="Use the same Y-axis scale across columns")
@@ -143,7 +143,19 @@ def main():
                 ax.plot([], [], " ", label=ds["label"])
             else:
                 max_vram = get_max_usages(ds["monitoring"], "vram_usage")
-                ax.plot(ds["audio_durations"], max_vram, "o-", color=colors[i % len(colors)], label=ds["label"])
+                color = colors[i % len(colors)]
+                ax.plot(ds["audio_durations"], max_vram, "o-", color=color, label=ds["label"])
+                peak_idx = max(range(len(max_vram)), key=lambda k: max_vram[k])
+                peak_x = ds["audio_durations"][peak_idx]
+                peak_y = max_vram[peak_idx]
+                ax.annotate(
+                    f"{peak_y:.2f}",
+                    xy=(peak_x, peak_y),
+                    xytext=(0, 6),
+                    textcoords="offset points",
+                    ha="center", va="bottom",
+                    fontsize=8, color=color, fontweight="bold",
+                )
         ax.set_xlabel("Audio duration (s)")
         if col == 0:
             ax.set_ylabel("Max VRAM usage (GB)")
