@@ -44,7 +44,7 @@ class Model():
         raise NotImplementedError("Not supposed to be called")
     
     def add_defaults_to_config(self, config):
-        config["language"] = config.get("language", "fr")
+        # config["language"] = config.get("language", "fr")
         return config
     
 class HttpAPIModel(Model):

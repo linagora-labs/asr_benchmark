@@ -1,6 +1,7 @@
 import logging
 import time
 import requests
+import websockets.sync.client, websockets.exceptions
 import subprocess
 from pathlib import Path
 from asr_benchmark.utils.benchmark import load_audio, linstt_streaming
@@ -9,6 +10,26 @@ from asr_benchmark.benchmark.interfaces import Model
 
 logger = logging.getLogger(__name__)
 
+
+def healthcheck(model_url, streaming, check_transcribe=False):
+    if streaming:
+        try:
+            with websockets.sync.client.connect("ws://localhost:8080") as ws: 
+                ws.close()
+            return True
+        except (websockets.exceptions.WebSocketException, OSError):
+            pass
+    else:
+        try:
+            response = requests.get(f"http://{model_url}/healthcheck")
+            if response.status_code == 200 or response.status_code == 400:
+                if check_transcribe:
+                    transcribe_check = requests.post(f"http://{model_url}/transcribe")
+                    return transcribe_check.status_code != 405
+                return True
+        except requests.ConnectionError:
+            pass
+    return False
 
 class LintoSttWhisperModel(Model):
 
@@ -26,13 +47,16 @@ class LintoSttWhisperModel(Model):
             time.sleep(0.5)
         out = open("docker.log", "w")
         cache_folder = self.config.get("cache_folder", Path.home() / ".cache")
-        build_args = f"--env SERVICE_MODE={'http' if not self.config['streaming'] else 'websocket'} --env VAD={self.config['vad']} --env DEVICE={self.config['device']} --env USE_ACCURATE={self.config['accurate']} \
---env LANGUAGE={self.config['language']} --env MODEL={self.config['model']} --env NUM_THREADS=4 --env CONCURRENCY=0"
-        build_args += f" -v {str(cache_folder)}:/home/appuser/.cache --env USER_ID={subprocess.check_output(['id', '-u']).decode().strip()} --env GROUP_ID={subprocess.check_output(['id', '-g']).decode().strip()}"
+        build_args = f"--env SERVICE_MODE={'http' if not self.config['streaming'] else 'websocket'}"
+        build_args += f" --env DEVICE={self.config['device']} --env NUM_THREADS=4 --env CONCURRENCY=0"
+        build_args += f" --env VAD={self.config['vad']} --env USE_ACCURATE={self.config['accurate']} --env MODEL={self.config['model']}"
+        if self.config.get("language"):
+            build_args += f" --env LANGUAGE={self.config['language']}"
         if self.config["streaming"]:
             build_args += f" --env STREAMING_MIN_CHUNK_SIZE={self.config['streaming_min_chunk_size']} --env STREAMING_BUFFER_TRIMMING_SEC={self.config['streaming_buffer_trimming_sec']}"
         if self.config["device"] != "cpu":
             build_args += f" --gpus all"
+        build_args += f" -v {str(cache_folder)}:/home/appuser/.cache --env USER_ID={subprocess.check_output(['id', '-u']).decode().strip()} --env GROUP_ID={subprocess.check_output(['id', '-g']).decode().strip()}"
         cmd = f"docker run --rm -p {self.config.get('port', 8080)}:80 --name bench_container {build_args} {self.config['docker_image']}"
         out.write(cmd + "\n")
         out.flush()
@@ -43,15 +67,8 @@ class LintoSttWhisperModel(Model):
         time.sleep(0.5)
         self.model = f"{self.config['server']}:{self.config['port']}"
         while elapsed_time < total_wait_time:
-            try:
-                response = requests.get(f"http://{self.model}/healthcheck")
-                if response.status_code == 200 or response.status_code == 400:
-                    # Healthcheck passed, now verify /transcribe endpoint is ready
-                    transcribe_check = requests.post(f"http://{self.model}/transcribe")
-                    if transcribe_check.status_code != 405:
-                        return
-            except requests.ConnectionError:
-                pass
+            if healthcheck(self.model, self.config["streaming"], check_transcribe=True):
+                return
             if p.poll() is not None:
                 raise RuntimeError(
                     f"The server container has stopped for an unexpected reason."
@@ -177,13 +194,17 @@ class LintoSttNemoModel(LintoSttWhisperModel):
             time.sleep(0.5)
         out = open("docker.log", "w")
         cache_folder = self.config.get("cache_folder", Path.home() / ".cache")
-        build_args = f"--env SERVICE_MODE={'http' if not self.config['streaming'] else 'websocket'} --env VAD={self.config['vad']} --env DEVICE={self.config['device']} --env ARCHITECTURE={self.config['architecture']} \
---env MODEL={self.config['model']} --env CONCURRENCY=0"
-        build_args += f" -v {str(cache_folder)}:/home/appuser/.cache --env USER_ID={subprocess.check_output(['id', '-u']).decode().strip()} --env GROUP_ID={subprocess.check_output(['id', '-g']).decode().strip()}"
+        build_args = f"--env SERVICE_MODE={'http' if not self.config['streaming'] else 'websocket'}"
+        build_args += f" --env DEVICE={self.config['device']} --env CONCURRENCY=0"
+        build_args += f" --env VAD={self.config['vad']} --env MODEL={self.config['model']} --env ARCHITECTURE={self.config['architecture']}"
+        build_args += f" --env ATT_CONTEXT_SIZE={self.config['att_context_size']}"
+        if self.config.get("language"):
+            build_args += f" --env LANGUAGE={self.config['language']}"
         if self.config["streaming"]:
             build_args += f" --env STREAMING_MIN_CHUNK_SIZE={self.config['streaming_min_chunk_size']} --env STREAMING_BUFFER_TRIMMING_SEC={self.config['streaming_buffer_trimming_sec']}"
         if self.config["device"] != "cpu":
             build_args += f" --gpus all"
+        build_args += f" -v {str(cache_folder)}:/home/appuser/.cache --env USER_ID={subprocess.check_output(['id', '-u']).decode().strip()} --env GROUP_ID={subprocess.check_output(['id', '-g']).decode().strip()}"
         cmd = f"docker run --rm -p {self.config.get('port', 8080)}:80 --name bench_container {build_args} {self.config['docker_image']}"
         out.write(cmd + "\n")
         out.flush()
@@ -194,12 +215,8 @@ class LintoSttNemoModel(LintoSttWhisperModel):
         time.sleep(0.5)
         self.model = f"{self.config['server']}:{self.config['port']}"
         while elapsed_time < total_wait_time:
-            try:
-                response = requests.get(f"http://{self.model}/healthcheck")
-                if response.status_code == 200:  # or response.status_code == 400:
-                    return
-            except requests.ConnectionError:
-                pass
+            if healthcheck(self.model, self.config["streaming"]):
+                return
             if p.poll() is not None:
                 raise RuntimeError(
                     f"The server container has stopped for an unexpected reason. {p}"
@@ -236,11 +253,13 @@ class LintoSttNemoModel(LintoSttWhisperModel):
             )
             config["streaming_wait"] = config.get("streaming_wait", 0.5)
             config["streaming_chunk"] = config.get("streaming_chunk", 0.5)
+        config["att_context_size"] = config.get("att_context_size", 128)
         return Model.add_defaults_to_config(self, config)
 
     def get_folder_name(self):
         tot_config = self.config.copy()
         name = f"linto-stt-nemo_{tot_config['model']}_decoder-{tot_config['decoder']}"
+        name += f"_attn-{tot_config['att_context_size']}"
         name += f"_vad-{tot_config['vad']}_device-{tot_config['device']}_{self.config['docker_image'].replace(':', '-')}"
         if tot_config["streaming"]:
             name += f"_streaming-{tot_config['streaming_min_chunk_size']}-{tot_config['streaming_buffer_trimming_sec']}-{tot_config['streaming_wait']}-{tot_config['streaming_chunk']}"
