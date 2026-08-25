@@ -1,0 +1,15 @@
+# WER benchmark for MOSS-Transcribe-Diarize, on the same data as the
+# linto_stt_fr_fastconformer benchmark so results are directly comparable.
+input_manifest: benchmarks/linto_stt_fr_fastconformer/manifest.jsonl
+output_folder: benchmarks/linto_stt_fr_fastconformer/local_bench
+input_audios_paths: nemo_dataset/converted_audios/%n_%s
+compute_rtf: False
+plot_monitoring: False
+skip_errors: False
+save_alignments: True
+save_predictions: False
+
+benchmarks:
+  - backend: moss
+    model: OpenMOSS-Team/MOSS-Transcribe-Diarize
+    dtype: bfloat16

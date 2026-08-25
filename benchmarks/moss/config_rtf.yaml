@@ -1,0 +1,14 @@
+# RTF + (V)RAM benchmark for MOSS-Transcribe-Diarize, on the same data as the
+# linto_stt_fr_fastconformer RTF benchmark so results are directly comparable.
+input_manifest: benchmarks/linto_stt_fr_fastconformer/manifest_rtf.jsonl
+output_folder: benchmarks/linto_stt_fr_fastconformer/local_bench_rtf
+input_audios_paths: nemo_dataset/converted_audios/%n_%s
+compute_rtf: True
+save_alignments: False
+plot_monitoring: False
+skip_errors: False
+
+benchmarks:
+  - backend: moss
+    model: OpenMOSS-Team/MOSS-Transcribe-Diarize
+    dtype: bfloat16

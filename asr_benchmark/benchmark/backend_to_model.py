@@ -34,6 +34,9 @@ def get_model(config):
     elif backend == "nemo":
         import asr_benchmark.benchmark.interfaces_nemo as interfaces_nemo
         model = interfaces_nemo.NemoModel(config)
+    elif backend == "moss":
+        import asr_benchmark.benchmark.interfaces_moss as interfaces_moss
+        model = interfaces_moss.MossTranscribeDiarizeModel(config)
     else:
         raise ValueError(f"Invalid backend: {backend}")
     return model
