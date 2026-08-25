@@ -66,10 +66,12 @@ class FasterWhisperModel(Model):
         if self.config['vad'] and self.config['vad'] in ['auditok','silero', 'pyannote']:
             audio, _ = ssak.utils.vad.remove_non_speech(audio, method=self.config['vad'])
         output = dict()
+        language = self.config.get("language", "fr")
+        condition_on_previous_text = self.config.get("previous_text", False)
         if self.config['batch_size']>1:
-            segments, info = self.model.transcribe(audio, language=self.config["language"], **self.transcribe_kwargs, batch_size=self.config['batch_size'], condition_on_previous_text=self.config['previous_text'])
+            segments, info = self.model.transcribe(audio, language=language, **self.transcribe_kwargs, batch_size=self.config['batch_size'], condition_on_previous_text=condition_on_previous_text)
         else:
-            segments, info = self.model.transcribe(audio, language=self.config["language"], **self.transcribe_kwargs, condition_on_previous_text=self.config['previous_text'])
+            segments, info = self.model.transcribe(audio, language=language, **self.transcribe_kwargs, condition_on_previous_text=condition_on_previous_text)
         output['text'] = " ".join([seg.text for seg in segments])
         return output
 
