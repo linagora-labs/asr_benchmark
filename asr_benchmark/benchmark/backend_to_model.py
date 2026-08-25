@@ -37,6 +37,9 @@ def get_model(config):
     elif backend == "moss":
         import asr_benchmark.benchmark.interfaces_moss as interfaces_moss
         model = interfaces_moss.MossTranscribeDiarizeModel(config)
+    elif backend == "transformers-voxtral":
+        import asr_benchmark.benchmark.interfaces_voxtral as interfaces_voxtral
+        model = interfaces_voxtral.TransformersVoxtralModel(config)
     else:
         raise ValueError(f"Invalid backend: {backend}")
     return model

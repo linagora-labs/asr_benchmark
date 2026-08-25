@@ -17,10 +17,44 @@ from ssak.utils.monitoring import Monitoring
 REPLACEMENTS_WER = {"euh": "", "hum": ""}
 PATH_TO_WARMUP_FILE = "examples/bonjour.wav"
 
+# Typographic punctuation that models emit but references usually write in ASCII
+# (or the reverse). Mapped to the ASCII equivalent before tokenizing, otherwise
+# e.g. "c\u2019est" and "c'est" yield different tokens and every French elision
+# counts as an error in the punctuated wer/cer.
+UNICODE_PUNCTUATION = {
+    "\u2019": "'",   # right single quotation mark, the usual ASR apostrophe
+    "\u2018": "'",   # left single quotation mark
+    "\u02bc": "'",   # modifier letter apostrophe
+    "\u2032": "'",   # prime
+    "\u201c": '"',   # left double quotation mark
+    "\u201d": '"',   # right double quotation mark
+    "\u00ab": '"',   # left-pointing double angle quotation mark
+    "\u00bb": '"',   # right-pointing double angle quotation mark
+    "\u2013": "-",   # en dash
+    "\u2014": "-",   # em dash
+    "\u2212": "-",   # minus sign
+    "\u2026": "...", # horizontal ellipsis
+    "\u00a0": " ",   # non-breaking space
+    "\u202f": " ",   # narrow no-break space (French thin space before ; : ! ?)
+}
+
+_UNICODE_PUNCTUATION_RE = re.compile("|".join(map(re.escape, UNICODE_PUNCTUATION)))
+
+
+def normalize_punctuation(text):
+    """
+    Map typographic punctuation to its ASCII equivalent.
+
+    Example: "c\u2019est \u2014 oui\u2026" -> "c'est - oui..."
+    """
+    return _UNICODE_PUNCTUATION_RE.sub(lambda m: UNICODE_PUNCTUATION[m.group()], text)
+
+
 def separate_punctuation(text):
     """
     Example: "Hello,world!" -> "Hello , world !"
     """
+    text = normalize_punctuation(text)
     text = re.sub(r'([.,!?;:()\"\'\-])', r' \1 ', text)
     text = re.sub(r'\s+', ' ', text).strip()
     return text
