@@ -8,6 +8,7 @@ authors = [
 requires-python = ">=3.10,<3.13"
 dependencies = [
     "pyyaml",
+    "torch",
     "torchcodec",
     "librosa>=0.10.1",
     "websockets>=12.0",
@@ -30,6 +31,12 @@ whisper = [
 nemo = [
     "nemo_toolkit[asr]>=2.5.0",
 ]
+moss = [
+    # The model's remote code imports transformers.utils.torch_compilable_check,
+    # which only exists in transformers 5.x.
+    "transformers>=5.0.0",
+    "accelerate",
+]
 visu = [
     "pandas",
     "ipykernel",
@@ -49,5 +56,23 @@ conflicts = [
     [
         { extra = "whisper" },
         { extra = "nemo" },
+        { extra = "moss" },
     ],
 ]
+
+# PyPI's torch/torchaudio wheels for Linux aarch64 are CPU-only builds, so on
+# ARM machines (e.g. the DGX Spark, GB10) you get "Torch not compiled with CUDA
+# enabled" and torchcodec fails to load libc10_cuda.so. The CUDA ARM builds are
+# only published on download.pytorch.org, so redirect these three there on
+# aarch64. x86_64 is untouched: PyPI's wheels are already CUDA-enabled there.
+# NB: torch must stay a direct dependency above -- [tool.uv.sources] only
+# applies to direct dependencies, not ones pulled in transitively.
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu130", marker = "sys_platform == 'linux' and platform_machine == 'aarch64'" }]
+torchaudio = [{ index = "pytorch-cu130", marker = "sys_platform == 'linux' and platform_machine == 'aarch64'" }]
+torchcodec = [{ index = "pytorch-cu130", marker = "sys_platform == 'linux' and platform_machine == 'aarch64'" }]
