@@ -1,15 +1,75 @@
 # WER benchmark for MOSS-Transcribe-Diarize, on the same data as the
 # linto_stt_fr_fastconformer benchmark so results are directly comparable.
+#
+# The baselines below are the 7 models of the WER table published with
+# linagora/linto_stt_fr_fastconformer_pc:
+#   https://huggingface.co/linagora/linto_stt_fr_fastconformer_pc/blob/main/assets/wer_table.png
+#
+# IMPORTANT -- this file CANNOT be run in a single pass. The moss, nemo and
+# whisper extras are declared as mutually conflicting in pyproject.toml (moss
+# needs transformers 5.x), so each backend needs its own environment. Run the
+# three passes below in turn; every model writes its own subfolder under the
+# shared output_folder, so the results end up side by side either way:
+#
+#   uv run --extra moss    python benchmarker.py benchmarks/moss/config.yaml
+#   uv run --extra nemo    python benchmarker.py benchmarks/moss/config.yaml
+#   uv run --extra whisper python benchmarker.py benchmarks/moss/config.yaml
+#
+# Already-benched models are skipped by check_if_benched, so each pass only
+# runs the backend it has the dependencies for -- but keep skip_errors: False
+# in mind: a pass aborts when it reaches a backend it cannot import, so put the
+# backend you want first, or set skip_errors: True to sweep through all three.
 input_manifest: benchmarks/linto_stt_fr_fastconformer/manifest.jsonl
 output_folder: benchmarks/linto_stt_fr_fastconformer/local_bench
 input_audios_paths: nemo_dataset/converted_audios/%n_%s
-compute_rtf: False
+compute_rtf: True
 plot_monitoring: False
 skip_errors: False
 save_alignments: True
-save_predictions: False
+save_predictions: True
 
 benchmarks:
+  # --- the model under test -------------------------------------------------
   - backend: moss
     model: OpenMOSS-Team/MOSS-Transcribe-Diarize
     dtype: bfloat16
+
+  # --- Mistral Voxtral (audio LLM, same transformers 5.x env as moss) -------
+  - backend: transformers-voxtral
+    model: mistralai/Voxtral-Small-24B-2507
+    dtype: bfloat16
+    language: fr
+
+  # --- baselines: OPENAI ----------------------------------------------------
+  - backend: faster-whisper
+    model: large-v3-turbo
+    precision: float16
+
+  # --- baselines: NVIDIA canary --------------------------------------------
+  # language is required here: the nemo interface passes config["language"] as
+  # source_lang/target_lang for EncDecMultiTaskModel (canary), and the default
+  # in interfaces.py is commented out, so omitting it raises KeyError.
+  - backend: nemo
+    model:
+    - nvidia/canary-180m-flash
+    - nvidia/canary-1b-v2
+    batch_size: 8
+    language: fr
+
+  # --- baselines: fastconformer hybrid, RNNT decoder ------------------------
+  - backend: nemo
+    model:
+    - nvidia/stt_fr_fastconformer_hybrid_large_pc
+    - bofenghuang/stt_fr_fastconformer_hybrid_large
+    - linagora/linto_stt_fr_fastconformer
+    batch_size: 8
+    decoder:
+    - rnnt
+
+  # --- baselines: LINTO fastconformer-pc, both decoders ---------------------
+  - backend: nemo
+    model: linagora/linto_stt_fr_fastconformer_pc
+    batch_size: 8
+    decoder:
+    - rnnt
+    - ctc
