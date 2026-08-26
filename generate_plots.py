@@ -1,0 +1,236 @@
+#!/usr/bin/env python3
+"""Generate WER / RTF (and RAM-VRAM when available) plots from benchmark outputs.
+
+Takes one or more benchmark output folders (each containing per-model subfolders
+with metadata.json + performances/ + predictions/, as written by benchmarker.py)
+and produces:
+  - a WER heatmap table (model x dataset)
+  - an RTFx bar chart (speed, higher = faster)
+  - RAM / VRAM bar charts, only when monitoring.json is present
+
+If --output is given the figures are saved there as PNGs; otherwise they are
+shown interactively with plt.show().
+
+Usage:
+    python generate_plots.py FOLDER [FOLDER ...] [--output OUT] [--casepunc]
+
+Examples:
+    # show interactively
+    python generate_plots.py benchmarks/linto_stt_fr_fastconformer/local_bench
+    # save to a folder, from several benchmark dirs at once
+    python generate_plots.py local_bench local_bench_rtf --output my_plots
+"""
+import argparse
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from asr_benchmark.visualization.table import plot_wer_table, prepare_model_name
+
+# Short dataset labels (same as generate_plots.ipynb).
+DATASET_RENAME = {
+    "YouTubeFr_split6": "YouTube",
+    "TEDX_fr": "TEDx",
+    "MLS_Facebook_french": "MLS",
+    "Voxpopuli": "VoxPopuli",
+}
+# Preferred column order for the WER table; unknown datasets are appended after.
+DATASET_ORDER = ["CommonVoice", "MLS", "SUMM-RE", "VoxPopuli", "TEDx", "YouTube"]
+
+
+def model_label(meta):
+    """Readable, unique-ish label for one experiment's metadata."""
+    model = meta["model"]
+    if meta.get("backend") == "faster-whisper" and "whisper" not in model:
+        model = f"whisper-{model}"
+    label = prepare_model_name(model)
+    if meta.get("decoder"):
+        label += f"\n{meta['decoder'].upper()}"
+    # Distinguishing extras (precision/dtype/accurate) keep otherwise-identical
+    # model names apart; only appended when present.
+    extras = [str(meta[k]) for k in ("precision", "dtype") if meta.get(k)]
+    if meta.get("accurate") in ("accurate", "greedy"):
+        extras.append(meta["accurate"])
+    if extras:
+        label += f"\n({', '.join(extras)})"
+    return label
+
+
+def collect(folders, casepunc=False):
+    """Read every experiment folder into a flat list of per-(model,dataset) rows."""
+    wer_key = "wer" if casepunc else "wer_nocasepunc"
+    rows = []
+    for folder in folders:
+        folder = Path(folder)
+        if not folder.is_dir():
+            print(f"  ! skipping (not a folder): {folder}")
+            continue
+        for exp in sorted(folder.iterdir()):
+            meta_file = exp / "metadata.json"
+            perf_dir = exp / "performances"
+            if not meta_file.exists() or not perf_dir.is_dir():
+                continue
+            meta = json.loads(meta_file.read_text())
+            label = model_label(meta)
+            device = {"cuda": "GPU", "cpu": "CPU"}.get(meta.get("device"), meta.get("device"))
+
+            # RAM / VRAM (optional) from a single monitoring.json per experiment.
+            ram = vram = None
+            mon_file = exp / "monitoring.json"
+            if mon_file.exists():
+                mon = json.loads(mon_file.read_text())
+                if mon.get("ram_usage"):
+                    ram = round(max(mon["ram_usage"]), 2)
+                if mon.get("vram_usage"):
+                    vram = round(max(mon["vram_usage"]), 2)
+
+            for perf_file in sorted(perf_dir.iterdir()):
+                perf = json.loads(perf_file.read_text())
+                if wer_key not in perf:
+                    continue
+                # RTF list + canonical dataset name from the predictions file.
+                rtfs = []
+                dataset = perf_file.stem
+                pred_file = exp / "predictions" / perf_file.name
+                if pred_file.exists():
+                    preds = json.loads(pred_file.read_text())
+                    for rec in preds.values():
+                        rtf = rec.get("rtf")
+                        if rtf is None and rec.get("audio_duration"):
+                            rtf = rec.get("prediction_duration", 0) / rec["audio_duration"]
+                        if rtf:
+                            rtfs.append(rtf)
+                    # 'dataset' here is the short, suffix-stripped name (e.g. "MLS_Facebook_french").
+                    first = next(iter(preds.values()), None)
+                    if first and first.get("dataset"):
+                        dataset = first["dataset"]
+                dataset = DATASET_RENAME.get(dataset, dataset)
+                rows.append({
+                    "model": label,
+                    "dataset": dataset,
+                    "device": device,
+                    "wer": perf[wer_key]["wer"],
+                    "count": perf[wer_key].get("count", 0),
+                    "rtfs": rtfs,
+                    "ram": ram,
+                    "vram": vram,
+                })
+    return pd.DataFrame(rows)
+
+
+def order_datasets(columns):
+    ordered = [d for d in DATASET_ORDER if d in columns]
+    return ordered + [c for c in columns if c not in ordered]
+
+
+def save_or_show(fig, output, name):
+    # When no output folder is given, leave the figure open so main() can show
+    # every figure at once with a single plt.show() at the end.
+    if output:
+        path = Path(output) / name
+        fig.savefig(path, bbox_inches="tight")
+        plt.close(fig)
+        print(f"  saved {path}")
+
+
+def plot_wer(df, output):
+    piv = df.pivot_table(index="model", columns="dataset", values="wer", aggfunc="mean")
+    piv = piv[order_datasets(piv.columns)]
+    # Micro-averaged WER across datasets (weighted by word count) as an extra column.
+    wsum = df.pivot_table(index="model", columns="dataset", values="wer", aggfunc="mean")
+    cnt = df.pivot_table(index="model", columns="dataset", values="count", aggfunc="mean")
+    piv["Average"] = (wsum * cnt).sum(axis=1) / cnt.sum(axis=1)
+    piv = piv.sort_values("Average")
+    # show=False: the figure is left open and shown once at the end (see main()).
+    plot_wer_table(
+        piv,
+        output_filename=str(Path(output) / "wer_table.png") if output else None,
+        show=False,
+        y_label="WER (%)",
+        color_lims=(0, 50),
+    )
+    if output:
+        print(f"  saved {Path(output) / 'wer_table.png'}")
+
+
+def plot_rtf(df, output):
+    # Aggregate per (model, device): mean RTF over all files -> RTFx = 1 / mean.
+    recs = []
+    for (model, device), g in df.groupby(["model", "device"]):
+        arr = np.array([r for lst in g["rtfs"] for r in lst], dtype=float)
+        arr = arr[np.isfinite(arr) & (arr > 0)]
+        if arr.size == 0:
+            continue
+        recs.append({"model": model, "device": device, "rtfx": 1.0 / arr.mean()})
+    if not recs:
+        print("  ! no RTF data found, skipping RTF plot")
+        return
+    rtf = pd.DataFrame(recs).sort_values("rtfx")
+    devices = sorted(rtf["device"].unique())
+    fig, ax = plt.subplots(figsize=(10, max(4, 0.5 * len(rtf) + 1)))
+    if len(devices) > 1:
+        import seaborn as sns
+        sns.barplot(data=rtf, y="model", x="rtfx", hue="device", ax=ax)
+    else:
+        ax.barh(rtf["model"], rtf["rtfx"], color="tab:blue")
+        for y, v in enumerate(rtf["rtfx"]):
+            ax.text(v, y, f" {v:.1f}", va="center", fontsize=11)
+    ax.set_xlabel("RTFx (higher = faster than real time)")
+    ax.set_ylabel("")
+    ax.set_title("Inverse real-time factor")
+    ax.grid(True, axis="x", alpha=0.3)
+    fig.tight_layout()
+    save_or_show(fig, output, "rtf.png")
+
+
+def plot_resource(df, output, column, title, fname):
+    sub = df[df[column].notna()][["model", column]].drop_duplicates("model")
+    if sub.empty:
+        print(f"  ! no {title} data (no monitoring.json), skipping")
+        return
+    sub = sub.sort_values(column)
+    fig, ax = plt.subplots(figsize=(10, max(4, 0.5 * len(sub) + 1)))
+    ax.barh(sub["model"], sub[column], color="tab:green")
+    for y, v in enumerate(sub[column]):
+        ax.text(v, y, f" {v:.0f}", va="center", fontsize=11)
+    ax.set_xlabel(f"{title} (MB)")
+    ax.set_title(title)
+    ax.grid(True, axis="x", alpha=0.3)
+    fig.tight_layout()
+    save_or_show(fig, output, fname)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument("folders", nargs="+", help="benchmark output folder(s)")
+    parser.add_argument("-o", "--output", default=None,
+                        help="folder to save PNGs into (default: show interactively)")
+    parser.add_argument("--casepunc", action="store_true",
+                        help="use case+punctuation WER instead of normalized WER")
+    args = parser.parse_args()
+
+    df = collect(args.folders, casepunc=args.casepunc)
+    if df.empty:
+        raise SystemExit("No benchmark results found in the given folder(s).")
+    print(f"Loaded {df['model'].nunique()} models across {df['dataset'].nunique()} datasets.")
+
+    if args.output:
+        Path(args.output).mkdir(parents=True, exist_ok=True)
+
+    plot_wer(df, args.output)
+    plot_rtf(df, args.output)
+    plot_resource(df, args.output, "vram", "VRAM usage", "vram.png")
+    plot_resource(df, args.output, "ram", "RAM usage", "ram.png")
+
+    # No output folder: show all figures at once.
+    if not args.output:
+        plt.show()
+
+
+if __name__ == "__main__":
+    main()
