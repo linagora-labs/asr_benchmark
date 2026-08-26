@@ -92,8 +92,16 @@ torch = [{ index = "pytorch-cu130", marker = "sys_platform == 'linux' and platfo
 torchaudio = [{ index = "pytorch-cu130", marker = "sys_platform == 'linux' and platform_machine == 'aarch64'" }]
 torchcodec = [{ index = "pytorch-cu130", marker = "sys_platform == 'linux' and platform_machine == 'aarch64'" }]
 
-# CTranslate2 publishes CUDA-enabled wheels for x86_64 only; its aarch64 wheel is
-# CPU-only, so faster-whisper dies with "This CTranslate2 package was not compiled
-# with CUDA support" on the DGX Spark. This is a local build of v4.8.1 for
-# sm_121 (see CTRANSLATE2_BUILD.md). x86_64 keeps using the PyPI wheel.
-ctranslate2 = [{ path = "/home/jlouradour/wheels/ctranslate2-4.8.1-cp312-cp312-linux_aarch64.whl", marker = "sys_platform == 'linux' and platform_machine == 'aarch64' and python_full_version >= '3.12' and python_full_version < '3.13'" }]
+# CTranslate2 (a faster-whisper dependency) ships CUDA-enabled wheels for x86_64
+# only; its aarch64 PyPI wheel is CPU-only, so on ARM machines (e.g. the DGX Spark)
+# faster-whisper fails with "This CTranslate2 package was not compiled with CUDA
+# support". There is no public CUDA aarch64 wheel -- it has to be built locally
+# (see CTRANSLATE2_BUILD.md). We deliberately do NOT pin a machine-local wheel path
+# here: an absolute path is not portable and, because uv resolves every supported
+# platform, a `path` source must exist on disk even on machines whose marker
+# excludes it -- which breaks `uv` on every host that lacks that exact file.
+# Instead, on an ARM host that needs CUDA faster-whisper, point uv at the locally
+# built wheel at sync time (no repo change needed), e.g.:
+#     UV_FIND_LINKS=/path/to/your/wheels uv sync --extra whisper
+# or install it over the CPU wheel afterwards:
+#     uv pip install --reinstall /path/to/ctranslate2-*-linux_aarch64.whl
