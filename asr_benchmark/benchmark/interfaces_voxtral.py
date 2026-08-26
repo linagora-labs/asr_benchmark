@@ -32,11 +32,13 @@ class TransformersVoxtralModel(Model):
             logger.warning("Forcing float32 on CPU for Voxtral.")
             torch_dtype = torch.float32
 
-        # fix_mistral_regex: without it transformers warns that the tokenizer uses
-        # an incorrect regex pattern, which leads to incorrect tokenization.
+        # mistral_format=True selects the MistralCommonBackend tokenizer, which
+        # apply_transcription_request() requires (the default TokenizersBackend
+        # has no .tokenizer.encode_transcription). It also uses Mistral's native
+        # tokenizer, avoiding the incorrect-regex warning of the converted one.
         self.processor = AutoProcessor.from_pretrained(
             self.config["model"],
-            fix_mistral_regex=True,
+            mistral_format=True,
         )
         self.model = VoxtralForConditionalGeneration.from_pretrained(
             self.config["model"],
@@ -48,11 +50,16 @@ class TransformersVoxtralModel(Model):
         return load_audio(audio, return_format="librosa", start=start, duration=duration)
 
     def transcribe(self, audio) -> dict:
+        # Audio is passed as an array (not a path) so that the manifest's
+        # offset/duration are honoured; the processor re-encodes it through
+        # soundfile, which requires an explicit container format.
         inputs = self.processor.apply_transcription_request(
             audio=audio,
             model_id=self.config["model"],
             language=self.config["language"],
             sampling_rate=16000,
+            format="WAV",
+            return_tensors="pt",
         )
         inputs = inputs.to(self.model.device, dtype=self.model.dtype)
 

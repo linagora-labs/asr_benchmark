@@ -37,6 +37,14 @@ moss = [
     "transformers>=5.0.0",
     "accelerate",
 ]
+voxtral = [
+    # VoxtralProcessor.apply_transcription_request() is gated behind a
+    # mistral-common backend check in transformers, so the tokenizer library is
+    # required even though the processor itself loads without it.
+    "transformers>=5.0.0",
+    "accelerate",
+    "mistral-common",
+]
 visu = [
     "pandas",
     "ipykernel",
@@ -57,6 +65,13 @@ conflicts = [
         { extra = "whisper" },
         { extra = "nemo" },
         { extra = "moss" },
+    ],
+    # voxtral needs transformers 5.x like moss, so the two can share an
+    # environment; only whisper and nemo are incompatible with it.
+    [
+        { extra = "whisper" },
+        { extra = "nemo" },
+        { extra = "voxtral" },
     ],
 ]
 
