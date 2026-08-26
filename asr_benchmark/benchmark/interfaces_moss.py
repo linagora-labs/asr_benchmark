@@ -8,12 +8,45 @@ from asr_benchmark.benchmark.interfaces import Model
 
 logger = logging.getLogger(__name__)
 
-# Default prompt from the model card, optimized for timestamped transcription and
-# speaker diarization. The model produces the transcript in the language of the audio.
+# Canonical default prompt from the model card (Chinese), optimized for timestamped
+# transcription and speaker diarization. Used when no language is pinned; the model
+# then transcribes in whatever language it detects.
 DEFAULT_PROMPT = (
     "请将音频转写为文本，每一段需以起始时间戳和说话人编号（[S01]、[S02]、[S03]…）"
     "开头，正文为对应的语音内容，并在段末标注结束时间戳，以清晰标明该段语音范围。"
 )
+# Equivalent English version (from the model's examples/prompts.md) -- what the Chinese
+# prompt above says, and a drop-in replacement for DEFAULT_PROMPT to trial an English prompt:
+# DEFAULT_PROMPT = (
+#     "Transcribe the audio. For each segment, start with the timestamp and speaker ID "
+#     "([S01], [S02], [S03], ...), then the spoken text, and end with the segment timestamp."
+# )
+
+# English names for language codes, used to pin the transcription language in the prompt.
+# Unknown codes fall back to the raw code, which the model still tends to honour.
+_LANGUAGE_NAMES = {
+    "fr": "French", "en": "English", "de": "German", "es": "Spanish", "it": "Italian",
+    "pt": "Portuguese", "nl": "Dutch", "zh": "Chinese", "ar": "Arabic", "ru": "Russian",
+    "ja": "Japanese", "ko": "Korean",
+}
+
+
+def build_prompt(language):
+    """Transcription prompt, optionally pinning the output language.
+
+    ``language=None`` uses the model's canonical (Chinese) default prompt, letting it
+    auto-detect the language -- which on short/ambiguous clips can drift to English.
+    A language code pins the output language (the English base prompt from the model's
+    examples/prompts.md, with an explicit language instruction).
+    """
+    if not language:
+        return DEFAULT_PROMPT
+    name = _LANGUAGE_NAMES.get(language, language)
+    return (
+        f"Transcribe the audio in {name}. For each segment, start with the timestamp and "
+        "speaker ID ([S01], [S02], [S03], ...), then the spoken text, and end with the "
+        "segment timestamp."
+    )
 
 _DTYPES = {
     "float16": torch.float16,
@@ -83,6 +116,12 @@ class MossTranscribeDiarizeModel(Model):
             generate_kwargs["temperature"] = self.config["temperature"]
         else:
             generate_kwargs["do_sample"] = False
+        # Repetition suppression: greedy decoding on short/ambiguous clips otherwise
+        # collapses into degenerate loops ("a, a, a, ...") that explode the WER.
+        if self.config["no_repeat_ngram_size"]:
+            generate_kwargs["no_repeat_ngram_size"] = self.config["no_repeat_ngram_size"]
+        if self.config["repetition_penalty"] and self.config["repetition_penalty"] != 1.0:
+            generate_kwargs["repetition_penalty"] = self.config["repetition_penalty"]
 
         with torch.no_grad():
             output_ids = self.model.generate(**inputs, **generate_kwargs)
@@ -113,7 +152,15 @@ class MossTranscribeDiarizeModel(Model):
         config["do_sample"] = config.get("do_sample", False)
         if config["do_sample"]:
             config["temperature"] = float(config.get("temperature", 0.2))
-        config["prompt"] = config.get("prompt", DEFAULT_PROMPT)
+        # Language pinning: "fr" by default, or None to let the model auto-detect.
+        config["language"] = config.get("language", "fr")
+        # An explicit prompt (if given) wins; otherwise build one from the language.
+        config["prompt"] = config.get("prompt") or build_prompt(config["language"])
+        # Repetition suppression, OFF by default to match the model's validated greedy
+        # decoding (its generation_config sets neither). Opt in to combat the rare loop
+        # cases, e.g. repetition_penalty ~1.1-1.15; see transcribe.
+        config["no_repeat_ngram_size"] = int(config.get("no_repeat_ngram_size", 0))
+        config["repetition_penalty"] = float(config.get("repetition_penalty", 1.0))
         # Strip timestamps/speaker labels for WER computation (default), or keep the
         # raw diarized transcript when raw_output is true.
         config["raw_output"] = config.get("raw_output", False)
@@ -128,10 +175,13 @@ class MossTranscribeDiarizeModel(Model):
         c = self.config
         model = c["model"].replace("/", "-")
         name = f"moss_{model}_device-{c['device']}_dtype-{c['dtype']}"
+        name += f"_lang-{c['language']}" if c["language"] else "_lang-auto"
         if c["do_sample"]:
             name += f"_temperature-{c['temperature']}"
         else:
             name += "_greedy"
+        if c["no_repeat_ngram_size"] or (c["repetition_penalty"] and c["repetition_penalty"] != 1.0):
+            name += f"_norep{c['no_repeat_ngram_size']}-rep{c['repetition_penalty']}"
         if c["raw_output"]:
             name += "_raw"
         name = name.replace("/", "-")
