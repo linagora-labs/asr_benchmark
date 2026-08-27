@@ -266,7 +266,7 @@ class VllmTranscriptionModel(Model):
         name = f"vllm_{c['model'].replace('/', '-')}"
         if c["language"]:
             name += f"_lang-{c['language']}"
-        if not c.get("compute_rtf") and c["concurrency"] > 1:
+        if c["concurrency"] > 1:
             name += f"_conc{c['concurrency']}"
         name = name.replace("/", "-")
         name += "_rtf" if c.get("compute_rtf") else ""

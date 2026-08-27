@@ -21,29 +21,30 @@
 # / `backend: moss` / `backend: faster-whisper` (config.yaml) lands in a different
 # get_folder_name(), so both appear side by side in the WER/RTF plots.
 #
-# TWO MEASUREMENT MODES:
-#   * compute_rtf: True  (this file) -> serial, one file at a time. Gives WER,
-#     per-file latency RTF, and hardware monitoring. VRAM/RAM are measured
-#     device-wide (NVML/psutil), so the vLLM SERVER process is captured too -- no
-#     PID needed, as long as it runs on the monitored GPU (it inherits this
-#     process's CUDA_VISIBLE_DEVICES). CAVEAT: vLLM pre-reserves VRAM via
-#     --gpu-memory-utilization (we default it to 0.85; set the `gpu_memory_utilization`
-#     key to change it, or null for vLLM's own 0.9) and that reservation IS the KV
-#     cache that makes it fast, so the NVML number reflects the reservation, not the
-#     model's footprint -- and you cannot just lower it to 0.1: the weights must fit
-#     (Voxtral-24B ~48GB, Whisper-large-v3 ~3GB) and a small KV cache kills throughput
-#     / long-audio support. For a real VRAM footprint, use the transformers backends
-#     (config.yaml), or read the "model weights / KV cache GiB" breakdown vLLM prints
-#     to vllm.log at startup.
-#   * compute_rtf: False + concurrency: N -> throughput mode. transcribe_batch
-#     keeps N requests in flight and logs/stores `throughput_rtfx` = total_audio /
-#     wall_time, the fair way to measure a batching server. (No harness monitoring
-#     on this path; take VRAM from the compute_rtf: True run above.) To use it, set
-#     compute_rtf: False at the top and add `concurrency: 16` to the entries below.
+# MEASUREMENT MODES (set per entry with `concurrency`, and globally with compute_rtf):
+#   * compute_rtf: True, concurrency 1 (default) -> serial, one file at a time. Per-file
+#     latency RTF + hardware monitoring. A single request never batches, so RTF here is
+#     roughly the same as the transformers backend (vLLM has no advantage one-at-a-time).
+#   * compute_rtf: True, concurrency N (>1) -> CONCURRENT RTF (recommended for vLLM).
+#     Keeps N requests in flight so vLLM batches them, AND monitors hardware. Each file
+#     gets an amortized throughput-consistent time (rtf = wall/total_audio), so the RTFx
+#     in the plot IS the real concurrent throughput; the true per-request latency is kept
+#     as 'latency'. This is how you get vLLM's speed AND VRAM in one run.
+#   * compute_rtf: False, concurrency N -> throughput only (no monitoring); logs/stores
+#     `throughput_rtfx`. Rarely needed now that concurrency works with compute_rtf: True.
+# VRAM note: it is measured device-wide (NVML/psutil), so the vLLM SERVER process is
+# captured too (it inherits CUDA_VISIBLE_DEVICES). But vLLM pre-reserves VRAM via
+# --gpu-memory-utilization (default 0.85; set `gpu_memory_utilization`, or null for
+# vLLM's 0.9), so the NVML number reflects that reservation, not the model footprint --
+# you can't lower it to ~0.1 (weights must fit + a tiny KV cache kills throughput). For a
+# real footprint use the transformers backends (config.yaml) or vLLM's startup log.
 input_manifest: benchmarks/linto_stt_fr_fastconformer/manifest.jsonl
 output_folder: benchmarks/main/local_bench
 input_audios_paths: nemo_dataset/converted_audios/%n_%s
 compute_rtf: True
+# Concurrent requests in flight (inherited by every entry below). >1 -> concurrent RTF
+# mode: throughput + VRAM in one run (see MEASUREMENT MODES above). Set 1 for serial.
+concurrency: 16
 plot_monitoring: False
 skip_errors: False
 save_alignments: True

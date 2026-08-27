@@ -157,6 +157,49 @@ def transcribe_with_rtf(model, data, output_folder, config):
         progress_bar.set_description(f"Finished {model.get_folder_name()}".ljust(45))
     monitor.stop()
 
+def transcribe_with_rtf_concurrent(model, data, output_folder, config):
+    """RTF path for backends that process a batch concurrently (e.g. vLLM with
+    concurrency>1). Hardware is monitored over the whole batch (so VRAM/RAM are captured
+    -- device-wide, which includes a separate server process), and each file is given an
+    amortized, throughput-consistent time: rtf = wall_time / total_audio for every file,
+    so 1/mean(rtf) = total_audio/wall_time = the real concurrent throughput, and
+    prediction_duration = rtf * audio_duration (these sum to the wall time). The true
+    per-request latency (if the backend measured it) is kept as 'latency'.
+    """
+    monitor = Monitoring(
+        output_folder, device=config.get("device", 0), plot_monitoring=config.get("plot_monitoring", True)
+    )
+    monitor.start(steps=[Path(row['id']).stem for row in data])
+    model.config['device_name'] = monitor.get_device_name()
+    if model.config['device_name'] == 'cpu':
+        torch.set_num_threads(model.config.get("num_threads", 4))
+    durations = [make_perf_file(row)["audio_duration"] for row in data]
+    try:
+        start = time.time()
+        outputs = model.transcribe_batch(data)
+        wall = time.time() - start
+    except Exception as e:
+        logger.error("while transcribing (concurrent batch)")
+        monitor.stop(error=True)
+        raise e
+    monitor.stop()
+
+    total_audio = sum(durations) or 1e-9
+    rtf_const = wall / total_audio
+    throughput_rtfx = round(1.0 / rtf_const, 3) if rtf_const > 0 else None
+    logger.info(
+        f"Concurrent RTF: throughput={throughput_rtfx}x realtime "
+        f"({len(data)} files, {total_audio:.0f}s audio in {wall:.1f}s, "
+        f"concurrency={config.get('concurrency', 1)})"
+    )
+    for i, (output, row, dur) in enumerate(zip(outputs, data, durations)):
+        if "prediction_duration" in output:  # the real per-request latency, kept for reference
+            output["latency"] = output["prediction_duration"]
+        output["prediction_duration"] = round(rtf_const * dur, 5)
+        output["rtf"] = round(rtf_const, 5)
+        output["throughput_rtfx"] = throughput_rtfx
+        yield i, output, row
+
 def transcribe_fast(model, data, output_folder, config):
     outputs = model.transcribe_batch(data)
     for i, row in enumerate(data):
@@ -246,7 +289,10 @@ def bench_model(config, input_manifest, output_folder, debug=False):
             dataset_data = data[dataset]
             bench_dataset_result = bench_results.get(dataset, dict())
             if config.get('compute_rtf', True):
-                iterator = transcribe_with_rtf(model, dataset_data, output_folder, config)
+                if int(config.get('concurrency', 1) or 1) > 1:
+                    iterator = transcribe_with_rtf_concurrent(model, dataset_data, output_folder, config)
+                else:
+                    iterator = transcribe_with_rtf(model, dataset_data, output_folder, config)
             else:
                 iterator = transcribe_fast(model, dataset_data, output_folder, config)
             process_result(iterator, bench_dataset_result, output_folder, config, save_interval=1 if config.get('compute_rtf', True) else None)
