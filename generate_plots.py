@@ -83,6 +83,9 @@ def collect(folders, casepunc=False, with_texts=False):
             print(f"  ! skipping (not a folder): {folder}")
             continue
         for exp in sorted(folder.iterdir()):
+            # Skip deprecated / hidden-by-convention experiment folders.
+            if exp.name.startswith("_") or "deprecated" in exp.name.lower():
+                continue
             meta_file = exp / "metadata.json"
             perf_dir = exp / "performances"
             if not meta_file.exists() or not perf_dir.is_dir():
