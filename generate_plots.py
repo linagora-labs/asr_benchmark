@@ -110,6 +110,7 @@ def collect(folders, casepunc=False):
                 dataset = DATASET_RENAME.get(dataset, dataset)
                 rows.append({
                     "model": label,
+                    "folder": exp.name,
                     "dataset": dataset,
                     "device": device,
                     "wer": perf[wer_key]["wer"],
@@ -118,7 +119,42 @@ def collect(folders, casepunc=False):
                     "ram": ram,
                     "vram": vram,
                 })
-    return pd.DataFrame(rows)
+    df = pd.DataFrame(rows)
+    if not df.empty:
+        df["model"] = disambiguate_labels(df)
+    return df
+
+
+def disambiguate_labels(df):
+    """Give each experiment folder its own display label.
+
+    Rows are keyed by folder (one benchmark run), so runs of the same model with
+    different settings never collapse into one line. When several folders share the
+    same model name, the tokens that differ between their folder names are appended
+    in parentheses so they can be told apart in the plots.
+    """
+    from collections import defaultdict
+
+    folder_base = df.groupby("folder")["model"].first().to_dict()
+    by_base = defaultdict(list)
+    for folder, base in folder_base.items():
+        by_base[base].append(folder)
+
+    folder_display = {}
+    for base, folders in by_base.items():
+        if len(folders) == 1:
+            folder_display[folders[0]] = base
+            continue
+        # Tokens (split on "_") shared by every colliding folder are the common
+        # context; what remains per folder is its distinguishing setting.
+        token_sets = {f: f.split("_") for f in folders}
+        common = set.intersection(*(set(t) for t in token_sets.values()))
+        for f in folders:
+            variable = [t for t in token_sets[f] if t not in common]
+            paren = ", ".join(variable) if variable else "default"
+            folder_display[f] = f"{base}\n({paren})"
+
+    return df["folder"].map(folder_display)
 
 
 def order_datasets(columns):
