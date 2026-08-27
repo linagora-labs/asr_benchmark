@@ -42,7 +42,7 @@
 #     compute_rtf: False at the top and add `concurrency: 16` to the entries below.
 input_manifest: benchmarks/linto_stt_fr_fastconformer/manifest.jsonl
 output_folder: benchmarks/main/local_bench
-input_audios_paths: /mnt/d/datasets/nemo_dataset/converted_audios/%n_%s
+input_audios_paths: nemo_dataset/converted_audios/%n_%s
 compute_rtf: True
 plot_monitoring: False
 skip_errors: False
