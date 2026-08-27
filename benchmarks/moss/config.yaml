@@ -30,6 +30,12 @@ save_predictions: True
 
 benchmarks:
   # --- the model under test -------------------------------------------------
+  # MOSS baseline = auto-detect (language unset -> None), which is the ONLY prompt
+  # documented by the model and the best-performing on French. `language` is an
+  # UNOFFICIAL knob: MOSS has no documented way to force a language. Pinning via an
+  # English prompt makes it translate French->English (big regression on VoxPopuli/
+  # YouTube); the code instead pins via an untested Chinese prompt. To experiment,
+  # add e.g. `language: fr` -- but treat the auto-detect run as the real baseline.
   - backend: moss
     model: OpenMOSS-Team/MOSS-Transcribe-Diarize
     dtype: bfloat16

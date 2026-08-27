@@ -28,6 +28,10 @@ skip_errors: False
 
 benchmarks:
   # --- the model under test -------------------------------------------------
+  # MOSS baseline = auto-detect (language unset -> None), the ONLY documented prompt
+  # and the best on French. `language` is an UNOFFICIAL knob (MOSS has no documented
+  # language switch): an English pin makes it translate French->English. Add e.g.
+  # `language: fr` only to experiment; auto-detect is the real baseline.
   - backend: moss
     model: OpenMOSS-Team/MOSS-Transcribe-Diarize
     dtype: bfloat16

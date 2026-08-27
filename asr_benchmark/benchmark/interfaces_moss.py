@@ -8,45 +8,47 @@ from asr_benchmark.benchmark.interfaces import Model
 
 logger = logging.getLogger(__name__)
 
-# Canonical default prompt from the model card (Chinese), optimized for timestamped
-# transcription and speaker diarization. Used when no language is pinned; the model
-# then transcribes in whatever language it detects.
+# Canonical default prompt from the model card / examples/prompts.md (Chinese),
+# optimized for timestamped transcription and speaker diarization. This exact string
+# (auto-detect, no language specified) is the ONLY documented, model-intended prompt,
+# and it is the best-performing setting on French in practice -- so it is the default.
 DEFAULT_PROMPT = (
     "请将音频转写为文本，每一段需以起始时间戳和说话人编号（[S01]、[S02]、[S03]…）"
     "开头，正文为对应的语音内容，并在段末标注结束时间戳，以清晰标明该段语音范围。"
 )
-# Equivalent English version (from the model's examples/prompts.md) -- what the Chinese
-# prompt above says, and a drop-in replacement for DEFAULT_PROMPT to trial an English prompt:
-# DEFAULT_PROMPT = (
-#     "Transcribe the audio. For each segment, start with the timestamp and speaker ID "
-#     "([S01], [S02], [S03], ...), then the spoken text, and end with the segment timestamp."
-# )
 
-# English names for language codes, used to pin the transcription language in the prompt.
-# Unknown codes fall back to the raw code, which the model still tends to honour.
-_LANGUAGE_NAMES = {
-    "fr": "French", "en": "English", "de": "German", "es": "Spanish", "it": "Italian",
-    "pt": "Portuguese", "nl": "Dutch", "zh": "Chinese", "ar": "Arabic", "ru": "Russian",
-    "ja": "Japanese", "ko": "Korean",
+# --- Language pinning below is UNOFFICIAL / experimental -----------------------------
+# MOSS has no documented way to force an output language; the model card only says it
+# transcribes "in whatever language it detects". The template below inserts a Chinese
+# language name before 文本 ("text") as an experiment. It is NOT from the model card.
+# (An *English* language instruction like "Transcribe the audio in French" is worse: it
+# makes the model translate French speech to English -- a large regression on VoxPopuli/
+# YouTube -- which is why any pinning, if used at all, stays in the native Chinese.)
+_PROMPT_ZH_LANG = (
+    "请将音频转写为{lang}文本，每一段需以起始时间戳和说话人编号（[S01]、[S02]、[S03]…）"
+    "开头，正文为对应的语音内容，并在段末标注结束时间戳，以清晰标明该段语音范围。"
+)
+_LANGUAGE_NAMES_ZH = {
+    "fr": "法语", "en": "英语", "de": "德语", "es": "西班牙语", "it": "意大利语",
+    "pt": "葡萄牙语", "nl": "荷兰语", "zh": "中文", "ar": "阿拉伯语", "ru": "俄语",
+    "ja": "日语", "ko": "韩语",
 }
 
 
 def build_prompt(language):
-    """Transcription prompt, optionally pinning the output language.
+    """Transcription prompt.
 
-    ``language=None`` uses the model's canonical (Chinese) default prompt, letting it
-    auto-detect the language -- which on short/ambiguous clips can drift to English.
-    A language code pins the output language (the English base prompt from the model's
-    examples/prompts.md, with an explicit language instruction).
+    ``language`` is None by default -> the documented auto-detect prompt (recommended).
+    Passing a language code applies an UNOFFICIAL Chinese language-pinned prompt (see the
+    note above); unknown codes fall back to auto-detect rather than an English prompt.
     """
     if not language:
         return DEFAULT_PROMPT
-    name = _LANGUAGE_NAMES.get(language, language)
-    return (
-        f"Transcribe the audio in {name}. For each segment, start with the timestamp and "
-        "speaker ID ([S01], [S02], [S03], ...), then the spoken text, and end with the "
-        "segment timestamp."
-    )
+    name = _LANGUAGE_NAMES_ZH.get(language)
+    if name is None:
+        logger.warning(f"No Chinese name for language {language!r}; using the auto-detect prompt.")
+        return DEFAULT_PROMPT
+    return _PROMPT_ZH_LANG.format(lang=name)
 
 _DTYPES = {
     "float16": torch.float16,
@@ -152,8 +154,10 @@ class MossTranscribeDiarizeModel(Model):
         config["do_sample"] = config.get("do_sample", False)
         if config["do_sample"]:
             config["temperature"] = float(config.get("temperature", 0.2))
-        # Language pinning: "fr" by default, or None to let the model auto-detect.
-        config["language"] = config.get("language", "fr")
+        # Language: None by default -> the documented auto-detect prompt (recommended,
+        # and best-performing on French). Set a code (e.g. "fr") to try the UNOFFICIAL
+        # Chinese language-pinned prompt; an English pin makes MOSS translate to English.
+        config["language"] = config.get("language", None)
         # An explicit prompt (if given) wins; otherwise build one from the language.
         config["prompt"] = config.get("prompt") or build_prompt(config["language"])
         # Repetition suppression, OFF by default to match the model's validated greedy
