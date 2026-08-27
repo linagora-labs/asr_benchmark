@@ -40,6 +40,9 @@ def get_model(config):
     elif backend == "transformers-voxtral":
         import asr_benchmark.benchmark.interfaces_voxtral as interfaces_voxtral
         model = interfaces_voxtral.TransformersVoxtralModel(config)
+    elif backend == "vllm":
+        import asr_benchmark.benchmark.interfaces_vllm as interfaces_vllm
+        model = interfaces_vllm.VllmTranscriptionModel(config)
     else:
         raise ValueError(f"Invalid backend: {backend}")
     return model

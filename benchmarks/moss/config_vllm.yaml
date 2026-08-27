@@ -1,0 +1,68 @@
+# vLLM benchmark, on the same data as benchmarks/moss/config.yaml so results are
+# directly comparable to the transformers/nemo/faster-whisper runs.
+#
+# Only the audio-LLM models vLLM can serve are here (Voxtral, MOSS, Whisper); NeMo
+# canary/fastconformer are CTC/RNNT models and are not vLLM-servable.
+#
+# Each entry's load() launches `vllm serve <model>` on its port, waits for the
+# server's /health, benchmarks it, and cleanup() stops the server before the next
+# model -- so the whole file runs in a single pass:
+#
+#   uv run python benchmarker.py benchmarks/moss/config_vllm.yaml
+#
+# Requirements:
+#   * `vllm` must be on PATH (or set `vllm_command`, e.g. vllm_command: "uvx vllm serve",
+#     to run it from a separate environment). The benchmark process itself only needs
+#     `requests`, so vLLM does NOT have to be installed in this project's env.
+#   * Voxtral additionally needs `mistral-common[audio]` in the vLLM environment.
+#   * Set launch: false on an entry to hit a server you started yourself.
+#
+# Compare with/without vLLM: the same model run via `backend: transformers-voxtral`
+# / `backend: moss` / `backend: faster-whisper` (config.yaml) lands in a different
+# get_folder_name(), so both appear side by side in the WER/RTF plots.
+#
+# TWO MEASUREMENT MODES:
+#   * compute_rtf: True  (this file) -> serial, one file at a time. Gives WER,
+#     per-file latency RTF, and hardware monitoring. VRAM/RAM are measured
+#     device-wide (NVML/psutil), so the vLLM SERVER process is captured too -- no
+#     PID needed, as long as it runs on the monitored GPU (it inherits this
+#     process's CUDA_VISIBLE_DEVICES). CAVEAT: vLLM pre-reserves VRAM via
+#     --gpu-memory-utilization (default ~0.9) and that reservation IS the KV cache
+#     that makes it fast, so the NVML number reflects the reservation, not the
+#     model's footprint -- and you cannot just lower it to 0.1: the weights must
+#     fit (Voxtral-24B ~48GB, Whisper-large-v3 ~3GB) and a small KV cache kills
+#     throughput / long-audio support. For a real VRAM footprint, use the
+#     transformers backends (config.yaml), or read the "model weights / KV cache
+#     GiB" breakdown vLLM prints to vllm.log at startup.
+#   * compute_rtf: False + concurrency: N -> throughput mode. transcribe_batch
+#     keeps N requests in flight and logs/stores `throughput_rtfx` = total_audio /
+#     wall_time, the fair way to measure a batching server. (No harness monitoring
+#     on this path; take VRAM from the compute_rtf: True run above.) To use it, set
+#     compute_rtf: False at the top and add `concurrency: 16` to the entries below.
+input_manifest: benchmarks/linto_stt_fr_fastconformer/manifest.jsonl
+output_folder: benchmarks/linto_stt_fr_fastconformer/local_bench
+input_audios_paths: /mnt/d/datasets/nemo_dataset/converted_audios/%n_%s
+compute_rtf: True
+plot_monitoring: False
+skip_errors: False
+save_alignments: True
+save_predictions: True
+
+benchmarks:
+  # --- Mistral Voxtral ------------------------------------------------------
+  - backend: vllm
+    model: mistralai/Voxtral-Small-24B-2507
+    port: 8000
+    language: fr
+
+  # --- MOSS-Transcribe-Diarize (custom code -> needs trust_remote_code) ------
+  - backend: vllm
+    model: OpenMOSS-Team/MOSS-Transcribe-Diarize
+    trust_remote_code: true
+    port: 8001
+
+  # --- OpenAI Whisper -------------------------------------------------------
+  - backend: vllm
+    model: openai/whisper-large-v3
+    port: 8002
+    language: fr
