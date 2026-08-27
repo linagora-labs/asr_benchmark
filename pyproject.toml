@@ -44,6 +44,9 @@ voxtral = [
     "transformers>=5.0.0",
     "accelerate",
     "mistral-common",
+    # timm is pulled in for Gemma 3n's vision tower (the gemma3n backend shares this
+    # transformers-5.x env; run_config.sh's pass 1 uses --extra moss --extra voxtral).
+    "timm",
 ]
 visu = [
     "pandas",

@@ -43,6 +43,12 @@ def get_model(config):
     elif backend == "vllm":
         import asr_benchmark.benchmark.interfaces_vllm as interfaces_vllm
         model = interfaces_vllm.VllmTranscriptionModel(config)
+    elif backend == "gemma3n":
+        import asr_benchmark.benchmark.interfaces_gemma3n as interfaces_gemma3n
+        model = interfaces_gemma3n.Gemma3nModel(config)
+    elif backend == "qwen3-omni":
+        import asr_benchmark.benchmark.interfaces_qwen3omni as interfaces_qwen3omni
+        model = interfaces_qwen3omni.Qwen3OmniModel(config)
     else:
         raise ValueError(f"Invalid backend: {backend}")
     return model
