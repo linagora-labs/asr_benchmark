@@ -4,7 +4,9 @@
 Takes one or more benchmark output folders (each containing per-model subfolders
 with metadata.json + performances/ + predictions/, as written by benchmarker.py)
 and produces:
-  - a WER heatmap table (model x dataset)
+  - a micro-average WER heatmap table (model x dataset), as reported by the benchmark
+  - with --plot-macro-wer, a second table of the macro-average WER (mean of per-file
+    WER), recomputed from the predictions, with each file's WER capped by --cap-macro-wer
   - an RTFx bar chart (speed, higher = faster)
   - RAM / VRAM bar charts, only when monitoring.json is present
 
@@ -13,6 +15,7 @@ shown interactively with plt.show().
 
 Usage:
     python generate_plots.py FOLDER [FOLDER ...] [--output OUT] [--casepunc]
+                             [--plot-macro-wer] [--cap-macro-wer 100]
 
 Examples:
     # show interactively
@@ -27,6 +30,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 from asr_benchmark.visualization.table import plot_wer_table, prepare_model_name
 
@@ -59,8 +63,12 @@ def model_label(meta):
     return label
 
 
-def collect(folders, casepunc=False):
-    """Read every experiment folder into a flat list of per-(model,dataset) rows."""
+def collect(folders, casepunc=False, with_texts=False):
+    """Read every experiment folder into a flat list of per-(model,dataset) rows.
+
+    with_texts=True also keeps each file's reference/prediction text (needed for the
+    macro-average WER, which is recomputed per file).
+    """
     wer_key = "wer" if casepunc else "wer_nocasepunc"
     rows = []
     for folder in folders:
@@ -91,18 +99,24 @@ def collect(folders, casepunc=False):
                 perf = json.loads(perf_file.read_text())
                 if wer_key not in perf:
                     continue
-                # RTF list + canonical dataset name from the predictions file.
+                # RTF list + canonical dataset name (+ optional texts) from predictions.
                 rtfs = []
+                refs, texts_pred = [], []
                 dataset = perf_file.stem
+                n_files = perf.get("num_data", 0)
                 pred_file = exp / "predictions" / perf_file.name
                 if pred_file.exists():
                     preds = json.loads(pred_file.read_text())
+                    n_files = len(preds)
                     for rec in preds.values():
                         rtf = rec.get("rtf")
                         if rtf is None and rec.get("audio_duration"):
                             rtf = rec.get("prediction_duration", 0) / rec["audio_duration"]
                         if rtf:
                             rtfs.append(rtf)
+                        if with_texts:
+                            refs.append(rec.get("text", ""))
+                            texts_pred.append(rec.get("prediction", ""))
                     # 'dataset' here is the short, suffix-stripped name (e.g. "MLS_Facebook_french").
                     first = next(iter(preds.values()), None)
                     if first and first.get("dataset"):
@@ -115,7 +129,10 @@ def collect(folders, casepunc=False):
                     "device": device,
                     "wer": perf[wer_key]["wer"],
                     "count": perf[wer_key].get("count", 0),
+                    "n_files": n_files,
                     "rtfs": rtfs,
+                    "refs": refs,
+                    "preds": texts_pred,
                     "ram": ram,
                     "vram": vram,
                 })
@@ -185,11 +202,75 @@ def plot_wer(df, output):
         piv,
         output_filename=str(Path(output) / "wer_table.png") if output else None,
         show=False,
-        y_label="WER (%)",
+        y_label="micro-avg WER (%)",
         color_lims=(0, 50),
     )
     if output:
         print(f"  saved {Path(output) / 'wer_table.png'}")
+
+
+def compute_macro_wer(df, cap, casepunc):
+    """Add a 'macro_wer' column: the mean of per-file WER (each file recomputed with the
+    same normalization as the benchmark, then optionally capped at `cap` percent).
+
+    cap <= 0 means no cap. A single tqdm bar spans every file across all models, since
+    per-file re-scoring (text normalization + alignment) is what makes this slow.
+    """
+    import ssak.utils.wer as sw
+    from ssak.utils.wer import compute_wer
+
+    normalization = "" if casepunc else "fr+"
+    replacements = {"euh": "", "hum": ""}
+    total = int(df["refs"].map(len).sum())
+
+    def per_file_wer(ref, pred):
+        res = compute_wer(
+            [ref], [pred], normalization=normalization, use_percents=True,
+            replacements_ref=replacements, replacements_pred=replacements,
+        )
+        return res["wer"] if res.get("count", 0) > 0 else None
+
+    macro = []
+    saved_tqdm = sw.tqdm  # silence compute_wer's own inner progress bars
+    sw.tqdm = type("_Q", (), {"tqdm": staticmethod(lambda x, *a, **k: x)})
+    try:
+        with tqdm(total=total, desc="Computing macro-avg WER", unit="file") as bar:
+            for refs, preds in zip(df["refs"], df["preds"]):
+                vals = []
+                for ref, pred in zip(refs, preds):
+                    w = per_file_wer(ref, pred)
+                    if w is not None:
+                        vals.append(min(w, cap) if cap and cap > 0 else w)
+                    bar.update(1)
+                macro.append(sum(vals) / len(vals) if vals else float("nan"))
+    finally:
+        sw.tqdm = saved_tqdm
+
+    df = df.copy()
+    df["macro_wer"] = macro
+    return df
+
+
+def plot_macro_wer(df, output, cap):
+    piv = df.pivot_table(index="model", columns="dataset", values="macro_wer", aggfunc="mean")
+    piv = piv[order_datasets(piv.columns)]
+    # Overall macro = per-file WER averaged across all files (weighted by file count).
+    macro = df.pivot_table(index="model", columns="dataset", values="macro_wer", aggfunc="mean")
+    nf = df.pivot_table(index="model", columns="dataset", values="n_files", aggfunc="mean")
+    piv["Average"] = (macro * nf).sum(axis=1) / nf.sum(axis=1)
+    piv = piv.sort_values("Average")
+    plot_wer_table(
+        piv,
+        output_filename=str(Path(output) / "macro_wer_table.png") if output else None,
+        show=False,
+        y_label="macro-avg WER (%)",
+        color_lims=(0, 50),
+    )
+    cap_note = f"capped at {cap:g}%/file" if cap and cap > 0 else "uncapped"
+    if output:
+        print(f"  saved {Path(output) / 'macro_wer_table.png'} ({cap_note})")
+    else:
+        print(f"  macro-avg WER table ({cap_note})")
 
 
 def plot_rtf(df, output):
@@ -248,9 +329,15 @@ def main():
                         help="folder to save PNGs into (default: show interactively)")
     parser.add_argument("--casepunc", action="store_true",
                         help="use case+punctuation WER instead of normalized WER")
+    parser.add_argument("--plot-macro-wer", action="store_true",
+                        help="also plot the macro-average WER (mean of per-file WER), "
+                             "recomputed from the predictions")
+    parser.add_argument("--cap-macro-wer", type=float, default=100.0,
+                        help="cap each file's WER at this percent for the macro average "
+                             "(default 100; 0 or negative = no cap)")
     args = parser.parse_args()
 
-    df = collect(args.folders, casepunc=args.casepunc)
+    df = collect(args.folders, casepunc=args.casepunc, with_texts=args.plot_macro_wer)
     if df.empty:
         raise SystemExit("No benchmark results found in the given folder(s).")
     print(f"Loaded {df['model'].nunique()} models across {df['dataset'].nunique()} datasets.")
@@ -259,6 +346,9 @@ def main():
         Path(args.output).mkdir(parents=True, exist_ok=True)
 
     plot_wer(df, args.output)
+    if args.plot_macro_wer:
+        df = compute_macro_wer(df, cap=args.cap_macro_wer, casepunc=args.casepunc)
+        plot_macro_wer(df, args.output, cap=args.cap_macro_wer)
     plot_rtf(df, args.output)
     plot_resource(df, args.output, "vram", "VRAM usage", "vram.png")
     plot_resource(df, args.output, "ram", "RAM usage", "ram.png")
