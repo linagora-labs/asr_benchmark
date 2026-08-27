@@ -6,7 +6,10 @@ with metadata.json + performances/ + predictions/, as written by benchmarker.py)
 and produces:
   - a micro-average WER heatmap table (model x dataset), as reported by the benchmark
   - with --plot-macro-wer, a second table of the macro-average WER (mean of per-file
-    WER), recomputed from the predictions, with each file's WER capped by --cap-macro-wer
+    WER), recomputed from the predictions, with each file's WER capped by --cap-macro-wer.
+    Per-file re-scoring runs across --macro-workers processes and the (uncapped) per-file
+    WER is cached on disk, so re-runs -- including with a different --cap-macro-wer -- are
+    near-instant.
   - an RTFx bar chart (speed, higher = faster)
   - RAM / VRAM bar charts, only when monitoring.json is present
 
@@ -16,6 +19,7 @@ shown interactively with plt.show().
 Usage:
     python generate_plots.py FOLDER [FOLDER ...] [--output OUT] [--casepunc]
                              [--plot-macro-wer] [--cap-macro-wer 100]
+                             [--macro-workers N] [--macro-cache PATH | --no-macro-cache]
 
 Examples:
     # show interactively
@@ -25,6 +29,8 @@ Examples:
 """
 import argparse
 import json
+import multiprocessing as mp
+import os
 from pathlib import Path
 
 import numpy as np
@@ -209,45 +215,112 @@ def plot_wer(df, output):
         print(f"  saved {Path(output) / 'wer_table.png'}")
 
 
-def compute_macro_wer(df, cap, casepunc):
+# Per-worker state + task function for the macro-WER process pool (must be top-level so
+# they can be pickled to worker processes). The worker returns the UNCAPPED per-file WER
+# (or None for empty references) -- the cap is applied later, so the cache is cap-agnostic.
+_MACRO = {}
+
+
+def _macro_init(normalization):
+    _MACRO["norm"] = normalization
+    import ssak.utils.wer as sw  # silence compute_wer's own inner progress bars in each worker
+    sw.tqdm = type("_Q", (), {"tqdm": staticmethod(lambda x, *a, **k: x)})
+
+
+def _macro_score(pair):
+    ref, pred = pair
+    from ssak.utils.wer import compute_wer
+    res = compute_wer(
+        [ref], [pred], normalization=_MACRO["norm"], use_percents=True,
+        replacements_ref={"euh": "", "hum": ""}, replacements_pred={"euh": "", "hum": ""},
+    )
+    return res["wer"] if res.get("count", 0) > 0 else None
+
+
+def _macro_key(normalization, ref, pred):
+    import hashlib
+    h = hashlib.sha1()
+    h.update(normalization.encode("utf-8"))
+    for s in ("\x00", ref, "\x00", pred):
+        h.update(s.encode("utf-8"))
+    return h.hexdigest()
+
+
+def compute_macro_wer(df, cap, casepunc, workers=None, cache_path=None):
     """Add a 'macro_wer' column: the mean of per-file WER (each file recomputed with the
     same normalization as the benchmark, then optionally capped at `cap` percent).
 
-    cap <= 0 means no cap. A single tqdm bar spans every file across all models, since
-    per-file re-scoring (text normalization + alignment) is what makes this slow.
+    cap <= 0 means no cap. Per-file re-scoring (text normalization + alignment) is the slow
+    part, so: only files not already in the on-disk cache are (re)computed, across a process
+    pool. The cache stores the *uncapped* per-file WER keyed by a hash of (normalization,
+    reference, prediction) -- so it is safe across models/datasets and re-used when the cap
+    changes; a changed prediction gets a new key and is recomputed.
     """
-    import ssak.utils.wer as sw
-    from ssak.utils.wer import compute_wer
-
+    df = df.reset_index(drop=True)
     normalization = "" if casepunc else "fr+"
-    replacements = {"euh": "", "hum": ""}
-    total = int(df["refs"].map(len).sum())
 
-    def per_file_wer(ref, pred):
-        res = compute_wer(
-            [ref], [pred], normalization=normalization, use_percents=True,
-            replacements_ref=replacements, replacements_pred=replacements,
-        )
-        return res["wer"] if res.get("count", 0) > 0 else None
+    # Flatten every file into a (ref, pred) task + its content key, remembering its row.
+    pairs, keys, row_of = [], [], []
+    for ri, (refs, preds) in enumerate(zip(df["refs"], df["preds"])):
+        for ref, pred in zip(refs, preds):
+            pairs.append((ref, pred))
+            keys.append(_macro_key(normalization, ref, pred))
+            row_of.append(ri)
 
-    macro = []
-    saved_tqdm = sw.tqdm  # silence compute_wer's own inner progress bars
-    sw.tqdm = type("_Q", (), {"tqdm": staticmethod(lambda x, *a, **k: x)})
-    try:
-        with tqdm(total=total, desc="Computing macro-avg WER", unit="file") as bar:
-            for refs, preds in zip(df["refs"], df["preds"]):
-                vals = []
-                for ref, pred in zip(refs, preds):
-                    w = per_file_wer(ref, pred)
-                    if w is not None:
-                        vals.append(min(w, cap) if cap and cap > 0 else w)
-                    bar.update(1)
-                macro.append(sum(vals) / len(vals) if vals else float("nan"))
-    finally:
-        sw.tqdm = saved_tqdm
+    # Load cache and figure out what actually needs computing (deduped by content key).
+    cache = {}
+    if cache_path and Path(cache_path).exists():
+        try:
+            cache = json.loads(Path(cache_path).read_text())
+        except (ValueError, OSError):
+            cache = {}
+    todo = {}
+    for key, pair in zip(keys, pairs):
+        if key not in cache:
+            todo[key] = pair
+    n_cached = len(pairs) - sum(1 for k in keys if k in todo)
+    print(f"  macro-WER: {len(pairs)} files, {n_cached} cached, {len(todo)} to compute")
+
+    if todo:
+        if workers is None:
+            workers = min(os.cpu_count() or 4, 16)
+        workers = max(1, min(workers, len(todo)))
+        tkeys = list(todo)
+        tpairs = [todo[k] for k in tkeys]
+        desc = f"Computing macro-avg WER ({workers} worker{'s' if workers > 1 else ''})"
+        if workers == 1:
+            _macro_init(normalization)
+            results = map(_macro_score, tpairs)
+            pool = None
+        else:
+            pool = mp.Pool(workers, initializer=_macro_init, initargs=(normalization,))
+            results = pool.imap(_macro_score, tpairs, chunksize=64)
+        try:
+            for key, val in zip(tkeys, tqdm(results, total=len(tpairs), desc=desc, unit="file")):
+                cache[key] = val
+        finally:
+            if pool is not None:
+                pool.close()
+                pool.join()
+        if cache_path:
+            try:
+                Path(cache_path).parent.mkdir(parents=True, exist_ok=True)
+                Path(cache_path).write_text(json.dumps(cache))
+                print(f"  macro-WER cache -> {cache_path} ({len(cache)} entries)")
+            except OSError as e:
+                print(f"  ! could not write macro-WER cache ({e})")
+
+    # Aggregate per row, applying the cap here (kept out of the cache).
+    sums = [0.0] * len(df)
+    cnts = [0] * len(df)
+    for key, ri in zip(keys, row_of):
+        val = cache.get(key)
+        if val is not None:
+            sums[ri] += min(val, cap) if cap and cap > 0 else val
+            cnts[ri] += 1
 
     df = df.copy()
-    df["macro_wer"] = macro
+    df["macro_wer"] = [sums[i] / cnts[i] if cnts[i] else float("nan") for i in range(len(df))]
     return df
 
 
@@ -335,6 +408,14 @@ def main():
     parser.add_argument("--cap-macro-wer", type=float, default=100.0,
                         help="cap each file's WER at this percent for the macro average "
                              "(default 100; 0 or negative = no cap)")
+    parser.add_argument("--macro-workers", type=int, default=None,
+                        help="processes for the macro-WER computation (default: CPU count, "
+                             "capped at 16)")
+    parser.add_argument("--macro-cache", default=None,
+                        help="path to the macro-WER cache file (default: "
+                             "<first folder>/.macro_wer_cache.json)")
+    parser.add_argument("--no-macro-cache", action="store_true",
+                        help="disable reading/writing the macro-WER cache")
     args = parser.parse_args()
 
     df = collect(args.folders, casepunc=args.casepunc, with_texts=args.plot_macro_wer)
@@ -347,7 +428,12 @@ def main():
 
     plot_wer(df, args.output)
     if args.plot_macro_wer:
-        df = compute_macro_wer(df, cap=args.cap_macro_wer, casepunc=args.casepunc)
+        if args.no_macro_cache:
+            cache_path = None
+        else:
+            cache_path = args.macro_cache or str(Path(args.folders[0]) / ".macro_wer_cache.json")
+        df = compute_macro_wer(df, cap=args.cap_macro_wer, casepunc=args.casepunc,
+                               workers=args.macro_workers, cache_path=cache_path)
         plot_macro_wer(df, args.output, cap=args.cap_macro_wer)
     plot_rtf(df, args.output)
     plot_resource(df, args.output, "vram", "VRAM usage", "vram.png")
