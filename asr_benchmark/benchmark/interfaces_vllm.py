@@ -1,3 +1,4 @@
+import atexit
 import logging
 import os
 import re
@@ -72,6 +73,10 @@ class VllmTranscriptionModel(Model):
         # start_new_session -> own process group, so cleanup() can kill the whole
         # tree (vLLM spawns worker processes that would otherwise hold the GPU/port).
         self._proc = subprocess.Popen(cmd, stdout=self._log, stderr=self._log, start_new_session=True)
+        # Backstop: kill the server on interpreter exit too, so a crash anywhere *after*
+        # load() (e.g. in the RTF loop) can't leave it orphaned on the GPU. Idempotent
+        # with cleanup(): _terminate_server() no-ops once the process is gone.
+        atexit.register(self._terminate_server)
         try:
             self._wait_until_ready()
         except BaseException:
@@ -219,6 +224,11 @@ class VllmTranscriptionModel(Model):
     def add_defaults_to_config(self, config):
         config["server"] = config.get("server", "http://localhost")
         config["port"] = int(config.get("port", 8000))
+        # The vLLM engine runs as a separate server, but the harness still monitors a
+        # device during the RTF run -- give it a string ("cuda"/"cpu"/"cuda:N") so the
+        # hardware monitor watches the GPU the server uses (it inherits CUDA_VISIBLE_DEVICES).
+        # Without this, config.get("device", 0) hands Monitoring the int 0 and it crashes.
+        config["device"] = config.get("device", "cuda")
         config["launch"] = config.get("launch", True)
         vllm_command = config.get("vllm_command", ["vllm", "serve"])
         config["vllm_command"] = vllm_command.split() if isinstance(vllm_command, str) else list(vllm_command)
