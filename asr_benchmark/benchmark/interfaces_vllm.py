@@ -61,6 +61,8 @@ class VllmTranscriptionModel(Model):
             cmd.append("--trust-remote-code")
         if self.config["served_model_name"]:
             cmd += ["--served-model-name", self.config["served_model_name"]]
+        if self.config["gpu_memory_utilization"] is not None:
+            cmd += ["--gpu-memory-utilization", str(self.config["gpu_memory_utilization"])]
         cmd += list(self.config["extra_args"])
 
         self._log = open(self.config["log_file"], "w")
@@ -70,7 +72,13 @@ class VllmTranscriptionModel(Model):
         # start_new_session -> own process group, so cleanup() can kill the whole
         # tree (vLLM spawns worker processes that would otherwise hold the GPU/port).
         self._proc = subprocess.Popen(cmd, stdout=self._log, stderr=self._log, start_new_session=True)
-        self._wait_until_ready()
+        try:
+            self._wait_until_ready()
+        except BaseException:
+            # Don't leave the server we started orphaned on the GPU if it never became
+            # ready (or on Ctrl-C) -- cleanup() only runs on a model that loaded.
+            self._terminate_server()
+            raise
 
     def _wait_until_ready(self) -> None:
         total, interval, elapsed = self.config["startup_timeout"], 3, 0
@@ -189,7 +197,7 @@ class VllmTranscriptionModel(Model):
         text = _BRACKET_RE.sub(" ", text)
         return re.sub(r"\s+", " ", text).strip()
 
-    def cleanup(self):
+    def _terminate_server(self):
         proc = getattr(self, "_proc", None)
         if proc is not None and proc.poll() is None:
             try:
@@ -203,6 +211,10 @@ class VllmTranscriptionModel(Model):
                 pass
         if getattr(self, "_log", None) is not None:
             self._log.close()
+            self._log = None
+
+    def cleanup(self):
+        self._terminate_server()
 
     def add_defaults_to_config(self, config):
         config["server"] = config.get("server", "http://localhost")
@@ -212,6 +224,9 @@ class VllmTranscriptionModel(Model):
         config["vllm_command"] = vllm_command.split() if isinstance(vllm_command, str) else list(vllm_command)
         config["trust_remote_code"] = config.get("trust_remote_code", False)
         config["served_model_name"] = config.get("served_model_name", None)
+        # Fraction of GPU memory vLLM reserves (weights + KV cache). Set None to use
+        # vLLM's own default (0.9). Passed to `vllm serve --gpu-memory-utilization`.
+        config["gpu_memory_utilization"] = config.get("gpu_memory_utilization", 0.85)
         extra_args = config.get("extra_args", [])
         config["extra_args"] = extra_args.split() if isinstance(extra_args, str) else list(extra_args)
         config["language"] = config.get("language", None)
@@ -221,7 +236,12 @@ class VllmTranscriptionModel(Model):
         config["concurrency"] = int(config.get("concurrency", 1))
         # Strip [timestamp]/[speaker] tags for WER (needed for MOSS; a no-op otherwise).
         config["strip_diarization"] = config.get("strip_diarization", True)
-        config["startup_timeout"] = int(config.get("startup_timeout", 1200))
+        # Seconds to wait for `vllm serve` to become ready. Big models on slow hardware
+        # are slow to start: a 24B model on a GB10 (ARM) takes ~19 min with torch.compile
+        # + CUDA-graph capture, so 1200 s was too tight. Raise further for larger models,
+        # or add extra_args: "--enforce-eager" to skip graph capture (faster start, but
+        # it slows inference, so it skews RTF/throughput measurements).
+        config["startup_timeout"] = int(config.get("startup_timeout", 2400))
         config["request_timeout"] = int(config.get("request_timeout", 600))
         config["log_file"] = config.get("log_file", "vllm.log")
         return super().add_defaults_to_config(config)
