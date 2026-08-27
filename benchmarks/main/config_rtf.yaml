@@ -19,7 +19,7 @@
 # in mind: a pass aborts when it reaches a backend it cannot import, so put the
 # backend you want first, or set skip_errors: True to sweep through all three.
 input_manifest: benchmarks/linto_stt_fr_fastconformer/manifest_rtf.jsonl
-output_folder: benchmarks/linto_stt_fr_fastconformer/local_bench_rtf
+output_folder: benchmarks/main/local_bench_rtf
 input_audios_paths: nemo_dataset/converted_audios/%n_%s
 compute_rtf: True
 save_alignments: False
@@ -41,6 +41,21 @@ benchmarks:
     model: mistralai/Voxtral-Small-24B-2507
     dtype: bfloat16
     language: fr
+
+  # --- Mistral Voxtral realtime (streaming model, batch-transcribed here) ----
+  - backend: transformers-voxtral-realtime
+    model: mistralai/Voxtral-Mini-4B-Realtime-2602
+    dtype: bfloat16
+
+  # --- Google Gemma 3n (general multimodal LLM; may need `timm` installed) ----
+  - backend: gemma3n
+    model: google/gemma-3n-e4b-it
+    dtype: bfloat16
+
+  # --- Qwen3-Omni (30B MoE thinker, text output; large VRAM, not ASR-tuned) --
+  - backend: qwen3-omni
+    model: Qwen/Qwen3-Omni-30B-A3B-Instruct
+    dtype: bfloat16
 
   # --- baselines: OPENAI ----------------------------------------------------
   - backend: faster-whisper

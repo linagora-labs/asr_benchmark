@@ -20,7 +20,7 @@
 # in mind: a pass aborts when it reaches a backend it cannot import, so put the
 # backend you want first, or set skip_errors: True to sweep through all three.
 input_manifest: benchmarks/linto_stt_fr_fastconformer/manifest.jsonl
-output_folder: benchmarks/linto_stt_fr_fastconformer/local_bench
+output_folder: benchmarks/main/local_bench
 input_audios_paths: nemo_dataset/converted_audios/%n_%s
 compute_rtf: True
 plot_monitoring: False
@@ -45,6 +45,29 @@ benchmarks:
     model: mistralai/Voxtral-Small-24B-2507
     dtype: bfloat16
     language: fr
+
+  # --- Mistral Voxtral realtime -- DISABLED in this (transformers) config ----
+  # Voxtral-Mini-Realtime is a STREAMING model: it signals end-of-turn via a
+  # streaming end-of-audio mechanism, not a text EOS in one-shot generate(). Run
+  # through the transformers backend it therefore never stops early and burns the
+  # full max_tokens (512) per clip -> ~45 s for a 5 s CommonVoice utterance
+  # (RTF ~9x), making it impractically slow here. The model card recommends vLLM
+  # streaming (websockets); benchmark it via benchmarks/main/config_vllm.yaml
+  # instead, where it is kept.
+  # - backend: transformers-voxtral-realtime
+  #   model: mistralai/Voxtral-Mini-4B-Realtime-2602
+  #   dtype: bfloat16
+
+  # --- Google Gemma 3n (general multimodal LLM; may need `timm` installed) ----
+  - backend: gemma3n
+    model: google/gemma-3n-e4b-it
+    dtype: bfloat16
+
+  # --- Qwen3-Omni (30B MoE thinker, text output; large VRAM, not ASR-tuned) --
+  # For pure ASR, Qwen/Qwen3-ASR-1.7B-hf would be a lighter, better-suited model.
+  - backend: qwen3-omni
+    model: Qwen/Qwen3-Omni-30B-A3B-Instruct
+    dtype: bfloat16
 
   # --- baselines: OPENAI ----------------------------------------------------
   - backend: faster-whisper
