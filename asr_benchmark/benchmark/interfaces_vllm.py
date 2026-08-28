@@ -167,10 +167,20 @@ class VllmTranscriptionModel(Model):
 
             results = [None] * len(items)
 
+            n_failed = [0]
+
             def work(item):
                 i, path, duration = item
                 t0 = time.time()
-                text = self._post(path)
+                # A single failed/timed-out request must NOT abort the whole batch (which
+                # would lose the entire dataset, since results are saved only at the end).
+                # Record an empty prediction for it and carry on.
+                try:
+                    text = self._post(path)
+                except Exception as e:
+                    logger.error(f"vLLM request failed for item {i} ({Path(path).name}): {e}")
+                    text = ""
+                    n_failed[0] += 1
                 latency = time.time() - t0
                 return i, {
                     "text": text,
@@ -186,9 +196,11 @@ class VllmTranscriptionModel(Model):
 
             total_audio = sum(d for _, _, d in items)
             throughput = round(total_audio / wall, 3) if wall > 0 else None
+            failed_note = f", {n_failed[0]} FAILED" if n_failed[0] else ""
             logger.info(
                 f"vLLM concurrent throughput: {throughput}x realtime "
-                f"(concurrency={concurrency}, {len(items)} files, {total_audio:.0f}s audio in {wall:.1f}s)"
+                f"(concurrency={concurrency}, {len(items)} files{failed_note}, "
+                f"{total_audio:.0f}s audio in {wall:.1f}s)"
             )
             for out in results:
                 out["throughput_rtfx"] = throughput

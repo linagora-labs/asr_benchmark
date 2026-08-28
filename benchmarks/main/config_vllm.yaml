@@ -44,7 +44,7 @@ input_audios_paths: nemo_dataset/converted_audios/%n_%s
 compute_rtf: True
 # Concurrent requests in flight (inherited by every entry below). >1 -> concurrent RTF
 # mode: throughput + VRAM in one run (see MEASUREMENT MODES above). Set 1 for serial.
-concurrency: 16
+concurrency: 8
 plot_monitoring: False
 skip_errors: False
 save_alignments: True
