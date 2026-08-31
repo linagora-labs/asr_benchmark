@@ -92,6 +92,10 @@ def collect(folders, casepunc=False, with_texts=False):
                 continue
             meta = json.loads(meta_file.read_text())
             label = model_label(meta)
+            # Runs served through vLLM (folder name prefixed "vllm_") are marked so
+            # they are distinguishable from the same model run via other backends.
+            if exp.name.startswith("vllm_"):
+                label = f"vLLM {label}"
             device = {"cuda": "GPU", "cpu": "CPU"}.get(meta.get("device"), meta.get("device"))
 
             # RAM / VRAM (optional) from a single monitoring.json per experiment.
