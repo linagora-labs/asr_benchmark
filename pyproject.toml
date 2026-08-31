@@ -36,6 +36,12 @@ moss = [
     # which only exists in transformers 5.x.
     "transformers>=5.0.0",
     "accelerate",
+    # gemma-3n has a vision tower built through timm's TimmWrapperModel, so
+    # transformers refuses to instantiate the model without timm (which itself
+    # needs torchvision). The gemma3n backend shares this transformers-5.x env;
+    # run_config.sh's pass 1 uses --extra moss --extra voxtral.
+    "timm",
+    "torchvision",
 ]
 voxtral = [
     # VoxtralProcessor.apply_transcription_request() is gated behind a
@@ -44,9 +50,6 @@ voxtral = [
     "transformers>=5.0.0",
     "accelerate",
     "mistral-common",
-    # timm is pulled in for Gemma 3n's vision tower (the gemma3n backend shares this
-    # transformers-5.x env; run_config.sh's pass 1 uses --extra moss --extra voxtral).
-    "timm",
 ]
 visu = [
     "pandas",
@@ -93,6 +96,7 @@ explicit = true
 [tool.uv.sources]
 torch = [{ index = "pytorch-cu130", marker = "sys_platform == 'linux' and platform_machine == 'aarch64'" }]
 torchaudio = [{ index = "pytorch-cu130", marker = "sys_platform == 'linux' and platform_machine == 'aarch64'" }]
+torchvision = [{ index = "pytorch-cu130", marker = "sys_platform == 'linux' and platform_machine == 'aarch64'" }]
 torchcodec = [{ index = "pytorch-cu130", marker = "sys_platform == 'linux' and platform_machine == 'aarch64'" }]
 
 # CTranslate2 (a faster-whisper dependency) ships CUDA-enabled wheels for x86_64
