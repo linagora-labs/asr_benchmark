@@ -259,10 +259,11 @@ def process_wer(output_folder, config):
             if "wer" in modes:
                 references = [separate_punctuation(ref) for ref in references]
                 predictions = [separate_punctuation(pred) for pred in predictions]
+            language = config.get("language") or "fr"
             wer_score = compute_wer(
                 references,
                 predictions,
-                normalization=f"{config.get('language', 'fr')}+" if "nocasepunc" in key else "",
+                normalization=f"{language}+" if "nocasepunc" in key else "",
                 character_level="cer" in key,
                 use_percents=True,
                 alignment=alignment,
