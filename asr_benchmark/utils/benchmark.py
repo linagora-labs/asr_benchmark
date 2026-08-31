@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 import time
 import torchaudio
 import librosa
@@ -54,6 +55,11 @@ def get_data(input_file, input_audio_path=''):
                 else:
                     path_filled = path_filled.replace('_%n','')
                 row['audio_filepath'] = str(Path(path_filled) / row['audio_filepath'])
+            if "<AUDIO_FOLDER>" in row['audio_filepath']:
+                data_folder = os.getenv("AUDIO_FOLDER")
+                if not data_folder:
+                    raise EnvironmentError("AUDIO_FOLDER environment variable is not set, but a data path uses the <AUDIO_FOLDER> placeholder.")
+                row['audio_filepath'] = row['audio_filepath'].replace("<AUDIO_FOLDER>", data_folder)
             all_data.append(row)
     return all_data
 
