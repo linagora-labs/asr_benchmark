@@ -16,6 +16,10 @@
 #     `requests`, so vLLM does NOT have to be installed in this project's env.
 #   * Voxtral additionally needs `mistral-common[audio]` in the vLLM environment.
 #   * Set launch: false on an entry to hit a server you started yourself.
+#   * PORTS: keep them in the 81xx range. On this DGX Spark, 8003/8005/8008/8010
+#     are permanently held by the BeeGFS daemons (beegfs-storage / -meta / -mgmtd),
+#     so `vllm serve --port 8005` dies with "OSError: [Errno 98] Address already
+#     in use" before it ever loads the model. Check with: ss -lnt '( sport = :PORT )'
 #
 # Compare with/without vLLM: the same model run via `backend: transformers-voxtral`
 # / `backend: moss` / `backend: faster-whisper` (config.yaml) lands in a different
@@ -45,6 +49,18 @@ compute_rtf: True
 # Concurrent requests in flight (inherited by every entry below). >1 -> concurrent RTF
 # mode: throughput + VRAM in one run (see MEASUREMENT MODES above). Set 1 for serial.
 concurrency: 8
+# Extra env for the `vllm serve` process. MAX_JOBS caps the parallelism of the
+# FlashInfer CUTLASS fused-MoE JIT build that MoE models (Qwen3-Omni) trigger at
+# startup: unset, ninja runs nproc+2 = 22 nvcc jobs, which OOMs the GB10's unified
+# memory next to 59 GiB of resident weights and kills the server with exit -9.
+env:
+  MAX_JOBS: 4
+# Seconds to wait for `vllm serve` to become ready (default 2400). Raised for
+# Qwen3-Omni-30B: the checkpoint lives on BeeGFS and vLLM disables auto-prefetch
+# there (~8 min just to read the 15 shards), then the FlashInfer CUTLASS fused-MoE
+# kernel is JIT-compiled -- and MAX_JOBS: 4 above deliberately makes that build
+# slower. Only the first run pays the compile; it is cached in ~/.cache/flashinfer.
+startup_timeout: 7200
 plot_monitoring: False
 skip_errors: False
 save_alignments: True
@@ -54,35 +70,35 @@ benchmarks:
   # --- Mistral Voxtral ------------------------------------------------------
   - backend: vllm
     model: mistralai/Voxtral-Small-24B-2507
-    port: 8000
+    port: 8100
     language: fr
 
   # --- MOSS-Transcribe-Diarize (custom code -> needs trust_remote_code) ------
   - backend: vllm
     model: OpenMOSS-Team/MOSS-Transcribe-Diarize
     trust_remote_code: true
-    port: 8001
+    port: 8101
 
   # --- OpenAI Whisper -------------------------------------------------------
   - backend: vllm
     model: openai/whisper-large-v3
-    port: 8002
+    port: 8102
     language: fr
 
   # --- Mistral Voxtral realtime --------------------------------------------
   - backend: vllm
     model: mistralai/Voxtral-Mini-4B-Realtime-2602
-    port: 8003
+    port: 8103
     language: fr
 
   # --- Google Gemma 3n ------------------------------------------------------
   - backend: vllm
     model: google/gemma-3n-e4b-it
-    port: 8004
+    port: 8104
     language: fr
 
   # --- Qwen3-Omni (large; may need trust_remote_code) -----------------------
   - backend: vllm
     model: Qwen/Qwen3-Omni-30B-A3B-Instruct
-    port: 8005
+    port: 8105
     language: fr

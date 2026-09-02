@@ -56,8 +56,13 @@ class Qwen3OmniModel(Model):
                 ],
             }
         ]
+        # add_generation_prompt=True is required: without the assistant prompt the
+        # model never emits EOS and rambles to max_new_tokens on every file. In
+        # transformers 5.x, processor-call kwargs (padding, ...) must be nested in
+        # processor_kwargs, otherwise they are dropped with a warning.
         inputs = self.processor.apply_chat_template(
-            conversations, tokenize=True, return_dict=True, return_tensors="pt", padding=True,
+            conversations, add_generation_prompt=True, tokenize=True, return_dict=True,
+            return_tensors="pt", processor_kwargs={"padding": True},
         ).to(self.model.device)
         input_len = inputs["input_ids"].shape[1]
         with torch.no_grad():

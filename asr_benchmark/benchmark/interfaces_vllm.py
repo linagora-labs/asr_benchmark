@@ -56,7 +56,30 @@ class VllmTranscriptionModel(Model):
         except requests.RequestException:
             return False
 
+    def _check_port_free(self) -> None:
+        """Fail fast if something else already listens on the port.
+
+        Otherwise vLLM starts, dies on bind with "OSError: [Errno 98] Address already
+        in use", and the harness only reports "server exited early" -- the real cause
+        is buried in the vllm log. (On the DGX Spark, 8003/8005/8008/8010 belong to the
+        BeeGFS daemons.)
+        """
+        import socket
+
+        port = int(self.config["port"])
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            try:
+                sock.bind(("0.0.0.0", port))
+            except OSError as e:
+                raise RuntimeError(
+                    f"Port {port} is already in use ({e}); vLLM cannot start there. "
+                    f"Pick a free port in the yaml, or set launch: false to reuse the "
+                    f"server already on it. Find the owner with: "
+                    f"sudo ss -lntp \"( sport = :{port} )\""
+                ) from e
+
     def _launch_server(self) -> None:
+        self._check_port_free()
         cmd = list(self.config["vllm_command"]) + [self.config["model"], "--port", str(self.config["port"])]
         if self.config["trust_remote_code"]:
             cmd.append("--trust-remote-code")
@@ -72,7 +95,14 @@ class VllmTranscriptionModel(Model):
         logger.info(f"Launching vLLM server (logs -> {self.config['log_file']})")
         # start_new_session -> own process group, so cleanup() can kill the whole
         # tree (vLLM spawns worker processes that would otherwise hold the GPU/port).
-        self._proc = subprocess.Popen(cmd, stdout=self._log, stderr=self._log, start_new_session=True)
+        env = None
+        if self.config["env"]:
+            env = {**os.environ, **{k: str(v) for k, v in self.config["env"].items()}}
+            self._log.write(f"# extra env: {self.config['env']}\n")
+            self._log.flush()
+        self._proc = subprocess.Popen(
+            cmd, stdout=self._log, stderr=self._log, start_new_session=True, env=env
+        )
         # Backstop: kill the server on interpreter exit too, so a crash anywhere *after*
         # load() (e.g. in the RTF loop) can't leave it orphaned on the GPU. Idempotent
         # with cleanup(): _terminate_server() no-ops once the process is gone.
@@ -265,6 +295,18 @@ class VllmTranscriptionModel(Model):
         # it slows inference, so it skews RTF/throughput measurements).
         config["startup_timeout"] = int(config.get("startup_timeout", 2400))
         config["request_timeout"] = int(config.get("request_timeout", 600))
+        # Extra environment variables for the `vllm serve` process, e.g.
+        #   env: {MAX_JOBS: 4}
+        # MoE models (Qwen3-Omni, ...) make vLLM JIT-compile FlashInfer's CUTLASS
+        # fused-MoE kernel at startup. FlashInfer shells out to ninja with no -j, so
+        # ninja defaults to nproc+2 (22 here) concurrent nvcc processes, each eating
+        # several GiB -- on top of the model weights, which on the GB10's UNIFIED
+        # memory come out of the same pool. That OOMs: an nvcc gets SIGKILLed
+        # (ninja "FAILED: [code=137] ... Killed"), the build aborts and the server
+        # dies with exit code -9. MAX_JOBS caps ninja's parallelism (flashinfer's
+        # _get_num_workers reads it); the built kernel is then cached under
+        # ~/.cache/flashinfer, so the cost is paid once.
+        config["env"] = dict(config.get("env", {}) or {})
         config["log_file"] = config.get("log_file", "vllm.log")
         return super().add_defaults_to_config(config)
 
