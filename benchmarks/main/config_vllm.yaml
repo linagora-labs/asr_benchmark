@@ -102,3 +102,29 @@ benchmarks:
     model: Qwen/Qwen3-Omni-30B-A3B-Instruct
     port: 8105
     language: fr
+
+  # --- Mistral Voxtral realtime -- DISABLED, see below ----------------------
+  # DO NOT re-enable over this backend. Voxtral-Mini-4B-Realtime is a STREAMING
+  # model: vLLM serves it on the WebSocket ws://host:port/v1/realtime (OpenAI
+  # Realtime protocol -- session.update, input_audio_buffer.append/.commit). The
+  # generic /v1/audio/transcriptions route this backend POSTs to is still
+  # registered, so the request is ACCEPTED, but the realtime model never receives
+  # its audio through it: embed_input_ids() gets multimodal_embeddings=None and
+  # substitutes zeros (voxtral_realtime.py:304, "Returning zero embeddings to
+  # avoid engine crash"). The LM then decodes from silence and never emits an EOS,
+  # so every request runs until request_timeout with no usable transcript --
+  # the benchmark HANGS instead of failing. Benchmarking it needs a websocket
+  # client backend (cf. interfaces_lintostt.py); until then use the transformers
+  # path, backend: transformers-voxtral-realtime (already in config.yaml).
+  # - backend: vllm
+  # model: mistralai/Voxtral-Mini-4B-Realtime-2602
+  # port: 8103
+  # language: fr
+  # # vLLM defaults cudagraph_mode to FULL_AND_PIECEWISE, and this model asserts
+  # # "Voxtral realtime doesn't support full cudagraphs yet. Please use PIECEWISE."
+  # # (voxtral_realtime.py:221) -> engine init fails before any weight is loaded.
+  # # NB: extra_args must stay a STRING here. make_configs() expands every
+  # # list-valued field into a Cartesian product, so a YAML list would be read as
+  # # several separate benchmark runs, one per flag. The string is split on
+  # # whitespace, hence the space-free JSON.
+  # extra_args: '--compilation-config {"cudagraph_mode":"PIECEWISE"}'
