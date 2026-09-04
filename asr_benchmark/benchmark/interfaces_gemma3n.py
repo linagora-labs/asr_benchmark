@@ -58,10 +58,16 @@ class Gemma3nModel(Model):
                 return_dict=True, return_tensors="pt",
             ).to(self.model.device)
             input_len = inputs["input_ids"].shape[-1]
+            generate_kwargs = dict(max_new_tokens=self.config["max_new_tokens"], do_sample=False)
+            # Repetition suppression: greedy decoding on this general (non-ASR) model
+            # collapses into degenerate loops ("oh, oh, oh, ...") on noisy/short clips,
+            # producing huge insertion counts that dominate the WER.
+            if self.config["no_repeat_ngram_size"]:
+                generate_kwargs["no_repeat_ngram_size"] = self.config["no_repeat_ngram_size"]
+            if self.config["repetition_penalty"] and self.config["repetition_penalty"] != 1.0:
+                generate_kwargs["repetition_penalty"] = self.config["repetition_penalty"]
             with torch.inference_mode():
-                gen = self.model.generate(
-                    **inputs, max_new_tokens=self.config["max_new_tokens"], do_sample=False,
-                )
+                gen = self.model.generate(**inputs, **generate_kwargs)
             text = self.processor.decode(gen[0][input_len:], skip_special_tokens=True)
         finally:
             Path(audio).unlink(missing_ok=True)
@@ -74,7 +80,19 @@ class Gemma3nModel(Model):
         config["device"] = config.get("device", "cuda")
         config["dtype"] = config.get("dtype", "bfloat16")
         config["max_new_tokens"] = int(config.get("max_new_tokens", 512))
-        config["prompt"] = config.get("prompt", "Transcribe this audio.")
+        # A directive prompt curbs the instruct model's tendency to refuse or add
+        # commentary ("Je ne peux pas transcrire ce son...") instead of transcribing.
+        config["prompt"] = config.get(
+            "prompt",
+            "Transcribe the speech in this audio verbatim. "
+            "Output only the transcription, with no comments or explanations.",
+        )
+        # Repetition suppression, ON by default here: unlike an ASR model, greedy
+        # decoding on this general LLM loops on noisy/short clips and the resulting
+        # insertions dominate the WER. Override in the config to tune or disable
+        # (no_repeat_ngram_size: 0, repetition_penalty: 1.0).
+        config["no_repeat_ngram_size"] = int(config.get("no_repeat_ngram_size", 3))
+        config["repetition_penalty"] = float(config.get("repetition_penalty", 1.2))
         return super().add_defaults_to_config(config)
 
     def get_metadata(self):
@@ -86,5 +104,7 @@ class Gemma3nModel(Model):
         c = self.config
         name = f"gemma3n_{c['model'].replace('/', '-')}_device-{c['device']}_dtype-{c['dtype']}"
         name = name.replace("/", "-")
+        if c["no_repeat_ngram_size"] or (c["repetition_penalty"] and c["repetition_penalty"] != 1.0):
+            name += f"_norep{c['no_repeat_ngram_size']}-rep{c['repetition_penalty']}"
         name += "_rtf" if c.get("compute_rtf") else ""
         return name
