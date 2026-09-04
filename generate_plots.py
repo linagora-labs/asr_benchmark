@@ -51,21 +51,43 @@ DATASET_RENAME = {
 DATASET_ORDER = ["CommonVoice", "MLS", "SUMM-RE", "VoxPopuli", "TEDx", "YouTube"]
 
 
+def append_detail(label, detail):
+    """Append a parenthetical detail to a label, keeping every detail in a SINGLE
+    parenthesis at the end of the last line -- so a label never grows past two lines
+    (model names namespaced with "/" already occupy two lines).
+
+    If the last line already ends with a "(...)" group, the detail is merged into it
+    (comma-separated); on a one-line label the parenthesis starts a second line;
+    otherwise it is placed at the end of the existing last line.
+    """
+    lines = label.split("\n")
+    last = lines[-1]
+    if last.endswith(")"):
+        lines[-1] = f"{last[:-1]}, {detail})"
+    elif len(lines) == 1:
+        lines.append(f"({detail})")
+    else:
+        lines[-1] = f"{last} ({detail})"
+    return "\n".join(lines)
+
+
 def model_label(meta):
     """Readable, unique-ish label for one experiment's metadata."""
     model = meta["model"]
     if meta.get("backend") == "faster-whisper" and "whisper" not in model:
         model = f"whisper-{model}"
     label = prepare_model_name(model)
+    # Everything that distinguishes otherwise-identical model names -- the decoder
+    # and any precision/dtype/accurate extras -- goes into one parenthesis at the end
+    # of the last line, so the label stays (at most) two lines.
+    details = []
     if meta.get("decoder"):
-        label += f"\n{meta['decoder'].upper()}"
-    # Distinguishing extras (precision/dtype/accurate) keep otherwise-identical
-    # model names apart; only appended when present.
-    extras = [str(meta[k]) for k in ("precision", "dtype") if meta.get(k)]
+        details.append(meta["decoder"].upper())
+    details += [str(meta[k]) for k in ("precision", "dtype") if meta.get(k)]
     if meta.get("accurate") in ("accurate", "greedy"):
-        extras.append(meta["accurate"])
-    if extras:
-        label += f"\n({', '.join(extras)})"
+        details.append(meta["accurate"])
+    if details:
+        label = append_detail(label, ", ".join(details))
     return label
 
 
@@ -93,9 +115,10 @@ def collect(folders, casepunc=False, with_texts=False):
             meta = json.loads(meta_file.read_text())
             label = model_label(meta)
             # Runs served through vLLM (folder name prefixed "vllm_") are marked so
-            # they are distinguishable from the same model run via other backends.
+            # they are distinguishable from the same model run via other backends;
+            # the marker joins the parenthesis at the end of the second line.
             if exp.name.startswith("vllm_"):
-                label = f"vLLM {label}"
+                label = append_detail(label, "vLLM")
             device = {"cuda": "GPU", "cpu": "CPU"}.get(meta.get("device"), meta.get("device"))
 
             # RAM / VRAM (optional) from a single monitoring.json per experiment.
@@ -182,7 +205,9 @@ def disambiguate_labels(df):
         for f in folders:
             variable = [t for t in token_sets[f] if t not in common]
             paren = ", ".join(variable) if variable else "default"
-            folder_display[f] = f"{base}\n({paren})"
+            # append_detail keeps the label to two lines: the "(...)" goes at the end
+            # of the second line when the base already has one (e.g. a decoder).
+            folder_display[f] = append_detail(base, paren)
 
     return df["folder"].map(folder_display)
 
