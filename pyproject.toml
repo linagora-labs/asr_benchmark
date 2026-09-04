@@ -51,6 +51,13 @@ voxtral = [
     "accelerate",
     "mistral-common",
 ]
+qwen-asr = [
+    # Qwen/Qwen3-ASR-1.7B-hf uses checkpoint model type 'qwen3_asr', which is only
+    # recognised from transformers 5.13 onwards. Shares the transformers-5.x env, so
+    # it can be combined with moss/voxtral in a single pass.
+    "transformers>=5.13.0",
+    "accelerate",
+]
 visu = [
     "pandas",
     "ipykernel",
@@ -78,6 +85,13 @@ conflicts = [
         { extra = "whisper" },
         { extra = "nemo" },
         { extra = "voxtral" },
+    ],
+    # qwen-asr also needs transformers 5.x, so it shares that env with moss/voxtral
+    # and only conflicts with whisper and nemo.
+    [
+        { extra = "whisper" },
+        { extra = "nemo" },
+        { extra = "qwen-asr" },
     ],
 ]
 

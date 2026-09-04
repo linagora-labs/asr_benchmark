@@ -49,6 +49,9 @@ def get_model(config):
     elif backend == "qwen3-omni":
         import asr_benchmark.benchmark.interfaces_qwen3omni as interfaces_qwen3omni
         model = interfaces_qwen3omni.Qwen3OmniModel(config)
+    elif backend == "qwen3-asr":
+        import asr_benchmark.benchmark.interfaces_qwen3asr as interfaces_qwen3asr
+        model = interfaces_qwen3asr.Qwen3ASRModel(config)
     else:
         raise ValueError(f"Invalid backend: {backend}")
     return model
