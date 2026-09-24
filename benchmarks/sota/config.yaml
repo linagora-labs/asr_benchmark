@@ -6,28 +6,66 @@ skip_errors: False
 save_alignments: True
 save_predictions: False
 
+# The whisper, nemo and transformers-5.x (moss / voxtral / gemma3n / qwen3-omni)
+# extras conflict in pyproject.toml, so this file is run in several passes, one
+# per environment. Already-benched models are skipped; with skip_errors: False a
+# pass aborts at the first backend it cannot import, set it to True to sweep:
+#   uv run --extra moss --extra voxtral python benchmarker.py benchmarks/sota/config.yaml
+#   uv run --extra nemo                 python benchmarker.py benchmarks/sota/config.yaml
+#   uv run --extra whisper              python benchmarker.py benchmarks/sota/config.yaml
 
 benchmarks:
   # https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602#vllm-recommended
   - backend: transformers-voxtral-realtime
     model: mistralai/Voxtral-Mini-4B-Realtime-2602
     language: fr
+  # --- Mistral Voxtral (audio LLM) ------------------------------------------
+  - backend: transformers-voxtral
+    model: mistralai/Voxtral-Small-24B-2507
+    dtype: bfloat16
+    language: fr
+  # --- MOSS-Transcribe-Diarize ----------------------------------------------
+  # No language set: auto-detect is the only documented prompt and the best on
+  # French. `language` is an unofficial knob (an English pin makes it translate).
+  - backend: moss
+    model: OpenMOSS-Team/MOSS-Transcribe-Diarize
+    dtype: bfloat16
+  # --- Google Gemma 3n (general multimodal LLM, needs timm) -----------------
+  - backend: gemma3n
+    model: google/gemma-3n-e4b-it
+    dtype: bfloat16
+  # --- Qwen3-Omni (30B MoE, large VRAM, not ASR-tuned) ----------------------
+  - backend: qwen3-omni
+    model: Qwen/Qwen3-Omni-30B-A3B-Instruct
+    dtype: bfloat16
+  # --- NVIDIA canary / parakeet ---------------------------------------------
+  # language is required for canary (EncDecMultiTaskModel): the nemo interface
+  # passes config["language"] as source_lang/target_lang, no default.
   - backend: nemo
-    model: 
+    model:
     - nvidia/canary-180m-flash
     - nvidia/canary-1b-v2
     - nvidia/parakeet-tdt-0.6b-v3
     batch_size: 16
+    language: fr
+  # --- fastconformer hybrid, RNNT decoder -----------------------------------
   - backend: nemo
-    model: 
+    model:
     - nvidia/stt_fr_fastconformer_hybrid_large_pc
     - bofenghuang/stt_fr_fastconformer_hybrid_large
     - linagora/linto_stt_fr_fastconformer
     - linagora/linto_stt_fr_fastconformer_pc
     batch_size: 16
-    decoder: 
+    decoder:
     - rnnt
+  # --- LINTO fastconformer-pc, CTC decoder (RNNT is above) ------------------
+  - backend: nemo
+    model: linagora/linto_stt_fr_fastconformer_pc
+    batch_size: 16
+    decoder:
+    - ctc
+  # --- OpenAI whisper -------------------------------------------------------
   - backend: faster-whisper
-    model: 
+    model:
     - large-v3-turbo
     precision: float16
