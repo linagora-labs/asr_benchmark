@@ -1,0 +1,17 @@
+{
+  "backend": "nemo",
+  "model": "nvidia/nemotron-3.5-asr-streaming-0.6b",
+  "language": "fr",
+  "vad": "false",
+  "device": "cuda",
+  "num_threads": null,
+  "decoder": "rnnt",
+  "input_manifest": "benchmarks/sota/manifest.jsonl",
+  "compute_rtf": false,
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": true
+}

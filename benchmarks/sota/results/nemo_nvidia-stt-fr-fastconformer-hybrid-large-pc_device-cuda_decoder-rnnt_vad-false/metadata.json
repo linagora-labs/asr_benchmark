@@ -1,0 +1,16 @@
+{
+  "backend": "nemo",
+  "model": "nvidia/stt-fr-fastconformer-hybrid-large-pc",
+  "decoder": "rnnt",
+  "vad": "false",
+  "device": "cuda",
+  "num_threads": null,
+  "input_manifest": "benchmarks/sota/manifest.jsonl",
+  "compute_rtf": false,
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": true
+}

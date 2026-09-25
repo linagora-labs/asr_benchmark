@@ -1,0 +1,17 @@
+{
+  "backend": "transformers-voxtral-realtime",
+  "model": "mistralai/Voxtral-Mini-4B-Realtime-2602",
+  "language": "fr",
+  "device": "cuda",
+  "max_tokens": 512,
+  "temperature": 0.0,
+  "dtype": "float16",
+  "input_manifest": "benchmarks/march_2026/manifest.jsonl",
+  "compute_rtf": false,
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": false
+}

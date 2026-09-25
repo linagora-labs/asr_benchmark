@@ -152,6 +152,14 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# Benchmark run logs (python logs, docker/vLLM server output)
+logs/
+# Benchmark outputs (output_folder of the configs)
+benchmarks/*/results*/
+# ... except the SOTA results, versioned without the (large) alignments
+!benchmarks/sota/results/
+benchmarks/sota/results/*/alignments/
+
 dev/
 out*/
 out*

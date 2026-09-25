@@ -1,5 +1,5 @@
 input_manifest: benchmarks/sota/manifest.jsonl
-output_folder: benchmarks/sota/local_bench
+output_folder: benchmarks/sota/results
 compute_rtf: False
 plot_monitoring: False
 skip_errors: False

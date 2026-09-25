@@ -1,0 +1,19 @@
+{
+  "backend": "faster-whisper",
+  "model": "large-v3",
+  "precision": "float16",
+  "vad": "false",
+  "device": "cuda",
+  "accurate": false,
+  "previous_text": false,
+  "batch_size": 1,
+  "language": "fr",
+  "input_manifest": "benchmarks/linto_stt_fr_fastconformer/manifest.jsonl",
+  "compute_rtf": false,
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "/mnt/d/datasets/nemo_dataset/converted_audios/%n_%s",
+  "word_timestamps": true
+}
