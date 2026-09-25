@@ -1,5 +1,6 @@
 
 import logging
+import re
 from pathlib import Path
 import torch
 import json
@@ -10,17 +11,27 @@ from asr_benchmark.utils.benchmark import load_audio
 from asr_benchmark.benchmark.interfaces import Model
 
 DEFAULT_NUM_THREADS = torch.get_num_threads()
+# Language tag (e.g. " <fr-FR>") that prompt-conditioned models append after the
+# terminal punctuation, at least in auto-detect mode.
+LANG_TAG_PATTERN = re.compile(r"\s*<[a-z]{2}-[A-Z]{2}>")
+
 class NemoModel(Model):
-    
+
     def __init__(self, config) -> None:
         model_type = nemo_asr.models.EncDecCTCModelBPE
-        if "hybrid" in config['model'] or "linto_stt" in config['model']:
+        if "nemotron-3.5-asr" in config['model']:
+            # Language-ID prompt-conditioned cache-aware RNNT (nvidia/nemotron-3.5-asr-streaming-0.6b).
+            model_type = getattr(nemo_asr.models, "EncDecRNNTBPEModelWithPrompt", None)
+            if model_type is None:
+                raise ImportError(f"{config['model']} needs nemo_toolkit>=3.0.0 (EncDecRNNTBPEModelWithPrompt)")
+        elif "hybrid" in config['model'] or "linto_stt" in config['model']:
              model_type = nemo_asr.models.EncDecHybridRNNTCTCBPEModel
         elif "rnnt" in config['model'] or "tdt" in config['model']:
             model_type = nemo_asr.models.EncDecRNNTBPEModel
         elif "canary" in config['model']:
             model_type = nemo_asr.models.EncDecMultiTaskModel
         self.model_type = model_type
+        self.is_prompt_model = model_type is getattr(nemo_asr.models, "EncDecRNNTBPEModelWithPrompt", None)
         super().__init__(config)
 
 
@@ -69,14 +80,28 @@ class NemoModel(Model):
                 answer="na",
                 verbose=False
             )
+        elif self.is_prompt_model:
+            # In-memory audio has no per-cut language, so the prompt comes from target_lang.
+            result = self.model.transcribe(audio, verbose=False, target_lang=self.config["language"])
         else:
             result = self.model.transcribe(audio, verbose=False)
-        output['text'] = result[0].text
+        output['text'] = self.clean_text(result[0].text)
         return output
+
+    def clean_text(self, text):
+        if self.is_prompt_model:
+            text = LANG_TAG_PATTERN.sub("", text).strip()
+        return text
 
     def transcribe_batch(self, data: str) -> str:
         with open("tmp.jsonl", "w", encoding="utf-8") as f:
             for i in data:
+                if self.is_prompt_model:
+                    # With a manifest, the lhotse prompt dataset ignores target_lang: it takes the
+                    # language from each row's "lang" and, unless "prompt_mode" is "langID", randomly
+                    # swaps it for the auto prompt half of the time ("unified" default mode).
+                    language = self.config["language"]
+                    i = dict(i, lang=language, prompt_mode="auto" if language == "auto" else "langID")
                 f.write(json.dumps(i, ensure_ascii=False)+"\n")
         import nemo.collections.asr as nemo_asr
         batch_size = int(self.config.get('batch_size', 16))
@@ -92,6 +117,8 @@ class NemoModel(Model):
                 batch_size=batch_size,  # batch size to run the inference with
                 num_workers=4
             )
+        elif self.is_prompt_model:
+            result = self.model.transcribe("tmp.jsonl", batch_size=batch_size, num_workers=4, target_lang=self.config["language"])
         else:
             result = self.model.transcribe("tmp.jsonl", batch_size=batch_size, num_workers=4, return_hypotheses=True if self.decoder else False)
         outputs = list()
@@ -101,7 +128,7 @@ class NemoModel(Model):
                 text = self.decoder.decode(logits.numpy())
                 outputs.append({'text': text})
             else:
-                output = {'text': i.text}
+                output = {'text': self.clean_text(i.text)}
                 outputs.append(output)
         Path("tmp.jsonl").unlink()
         return outputs
@@ -116,7 +143,11 @@ class NemoModel(Model):
         config['vad'] = config.get('vad', 'false')
         config['device'] = config.get('device', 'cuda')
         config['num_threads'] = config.get('num_threads', DEFAULT_NUM_THREADS) if config['device'] == 'cpu' else None
-        if self.model_type!=nemo_asr.models.EncDecMultiTaskModel:
+        if self.is_prompt_model:
+            # Key of the model's prompt_dictionary: "fr" and "fr-FR" map to the same prompt, "auto" detects.
+            config['language'] = config.get('language') or 'fr'
+            config['decoder'] = 'rnnt'
+        elif self.model_type!=nemo_asr.models.EncDecMultiTaskModel:
             config['decoder'] = config.get('decoder', 'ctc')
         return super().add_defaults_to_config(config)
 
@@ -149,6 +180,8 @@ class NemoModel(Model):
             name += f"_decoder-rnnt"
         elif self.model_type == nemo_asr.models.EncDecCTCModelBPE:
             name += f"_decoder-ctc"
+        if self.is_prompt_model:
+            name += f"_lang-{tot_config['language']}"
         if tot_config['compute_rtf']:
             name += f"_vad-{tot_config['vad']}"
         else:

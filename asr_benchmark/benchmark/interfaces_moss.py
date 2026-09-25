@@ -94,20 +94,48 @@ class MossTranscribeDiarizeModel(Model):
         return load_audio(audio, return_format="librosa", start=start, duration=duration)
 
     def transcribe(self, audio) -> dict:
+        return self.transcribe_many([audio])[0]
+
+    def transcribe_batch(self, data: list) -> list[dict]:
+        if self.config["batch_size"] <= 1:
+            return super().transcribe_batch(data)
+        return self.transcribe_by_batches(data, self.config["batch_size"])
+
+    @staticmethod
+    def _left_pad(inputs, pad_token_id):
+        """The remote-code processor pads prompts on the right, which breaks batched
+        generation (new tokens would follow the padding). Move the padding to the left:
+        audio features are injected at the audio placeholder tokens in row order, which
+        this does not change."""
+        mask = inputs["attention_mask"]
+        lengths = mask.sum(dim=1)
+        input_ids = torch.full_like(inputs["input_ids"], pad_token_id)
+        attention_mask = torch.zeros_like(mask)
+        width = mask.shape[1]
+        for row, length in enumerate(lengths.tolist()):
+            input_ids[row, width - length:] = inputs["input_ids"][row, :length]
+            attention_mask[row, width - length:] = 1
+        inputs["input_ids"], inputs["attention_mask"] = input_ids, attention_mask
+        return inputs
+
+    def transcribe_many(self, audios: list) -> list[dict]:
         device = self.config["device"]
-        messages = [
-            {
-                "role": "user",
-                "content": [
+        texts = [
+            self.processor.apply_chat_template(
+                [{"role": "user", "content": [
                     {"type": "audio", "audio": audio},
                     {"type": "text", "text": self.config["prompt"]},
-                ],
-            }
+                ]}],
+                tokenize=False, add_generation_prompt=True,
+            )
+            for audio in audios
         ]
-        text = self.processor.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True
-        )
-        inputs = self.processor(text=text, audio=[audio], return_tensors="pt")
+        inputs = self.processor(text=texts, audio=list(audios), return_tensors="pt")
+        if len(audios) > 1:
+            pad_token_id = self.processor.tokenizer.pad_token_id
+            if pad_token_id is None:
+                pad_token_id = self.processor.tokenizer.eos_token_id or 0
+            inputs = self._left_pad(inputs, pad_token_id)
         inputs = inputs.to(device)
         if "input_features" in inputs:
             inputs["input_features"] = inputs["input_features"].to(self.torch_dtype)
@@ -129,13 +157,14 @@ class MossTranscribeDiarizeModel(Model):
             output_ids = self.model.generate(**inputs, **generate_kwargs)
         # Keep only the newly generated tokens (drop the prompt).
         generated = output_ids[:, inputs["input_ids"].shape[1]:]
-        raw = self.processor.tokenizer.decode(generated[0], skip_special_tokens=True)
-
-        if self.config["raw_output"]:
-            prediction = raw.strip()
-        else:
-            prediction = self._strip_annotations(raw)
-        return {"text": prediction}
+        predictions = []
+        for row in generated:
+            raw = self.processor.tokenizer.decode(row, skip_special_tokens=True)
+            if self.config["raw_output"]:
+                predictions.append({"text": raw.strip()})
+            else:
+                predictions.append({"text": self._strip_annotations(raw)})
+        return predictions
 
     @staticmethod
     def _strip_annotations(text: str) -> str:
@@ -168,11 +197,14 @@ class MossTranscribeDiarizeModel(Model):
         # Strip timestamps/speaker labels for WER computation (default), or keep the
         # raw diarized transcript when raw_output is true.
         config["raw_output"] = config.get("raw_output", False)
+        # Not in the folder name (like NeMo): it only changes speed, up to bf16 padding noise.
+        config["batch_size"] = int(config.get("batch_size", 1))
         return super().add_defaults_to_config(config)
 
     def get_metadata(self):
         metadata = super().get_metadata()
         metadata["model"] = self.config["model"].replace("_", "-")
+        metadata.pop("batch_size", None)
         return metadata
 
     def get_folder_name(self):

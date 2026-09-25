@@ -27,7 +27,24 @@ class Model():
             audio = self.load_audio(row['audio_filepath'], start=row['offset'], duration=row['duration'])
             predictions.append(self.transcribe(audio))
         return predictions
-    
+
+    def transcribe_by_batches(self, data: list, batch_size: int) -> list[dict]:
+        """Batched version of transcribe_batch for models implementing
+        transcribe_many(audios) -> list[dict]. Rows are grouped by similar duration
+        (longest first, so an OOM shows up immediately) to limit padding; predictions
+        are returned in the order of `data`."""
+        order = sorted(range(len(data)), key=lambda i: data[i].get('duration') or 0, reverse=True)
+        predictions = [None] * len(data)
+        batches = [order[i:i + batch_size] for i in range(0, len(order), batch_size)]
+        for batch in tqdm(batches, desc=f"Transcribing {data[0]['name']} with {self.config['model']} (batches of {batch_size})"):
+            audios = [self.load_audio(data[i]['audio_filepath'], start=data[i]['offset'], duration=data[i]['duration']) for i in batch]
+            for i, prediction in zip(batch, self.transcribe_many(audios)):
+                predictions[i] = prediction
+        return predictions
+
+    def transcribe_many(self, audios: list) -> list[dict]:
+        raise NotImplementedError("Not supposed to be called")
+
     def cleanup(self):
         pass
     

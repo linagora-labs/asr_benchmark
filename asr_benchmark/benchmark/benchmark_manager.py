@@ -377,10 +377,9 @@ def launch_benchmark(
                     torch.cuda.empty_cache()
                 predictions_dir = config_output / "predictions"
                 if len(list(predictions_dir.iterdir())) == 0 and not (config_output / "error.log").exists():
-                    predictions_dir.rmdir()
-                    (config_output / "performances").rmdir()
-                    (config_output / "wer").rmdir()
-                    config_output.rmdir()
+                    for folder in (predictions_dir, config_output / "performances", config_output / "wer", config_output):
+                        if folder.exists():
+                            folder.rmdir()
                     logger.error(f"Benched folder is empty, removing it")
                 else:
                     logger.error(f"Benched folder is not empty")

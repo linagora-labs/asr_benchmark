@@ -52,6 +52,9 @@ def get_model(config):
     elif backend == "qwen3-asr":
         import asr_benchmark.benchmark.interfaces_qwen3asr as interfaces_qwen3asr
         model = interfaces_qwen3asr.Qwen3ASRModel(config)
+    elif backend == "vibevoice-asr":
+        import asr_benchmark.benchmark.interfaces_vibevoice as interfaces_vibevoice
+        model = interfaces_vibevoice.VibeVoiceASRModel(config)
     else:
         raise ValueError(f"Invalid backend: {backend}")
     return model
