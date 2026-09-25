@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASR Leaderboard</title>
+<meta name="description" content="Word and character error rates of open speech recognition models, by Linagora Labs.">
+<style>
+  :root { --bg: #fbfbfa; --surface: #fff; --text: #1d1d1b; --muted: #6b6a66; --line: #e6e4df; --accent: #1f6f78; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #141513; --surface: #1c1d1b; --text: #ecebe7; --muted: #9d9b95; --line: #2f302d; --accent: #6cc3c9; }
+  }
+  /* Rank colors of each column (same as our other leaderboards). */
+  .first { background: #5dade2; } .second { background: #82e0aa; }
+  .second-last { background: #fdcb6e; } .last { background: #e74c3c; }
+  td.first, td.second, td.second-last, td.last { color: #1d1d1b; }
+
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, sans-serif; }
+  a { color: var(--accent); }
+  main { max-width: 1180px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { margin: 0 0 4px; font-size: 26px; }
+  .muted { color: var(--muted); }
+  .controls { display: flex; flex-wrap: wrap; gap: 12px 24px; margin: 24px 0 12px; align-items: center; }
+  select, button { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; margin-bottom: 12px; }
+  .swatch { display: inline-block; width: 12px; height: 12px; margin-right: 5px; border-radius: 2px; vertical-align: -1px; }
+  .scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  th { font-size: 13px; vertical-align: bottom; }
+  th:nth-child(-n+2), td:nth-child(-n+2) { text-align: left; }
+  td.avg { font-weight: 700; }
+  small { font-size: 11px; opacity: .75; }
+  .notes { margin-top: 20px; font-size: 14px; max-width: 80ch; }
+</style>
+</head>
+<body>
+<main>
+  <h1>ASR Leaderboard</h1>
+  <div class="muted">Error rates of open speech recognition models (lower is better). <span id="meta"></span></div>
+
+  <div class="controls">
+    <label>Language <select id="language"></select></label>
+    <span id="metric"><button data-v="wer" aria-pressed="true">WER</button> <button data-v="cer">CER</button></span>
+    <span id="norm"><button data-v="1" aria-pressed="true" title="Lowercase, punctuation removed">Normalized</button> <button data-v="0" title="Case and punctuation count as errors">Case &amp; punct.</button></span>
+    <span id="datasets"></span>
+  </div>
+  <div class="legend">
+    <span><span class="swatch first"></span>1st</span> <span><span class="swatch second"></span>2nd</span>
+    <span><span class="swatch second-last"></span>Second to last</span> <span><span class="swatch last"></span>Last</span>
+  </div>
+
+  <div class="scroll"><table id="board"></table></div>
+  <div class="notes muted" id="notes"></div>
+</main>
+
+<script>
+const DATA = /*__DATA__*/null;
+const LANGUAGES = { fr: "French", en: "English", ar: "Arabic", de: "German", es: "Spanish", it: "Italian" };
+const state = { language: "fr", metric: "wer", norm: true, selected: new Set() };
+
+const f1 = v => v.toFixed(1);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const metricKey = () => state.metric + (state.norm ? "_nocasepunc" : "");
+const datasetsOf = lang => DATA.datasets.filter(d => d.language === lang);
+const modelsOf = lang => DATA.models.filter(m => datasetsOf(lang).some(d => d.id in m.scores));
+const result = (m, d) => (m.scores[d.id] || {})[metricKey()];  // {wer, sub, del, ins, ci95} or undefined
+const halfWidth = r => r && r.ci95 ? (r.ci95[1] - r.ci95[0]) / 2 : null;
+
+// Default test sets of a language: those every model was evaluated on, so that averages compare.
+function selectLanguage(lang) {
+  state.language = lang;
+  const models = modelsOf(lang);
+  state.selected = new Set(datasetsOf(lang).filter(d => models.every(m => d.id in m.scores)).map(d => d.id));
+  document.getElementById("datasets").innerHTML = datasetsOf(lang).map(d =>
+    `<button data-id="${d.id}" aria-pressed="${state.selected.has(d.id)}" title="${esc(d.domain)}">${esc(d.name)}</button>`).join(" ");
+  render();
+}
+
+// Mean of the per-test-set scores; its ± combines the per-set half-widths as independent errors.
+function average(m, datasets) {
+  const results = datasets.map(d => result(m, d));
+  if (!datasets.length || results.some(r => !r)) return null;
+  const hw = results.map(halfWidth);
+  return {
+    wer: results.reduce((a, r) => a + r.wer, 0) / results.length,
+    pm: hw.every(h => h != null) ? Math.sqrt(hw.reduce((a, h) => a + h * h, 0)) / hw.length : null,
+  };
+}
+
+// Class of a score by its rank in its column: first, second, second-last, last.
+function rankClass(value, values) {
+  if (value == null || values.length < 4) return "";
+  const sorted = [...values].sort((a, b) => a - b);
+  const i = sorted.indexOf(value), n = sorted.length;
+  return i === 0 ? "first" : i === 1 ? "second" : i === n - 1 ? "last" : i === n - 2 ? "second-last" : "";
+}
+
+function cell(value, pm, cls, title) {
+  if (value == null) return `<td class="muted">—</td>`;
+  return `<td class="${cls}" title="${esc(title)}">${f1(value)}${pm != null ? ` <small>±${f1(pm)}</small>` : ""}</td>`;
+}
+
+function render() {
+  const datasets = datasetsOf(state.language).filter(d => state.selected.has(d.id));
+  const rows = modelsOf(state.language).map(m => ({ m, avg: average(m, datasets) }));
+  rows.sort((a, b) => (a.avg ? a.avg.wer : Infinity) - (b.avg ? b.avg.wer : Infinity));
+  const column = get => rows.map(get).filter(v => v != null);
+  const avgValues = column(r => r.avg && r.avg.wer);
+  const values = Object.fromEntries(datasets.map(d => [d.id, column(r => (result(r.m, d) || {}).wer)]));
+
+  const head = `<tr><th>#</th><th>Model</th><th>Average<br><small>${datasets.length} test sets</small></th>` +
+    datasets.map(d => `<th title="${esc(d.domain)}">${esc(d.name)}<br><small>${d.hours != null ? f1(d.hours) + " h" : ""}</small></th>`).join("") + "</tr>";
+  let rank = 0;
+  const body = rows.map(({ m, avg }) => {
+    const name = m.url ? `<a href="${esc(m.url)}">${esc(m.model)}</a>` : esc(m.model);
+    const cells = datasets.map(d => {
+      const r = result(m, d);
+      if (!r) return cell(null);
+      const title = [
+        r.ci95 && `95% CI: ${f1(r.ci95[0])} – ${f1(r.ci95[1])}`,
+        `Substitutions: ${f1(r.sub)}`, `Deletions: ${f1(r.del)}`, `Insertions: ${f1(r.ins)}`,
+        `Utterances: ${m.scores[d.id].n}`,
+      ].filter(Boolean).join("\n");
+      return cell(r.wer, halfWidth(r), rankClass(r.wer, values[d.id]), title);
+    }).join("");
+    const avgCell = avg ? cell(avg.wer, avg.pm, "avg " + rankClass(avg.wer, avgValues), "Mean over the selected test sets")
+                        : `<td class="muted" title="Not evaluated on all the selected test sets">—</td>`;
+    return `<tr><td>${avg ? ++rank : ""}</td><td>${name}<br><small>${esc([m.variant, m.backend].filter(Boolean).join(" · "))}</small></td>${avgCell}${cells}</tr>`;
+  }).join("");
+  document.getElementById("board").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
+}
+
+// Controls
+const languages = [...new Set(DATA.datasets.map(d => d.language))];
+const languageSelect = document.getElementById("language");
+languageSelect.innerHTML = languages.map(l => `<option value="${l}">${LANGUAGES[l] || l}</option>`).join("");
+languageSelect.value = languages.includes("fr") ? "fr" : languages[0];
+languageSelect.onchange = () => selectLanguage(languageSelect.value);
+for (const [id, apply] of [["metric", v => state.metric = v], ["norm", v => state.norm = v === "1"]]) {
+  document.getElementById(id).onclick = e => {
+    if (!e.target.dataset.v) return;
+    document.querySelectorAll(`#${id} button`).forEach(b => b.setAttribute("aria-pressed", b === e.target));
+    apply(e.target.dataset.v);
+    render();
+  };
+}
+document.getElementById("datasets").onclick = e => {
+  const id = e.target.dataset.id;
+  if (!id) return;
+  state.selected.has(id) ? state.selected.delete(id) : state.selected.add(id);
+  e.target.setAttribute("aria-pressed", state.selected.has(id));
+  render();
+};
+
+// Texts
+const updated = DATA.results_updated && new Date(DATA.results_updated).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+document.getElementById("meta").innerHTML = `${updated ? `Results updated ${updated}. ` : ""}<a href="${DATA.repo}">Linagora Labs · asr_benchmark</a>`;
+document.getElementById("notes").innerHTML = `
+  <p><b>Average</b>: mean of the scores over the selected test sets. The test sets that every model was evaluated on are selected by default; a model missing a selected set gets no average.</p>
+  <p><b>±</b>: half-width of the 95% confidence interval, by bootstrap over the utterances of each test set (hover a score for the exact interval and the error breakdown).</p>
+  <p><b>Normalized</b> scores ignore case and punctuation; <b>Case &amp; punct.</b> counts them as errors. Segments of at most 30 s.</p>
+  <p>Results and configuration: <a href="${DATA.repo}/tree/main/benchmarks/sota">benchmarks/sota</a>. Raw data: <a href="leaderboard.json">leaderboard.json</a>.</p>`;
+
+selectLanguage(languageSelect.value);
+</script>
+</body>
+</html>

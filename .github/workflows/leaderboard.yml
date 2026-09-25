@@ -1,0 +1,51 @@
+# Rebuild the French ASR leaderboard (benchmarks/sota/results) and publish it on
+# GitHub Pages whenever results or the page generator change on main.
+# One-time setup: Settings > Pages > Build and deployment > Source: "GitHub Actions".
+name: Leaderboard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "benchmarks/sota/results/**"
+      - "benchmarks/sota/config*.yaml"
+      - "tools/leaderboard/**"
+      - ".github/workflows/leaderboard.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only the latest push gets deployed; never cancel a deployment halfway.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history: the page shows the date of the last results commit.
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # Standard library only: no dependency to install.
+      - run: python tools/leaderboard/build.py --results benchmarks/sota/results --output site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
