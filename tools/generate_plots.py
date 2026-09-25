@@ -17,15 +17,15 @@ If --output is given the figures are saved there as PNGs; otherwise they are
 shown interactively with plt.show().
 
 Usage:
-    python generate_plots.py FOLDER [FOLDER ...] [--output OUT] [--casepunc]
-                             [--plot-macro-wer] [--cap-macro-wer 100]
-                             [--macro-workers N] [--macro-cache PATH | --no-macro-cache]
+    python tools/generate_plots.py FOLDER [FOLDER ...] [--output OUT] [--casepunc]
+                                   [--plot-macro-wer] [--cap-macro-wer 100]
+                                   [--macro-workers N] [--macro-cache PATH | --no-macro-cache]
 
 Examples:
     # show interactively
-    python generate_plots.py benchmarks/linto_stt_fr_fastconformer/local_bench
+    python tools/generate_plots.py benchmarks/linto_stt_fr_fastconformer/local_bench
     # save to a folder, from several benchmark dirs at once
-    python generate_plots.py local_bench local_bench_rtf --output my_plots
+    python tools/generate_plots.py local_bench local_bench_rtf --output my_plots
 """
 import argparse
 import json
