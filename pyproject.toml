@@ -6,40 +6,66 @@ authors = [
     { name = "Audran Bert", email = "abert@linagora.com" },
 ]
 requires-python = ">=3.10,<3.13"
+# Core: only what every benchmark run imports (benchmarker.py, benchmark_manager,
+# utils/benchmark, interfaces.py) plus the third-party modules ssak imports at the
+# top of ssak.utils.{wer,monitoring,audio,text} -- ssak itself declares no
+# dependencies. Everything backend- or tool-specific lives in an extra below.
 dependencies = [
     "pyyaml",
+    "numpy",
     "torch",
+    "torchaudio>=2.3.1",
+    # torchaudio >= 2.9 delegates audio decoding to torchcodec.
     "torchcodec",
     "librosa>=0.10.1",
-    "websockets>=12.0",
+    "soxbindings",
     "tqdm>=4.66.2",
-    "torchaudio>=2.3.1",
+    "requests",
+    "matplotlib>=3.9",
     "jiwer>=3.0.4,<4.0.0",
     "num2words",
-    "matplotlib>=3.9",
     "psutil",
     "py3nvml",
     "ssak @ git+https://github.com/linagora-labs/ssak",
-    "soxbindings"
 ]
 
 [project.optional-dependencies]
+# ---- Backends -------------------------------------------------------------
 whisper = [
     "faster-whisper @ git+https://github.com/linto-ai/faster-whisper",
     "ctranslate2>=4.4.0",
 ]
+openai-whisper = [
+    # backend "openai" (interfaces_whisper.OpenAIModel -> `import whisper`).
+    "openai-whisper",
+]
 nemo = [
+    # nvidia/nemotron-3.5-asr-streaming-0.6b (EncDecRNNTBPEModelWithPrompt) needs >= 3.0.0.
     "nemo_toolkit[asr]>=2.5.0",
+    # CTC beam search with a KenLM language model (NemoModel, `lm` config key).
+    "pyctcdecode",
+]
+transformers = [
+    # backends "transformers", "transformers-facebook", "transformers-bofenghuang",
+    # "qwen3-omni". Unpinned so it can share the nemo env (transformers 4.x) or the
+    # transformers-5.x env. "transformers-voxtral-realtime" needs transformers 5.x.
+    "transformers",
+    "accelerate",
+    # Wav2Vec2ProcessorWithLM (transformers-bofenghuang) decodes with pyctcdecode.
+    "pyctcdecode",
 ]
 moss = [
     # The model's remote code imports transformers.utils.torch_compilable_check,
     # which only exists in transformers 5.x.
     "transformers>=5.0.0",
     "accelerate",
+]
+gemma3n = [
     # gemma-3n has a vision tower built through timm's TimmWrapperModel, so
     # transformers refuses to instantiate the model without timm (which itself
-    # needs torchvision). The gemma3n backend shares this transformers-5.x env;
-    # run_config.sh's pass 1 uses --extra moss --extra voxtral.
+    # needs torchvision). Shares the transformers-5.x env with moss/voxtral.
+    "transformers>=5.0.0",
+    "accelerate",
     "timm",
     "torchvision",
 ]
@@ -58,10 +84,39 @@ qwen-asr = [
     "transformers>=5.13.0",
     "accelerate",
 ]
+vibevoice = [
+    # microsoft/VibeVoice-ASR-HF (VibeVoiceAsrForConditionalGeneration) landed in
+    # transformers 5.3. Shares the transformers-5.x env with moss/voxtral/qwen-asr.
+    "transformers>=5.3.0",
+    "accelerate",
+]
+linto = [
+    # backends "linto-stt*" (websocket streaming to a LinTO-STT container).
+    "websockets>=12.0",
+]
+# The "vllm" backend only talks HTTP to a `vllm serve` process (core `requests`);
+# vLLM itself is expected in its own env/container (see `vllm_command`).
+
+# ---- Options --------------------------------------------------------------
+vad = [
+    # `vad: auditok` / `vad: silero` in configs (ssak.utils.vad imports lazily).
+    # `vad: pyannote` additionally needs pyannote.audio, not installed here.
+    "auditok",
+    "onnxruntime",
+]
+
+# ---- Analysis & tools -----------------------------------------------------
 visu = [
     "pandas",
+    "seaborn",
     "ipykernel",
-    "matplotlib",
+]
+tools = [
+    # tools/*.py standalone scripts (add_silence, concat_audios, subsample_data,
+    # generate_plots).
+    "pydub",
+    "scikit-learn",
+    "pandas",
     "seaborn",
 ]
 
@@ -92,6 +147,16 @@ conflicts = [
         { extra = "whisper" },
         { extra = "nemo" },
         { extra = "qwen-asr" },
+    ],
+    [
+        { extra = "whisper" },
+        { extra = "nemo" },
+        { extra = "vibevoice" },
+    ],
+    [
+        { extra = "whisper" },
+        { extra = "nemo" },
+        { extra = "gemma3n" },
     ],
 ]
 
