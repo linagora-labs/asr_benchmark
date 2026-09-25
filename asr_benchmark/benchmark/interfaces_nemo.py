@@ -4,6 +4,7 @@ import re
 from pathlib import Path
 import torch
 import json
+import tempfile
 import ssak.utils.vad
 import nemo.collections.asr as nemo_asr
 logging.getLogger('nemo_logging').setLevel(logging.ERROR)
@@ -94,7 +95,10 @@ class NemoModel(Model):
         return text
 
     def transcribe_batch(self, data: str) -> str:
-        with open("tmp.jsonl", "w", encoding="utf-8") as f:
+        # NeMo transcribes from a manifest file; a temp file per call so parallel runs
+        # never share it, removed even if transcription fails.
+        with tempfile.NamedTemporaryFile("w", suffix=".jsonl", encoding="utf-8", delete=False) as f:
+            manifest = f.name
             for i in data:
                 if self.is_prompt_model:
                     # With a manifest, the lhotse prompt dataset ignores target_lang: it takes the
@@ -103,11 +107,27 @@ class NemoModel(Model):
                     language = self.config["language"]
                     i = dict(i, lang=language, prompt_mode="auto" if language == "auto" else "langID")
                 f.write(json.dumps(i, ensure_ascii=False)+"\n")
+        try:
+            result = self._transcribe_manifest(manifest)
+        finally:
+            Path(manifest).unlink()
+        outputs = list()
+        for i in result:
+            if self.decoder:
+                logits = i.alignments
+                text = self.decoder.decode(logits.numpy())
+                outputs.append({'text': text})
+            else:
+                output = {'text': self.clean_text(i.text)}
+                outputs.append(output)
+        return outputs
+
+    def _transcribe_manifest(self, manifest):
         import nemo.collections.asr as nemo_asr
         batch_size = int(self.config.get('batch_size', 16))
         if isinstance(self.model, nemo_asr.models.EncDecMultiTaskModel):
             result = self.model.transcribe(
-                "tmp.jsonl",
+                manifest,
                 duration=None,
                 task="asr",
                 source_lang=self.config["language"],
@@ -118,20 +138,10 @@ class NemoModel(Model):
                 num_workers=4
             )
         elif self.is_prompt_model:
-            result = self.model.transcribe("tmp.jsonl", batch_size=batch_size, num_workers=4, target_lang=self.config["language"])
+            result = self.model.transcribe(manifest, batch_size=batch_size, num_workers=4, target_lang=self.config["language"])
         else:
-            result = self.model.transcribe("tmp.jsonl", batch_size=batch_size, num_workers=4, return_hypotheses=True if self.decoder else False)
-        outputs = list()
-        for i in result:
-            if self.decoder:
-                logits = i.alignments
-                text = self.decoder.decode(logits.numpy())
-                outputs.append({'text': text})
-            else:
-                output = {'text': self.clean_text(i.text)}
-                outputs.append(output)
-        Path("tmp.jsonl").unlink()
-        return outputs
+            result = self.model.transcribe(manifest, batch_size=batch_size, num_workers=4, return_hypotheses=True if self.decoder else False)
+        return result
 
     def can_output_word_timestamps(self):
         return True

@@ -1,6 +1,8 @@
 import argparse
+from pathlib import Path
 import yaml
 from asr_benchmark.benchmark import launch_benchmark
+from asr_benchmark.utils import setup_logging
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Benchmarking tool for STT models")
@@ -37,8 +39,16 @@ if __name__ == "__main__":
         default=None,
         help="",
     )
+    parser.add_argument(
+        "--log_file",
+        type=str,
+        default=None,
+        help="Log file (appended). Default: logs/<config name>_<date>.log",
+    )
 
     args = parser.parse_args()
+    log_file = setup_logging(args.log_file, name=Path(args.config[0]).stem)
+    print(f"Logs: {log_file}")
     for config_file in args.config:
         config = yaml.load(open(config_file, "r"), Loader=yaml.FullLoader)
         input_manifest = (

@@ -1,6 +1,9 @@
 import asyncio
+import atexit
+import io
 import json
 import os
+import tempfile
 import time
 import torchaudio
 import librosa
@@ -9,14 +12,28 @@ import subprocess
 import ssak.utils.audio
 
 
+# load_audio(return_format="file") rewrites the same wav at each call (callers use it
+# right away). One file per process, so parallel benchmarks never overwrite each other.
+_TMP_WAV = None
+
+
+def _tmp_wav():
+    global _TMP_WAV
+    if _TMP_WAV is None:
+        fd, _TMP_WAV = tempfile.mkstemp(prefix="asr_benchmark_", suffix=".wav")
+        os.close(fd)
+        atexit.register(lambda: os.path.exists(_TMP_WAV) and os.remove(_TMP_WAV))
+    return _TMP_WAV
+
+
 def load_audio(fname, return_format="librosa", start=0.0, duration=None):
     end = start + duration if duration else None
     waveform = ssak.utils.audio.load_audio(fname, start=start, end=end, sample_rate=16000, mono=True, return_format="torch" if return_format=="file" else return_format)
     if return_format == "file" or return_format=="torch":
         waveform = waveform.unsqueeze(0)
     if return_format == "file":
-        torchaudio.save("tmp.wav", waveform, sample_rate=16000)
-        return "tmp.wav"
+        torchaudio.save(_tmp_wav(), waveform, sample_rate=16000)
+        return _tmp_wav()
     else:
         return waveform
 
@@ -149,8 +166,9 @@ async def _linstt_streaming(
     import logging
     logger = logging.getLogger(__name__)
     stream_config = {"language": language, "sample_rate": 16000, "vad": apply_vad, "stream_duration": stream_duration, "stream_wait": stream_wait}
-    subprocess.run(["ffmpeg", "-y", "-i", audio_file, "-acodec", "pcm_s16le", "-ar", str(stream_config['sample_rate']), "-ac", "1", "tmp.wav"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stream = open("tmp.wav", "rb")
+    with tempfile.NamedTemporaryFile(suffix=".wav") as wav_file:
+        subprocess.run(["ffmpeg", "-y", "-i", audio_file, "-acodec", "pcm_s16le", "-ar", str(stream_config['sample_rate']), "-ac", "1", wav_file.name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stream = io.BytesIO(Path(wav_file.name).read_bytes())
     stream_config["audio_file"] = audio_file
     text = ""
     partial = None

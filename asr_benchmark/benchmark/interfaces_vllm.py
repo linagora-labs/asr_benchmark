@@ -12,6 +12,7 @@ from pathlib import Path
 
 import requests
 
+from asr_benchmark.utils import log_path
 from asr_benchmark.utils.benchmark import load_audio
 from asr_benchmark.benchmark.interfaces import Model
 
@@ -307,7 +308,7 @@ class VllmTranscriptionModel(Model):
         # _get_num_workers reads it); the built kernel is then cached under
         # ~/.cache/flashinfer, so the cost is paid once.
         config["env"] = dict(config.get("env", {}) or {})
-        config["log_file"] = config.get("log_file", "vllm.log")
+        config["log_file"] = config.get("log_file") or str(log_path(f"vllm_{config['model']}.log"))
         return super().add_defaults_to_config(config)
 
     def get_metadata(self):
