@@ -1,0 +1,89 @@
+input_manifest: benchmarks/sota/manifest_rtf.jsonl
+output_folder: benchmarks/sota/local_bench_rtf
+compute_rtf: True
+plot_monitoring: True
+skip_errors: False
+save_alignments: False
+save_predictions: False
+
+# RTF + (V)RAM counterpart of config.yaml: same model list, but it measures
+# speed/hardware on manifest_rtf.jsonl instead of WER. Keep both files in sync.
+#
+# The whisper, nemo and transformers-5.x (moss / voxtral / gemma3n / qwen3-omni /
+# vibevoice) extras conflict in pyproject.toml, so this file is run in several
+# passes, one per environment. Already-benched models are skipped; with
+# skip_errors: False a pass aborts at the first backend it cannot import, set it
+# to True to sweep:
+#   uv run --extra moss --extra voxtral --extra vibevoice python benchmarker.py benchmarks/sota/config_rtf.yaml
+#   uv run --extra nemo                 python benchmarker.py benchmarks/sota/config_rtf.yaml
+#   uv run --extra whisper              python benchmarker.py benchmarks/sota/config_rtf.yaml
+# On the DGX: tools/run_sota_dgx.sh -c benchmarks/sota/config_rtf.yaml ...
+
+benchmarks:
+  # https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602#vllm-recommended
+  - backend: transformers-voxtral-realtime
+    model: mistralai/Voxtral-Mini-4B-Realtime-2602
+    language: fr
+  # --- Mistral Voxtral (audio LLM) ------------------------------------------
+  - backend: transformers-voxtral
+    model: mistralai/Voxtral-Small-24B-2507
+    dtype: bfloat16
+    language: fr
+  # --- MOSS-Transcribe-Diarize ----------------------------------------------
+  # No language set: auto-detect is the only documented prompt and the best on
+  # French. `language` is an unofficial knob (an English pin makes it translate).
+  - backend: moss
+    model: OpenMOSS-Team/MOSS-Transcribe-Diarize
+    dtype: bfloat16
+    batch_size: 8
+  # --- Google Gemma 3n (general multimodal LLM, needs timm) -----------------
+  - backend: gemma3n
+    model: google/gemma-3n-e4b-it
+    dtype: bfloat16
+  # --- Qwen3-Omni (30B MoE, large VRAM, not ASR-tuned) ----------------------
+  - backend: qwen3-omni
+    model: Qwen/Qwen3-Omni-30B-A3B-Instruct
+    dtype: bfloat16
+  # --- Microsoft VibeVoice-ASR (9B, transformers port of microsoft/VibeVoice-ASR) --
+  # No language setting: auto-detects. Needs transformers >= 5.3.
+  - backend: vibevoice-asr
+    model: microsoft/VibeVoice-ASR-HF
+    dtype: bfloat16
+    batch_size: 8
+  # --- NVIDIA Nemotron 3.5 ASR (streaming, language-ID prompt, needs NeMo >= 3.0) --
+  # Transcribed offline (full utterance), with the French prompt forced.
+  - backend: nemo
+    model: nvidia/nemotron-3.5-asr-streaming-0.6b
+    batch_size: 16
+    language: fr
+  # --- NVIDIA canary / parakeet ---------------------------------------------
+  # language is required for canary (EncDecMultiTaskModel): the nemo interface
+  # passes config["language"] as source_lang/target_lang, no default.
+  - backend: nemo
+    model:
+    - nvidia/canary-180m-flash
+    - nvidia/canary-1b-v2
+    - nvidia/parakeet-tdt-0.6b-v3
+    batch_size: 16
+    language: fr
+  # --- fastconformer hybrid, RNNT decoder -----------------------------------
+  - backend: nemo
+    model:
+    - nvidia/stt_fr_fastconformer_hybrid_large_pc
+    - bofenghuang/stt_fr_fastconformer_hybrid_large
+    - linagora/linto_stt_fr_fastconformer
+    - linagora/linto_stt_fr_fastconformer_pc
+    batch_size: 16
+    decoder:
+    - rnnt
+  # --- LINTO fastconformer-pc, CTC decoder (RNNT is above) ------------------
+  - backend: nemo
+    model: linagora/linto_stt_fr_fastconformer_pc
+    batch_size: 16
+    decoder:
+    - ctc
+  # --- OpenAI whisper -------------------------------------------------------
+  - backend: faster-whisper
+    model:
+    - large-v3-turbo
+    precision: float16
