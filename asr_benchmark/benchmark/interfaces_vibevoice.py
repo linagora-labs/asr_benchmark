@@ -116,8 +116,9 @@ class VibeVoiceASRModel(Model):
 
     def get_folder_name(self):
         c = self.config
-        name = f"vibevoice-asr_{c['model'].replace('/', '-')}_device-{c['device']}_dtype-{c['dtype']}"
-        name += "_prompt" if c.get("prompt") else ""
+        name = f"vibevoice-asr_{c['model'].replace('/', '-')}{self.device_tag()}"
+        name += self.detail(f"_dtype-{c['dtype']}")
+        name += self.detail("_prompt") if c.get("prompt") else ""
         name = name.replace("/", "-")
         name += "_rtf" if c.get("compute_rtf") else ""
         return name

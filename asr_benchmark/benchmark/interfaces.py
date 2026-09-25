@@ -59,6 +59,23 @@ class Model():
     
     def get_folder_name(self):
         raise NotImplementedError("Not supposed to be called")
+
+    # Folder names: by default only the model identity (backend, model, decoder...) so
+    # that model comparisons stay readable. With `full_name: true` in the config, the
+    # settings (dtype, device, vad, decoding params...) are added, to compare several
+    # settings of the same model.
+    def detail(self, tag):
+        """`tag` if the config asks for full folder names, else ""."""
+        return tag if self.config.get("full_name", False) else ""
+
+    # vad/device are left out even in full names for the usual values (no VAD, cuda).
+    def vad_tag(self):
+        vad = self.config.get("vad")
+        return "" if str(vad).lower() in ("false", "none", "") else self.detail(f"_vad-{vad}")
+
+    def device_tag(self):
+        device = self.config.get("device")
+        return "" if device in ("cuda", None) else self.detail(f"_device-{device}")
     
     def add_defaults_to_config(self, config):
         # config["language"] = config.get("language", "fr")

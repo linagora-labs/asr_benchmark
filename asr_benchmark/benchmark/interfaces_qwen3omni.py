@@ -97,7 +97,8 @@ class Qwen3OmniModel(Model):
 
     def get_folder_name(self):
         c = self.config
-        name = f"qwen3-omni_{c['model'].replace('/', '-')}_device-{c['device']}_dtype-{c['dtype']}"
+        name = f"qwen3-omni_{c['model'].replace('/', '-')}{self.device_tag()}"
+        name += self.detail(f"_dtype-{c['dtype']}")
         name = name.replace("/", "-")
         name += "_rtf" if c.get("compute_rtf") else ""
         return name

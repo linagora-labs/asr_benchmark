@@ -21,6 +21,8 @@
 # backend you want first, or set skip_errors: True to sweep through all three.
 input_manifest: benchmarks/linto_stt_fr_fastconformer/manifest.jsonl
 output_folder: benchmarks/main/local_bench
+# Long folder names (dtype, decoding params...): the results were produced with them.
+full_name: True
 input_audios_paths: nemo_dataset/converted_audios/%n_%s
 compute_rtf: True
 plot_monitoring: False

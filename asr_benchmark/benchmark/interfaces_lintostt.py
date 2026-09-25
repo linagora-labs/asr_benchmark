@@ -167,12 +167,13 @@ class LintoSttWhisperModel(Model):
 
     def get_folder_name(self):
         tot_config = self.config.copy()
-        name = (
-            f"linto-stt-whisper_{tot_config['model']}_accurate-{tot_config['accurate']}"
-        )
-        name += f"_vad-{tot_config['vad']}_device-{tot_config['device']}_{self.config['docker_image'].replace(':', '-')}"
+        name = f"linto-stt-whisper_{tot_config['model']}"
+        name += self.detail(f"_accurate-{tot_config['accurate']}")
+        name += f"{self.vad_tag()}{self.device_tag()}"
+        name += self.detail(f"_{self.config['docker_image'].replace(':', '-')}")
         if tot_config["streaming"]:
-            name += f"_streaming-{tot_config['streaming_min_chunk_size']}-{tot_config['streaming_buffer_trimming_sec']}-{tot_config['streaming_wait']}-{tot_config['streaming_chunk']}"
+            name += "_streaming"
+            name += self.detail(f"-{tot_config['streaming_min_chunk_size']}-{tot_config['streaming_buffer_trimming_sec']}-{tot_config['streaming_wait']}-{tot_config['streaming_chunk']}")
             name += "_latency" if tot_config["compute_latency"] else ""
         name = name.replace("/", "-")
         name += "_rtf" if tot_config["compute_rtf"] else ""
@@ -260,10 +261,12 @@ class LintoSttNemoModel(LintoSttWhisperModel):
     def get_folder_name(self):
         tot_config = self.config.copy()
         name = f"linto-stt-nemo_{tot_config['model']}_decoder-{tot_config['decoder']}"
-        name += f"_attn-{tot_config['att_context_size']}"
-        name += f"_vad-{tot_config['vad']}_device-{tot_config['device']}_{self.config['docker_image'].replace(':', '-')}"
+        name += self.detail(f"_attn-{tot_config['att_context_size']}")
+        name += f"{self.vad_tag()}{self.device_tag()}"
+        name += self.detail(f"_{self.config['docker_image'].replace(':', '-')}")
         if tot_config["streaming"]:
-            name += f"_streaming-{tot_config['streaming_min_chunk_size']}-{tot_config['streaming_buffer_trimming_sec']}-{tot_config['streaming_wait']}-{tot_config['streaming_chunk']}"
+            name += "_streaming"
+            name += self.detail(f"-{tot_config['streaming_min_chunk_size']}-{tot_config['streaming_buffer_trimming_sec']}-{tot_config['streaming_wait']}-{tot_config['streaming_chunk']}")
             name += "_latency" if tot_config["compute_latency"] else ""
         name = name.replace("/", "-")
         name += "_rtf" if tot_config["compute_rtf"] else ""

@@ -320,9 +320,9 @@ class VllmTranscriptionModel(Model):
         c = self.config
         name = f"vllm_{c['model'].replace('/', '-')}"
         if c["language"]:
-            name += f"_lang-{c['language']}"
+            name += self.detail(f"_lang-{c['language']}")
         if c["concurrency"] > 1:
-            name += f"_conc{c['concurrency']}"
+            name += self.detail(f"_conc{c['concurrency']}")
         name = name.replace("/", "-")
         name += "_rtf" if c.get("compute_rtf") else ""
         return name

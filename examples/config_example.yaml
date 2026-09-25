@@ -1,5 +1,7 @@
 input_manifest: examples/manifest_example.jsonl
 output_folder: examples/output
+# Folder names: model only (default), or True to add the settings (dtype, device, decoding params...)
+full_name: False
 compute_rtf: True
 plot_monitoring: False
 skip_errors: False

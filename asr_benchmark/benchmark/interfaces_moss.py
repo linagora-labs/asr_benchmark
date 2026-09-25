@@ -210,16 +210,17 @@ class MossTranscribeDiarizeModel(Model):
     def get_folder_name(self):
         c = self.config
         model = c["model"].replace("/", "-")
-        name = f"moss_{model}_device-{c['device']}_dtype-{c['dtype']}"
-        name += f"_lang-{c['language']}" if c["language"] else "_lang-auto"
+        name = f"moss_{model}{self.device_tag()}"
+        name += self.detail(f"_dtype-{c['dtype']}")
+        name += self.detail(f"_lang-{c['language']}" if c["language"] else "_lang-auto")
         if c["do_sample"]:
-            name += f"_temperature-{c['temperature']}"
+            name += self.detail(f"_temperature-{c['temperature']}")
         else:
-            name += "_greedy"
+            name += self.detail("_greedy")
         if c["no_repeat_ngram_size"] or (c["repetition_penalty"] and c["repetition_penalty"] != 1.0):
-            name += f"_norep{c['no_repeat_ngram_size']}-rep{c['repetition_penalty']}"
+            name += self.detail(f"_norep{c['no_repeat_ngram_size']}-rep{c['repetition_penalty']}")
         if c["raw_output"]:
-            name += "_raw"
+            name += self.detail("_raw")
         name = name.replace("/", "-")
         name += "_rtf" if c.get("compute_rtf") else ""
         return name

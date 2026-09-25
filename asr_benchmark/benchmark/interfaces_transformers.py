@@ -95,14 +95,15 @@ class TransformersModel(Model):
     
     def get_folder_name(self):
         tot_config = self.config.copy()
-        name = f"transformers_{tot_config['model']}_vad-{tot_config['vad']}_device-{tot_config['device']}_attn-{tot_config['attn']}_precision-{tot_config['precision']}"
-        name += f"_batch-{tot_config['batch_size']}_chunk-{tot_config['chunk_length_s']}_stride-{tot_config['stride_length_s']}"
+        name = f"transformers_{tot_config['model']}{self.vad_tag()}{self.device_tag()}"
+        name += self.detail(f"_attn-{tot_config['attn']}_precision-{tot_config['precision']}")
+        name += self.detail(f"_batch-{tot_config['batch_size']}_chunk-{tot_config['chunk_length_s']}_stride-{tot_config['stride_length_s']}")
         if tot_config['do_sample']:
-            name += f"_temperature-{tot_config['temperature']}_topk-{tot_config['top_k']}"
+            name += self.detail(f"_temperature-{tot_config['temperature']}_topk-{tot_config['top_k']}")
         else:
-            name += f"_beams-{tot_config['num_beams']}"
+            name += self.detail(f"_beams-{tot_config['num_beams']}")
         if tot_config['device'] == "cpu":
-            name += f"_numthreads-{tot_config['num_threads']}"
+            name += self.detail(f"_numthreads-{tot_config['num_threads']}")
         name = name.replace("/", "-")
         name += "_rtf" if tot_config['compute_rtf'] else ""
         return name
@@ -132,14 +133,15 @@ class IntelTransformersModel(TransformersModel):
     
     def get_folder_name(self):
         tot_config = self.config.copy()
-        name = f"intel-transformers_{tot_config['model']}_vad-{tot_config['vad']}_device-{tot_config['device']}_attn-{tot_config['attn']}"
-        name += f"_batch-{tot_config['batch_size']}_chunk-{tot_config['chunk_length_s']}_stride-{tot_config['stride_length_s']}"
+        name = f"intel-transformers_{tot_config['model']}{self.vad_tag()}{self.device_tag()}"
+        name += self.detail(f"_attn-{tot_config['attn']}")
+        name += self.detail(f"_batch-{tot_config['batch_size']}_chunk-{tot_config['chunk_length_s']}_stride-{tot_config['stride_length_s']}")
         if tot_config['do_sample']:
-            name += f"_temperature-{tot_config['temperature']}_topk-{tot_config['top_k']}"
+            name += self.detail(f"_temperature-{tot_config['temperature']}_topk-{tot_config['top_k']}")
         else:
-            name += f"_beams-{tot_config['num_beams']}"
+            name += self.detail(f"_beams-{tot_config['num_beams']}")
         if tot_config['device'] == "cpu":
-            name += f"_numthreads-{tot_config['num_threads']}"
+            name += self.detail(f"_numthreads-{tot_config['num_threads']}")
         name = name.replace("/", "-")
         name += "_rtf" if tot_config['compute_rtf'] else ""
         return name
@@ -183,9 +185,9 @@ class TransformersFacebookModel(TransformersModel):
     
     def get_folder_name(self):
         tot_config = self.config.copy()
-        name = f"transformers_{tot_config['model']}_vad-{tot_config['vad']}_device-{tot_config['device']}"
+        name = f"transformers_{tot_config['model']}{self.vad_tag()}{self.device_tag()}"
         if tot_config['device'] == "cpu":
-            name += f"_numthreads-{tot_config['num_threads']}"
+            name += self.detail(f"_numthreads-{tot_config['num_threads']}")
         name = name.replace("/", "-")
         name += "_rtf" if tot_config['compute_rtf'] else ""
         return name
@@ -243,7 +245,8 @@ class TransformersVoxtralRealtimeModel(Model):
 
     def get_folder_name(self):
         c = self.config
-        name = f"transformers-voxtral-realtime_{c['model']}_device-{c['device']}_dtype-{c['dtype']}_maxtokens-{c['max_tokens']}"
+        name = f"transformers-voxtral-realtime_{c['model']}{self.device_tag()}"
+        name += self.detail(f"_dtype-{c['dtype']}_maxtokens-{c['max_tokens']}")
         name = name.replace("/", "-")
         name += "_rtf" if c.get('compute_rtf') else ""
         return name
@@ -284,9 +287,9 @@ class TransformersBofenghuangModel(TransformersModel):
     
     def get_folder_name(self):
         tot_config = self.config.copy()
-        name = f"transformers_{tot_config['model']}_vad-{tot_config['vad']}_device-{tot_config['device']}"
+        name = f"transformers_{tot_config['model']}{self.vad_tag()}{self.device_tag()}"
         if tot_config['device'] == "cpu":
-            name += f"_numthreads-{tot_config['num_threads']}"
+            name += self.detail(f"_numthreads-{tot_config['num_threads']}")
         name = name.replace("/", "-")
         name += "_rtf" if tot_config['compute_rtf'] else ""
         return name

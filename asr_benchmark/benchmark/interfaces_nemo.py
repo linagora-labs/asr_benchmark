@@ -180,23 +180,21 @@ class NemoModel(Model):
             model = tot_config['model'].split("/")[-1].replace(".nemo", "").replace("_","-")
         else:
             model = tot_config['model'].replace(".nemo", "").replace("_","-").replace("/","-")
-        name = f"nemo_{model}_device-{tot_config['device']}"
+        name = f"nemo_{model}{self.device_tag()}"
         if self.model_type == nemo_asr.models.EncDecHybridRNNTCTCBPEModel:
             if tot_config.get('ngram_model', False):
                 name += f"_decoder-{Path(tot_config['ngram_model']).name}"
             else:
                 name += f"_decoder-{tot_config['decoder']}"
         elif self.model_type == nemo_asr.models.EncDecRNNTModel:
-            name += f"_decoder-rnnt"
+            name += self.detail("_decoder-rnnt")
         elif self.model_type == nemo_asr.models.EncDecCTCModelBPE:
-            name += f"_decoder-ctc"
+            name += self.detail("_decoder-ctc")
         if self.is_prompt_model:
-            name += f"_lang-{tot_config['language']}"
+            name += self.detail(f"_lang-{tot_config['language']}")
         if tot_config['compute_rtf']:
-            name += f"_vad-{tot_config['vad']}"
-        else:
-            name += f"_vad-false"
-        name += f"_threads{tot_config['num_threads']}" if tot_config['device'] == 'cpu' else ""
+            name += self.vad_tag()
+        name += self.detail(f"_threads{tot_config['num_threads']}") if tot_config['device'] == 'cpu' else ""
         name = name.replace("/", "-")
         name += "_rtf" if tot_config['compute_rtf'] else ""
         return name

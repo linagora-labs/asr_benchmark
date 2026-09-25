@@ -102,9 +102,10 @@ class Gemma3nModel(Model):
 
     def get_folder_name(self):
         c = self.config
-        name = f"gemma3n_{c['model'].replace('/', '-')}_device-{c['device']}_dtype-{c['dtype']}"
+        name = f"gemma3n_{c['model'].replace('/', '-')}{self.device_tag()}"
+        name += self.detail(f"_dtype-{c['dtype']}")
         name = name.replace("/", "-")
         if c["no_repeat_ngram_size"] or (c["repetition_penalty"] and c["repetition_penalty"] != 1.0):
-            name += f"_norep{c['no_repeat_ngram_size']}-rep{c['repetition_penalty']}"
+            name += self.detail(f"_norep{c['no_repeat_ngram_size']}-rep{c['repetition_penalty']}")
         name += "_rtf" if c.get("compute_rtf") else ""
         return name

@@ -97,8 +97,9 @@ class Qwen3ASRModel(Model):
 
     def get_folder_name(self):
         c = self.config
-        name = f"qwen3-asr_{c['model'].replace('/', '-')}_device-{c['device']}_dtype-{c['dtype']}"
-        name += f"_lang-{c['language']}" if c.get("language") else "_lang-auto"
+        name = f"qwen3-asr_{c['model'].replace('/', '-')}{self.device_tag()}"
+        name += self.detail(f"_dtype-{c['dtype']}")
+        name += self.detail(f"_lang-{c['language']}" if c.get("language") else "_lang-auto")
         name = name.replace("/", "-")
         name += "_rtf" if c.get("compute_rtf") else ""
         return name
