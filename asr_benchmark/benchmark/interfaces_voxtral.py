@@ -93,7 +93,7 @@ class TransformersVoxtralModel(Model):
     def get_folder_name(self):
         c = self.config
         model = c["model"].replace("/", "-")
-        name = f"voxtral_{model}{self.device_tag()}"
+        name = f"transformers-voxtral_{model}{self.device_tag()}"
         name += self.detail(f"_dtype-{c['dtype']}")
         if c["do_sample"]:
             name += self.detail(f"_temperature-{c['temperature']}")

@@ -16,7 +16,7 @@
   html { overflow-y: scroll; }  /* no layout shift between the tabs */
   body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, sans-serif; }
   a { color: var(--accent); }
-  main { max-width: 1180px; margin: 0 auto; padding: 32px 16px 64px; }
+  main { max-width: 1680px; margin: 0 auto; padding: 32px 16px 64px; }
   h1 { margin: 0 0 4px; font-size: 26px; }
   .muted { color: var(--muted); }
   .controls { display: flex; flex-wrap: wrap; gap: 12px 24px; margin: 24px 0 12px; align-items: center; }
@@ -29,17 +29,17 @@
   table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
   th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
   th { font-size: 13px; vertical-align: bottom; }
-  th:nth-child(-n+2), td:nth-child(-n+2) { text-align: left; }
+  th:nth-child(-n+2), td:nth-child(-n+2), .left { text-align: left; }
   td.avg { font-weight: 700; }
   th.sortable { cursor: pointer; user-select: none; }
   th.sortable:hover, th[aria-sort="ascending"] { color: var(--accent); }
   small { font-size: 11px; opacity: .75; }
-  .notes { margin-top: 20px; font-size: 14px; max-width: 80ch; }
+  .notes { margin-top: 20px; font-size: 14px; }
   .tabs { display: flex; flex-wrap: wrap; gap: 4px 24px; align-items: center; margin-top: 24px; border-bottom: 1px solid var(--line); }
   .tabs a { padding: 8px 2px; margin-bottom: -1px; color: var(--muted); text-decoration: none; font-weight: 600; border-bottom: 2px solid transparent; }
   .tabs a[aria-current="page"] { color: var(--accent); border-color: var(--accent); }
   .tabs label { margin-left: auto; }
-  .intro { margin: 16px 0 0; max-width: 80ch; }
+  .intro { margin: 16px 0 0; }
   #tab-testsets .scroll { margin-top: 24px; }
   .hist rect { fill: var(--accent); }
   .hist text { fill: var(--muted); font-size: 10px; }
@@ -89,6 +89,10 @@ const metricKey = () => state.metric + (state.norm ? "_nocasepunc" : "");
 const datasetsOf = lang => DATA.datasets.filter(d => d.language === lang);
 const modelsOf = lang => DATA.models.filter(m => datasetsOf(lang).some(d => d.id in m.scores));
 const result = (m, d) => (m.scores[d.id] || {})[metricKey()];  // {wer, sub, del, ins, ci95} or undefined
+// Model info columns.
+const params = n => n >= 1e9 ? `${(n / 1e9).toFixed(n < 1e10 ? 1 : 0)}B` : `${Math.round(n / 1e6)}M`;
+const licenseText = l => ({ "apache-2.0": "Apache-2.0", gemma: "Gemma" })[l] || l.toUpperCase();
+const languagesText = l => l && l.length <= 5 ? l.join(", ") : "multi";
 const halfWidth = r => r && r.ci95 ? (r.ci95[1] - r.ci95[0]) / 2 : null;
 // Test sets without casing/punctuation in their references (MLS, SUMM-RE) have no
 // "Case & punct." score: they are left out of that mode.
@@ -177,12 +181,13 @@ function render() {
   }
   const sortBy = datasets.find(d => d.id === state.sort);  // undefined: sort by the average or the rank
   const byRank = state.sort === "rank";
-  const sortedId = byRank ? "rank" : sortBy ? sortBy.id : "";
+  const byInfo = { params: m => m.params, rtfx: m => m.rtfx != null ? -m.rtfx : null }[state.sort];  // RTFx: fastest first
+  const sortedId = byRank || byInfo ? state.sort : sortBy ? sortBy.id : "";
   const rows = modelsOf(state.language).map(m => ({ m, avg: average(m, datasets) }));
   const ranks = averageRanks(rows.filter(r => r.avg).map(r => r.m), datasets);
   for (const r of rows) {
     r.rank = ranks.get(r.m);
-    r.key = byRank ? r.rank : sortBy ? (result(r.m, sortBy) || {}).wer : r.avg && r.avg.wer;
+    r.key = byInfo ? byInfo(r.m) : byRank ? r.rank : sortBy ? (result(r.m, sortBy) || {}).wer : r.avg && r.avg.wer;
   }
   // Models without a score in the sorted column go last, by name.
   rows.sort((a, b) => (a.key ?? Infinity) - (b.key ?? Infinity) || a.m.model.localeCompare(b.m.model));
@@ -198,7 +203,10 @@ function render() {
   };
   const head = `<tr><th>#</th><th>Model</th>${th("", "Average", `${datasets.length} test sets`, "Sort by the average")}` +
     th("rank", "Avg rank", `${datasets.length} test sets`, "Sort by the average rank") +
-    datasets.map(d => th(d.id, esc(d.name), d.hours != null ? f1(d.hours) + " h" : "", `${d.domain}. Sort by this test set`)).join("") + "</tr>";
+    datasets.map(d => th(d.id, esc(d.name), d.hours != null ? f1(d.hours) + " h" : "", `${d.domain}. Sort by this test set`)).join("") +
+    th("rtfx", "RTFx", "speed", "Seconds of audio transcribed per second of computation (higher is faster). Sort by speed") +
+    th("params", "Size", "parameters", "Number of parameters. Sort by size") +
+    `<th class="left">License</th><th class="left" title="Languages supported according to the model card">Languages</th></tr>`;
   let rank = 0;
   const body = rows.map(({ m, avg, rank: avgRank, key }) => {
     const name = m.url ? `<a href="${esc(m.url)}">${esc(m.model)}</a>` : esc(m.model);
@@ -216,7 +224,10 @@ function render() {
                         : `<td class="muted" title="Not evaluated on all the selected test sets">—</td>`;
     const rankCell = avgRank != null ? cell(avgRank, null, rankClass(avgRank, rankValues), "Mean of the ranks over the selected test sets")
                                      : `<td class="muted">—</td>`;
-    return `<tr><td>${key != null ? ++rank : ""}</td><td>${name}<br><small>${esc([m.variant, m.backend].filter(Boolean).join(" · "))}</small></td>${avgCell}${rankCell}${cells}</tr>`;
+    const info = (m.rtfx != null ? `<td title="${esc(m.hardware ? `On ${m.hardware}` : "")}">${Math.round(m.rtfx)}×</td>` : `<td class="muted" title="Not measured yet">—</td>`) +
+      `<td>${m.params ? params(m.params) : "—"}</td><td class="left">${esc(m.license ? licenseText(m.license) : "—")}</td>` +
+      `<td class="left" title="${esc(m.languages ? m.languages.join(" ") : "Not listed in the model card")}">${esc(languagesText(m.languages))}</td>`;
+    return `<tr><td>${key != null ? ++rank : ""}</td><td>${name}<br><small>${esc([m.variant, m.backend].filter(Boolean).join(" · "))}</small></td>${avgCell}${rankCell}${cells}${info}</tr>`;
   }).join("");
   document.getElementById("board").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
 }
@@ -260,6 +271,7 @@ document.getElementById("notes").innerHTML = `
   <p><b>Avg rank</b>: mean of the model's rank on each selected test set (1 = best), among the models that have an average. Unlike the average, a test set with high error rates does not weigh more than the others.</p>
   <p><b>±</b>: half-width of the 95% confidence interval, by bootstrap over the utterances of each test set (hover a score for the exact interval and the error breakdown).</p>
   <p><b>Normalized</b> scores ignore case and punctuation; <b>Case &amp; punct.</b> counts them as errors; it leaves out the test sets whose references have no case and punctuation. Segments of at most 30 s.</p>
+  <p><b>Size</b>, <b>License</b> and <b>Languages</b> (up to 5, "multi" beyond: hover for the list) come from the model cards. <b>RTFx</b>: seconds of audio transcribed per second of computation, on long recordings (hover for the hardware); higher is faster.</p>
   <p>Results and configuration: <a href="${DATA.repo}/tree/main/benchmarks/sota">benchmarks/sota</a>. Raw data: <a href="leaderboard.json">leaderboard.json</a>.</p>`;
 
 // Tabs: the URL hash (#test-sets) picks the tab, so that it can be linked.

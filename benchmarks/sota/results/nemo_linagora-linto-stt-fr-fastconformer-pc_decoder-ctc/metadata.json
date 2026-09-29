@@ -12,5 +12,13 @@
   "compute_latency": false,
   "plot_monitoring": false,
   "input_audios_paths": "",
-  "word_timestamps": true
+  "word_timestamps": true,
+  "model_info": {
+    "hf": "linagora/linto_stt_fr_fastconformer_pc",
+    "license": "cc-by-4.0",
+    "params": 115000000,
+    "languages": [
+      "fr"
+    ]
+  }
 }

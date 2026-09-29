@@ -357,6 +357,7 @@ def bench_model(config, input_manifest, output_folder, debug=False):
     if len(data)>0:
         model = get_model(config)
         model.load()
+        n_params = model.count_parameters()
         audio = model.load_audio(PATH_TO_WARMUP_FILE)
         _ = model.transcribe(audio)
         for dataset in data:
@@ -371,8 +372,20 @@ def bench_model(config, input_manifest, output_folder, debug=False):
                 iterator = transcribe_fast(model, dataset_data, output_folder, config)
             process_result(iterator, bench_dataset_result, output_folder, config, save_interval=1 if config.get('compute_rtf', True) else None)
         model.cleanup()
-        with open(Path(output_folder) / "metadata.json", "w", encoding="utf-8") as f:
-            f.write(json.dumps(model.get_metadata(), indent=2, ensure_ascii=False))
+        metadata = model.get_metadata()
+        # model_info (license, size, languages: tools/fill_model_info.py, or edited by hand)
+        # is not part of the config: keep it across reruns. The size is counted on the
+        # loaded model when the API cannot give it (e.g. .nemo checkpoints, no safetensors).
+        metadata_file = Path(output_folder) / "metadata.json"
+        model_info = {}
+        if metadata_file.exists():
+            model_info = json.loads(metadata_file.read_text(encoding="utf-8")).get("model_info") or {}
+        if n_params and not model_info.get("params"):
+            model_info["params"] = n_params
+        if model_info:
+            metadata["model_info"] = model_info
+        with open(metadata_file, "w", encoding="utf-8") as f:
+            f.write(json.dumps(metadata, indent=2, ensure_ascii=False))
     else:
         logger.info(f"Skipping transcriptions, it has already been transcribed")
     process_wer(output_folder, config)

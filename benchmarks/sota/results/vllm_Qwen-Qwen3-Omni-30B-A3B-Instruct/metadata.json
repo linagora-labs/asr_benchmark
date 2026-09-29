@@ -1,0 +1,60 @@
+{
+  "concurrency": 8,
+  "env": {
+    "MAX_JOBS": 4
+  },
+  "startup_timeout": 7200,
+  "backend": "vllm",
+  "model": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+  "port": 8105,
+  "language": "fr",
+  "server": "http://localhost",
+  "device": "cuda",
+  "launch": true,
+  "vllm_command": [
+    "vllm",
+    "serve"
+  ],
+  "trust_remote_code": false,
+  "served_model_name": null,
+  "gpu_memory_utilization": 0.85,
+  "extra_args": [],
+  "temperature": 0.0,
+  "strip_diarization": true,
+  "request_timeout": 600,
+  "log_file": "vllm.log",
+  "input_manifest": "benchmarks/sota/manifest.jsonl",
+  "compute_rtf": false,
+  "save_predictions": true,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "device_name": "NVIDIA GB10",
+  "word_timestamps": false,
+  "model_info": {
+    "hf": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+    "license": "apache-2.0",
+    "params": 35259818545,
+    "languages": [
+      "en",
+      "zh",
+      "ko",
+      "ja",
+      "de",
+      "ru",
+      "it",
+      "fr",
+      "es",
+      "pt",
+      "ms",
+      "nl",
+      "id",
+      "tr",
+      "vi",
+      "yue",
+      "ar",
+      "ur"
+    ]
+  }
+}

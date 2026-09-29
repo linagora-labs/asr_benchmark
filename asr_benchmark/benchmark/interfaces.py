@@ -57,6 +57,19 @@ class Model():
         metadata['word_timestamps'] = self.can_output_word_timestamps()
         return metadata
     
+    def count_parameters(self):
+        """Number of parameters of the loaded model (self.model, or the model of a
+        transformers pipeline), None when it is not a torch module of this process
+        (servers, CTranslate2...)."""
+        model = getattr(self, "model", None)
+        for module in (model, getattr(model, "model", None)):
+            if callable(getattr(module, "parameters", None)):
+                try:
+                    return sum(p.numel() for p in module.parameters())
+                except Exception:
+                    return None
+        return None
+
     def get_folder_name(self):
         raise NotImplementedError("Not supposed to be called")
 

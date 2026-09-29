@@ -12,5 +12,13 @@
   "compute_latency": false,
   "plot_monitoring": false,
   "input_audios_paths": "",
-  "word_timestamps": true
+  "word_timestamps": true,
+  "model_info": {
+    "hf": "bofenghuang/stt_fr_fastconformer_hybrid_large",
+    "license": "apache-2.0",
+    "params": 115000000,
+    "languages": [
+      "fr"
+    ]
+  }
 }

@@ -13,5 +13,37 @@
   "compute_latency": false,
   "plot_monitoring": false,
   "input_audios_paths": "",
-  "word_timestamps": true
+  "word_timestamps": true,
+  "model_info": {
+    "hf": "nvidia/parakeet-tdt-0.6b-v3",
+    "license": "cc-by-4.0",
+    "params": 627057286,
+    "languages": [
+      "en",
+      "es",
+      "fr",
+      "de",
+      "bg",
+      "hr",
+      "cs",
+      "da",
+      "nl",
+      "et",
+      "fi",
+      "el",
+      "hu",
+      "it",
+      "lv",
+      "lt",
+      "mt",
+      "pl",
+      "pt",
+      "ro",
+      "sk",
+      "sl",
+      "sv",
+      "ru",
+      "uk"
+    ]
+  }
 }

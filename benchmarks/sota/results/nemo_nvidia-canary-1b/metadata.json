@@ -12,5 +12,16 @@
   "compute_latency": false,
   "plot_monitoring": false,
   "input_audios_paths": "",
-  "word_timestamps": true
+  "word_timestamps": true,
+  "model_info": {
+    "hf": "nvidia/canary-1b",
+    "license": "cc-by-nc-4.0",
+    "params": 1000000000,
+    "languages": [
+      "en",
+      "de",
+      "es",
+      "fr"
+    ]
+  }
 }

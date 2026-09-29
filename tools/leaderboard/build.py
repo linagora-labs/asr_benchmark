@@ -1,7 +1,9 @@
 """Build the static leaderboard page from benchmark results.
 
-Reads every <results>/<experiment>/{metadata.json, performances/*.json} and the test
-manifest (utterance durations), and writes <output>/index.html (the page, data
+Reads every <results>/<experiment>/{metadata.json (with its model_info: license, size,
+languages, see tools/fill_model_info.py), performances/*.json}, the test
+manifest (utterance durations) and the speed runs (<rtf_results>/<experiment>_rtf, for
+the RTFx), and writes <output>/index.html (the page, data
 embedded) and <output>/leaderboard.json.
 Standard library only, so the GitHub Action needs no install.
 
@@ -31,10 +33,25 @@ DATASETS = {
 }
 DEFAULT_LANGUAGE = "fr"
 METRICS = ["wer_nocasepunc", "wer", "cer_nocasepunc", "cer"]
+
+def speed(exp, rtf_results):
+    """RTFx (seconds of audio transcribed per second of computation) and hardware of the
+    speed run of `exp`: <rtf_results>/<exp>_rtf, from benchmarks/sota/config_rtf.yaml."""
+    exp_rtf = rtf_results / f"{exp.name}_rtf" if rtf_results else None
+    if not exp_rtf or not (exp_rtf / "metadata.json").exists():
+        return None, None
+    audio = compute = 0
+    for pred_file in (exp_rtf / "predictions").glob("*.json"):
+        for row in json.loads(pred_file.read_text(encoding="utf-8")).values():
+            if row.get("prediction_duration"):
+                audio += row["audio_duration"]
+                compute += row["prediction_duration"]
+    meta = json.loads((exp_rtf / "metadata.json").read_text(encoding="utf-8"))
+    return (round(audio / compute, 1) if compute else None), meta.get("device_name") or meta.get("device")
 HISTOGRAM_BIN = 2  # seconds, durations histogram of the test sets
 
 
-def model_entry(exp):
+def model_entry(exp, rtf_results=None):
     meta = json.loads((exp / "metadata.json").read_text(encoding="utf-8"))
     backend, model = meta["backend"], meta["model"]
     # faster-whisper takes OpenAI size names ("large-v3"): show the original model.
@@ -45,7 +62,11 @@ def model_entry(exp):
     for prefix in {f"{backend}_{model.replace('/', '-')}", f"{backend}_{re.sub('[/_]', '-', model)}"}:
         if exp.name.startswith(prefix):
             variant = exp.name[len(prefix):].strip("_")
-    url = f"https://huggingface.co/{display}" if "/" in display and not display.startswith(("/", ".")) else None
+    # License, size and languages: filled by tools/fill_model_info.py.
+    info = meta.get("model_info") or {}
+    hf = info.get("hf") or display
+    url = f"https://huggingface.co/{hf}" if "/" in hf and not hf.startswith(("/", ".")) else None
+    rtfx, hardware = speed(exp, rtf_results)
     scores = {}
     for perf_file in sorted((exp / "performances").glob("*.json")):
         perf = json.loads(perf_file.read_text(encoding="utf-8"))
@@ -63,6 +84,11 @@ def model_entry(exp):
         "variant": variant,
         "backend": backend,
         "url": url,
+        "license": info.get("license"),
+        "params": info.get("params"),
+        "languages": info.get("languages"),
+        "rtfx": rtfx,
+        "hardware": hardware,
         "scores": scores,
     }
 
@@ -96,9 +122,9 @@ def last_commit_date(path):
         return None
 
 
-def build(results, manifest, output):
+def build(results, manifest, output, rtf_results=None):
     experiments = sorted(p for p in results.iterdir() if (p / "metadata.json").exists())
-    models = [model_entry(exp) for exp in experiments]
+    models = [model_entry(exp, rtf_results) for exp in experiments]
     durations = manifest_durations(manifest)
     stems = sorted({stem for m in models for stem in m["scores"]}, key=lambda s: DATASETS.get(s, (s,))[0].lower())
     datasets = [
@@ -142,5 +168,7 @@ if __name__ == "__main__":
     parser.add_argument("--results", type=Path, default=Path("benchmarks/sota/results"))
     parser.add_argument("--manifest", type=Path, default=Path("benchmarks/sota/manifest.jsonl"))
     parser.add_argument("--output", type=Path, default=Path("site"))
+    parser.add_argument("--rtf_results", type=Path, default=Path("benchmarks/sota/results_rtf"),
+                        help="Results of the speed runs (config_rtf.yaml), for the RTFx column")
     args = parser.parse_args()
-    build(args.results, args.manifest, args.output)
+    build(args.results, args.manifest, args.output, args.rtf_results)

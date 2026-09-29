@@ -17,5 +17,14 @@
   "compute_latency": false,
   "plot_monitoring": false,
   "input_audios_paths": "",
-  "word_timestamps": false
+  "word_timestamps": false,
+  "model_info": {
+    "hf": "OpenMOSS-Team/MOSS-Transcribe-Diarize",
+    "license": "apache-2.0",
+    "params": 908513280,
+    "languages": [
+      "en",
+      "zh"
+    ]
+  }
 }

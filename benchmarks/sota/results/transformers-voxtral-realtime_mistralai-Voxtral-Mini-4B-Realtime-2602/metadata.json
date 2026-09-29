@@ -13,5 +13,25 @@
   "compute_latency": false,
   "plot_monitoring": false,
   "input_audios_paths": "",
-  "word_timestamps": false
+  "word_timestamps": false,
+  "model_info": {
+    "hf": "mistralai/Voxtral-Mini-4B-Realtime-2602",
+    "license": "apache-2.0",
+    "params": 4429679360,
+    "languages": [
+      "en",
+      "fr",
+      "es",
+      "de",
+      "ru",
+      "zh",
+      "ja",
+      "it",
+      "pt",
+      "nl",
+      "ar",
+      "hi",
+      "ko"
+    ]
+  }
 }

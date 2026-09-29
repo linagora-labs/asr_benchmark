@@ -1,0 +1,41 @@
+{
+  "concurrency": 8,
+  "env": {
+    "MAX_JOBS": 4
+  },
+  "startup_timeout": 7200,
+  "backend": "vllm",
+  "model": "google/gemma-3n-e4b-it",
+  "port": 8104,
+  "language": "fr",
+  "server": "http://localhost",
+  "device": "cuda",
+  "launch": true,
+  "vllm_command": [
+    "vllm",
+    "serve"
+  ],
+  "trust_remote_code": false,
+  "served_model_name": null,
+  "gpu_memory_utilization": 0.85,
+  "extra_args": [],
+  "temperature": 0.0,
+  "strip_diarization": true,
+  "request_timeout": 600,
+  "log_file": "vllm.log",
+  "input_manifest": "benchmarks/sota/manifest.jsonl",
+  "compute_rtf": false,
+  "save_predictions": true,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "device_name": "NVIDIA GB10",
+  "word_timestamps": false,
+  "model_info": {
+    "hf": "google/gemma-3n-E4B-it",
+    "license": "gemma",
+    "params": 7849978192,
+    "languages": null
+  }
+}
