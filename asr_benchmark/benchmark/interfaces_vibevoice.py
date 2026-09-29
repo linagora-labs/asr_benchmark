@@ -110,7 +110,6 @@ class VibeVoiceASRModel(Model):
 
     def get_metadata(self):
         metadata = super().get_metadata()
-        metadata["model"] = self.config["model"].replace("_", "-")
         metadata.pop("batch_size", None)
         return metadata
 

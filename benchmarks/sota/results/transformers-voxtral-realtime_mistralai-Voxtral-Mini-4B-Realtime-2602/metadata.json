@@ -6,7 +6,7 @@
   "max_tokens": 512,
   "temperature": 0.0,
   "dtype": "float16",
-  "input_manifest": "benchmarks/march_2026/manifest.jsonl",
+  "input_manifest": "benchmarks/sota/manifest.jsonl",
   "compute_rtf": false,
   "save_predictions": false,
   "save_alignments": true,

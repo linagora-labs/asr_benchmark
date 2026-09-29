@@ -164,9 +164,7 @@ class NemoModel(Model):
     def get_metadata(self):
         metadata = super().get_metadata()
         if self.config['model'].endswith(".nemo"):
-            metadata['model'] = self.config['model'].split("/")[-1].replace(".nemo", "").replace("_","-")
-        else:
-            metadata['model'] = self.config['model'].replace("_","-")
+            metadata['model'] = Path(self.config['model']).stem
         if "batch_size" in metadata:
             del metadata['batch_size']
         if "ngram_model" in metadata:

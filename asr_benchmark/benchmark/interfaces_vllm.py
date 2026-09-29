@@ -311,11 +311,6 @@ class VllmTranscriptionModel(Model):
         config["log_file"] = config.get("log_file") or str(log_path(f"vllm_{config['model']}.log"))
         return super().add_defaults_to_config(config)
 
-    def get_metadata(self):
-        metadata = super().get_metadata()
-        metadata["model"] = self.config["model"].replace("_", "-")
-        return metadata
-
     def get_folder_name(self):
         c = self.config
         name = f"vllm_{c['model'].replace('/', '-')}"

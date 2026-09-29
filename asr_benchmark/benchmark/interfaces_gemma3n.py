@@ -95,11 +95,6 @@ class Gemma3nModel(Model):
         config["repetition_penalty"] = float(config.get("repetition_penalty", 1.2))
         return super().add_defaults_to_config(config)
 
-    def get_metadata(self):
-        metadata = super().get_metadata()
-        metadata["model"] = self.config["model"].replace("_", "-")
-        return metadata
-
     def get_folder_name(self):
         c = self.config
         name = f"gemma3n_{c['model'].replace('/', '-')}{self.device_tag()}"

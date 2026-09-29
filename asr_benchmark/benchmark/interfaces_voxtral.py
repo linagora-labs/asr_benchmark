@@ -102,8 +102,3 @@ class TransformersVoxtralModel(Model):
         name = name.replace("/", "-")
         name += "_rtf" if c["compute_rtf"] else ""
         return name
-
-    def get_metadata(self):
-        metadata = super().get_metadata()
-        metadata["model"] = self.config["model"].replace("_", "-")
-        return metadata

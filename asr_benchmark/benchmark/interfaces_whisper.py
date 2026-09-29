@@ -58,6 +58,8 @@ class FasterWhisperModel(Model):
         if model_kwargs['device']=="cpu" and model_kwargs['precision'] =="float16":
             raise ValueError("Float16 is not supported on CPU")
         model_kwargs['compute_type'] = model_kwargs.pop('precision', '')
+        if model_kwargs['device'] == "cpu":
+            model_kwargs['cpu_threads'] = self.config.get('num_threads') or 0  # 0: ctranslate2 default (4)
         self.model = WhisperModel(self.config['model'], download_root=self.config.get('cache_dir', None), **model_kwargs)
         if self.config['batch_size']>1:
             self.model = BatchedInferencePipeline(model=self.model)

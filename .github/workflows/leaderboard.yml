@@ -9,6 +9,7 @@ on:
     paths:
       - "benchmarks/sota/results/**"
       - "benchmarks/sota/config*.yaml"
+      - "benchmarks/sota/manifest.jsonl"
       - "tools/leaderboard/**"
       - ".github/workflows/leaderboard.yml"
   workflow_dispatch:
@@ -35,7 +36,7 @@ jobs:
         with:
           python-version: "3.12"
       # Standard library only: no dependency to install.
-      - run: python tools/leaderboard/build.py --results benchmarks/sota/results --output site
+      - run: python tools/leaderboard/build.py --results benchmarks/sota/results --manifest benchmarks/sota/manifest.jsonl --output site
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

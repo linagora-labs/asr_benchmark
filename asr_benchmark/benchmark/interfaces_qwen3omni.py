@@ -90,11 +90,6 @@ class Qwen3OmniModel(Model):
         config["prompt"] = config.get("prompt", "Transcribe this audio.")
         return super().add_defaults_to_config(config)
 
-    def get_metadata(self):
-        metadata = super().get_metadata()
-        metadata["model"] = self.config["model"].replace("_", "-")
-        return metadata
-
     def get_folder_name(self):
         c = self.config
         name = f"qwen3-omni_{c['model'].replace('/', '-')}{self.device_tag()}"

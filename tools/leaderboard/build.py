@@ -1,15 +1,17 @@
 """Build the static leaderboard page from benchmark results.
 
-Reads every <results>/<experiment>/{metadata.json, performances/*.json} and writes
-<output>/index.html (the page, data embedded) and <output>/leaderboard.json.
+Reads every <results>/<experiment>/{metadata.json, performances/*.json} and the test
+manifest (utterance durations), and writes <output>/index.html (the page, data
+embedded) and <output>/leaderboard.json.
 Standard library only, so the GitHub Action needs no install.
 
     python tools/leaderboard/build.py                       # benchmarks/sota/results -> site/
-    python tools/leaderboard/build.py --results X --output Y
+    python tools/leaderboard/build.py --results X --manifest M --output Y
 """
 import argparse
 import json
 import re
+import statistics
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -20,7 +22,7 @@ REPO_URL = "https://github.com/linagora-labs/asr_benchmark"
 # Display name, domain and language of the known test sets (file stem of
 # performances/*.json). Unknown datasets fall back to their stem, in DEFAULT_LANGUAGE.
 DATASETS = {
-    "CommonVoice_max30": ("Common Voice", "Read speech, crowd-sourced", "fr"),
+    "CommonVoice_max30": ("Common Voice", "Read speech", "fr"),
     "MLS_Facebook_french_max30": ("MLS", "Read audiobooks", "fr"),
     "SUMM-RE_max30": ("SUMM-RE", "Spontaneous meetings", "fr"),
     "TEDX_fr_max30": ("TEDx", "Prepared talks", "fr"),
@@ -29,45 +31,21 @@ DATASETS = {
 }
 DEFAULT_LANGUAGE = "fr"
 METRICS = ["wer_nocasepunc", "wer", "cer_nocasepunc", "cer"]
+HISTOGRAM_BIN = 2  # seconds, durations histogram of the test sets
 
 
-def dataset_hours(experiments, stem):
-    """Duration of a test set, from the first predictions file that has it."""
-    for exp in experiments:
-        pred = exp / "predictions" / f"{stem}.json"
-        if pred.exists():
-            rows = json.loads(pred.read_text(encoding="utf-8")).values()
-            return round(sum(r.get("audio_duration") or 0 for r in rows) / 3600, 2)
-    return None
-
-
-def config_model_ids(bench_dir):
-    """Model ids as written in the benchmark configs, keyed by their "_" -> "-" form:
-    some backends (NeMo) store the model id that way in metadata.json, which breaks
-    Hugging Face links (nvidia/stt_fr_fastconformer_hybrid_large_pc)."""
-    ids = {}
-    for config in bench_dir.glob("config*.yaml"):
-        # No yaml parser in the standard library: model ids are the only "org/name" values.
-        for model_id in re.findall(r"[\w.-]+/[\w.-]+", config.read_text(encoding="utf-8")):
-            ids.setdefault(model_id.replace("_", "-"), model_id)
-    return ids
-
-
-def model_entry(exp, model_ids):
+def model_entry(exp):
     meta = json.loads((exp / "metadata.json").read_text(encoding="utf-8"))
     backend, model = meta["backend"], meta["model"]
-    display = f"whisper-{model}" if backend == "faster-whisper" and "whisper" not in model else model
-    display = model_ids.get(display, display)
+    # faster-whisper takes OpenAI size names ("large-v3"): show the original model.
+    display = f"openai/whisper-{model}" if backend == "faster-whisper" and "/" not in model else model
     # What the folder name adds after <backend>_<model> (e.g. "decoder-ctc") tells
-    # apart several runs of the same model.
-    prefix = f"{backend}_{model.replace('/', '-')}"
-    variant = exp.name[len(prefix):].strip("_") if exp.name.startswith(prefix) else ""
-    if "/" in display and not display.startswith("/"):
-        url = f"https://huggingface.co/{display}"
-    elif backend == "faster-whisper":
-        url = f"https://huggingface.co/openai/{display}"
-    else:
-        url = None
+    # apart several runs of the same model. Some backends (NeMo) write "_" as "-" there.
+    variant = ""
+    for prefix in {f"{backend}_{model.replace('/', '-')}", f"{backend}_{re.sub('[/_]', '-', model)}"}:
+        if exp.name.startswith(prefix):
+            variant = exp.name[len(prefix):].strip("_")
+    url = f"https://huggingface.co/{display}" if "/" in display and not display.startswith(("/", ".")) else None
     scores = {}
     for perf_file in sorted((exp / "performances").glob("*.json")):
         perf = json.loads(perf_file.read_text(encoding="utf-8"))
@@ -78,6 +56,7 @@ def model_entry(exp, model_ids):
             if metric in perf
         }
         scores[perf_file.stem]["n"] = perf.get("num_data")
+        scores[perf_file.stem]["seconds"] = perf.get("duration")
     return {
         "id": exp.name,
         "model": display,
@@ -86,6 +65,24 @@ def model_entry(exp, model_ids):
         "url": url,
         "scores": scores,
     }
+
+
+def manifest_durations(manifest):
+    """Durations (s) of the utterances of each test set of the manifest, {} if there is none."""
+    durations = {}
+    if manifest and manifest.exists():
+        for line in manifest.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                row = json.loads(line)
+                durations.setdefault(row.get("name") or row.get("dataset"), []).append(row["duration"])
+    return durations
+
+
+def histogram(durations):
+    counts = [0] * (int(max(durations) // HISTOGRAM_BIN) + 1)
+    for d in durations:
+        counts[int(d // HISTOGRAM_BIN)] += 1
+    return counts
 
 
 def last_commit_date(path):
@@ -99,10 +96,10 @@ def last_commit_date(path):
         return None
 
 
-def build(results, output):
+def build(results, manifest, output):
     experiments = sorted(p for p in results.iterdir() if (p / "metadata.json").exists())
-    model_ids = config_model_ids(results.parent)
-    models = [model_entry(exp, model_ids) for exp in experiments]
+    models = [model_entry(exp) for exp in experiments]
+    durations = manifest_durations(manifest)
     stems = sorted({stem for m in models for stem in m["scores"]}, key=lambda s: DATASETS.get(s, (s,))[0].lower())
     datasets = [
         {
@@ -110,15 +107,24 @@ def build(results, output):
             "name": DATASETS.get(stem, (stem,))[0],
             "domain": DATASETS.get(stem, (stem, ""))[1],
             "language": DATASETS.get(stem, (stem, "", DEFAULT_LANGUAGE))[2],
-            "hours": dataset_hours(experiments, stem),
+            "hours": round(max((m["scores"][stem]["seconds"] or 0) for m in models if stem in m["scores"]) / 3600, 2) or None,
             "utterances": max((m["scores"][stem]["n"] or 0) for m in models if stem in m["scores"]),
         }
+        # The manifest, when it has the test set, gives the exact figures and the histogram.
+        | ({
+            "hours": round(sum(durations[stem]) / 3600, 2),
+            "utterances": len(durations[stem]),
+            "mean_seconds": round(statistics.mean(durations[stem]), 1),
+            "median_seconds": round(statistics.median(durations[stem]), 1),
+            "histogram": histogram(durations[stem]),
+        } if durations.get(stem) else {})
         for stem in stems
     ]
     data = {
         "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "results_updated": last_commit_date(results),
         "repo": REPO_URL,
+        "histogram_bin": HISTOGRAM_BIN,
         "datasets": datasets,
         "models": models,
     }
@@ -134,6 +140,7 @@ def build(results, output):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--results", type=Path, default=Path("benchmarks/sota/results"))
+    parser.add_argument("--manifest", type=Path, default=Path("benchmarks/sota/manifest.jsonl"))
     parser.add_argument("--output", type=Path, default=Path("site"))
     args = parser.parse_args()
-    build(args.results, args.output)
+    build(args.results, args.manifest, args.output)
