@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ASR Leaderboard</title>
+<title>French ASR Leaderboard</title>
 <meta name="description" content="Word and character error rates of open speech recognition models, by Linagora Labs.">
 <style>
   /* Light theme only for now. */
@@ -39,6 +39,7 @@
   .tabs a { padding: 8px 2px; margin-bottom: -1px; color: var(--muted); text-decoration: none; font-weight: 600; border-bottom: 2px solid transparent; }
   .tabs a[aria-current="page"] { color: var(--accent); border-color: var(--accent); }
   .tabs label { margin-left: auto; }
+  .intro { margin: 16px 0 0; max-width: 80ch; }
   #tab-testsets .scroll { margin-top: 24px; }
   .hist rect { fill: var(--accent); }
   .hist text { fill: var(--muted); font-size: 10px; }
@@ -46,8 +47,10 @@
 </head>
 <body>
 <main>
-  <h1>ASR Leaderboard</h1>
+  <h1>French ASR Leaderboard</h1>
   <div class="muted" id="meta"></div>
+  <p class="intro">Transcription errors of open-weight speech recognition models on French test sets.
+    Only models whose weights are publicly available are evaluated.</p>
 
   <nav class="tabs">
     <a href="#">Leaderboard</a> <a href="#test-sets">Test sets</a>
@@ -135,6 +138,20 @@ function average(m, datasets) {
   };
 }
 
+// Mean over the test sets of each model's rank (1 = best score of the column). Ranked
+// among the models that have an average, so that all compare on the same test sets;
+// displayed-equal scores share a rank.
+function averageRanks(models, datasets) {
+  const shown = v => Math.round(v * 10) / 10;
+  const ranks = new Map(models.map(m => [m, 0]));
+  for (const d of datasets) {
+    const scores = models.map(m => shown(result(m, d).wer));
+    models.forEach((m, i) => ranks.set(m, ranks.get(m) + 1 + scores.filter(v => v < scores[i]).length));
+  }
+  models.forEach(m => ranks.set(m, ranks.get(m) / datasets.length));
+  return ranks;
+}
+
 // Class of a score by its rank in its column: first, second, second-last, last.
 // Ranks are over the distinct displayed values: ties share a color and the next value
 // still gets the following one (two last -> both red, the value above them orange).
@@ -158,27 +175,32 @@ function render() {
     button.disabled = !scored(d);
     button.title = scored(d) ? d.domain : "No score in this mode (references without case and punctuation)";
   }
-  const sortBy = datasets.find(d => d.id === state.sort);  // undefined: sort by the average
-  const rows = modelsOf(state.language).map(m => {
-    const avg = average(m, datasets);
-    const key = sortBy ? (result(m, sortBy) || {}).wer : avg && avg.wer;
-    return { m, avg, key };
-  });
+  const sortBy = datasets.find(d => d.id === state.sort);  // undefined: sort by the average or the rank
+  const byRank = state.sort === "rank";
+  const sortedId = byRank ? "rank" : sortBy ? sortBy.id : "";
+  const rows = modelsOf(state.language).map(m => ({ m, avg: average(m, datasets) }));
+  const ranks = averageRanks(rows.filter(r => r.avg).map(r => r.m), datasets);
+  for (const r of rows) {
+    r.rank = ranks.get(r.m);
+    r.key = byRank ? r.rank : sortBy ? (result(r.m, sortBy) || {}).wer : r.avg && r.avg.wer;
+  }
   // Models without a score in the sorted column go last, by name.
   rows.sort((a, b) => (a.key ?? Infinity) - (b.key ?? Infinity) || a.m.model.localeCompare(b.m.model));
   const column = get => rows.map(get).filter(v => v != null);
   const avgValues = column(r => r.avg && r.avg.wer);
+  const rankValues = column(r => r.rank);
   const values = Object.fromEntries(datasets.map(d => [d.id, column(r => (result(r.m, d) || {}).wer)]));
 
   const th = (id, label, sub, title) => {
-    const sorted = (id || null) === (sortBy ? sortBy.id : null);
+    const sorted = id === sortedId;
     return `<th data-sort="${esc(id)}" class="sortable" aria-sort="${sorted ? "ascending" : "none"}" title="${esc(title)}">` +
       `${sorted ? "▲ " : ""}${label}<br><small>${sub}</small></th>`;
   };
   const head = `<tr><th>#</th><th>Model</th>${th("", "Average", `${datasets.length} test sets`, "Sort by the average")}` +
+    th("rank", "Avg rank", `${datasets.length} test sets`, "Sort by the average rank") +
     datasets.map(d => th(d.id, esc(d.name), d.hours != null ? f1(d.hours) + " h" : "", `${d.domain}. Sort by this test set`)).join("") + "</tr>";
   let rank = 0;
-  const body = rows.map(({ m, avg, key }) => {
+  const body = rows.map(({ m, avg, rank: avgRank, key }) => {
     const name = m.url ? `<a href="${esc(m.url)}">${esc(m.model)}</a>` : esc(m.model);
     const cells = datasets.map(d => {
       const r = result(m, d);
@@ -192,7 +214,9 @@ function render() {
     }).join("");
     const avgCell = avg ? cell(avg.wer, avg.pm, "avg " + rankClass(avg.wer, avgValues), "Mean over the selected test sets")
                         : `<td class="muted" title="Not evaluated on all the selected test sets">—</td>`;
-    return `<tr><td>${key != null ? ++rank : ""}</td><td>${name}<br><small>${esc([m.variant, m.backend].filter(Boolean).join(" · "))}</small></td>${avgCell}${cells}</tr>`;
+    const rankCell = avgRank != null ? cell(avgRank, null, rankClass(avgRank, rankValues), "Mean of the ranks over the selected test sets")
+                                     : `<td class="muted">—</td>`;
+    return `<tr><td>${key != null ? ++rank : ""}</td><td>${name}<br><small>${esc([m.variant, m.backend].filter(Boolean).join(" · "))}</small></td>${avgCell}${rankCell}${cells}</tr>`;
   }).join("");
   document.getElementById("board").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
 }
@@ -203,6 +227,7 @@ const languageSelect = document.getElementById("language");
 languageSelect.innerHTML = languages.map(l => `<option value="${l}">${LANGUAGES[l] || l}</option>`).join("");
 languageSelect.value = languages.includes("fr") ? "fr" : languages[0];
 languageSelect.onchange = () => selectLanguage(languageSelect.value);
+languageSelect.parentElement.hidden = languages.length < 2;  // only French for now
 for (const [id, apply] of [["metric", v => state.metric = v], ["norm", v => state.norm = v === "1"]]) {
   document.getElementById(id).onclick = e => {
     if (!e.target.dataset.v) return;
@@ -230,7 +255,9 @@ const updated = DATA.results_updated && new Date(DATA.results_updated).toLocaleD
 document.getElementById("meta").innerHTML = `${updated ? `Updated on ${updated} · ` : ""}<a href="${DATA.repo}">${DATA.repo.replace("https://", "")}</a>`;
 document.getElementById("notes").innerHTML = `
   <p><b>WER</b> (word error rate) and <b>CER</b> (character error rate), in %: lower is better. Click a column header to sort by that test set, or by the average.</p>
+  <p><b>Capped at 100% per segment</b>: the errors of each segment count at most as many as the words (or characters) of its reference, so that one or two hallucinated segments cannot inflate a score on their own. The excess is removed from the insertions.</p>
   <p><b>Average</b>: mean of the scores over the selected test sets. A model not evaluated on all the selected test sets gets no average (—): unselect a test set to compare it.</p>
+  <p><b>Avg rank</b>: mean of the model's rank on each selected test set (1 = best), among the models that have an average. Unlike the average, a test set with high error rates does not weigh more than the others.</p>
   <p><b>±</b>: half-width of the 95% confidence interval, by bootstrap over the utterances of each test set (hover a score for the exact interval and the error breakdown).</p>
   <p><b>Normalized</b> scores ignore case and punctuation; <b>Case &amp; punct.</b> counts them as errors; it leaves out the test sets whose references have no case and punctuation. Segments of at most 30 s.</p>
   <p>Results and configuration: <a href="${DATA.repo}/tree/main/benchmarks/sota">benchmarks/sota</a>. Raw data: <a href="leaderboard.json">leaderboard.json</a>.</p>`;

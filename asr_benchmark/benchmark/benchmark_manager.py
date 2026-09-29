@@ -281,7 +281,8 @@ def bootstrap_ci(counts, score, n_resamples=1000, level=0.95, seed=0):
 
 def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
     """WER/CER of one dataset's predictions ({id: {"text", "prediction", ...}}), in
-    every mode, each with its 95% confidence interval ("ci95")."""
+    every mode, each with its 95% confidence interval ("ci95"). Each file's errors are
+    capped at its reference length (100% WER per file)."""
     predictions = [data[id]["prediction"] for id in data]
     references = [data[id]["text"] for id in data]
     results = dict(num_data=len(predictions), duration=sum([data[id]["audio_duration"] for id in data]))
@@ -317,7 +318,14 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
         else:
             word_alignments[normalization] = wer_score["raw_alignement"]
             counts = utterance_errors(wer_score["raw_alignement"])
-        wer_score["ci95"] = bootstrap_ci(counts, wer_score["wer"])
+        # Each file's errors are capped at its reference length (100% WER), so that one
+        # hallucination loop does not dominate the dataset score. Only insertions can
+        # exceed the reference length, so the excess is removed from them.
+        capped = [(min(errors, max(length, 1)), length) for errors, length in counts]
+        excess = 100 * sum(e - c for (e, _), (c, _) in zip(counts, capped)) / max(wer_score["count"], 1)
+        wer_score["ins"] -= excess
+        wer_score["wer"] -= excess
+        wer_score["ci95"] = bootstrap_ci(capped, wer_score["wer"])
         del wer_score['alignment']
         del wer_score['raw_alignement']
         results[key] = wer_score
