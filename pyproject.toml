@@ -15,9 +15,15 @@ dependencies = [
     "numpy",
     "torch",
     "torchaudio>=2.3.1",
-    # torchaudio >= 2.9 delegates audio decoding to torchcodec.
-    "torchcodec",
+    # torchaudio >= 2.9 delegates audio I/O to torchcodec. torchcodec declares no torch
+    # requirement but each release is built against one torch version (0.N <-> 2.N):
+    # unpinned, uv picks the latest one, which fails to load (missing libnvrtc) with
+    # the torch 2.10 resolved on x86_64. Keep it matched with torch there.
+    "torchcodec==0.10.*; platform_machine != 'aarch64'",
+    "torchcodec; platform_machine == 'aarch64'",
     "librosa>=0.10.1",
+    # utils/benchmark.py writes wav files (also a librosa dependency).
+    "soundfile",
     "soxbindings",
     "tqdm>=4.66.2",
     "requests",
@@ -46,8 +52,8 @@ nemo = [
     "pyctcdecode",
 ]
 transformers = [
-    # backends "transformers", "transformers-facebook", "transformers-bofenghuang",
-    # "qwen3-omni". Unpinned so it can share the nemo env (transformers 4.x) or the
+    # backends "transformers", "transformers-whisper", "transformers-facebook",
+    # "transformers-bofenghuang", "qwen3-omni". Unpinned so it can share the nemo env (transformers 4.x) or the
     # transformers-5.x env. "transformers-voxtral-realtime" needs transformers 5.x.
     "transformers",
     "accelerate",

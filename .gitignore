@@ -156,9 +156,11 @@ cython_debug/
 logs/
 # Benchmark outputs (output_folder of the configs)
 benchmarks/*/results*/
-# ... except the SOTA results, versioned without the (large) alignments
+# ... except the SOTA results and rtf runs (leaderboard), versioned without the (large) alignments
 !benchmarks/sota/results/
+!benchmarks/sota/results_rtf/
 benchmarks/sota/results/*/alignments/
+benchmarks/sota/results_rtf/*/alignments/
 
 dev/
 out*/
