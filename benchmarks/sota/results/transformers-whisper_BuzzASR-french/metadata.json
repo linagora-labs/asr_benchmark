@@ -1,0 +1,34 @@
+{
+  "backend": "transformers-whisper",
+  "model": "BuzzASR/french",
+  "generate_kwargs": {
+    "no_repeat_ngram_size": 3,
+    "repetition_penalty": 1.2
+  },
+  "language": null,
+  "vad": "false",
+  "device": "cuda",
+  "attn": "sdpa",
+  "precision": "float16",
+  "batch_size": 24,
+  "chunk_length_s": 30.0,
+  "stride_length_s": 5.0,
+  "do_sample": false,
+  "num_beams": 1,
+  "input_manifest": "benchmarks/sota/manifest.jsonl",
+  "compute_rtf": false,
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": false,
+  "model_info": {
+    "hf": "BuzzASR/french",
+    "license": "mit",
+    "params": 1545548800,
+    "languages": [
+      "fr"
+    ]
+  }
+}

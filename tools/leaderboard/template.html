@@ -266,6 +266,7 @@ function render() {
       const r = result(m, d);
       if (!r) return cell(null);
       const title = [
+        `${d.name} · ${m.model}${m.variant ? ` (${m.variant})` : ""}`,
         r.ci95 && `95% CI: ${f1(r.ci95[0])} – ${f1(r.ci95[1])}`,
         `Substitutions: ${f1(r.sub)}`, `Deletions: ${f1(r.del)}`, `Insertions: ${f1(r.ins)}`,
         `Utterances: ${m.scores[d.id].n}`,
