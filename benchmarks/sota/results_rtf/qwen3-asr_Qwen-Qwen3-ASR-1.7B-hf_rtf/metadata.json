@@ -1,0 +1,21 @@
+{
+  "startup_timeout": 7200,
+  "backend": "qwen3-asr",
+  "model": "Qwen/Qwen3-ASR-1.7B-hf",
+  "dtype": "bfloat16",
+  "max_new_tokens": 256,
+  "language": "fr",
+  "device": "cuda",
+  "input_manifest": "benchmarks/sota/manifest_rtf.jsonl",
+  "compute_rtf": true,
+  "save_predictions": false,
+  "save_alignments": false,
+  "compute_latency": false,
+  "plot_monitoring": true,
+  "input_audios_paths": "",
+  "device_name": "NVIDIA GB10",
+  "word_timestamps": false,
+  "model_info": {
+    "params": 2038052480
+  }
+}

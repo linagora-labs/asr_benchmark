@@ -1,0 +1,20 @@
+{
+  "startup_timeout": 7200,
+  "backend": "faster-whisper",
+  "model": "large-v3-turbo",
+  "precision": "float16",
+  "vad": "false",
+  "device": "cuda",
+  "accurate": false,
+  "previous_text": false,
+  "batch_size": 1,
+  "input_manifest": "benchmarks/sota/manifest_rtf.jsonl",
+  "compute_rtf": true,
+  "save_predictions": false,
+  "save_alignments": false,
+  "compute_latency": false,
+  "plot_monitoring": true,
+  "input_audios_paths": "",
+  "device_name": "NVIDIA GB10",
+  "word_timestamps": true
+}

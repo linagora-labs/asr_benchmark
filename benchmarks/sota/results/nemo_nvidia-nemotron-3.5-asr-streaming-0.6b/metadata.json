@@ -2,6 +2,7 @@
   "backend": "nemo",
   "model": "nvidia/nemotron-3.5-asr-streaming-0.6b",
   "language": "fr",
+  "chunk_ms": 1120,
   "vad": "false",
   "device": "cuda",
   "num_threads": null,
@@ -14,6 +15,10 @@
   "plot_monitoring": false,
   "input_audios_paths": "",
   "word_timestamps": true,
+  "att_context_size": [
+    56,
+    13
+  ],
   "model_info": {
     "hf": "nvidia/nemotron-3.5-asr-streaming-0.6b",
     "license": "openmdw-1.1",

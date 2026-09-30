@@ -13,14 +13,20 @@ class TransformersModel(Model):
     
     def __init__(self, config) -> None:
         super().__init__(config)
-        self.transcribe_kwargs['language'] = self.config["language"]
-        self.transcribe_kwargs['task'] = "transcribe"
+        # No language: the one of the model's generation config (e.g. monolingual fine-tunes
+        # with their own tokenizer, whose language/task prompt is baked in).
+        if self.config["language"]:
+            self.transcribe_kwargs['language'] = self.config["language"]
+            self.transcribe_kwargs['task'] = "transcribe"
         self.transcribe_kwargs['do_sample'] = self.config['do_sample']
         if self.config['do_sample']:
             self.transcribe_kwargs['temperature'] = self.config['temperature']
             self.transcribe_kwargs['top_k'] = self.config['top_k']
         else:
             self.transcribe_kwargs['num_beams'] = self.config['num_beams']
+        # Other generate() arguments, e.g. the decoding recommended by a model card
+        # (no_repeat_ngram_size, repetition_penalty...).
+        self.transcribe_kwargs.update(self.config['generate_kwargs'] or {})
         if self.config['device']=="cpu":
             torch.set_num_threads(self.config['num_threads'])
 
@@ -56,8 +62,7 @@ class TransformersModel(Model):
             audio, _ = ssak.utils.vad.remove_non_speech(audio, method=self.config['vad'])
         result = self.model(audio, chunk_length_s=self.config['chunk_length_s'], batch_size=int(self.config['batch_size']), \
                             stride_length_s=self.config['stride_length_s'], return_timestamps=False, generate_kwargs=self.transcribe_kwargs)
-        text = result['text']
-        return text
+        return {'text': result['text']}
 
     def can_output_word_timestamps(self):
         if self.config['attn'] == "eager":
@@ -72,6 +77,8 @@ class TransformersModel(Model):
         if model_name in ['large-v3', 'tiny', 'base', 'medium', 'large-v2', 'large-v1', 'small']:
             model_name = f"openai/whisper-{model_name}"
         config['model'] = model_name
+        config['language'] = config.get('language')
+        config['generate_kwargs'] = config.get('generate_kwargs')
         config['vad'] = config.get('vad', 'false')
         config['device'] = config.get('device', 'cuda')
         config['attn'] = config.get('attn', 'sdpa')
@@ -102,12 +109,53 @@ class TransformersModel(Model):
             name += self.detail(f"_temperature-{tot_config['temperature']}_topk-{tot_config['top_k']}")
         else:
             name += self.detail(f"_beams-{tot_config['num_beams']}")
+        for k, v in sorted((tot_config['generate_kwargs'] or {}).items()):
+            name += self.detail(f"_{k}-{v}")
         if tot_config['device'] == "cpu":
             name += self.detail(f"_numthreads-{tot_config['num_threads']}")
         name = name.replace("/", "-")
         name += "_rtf" if tot_config['compute_rtf'] else ""
         return name
     
+class TransformersWhisperModel(TransformersModel):
+    """Whisper models through model.generate(), without the ASR pipeline, which decodes an
+    empty text with the per-language tokenizers of some fine-tunes (BuzzASR). Segments of
+    at most 30 s (one Whisper window), transcribed by batches of `batch_size`."""
+    MAX_SECONDS = 30
+
+    def load(self) -> None:
+        from transformers import WhisperForConditionalGeneration, WhisperProcessor
+        attn = {"flash2": "flash_attention_2", "eager": "eager", "sdpa": "sdpa"}[self.config['attn']]
+        self.dtype = getattr(torch, self.config['precision'])
+        self.model = WhisperForConditionalGeneration.from_pretrained(
+            self.config['model'], dtype=self.dtype, attn_implementation=attn,
+        ).to(self.config['device']).eval()
+        self.processor = WhisperProcessor.from_pretrained(self.config['model'])
+
+    def transcribe_many(self, audios: list) -> list[dict]:
+        for audio in audios:
+            if len(audio) > self.MAX_SECONDS * 16000:
+                raise ValueError(f"{len(audio) / 16000:.1f} s of audio: {self.config['backend']} only transcribes segments of at most {self.MAX_SECONDS} s")
+        features = self.processor(audios, sampling_rate=16000, return_tensors="pt").input_features
+        with torch.inference_mode():
+            ids = self.model.generate(features.to(self.config['device'], self.dtype), **self.transcribe_kwargs)
+        return [{'text': text} for text in self.processor.batch_decode(ids, skip_special_tokens=True)]
+
+    def transcribe(self, audio) -> dict:
+        if self.config['vad'] and self.config['vad'] in ['auditok','silero', 'pyannote']:
+            audio, _ = ssak.utils.vad.remove_non_speech(audio, method=self.config['vad'])
+        return self.transcribe_many([audio])[0]
+
+    def transcribe_batch(self, data: list) -> list[dict]:
+        return self.transcribe_by_batches(data, int(self.config['batch_size']))
+
+    def can_output_word_timestamps(self):
+        return False
+
+    def get_folder_name(self):
+        return "transformers-whisper_" + super().get_folder_name().split("_", 1)[1]
+
+
 class IntelTransformersModel(TransformersModel):
     def load(self) -> None:
         from intel_extension_for_transformers.transformers.pipeline import pipeline as intel_pipeline      

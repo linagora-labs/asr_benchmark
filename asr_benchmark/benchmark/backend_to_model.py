@@ -5,6 +5,9 @@ def get_model(config):
     if backend == "transformers":
         import asr_benchmark.benchmark.interfaces_transformers as interfaces_transformers
         model = interfaces_transformers.TransformersModel(config)
+    elif backend == "transformers-whisper":
+        import asr_benchmark.benchmark.interfaces_transformers as interfaces_transformers
+        model = interfaces_transformers.TransformersWhisperModel(config)
     elif backend == "transformers-facebook":
         import asr_benchmark.benchmark.interfaces_transformers as interfaces_transformers
         model = interfaces_transformers.TransformersFacebookModel(config)

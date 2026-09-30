@@ -1,0 +1,22 @@
+{
+  "startup_timeout": 7200,
+  "backend": "nemo",
+  "model": "nvidia/parakeet-tdt-0.6b-v3",
+  "language": "fr",
+  "vad": "false",
+  "device": "cuda",
+  "num_threads": null,
+  "decoder": "ctc",
+  "input_manifest": "benchmarks/sota/manifest_rtf.jsonl",
+  "compute_rtf": true,
+  "save_predictions": false,
+  "save_alignments": false,
+  "compute_latency": false,
+  "plot_monitoring": true,
+  "input_audios_paths": "",
+  "device_name": "NVIDIA GB10",
+  "word_timestamps": true,
+  "model_info": {
+    "params": 627008134
+  }
+}

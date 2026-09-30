@@ -1,0 +1,22 @@
+{
+  "startup_timeout": 7200,
+  "backend": "vibevoice-asr",
+  "model": "microsoft/VibeVoice-ASR-HF",
+  "dtype": "bfloat16",
+  "device": "cuda",
+  "max_new_tokens": 1024,
+  "sampling_rate": 24000,
+  "prompt": null,
+  "input_manifest": "benchmarks/sota/manifest_rtf.jsonl",
+  "compute_rtf": true,
+  "save_predictions": false,
+  "save_alignments": false,
+  "compute_latency": false,
+  "plot_monitoring": true,
+  "input_audios_paths": "",
+  "device_name": "NVIDIA GB10",
+  "word_timestamps": false,
+  "model_info": {
+    "params": 8330325888
+  }
+}

@@ -13,6 +13,7 @@
   .second-last { background: #fdcb6e; } .last { background: #e74c3c; }
   td.first, td.second, td.second-last, td.last { color: #1d1d1b; }
 
+  [hidden] { display: none !important; }
   html { overflow-y: scroll; }  /* no layout shift between the tabs */
   body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, sans-serif; }
   a { color: var(--accent); }
@@ -41,6 +42,22 @@
   .tabs label { margin-left: auto; }
   .intro { margin: 16px 0 0; }
   #tab-testsets .scroll { margin-top: 24px; }
+  h2 { margin: 40px 0 0; font-size: 19px; }
+  tr.total td { font-weight: 700; }
+  .chart { position: relative; padding: 8px 8px 0; }
+  .chart svg { display: block; width: 100%; height: auto; font-size: 12px; }
+  .chart .grid { stroke: var(--line); }
+  .chart .axis text, .chart .axis-title { fill: var(--muted); }
+  .chart .label { fill: var(--text); font-size: 12px; } .chart .label.muted { fill: var(--muted); }
+  .chart .ci { stroke: var(--muted); stroke-width: 1.5; opacity: .45; }
+  .chart .front-line { fill: none; stroke: var(--accent); stroke-width: 2; opacity: .45; }
+  .chart .dot { stroke: var(--surface); stroke-width: 2; }
+  .chart .dot.front { fill: var(--accent); } .chart .dot.other { fill: #a3a19b; }
+  .chart .dot.hover { stroke: var(--text); }
+  .tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+         padding: 6px 10px; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,.08); white-space: nowrap; }
+  .swatch.front { background: var(--accent); border-radius: 50%; } .swatch.other { background: #a3a19b; border-radius: 50%; }
+  #tab-speed .legend { margin: 12px 0 0; }
   .hist rect { fill: var(--accent); }
   .hist text { fill: var(--muted); font-size: 10px; }
 </style>
@@ -53,16 +70,17 @@
     Only models whose weights are publicly available are evaluated.</p>
 
   <nav class="tabs">
-    <a href="#">Leaderboard</a> <a href="#test-sets">Test sets</a>
+    <a href="#">Leaderboard</a> <a href="#speed">WER vs RTFx</a> <a href="#test-sets">Test sets</a>
     <label>Language <select id="language"></select></label>
   </nav>
 
-  <section id="tab-board">
-  <div class="controls">
+  <div class="controls" id="controls">
     <span id="metric"><button data-v="wer" aria-pressed="true">WER</button> <button data-v="cer">CER</button></span>
     <span id="norm"><button data-v="1" aria-pressed="true" title="Lowercase, punctuation removed">Normalized</button> <button data-v="0" title="Case and punctuation count as errors">Case &amp; punct.</button></span>
     <span id="datasets"></span>
   </div>
+
+  <section id="tab-board">
   <div class="legend">
     <span><span class="swatch first"></span>1st</span> <span><span class="swatch second"></span>2nd</span>
     <span><span class="swatch second-last"></span>Second to last</span> <span><span class="swatch last"></span>Last</span>
@@ -72,8 +90,22 @@
   <div class="notes muted" id="notes"></div>
   </section>
 
+  <section id="tab-speed" hidden>
+  <div class="scroll chart"><svg id="scatter" role="img"></svg><div class="tip" id="tip" hidden></div></div>
+  <div class="legend">
+    <span><span class="swatch front"></span>Best trade-off: no other model is both faster and more accurate</span>
+    <span><span class="swatch other"></span>Other models</span>
+  </div>
+  <div class="notes muted" id="chart-notes"></div>
+  </section>
+
   <section id="tab-testsets" hidden>
   <div class="scroll"><table id="testsets"></table></div>
+  <div id="speed" hidden>
+    <h2>Speed test set (RTFx)</h2>
+    <div class="notes" id="speed-notes"></div>
+    <div class="scroll"><table id="speedset"></table></div>
+  </div>
   </section>
 </main>
 
@@ -129,6 +161,26 @@ function renderTestSets() {
     `<td>${d.median_seconds != null ? f1(d.median_seconds) + " s" : "—"}</td>` +
     `<td>${d.histogram ? histogramSvg(d.histogram, bins) : "—"}</td></tr>`).join("");
   document.getElementById("testsets").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
+  renderSpeedSet(bins);
+}
+
+// Segments the RTFx is measured on (separate from the test sets), per source test set.
+const duration = s => s >= 90 ? f1(s / 60) + " min" : f1(s) + " s";
+function renderSpeedSet(testsetBins) {
+  const set = DATA.speed_set;
+  document.getElementById("speed").hidden = !set;
+  if (!set) return;
+  const t = set.total;
+  const bins = Math.max(testsetBins, t.histogram.length);  // same x scale as the test sets when possible
+  const row = (name, domain, d, cls = "") => `<tr class="${cls}"><td>${esc(name)}</td><td>${esc(domain)}</td><td>${d.utterances}</td>` +
+    `<td>${duration(d.seconds)}</td><td>${f1(d.mean_seconds)} s</td><td>${f1(d.median_seconds)} s</td><td>${histogramSvg(d.histogram, bins)}</td></tr>`;
+  const head = `<tr><th>Drawn from</th><th>Type</th><th>Segments</th><th>Duration</th><th>Mean length</th><th>Median length</th><th>Length distribution</th></tr>`;
+  const body = set.sources.map(d => row(d.name, d.domain, d)).join("") + row("Total", "", t, "total");
+  document.getElementById("speedset").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
+  document.getElementById("speed-notes").innerHTML = `
+    <p><b>RTFx</b> (inverse real-time factor): seconds of audio transcribed per second of computation, higher is faster.<br>
+      Measured on ${t.utterances} segments ranging from ${Math.round(t.min_seconds)} to ${Math.round(t.max_seconds)} s.<br>
+      No batching, only the transcription is timed.${set.hardware.length ? `<br>GPU: ${esc(set.hardware.join(", "))}` : ""}</p>`;
 }
 
 // Mean of the per-test-set scores; its ± combines the per-set half-widths as independent errors.
@@ -224,12 +276,102 @@ function render() {
                         : `<td class="muted" title="Not evaluated on all the selected test sets">—</td>`;
     const rankCell = avgRank != null ? cell(avgRank, null, rankClass(avgRank, rankValues), "Mean of the ranks over the selected test sets")
                                      : `<td class="muted">—</td>`;
-    const info = (m.rtfx != null ? `<td title="${esc(m.hardware ? `On ${m.hardware}` : "")}">${Math.round(m.rtfx)}×</td>` : `<td class="muted" title="Not measured yet">—</td>`) +
+    const info = (m.rtfx != null ? `<td title="${esc([m.hardware && `On ${m.hardware}`, m.rtf_backend && `timed with ${m.rtf_backend}`].filter(Boolean).join(", "))}">${Math.round(m.rtfx)}×</td>` : `<td class="muted" title="Not measured yet">—</td>`) +
       `<td>${m.params ? params(m.params) : "—"}</td><td class="left">${esc(m.license ? licenseText(m.license) : "—")}</td>` +
       `<td class="left" title="${esc(m.languages ? m.languages.join(" ") : "Not listed in the model card")}">${esc(languagesText(m.languages))}</td>`;
     return `<tr><td>${key != null ? ++rank : ""}</td><td>${name}<br><small>${esc([m.variant, m.backend].filter(Boolean).join(" · "))}</small></td>${avgCell}${rankCell}${cells}${info}</tr>`;
   }).join("");
   document.getElementById("board").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
+  renderChart(rows, datasets);
+}
+
+// Average WER (same selection as the leaderboard) against RTFx, log scale.
+function renderChart(rows, datasets) {
+  const W = 1000, H = 540, L = 60, R = 24, T = 16, B = 52;
+  const points = rows.filter(r => r.avg && r.m.rtfx).map(r => ({ m: r.m, wer: r.avg.wer, pm: r.avg.pm, rtfx: r.m.rtfx }));
+  // Best trade-offs: from the fastest, each model more accurate than all the faster ones.
+  let best = Infinity;
+  [...points].sort((a, b) => b.rtfx - a.rtfx).forEach(p => { p.front = p.wer < best; best = Math.min(best, p.wer); });
+  const svg = document.getElementById("scatter");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("aria-label", `Average ${state.metric.toUpperCase()} against RTFx of ${points.length} models`);
+  if (!points.length) { svg.innerHTML = ""; return; }
+  const lo = Math.floor(Math.log10(Math.min(...points.map(p => p.rtfx))));
+  const hi = Math.ceil(Math.log10(Math.max(...points.map(p => p.rtfx))));
+  const x = v => L + (Math.log10(v) - lo) / (hi - lo) * (W - L - R);
+  const top = Math.max(...points.map(p => p.wer + (p.pm || 0)));
+  const step = top > 40 ? 10 : 5, yMax = Math.ceil(top / step) * step;
+  const y = v => T + (1 - v / yMax) * (H - T - B);
+  const xTicks = [];
+  for (let e = lo; e <= hi; e++) for (const k of [1, 3]) if (e + Math.log10(k) <= hi) xTicks.push(k * 10 ** e);
+  const yTicks = Array.from({ length: yMax / step + 1 }, (_, i) => i * step);
+  const grid = xTicks.map(t => `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="${T}" y2="${H - B}"/>` +
+      `<text x="${x(t)}" y="${H - B + 18}" text-anchor="middle">${t}×</text>`).join("") +
+    yTicks.map(t => `<line class="grid" x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}"/>` +
+      `<text x="${L - 8}" y="${y(t) + 4}" text-anchor="end">${t}</text>`).join("");
+  const metric = `${state.metric.toUpperCase()} (%)${state.norm ? "" : ", case & punct."}`;
+  const titles = `<text class="axis-title" x="${(L + W - R) / 2}" y="${H - 8}" text-anchor="middle">RTFx, log scale (faster →)</text>` +
+    `<text class="axis-title" transform="translate(16 ${(T + H - B) / 2}) rotate(-90)" text-anchor="middle">Average ${metric}, ${datasets.length} test sets (lower is better)</text>`;
+  const front = points.filter(p => p.front).sort((a, b) => a.rtfx - b.rtfx);
+  const line = `<polyline class="front-line" points="${front.map(p => `${x(p.rtfx)},${y(p.wer)}`).join(" ")}"/>`;
+  const ci = points.filter(p => p.pm).map(p => `<line class="ci" x1="${x(p.rtfx)}" x2="${x(p.rtfx)}" y1="${y(p.wer - p.pm)}" y2="${y(p.wer + p.pm)}"/>`).join("");
+  // Front points first in the DOM so that the others are drawn over the line, all after the whiskers.
+  const dots = points.map((p, i) => `<circle class="dot ${p.front ? "front" : "other"}" data-i="${i}" cx="${x(p.rtfx)}" cy="${y(p.wer)}" r="${p.front ? 6 : 5}"/>`).join("");
+  // Labels: for each model (best trade-offs first), the first of a few positions around its dot
+  // that overlaps no dot and no other label; none fits: no label (the tooltip still names it).
+  // Same name as in the leaderboard, plus the variant when several runs of a model are shown.
+  const homonyms = new Set(points.map(p => p.m.model).filter((n, i, all) => all.indexOf(n) !== i));
+  const boxes = points.map(p => ({ x0: x(p.rtfx) - 7, x1: x(p.rtfx) + 7, y0: y(p.wer) - 7, y1: y(p.wer) + 7 }));
+  const overlaps = b => b.x0 < L || b.x1 > W - R || b.y0 < T || b.y1 > H - B ||
+    boxes.some(o => b.x0 < o.x1 && o.x0 < b.x1 && b.y0 < o.y1 && o.y0 < b.y1);
+  const text = [...points].sort((a, b) => b.front - a.front || b.rtfx - a.rtfx).map(p => {
+    const name = p.m.model + (homonyms.has(p.m.model) && p.m.variant ? ` (${p.m.variant})` : "");
+    const w = name.length * 6.6, cx = x(p.rtfx), cy = y(p.wer);
+    const candidates = [[10, 4, "start"], [-10, 4, "end"], [0, -12, "middle"], [0, 20, "middle"],
+                        [10, -10, "start"], [10, 18, "start"], [-10, -10, "end"], [-10, 18, "end"],
+                        [0, -26, "middle"], [0, 34, "middle"], [-10, -24, "end"], [10, -24, "start"], [-10, 32, "end"], [10, 32, "start"]];
+    for (const [dx, dy, anchor] of candidates) {
+      const x0 = cx + dx - (anchor === "end" ? w : anchor === "middle" ? w / 2 : 0);
+      const box = { x0, x1: x0 + w, y0: cy + dy - 11, y1: cy + dy + 3 };
+      if (overlaps(box)) continue;
+      boxes.push(box);
+      return `<text class="label${p.front ? "" : " muted"}" x="${cx + dx}" y="${cy + dy}" text-anchor="${anchor}">${esc(name)}</text>`;
+    }
+    return "";
+  }).join("");
+  svg.innerHTML = `<g class="axis">${grid}</g>${titles}${line}${ci}${dots}${text}`;
+
+  const tip = document.getElementById("tip");
+  // Hover: the dot whose center is the nearest to the pointer (within 20 px), so that each of
+  // two overlapping dots can be reached from its own side.
+  svg.onmousemove = e => {
+    const m = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse());
+    let i = -1, dMin = 20;
+    points.forEach((p, j) => { const d = Math.hypot(x(p.rtfx) - m.x, y(p.wer) - m.y); if (d < dMin) { dMin = d; i = j; } });
+    svg.querySelectorAll(".dot.hover").forEach(d => d.classList.remove("hover"));
+    if (i < 0) { tip.hidden = true; return; }
+    const p = points[i];
+    const dot = svg.querySelector(`.dot[data-i="${i}"]`);
+    dot.classList.add("hover");
+    svg.appendChild(dot);  // on top of the dot it overlaps
+    tip.innerHTML = `<b>${esc(p.m.model)}</b>${p.m.variant ? ` <span class="muted">${esc(p.m.variant)}</span>` : ""}<br>` +
+      `Average ${state.metric.toUpperCase()}: ${f1(p.wer)}${p.pm != null ? ` ±${f1(p.pm)}` : ""}<br>RTFx: ${Math.round(p.rtfx)}×` +
+      `${p.m.rtf_backend ? ` (timed with ${esc(p.m.rtf_backend)})` : ""}` +
+      `${p.m.params ? ` · ${params(p.m.params)} parameters` : ""}`;
+    tip.hidden = false;
+    const box = svg.parentElement.getBoundingClientRect();
+    const px = e.clientX - box.left, py = e.clientY - box.top;
+    tip.style.left = Math.min(px + 14, box.width - tip.offsetWidth - 8) + "px";
+    tip.style.top = Math.max(py - tip.offsetHeight - 10, 4) + "px";
+  };
+  svg.onmouseleave = () => { tip.hidden = true; svg.querySelectorAll(".dot.hover").forEach(d => d.classList.remove("hover")); };
+
+  const missing = (list, why) => list.length ? `<p>${why}: ${list.map(r => esc(r.m.model + (r.m.variant ? ` (${r.m.variant})` : ""))).join(", ")}.</p>` : "";
+  document.getElementById("chart-notes").innerHTML =
+    `<p>Each dot is a model: its average over the test sets selected above, against its RTFx (seconds of audio transcribed per second of computation, ` +
+    `see the <a href="#test-sets">test sets</a> tab). Vertical bars: 95% confidence interval of the average. Hover a dot for the details.</p>` +
+    missing(rows.filter(r => r.avg && !r.m.rtfx), "Speed not measured yet") +
+    missing(rows.filter(r => !r.avg), "Not evaluated on all the selected test sets");
 }
 
 // Controls
@@ -271,15 +413,18 @@ document.getElementById("notes").innerHTML = `
   <p><b>Avg rank</b>: mean of the model's rank on each selected test set (1 = best), among the models that have an average. Unlike the average, a test set with high error rates does not weigh more than the others.</p>
   <p><b>±</b>: half-width of the 95% confidence interval, by bootstrap over the utterances of each test set (hover a score for the exact interval and the error breakdown).</p>
   <p><b>Normalized</b> scores ignore case and punctuation; <b>Case &amp; punct.</b> counts them as errors; it leaves out the test sets whose references have no case and punctuation. Segments of at most 30 s.</p>
-  <p><b>Size</b>, <b>License</b> and <b>Languages</b> (up to 5, "multi" beyond: hover for the list) come from the model cards. <b>RTFx</b>: seconds of audio transcribed per second of computation, on long recordings (hover for the hardware); higher is faster.</p>
+  <p><b>Size</b>, <b>License</b> and <b>Languages</b> (up to 5, "multi" beyond: hover for the list) come from the model cards.</p>
+  <p><b>RTFx</b>: seconds of audio transcribed per second of computation, higher is faster.</p>
   <p>Results and configuration: <a href="${DATA.repo}/tree/main/benchmarks/sota">benchmarks/sota</a>. Raw data: <a href="leaderboard.json">leaderboard.json</a>.</p>`;
 
 // Tabs: the URL hash (#test-sets) picks the tab, so that it can be linked.
 function showTab() {
-  const testsets = location.hash === "#test-sets";
-  document.getElementById("tab-board").hidden = testsets;
-  document.getElementById("tab-testsets").hidden = !testsets;
-  document.querySelectorAll(".tabs a").forEach(a => a.setAttribute("aria-current", (a.hash === "#test-sets") === testsets ? "page" : "false"));
+  const tab = ["#speed", "#test-sets"].includes(location.hash) ? location.hash : "";
+  document.getElementById("tab-board").hidden = tab !== "";
+  document.getElementById("tab-speed").hidden = tab !== "#speed";
+  document.getElementById("tab-testsets").hidden = tab !== "#test-sets";
+  document.getElementById("controls").hidden = tab === "#test-sets";  // the test sets tab does not use them
+  document.querySelectorAll(".tabs a").forEach(a => a.setAttribute("aria-current", a.hash === tab ? "page" : "false"));
 }
 window.onhashchange = showTab;
 showTab();

@@ -40,6 +40,12 @@ benchmarks:
   - backend: qwen3-omni
     model: Qwen/Qwen3-Omni-30B-A3B-Instruct
     dtype: bfloat16
+  # --- Qwen3-ASR (transformers) --------------------------------------------
+  - backend: qwen3-asr
+    model: Qwen/Qwen3-ASR-1.7B-hf
+    dtype: bfloat16
+    max_new_tokens: 256
+    language: fr
   # --- Microsoft VibeVoice-ASR (9B, transformers port of microsoft/VibeVoice-ASR) --
   # No language setting: auto-detects. Needs transformers >= 5.3.
   - backend: vibevoice-asr
@@ -47,17 +53,21 @@ benchmarks:
     dtype: bfloat16
     batch_size: 8
   # --- NVIDIA Nemotron 3.5 ASR (streaming, language-ID prompt, needs NeMo >= 3.0) --
-  # Transcribed offline (full utterance), with the French prompt forced.
+  # Transcribed offline (full utterance), with the French prompt forced. The
+  # encoder still masks attention as in streaming: chunk_ms picks the latency
+  # (80, 320 = model default, 560, 1120 ms), here the largest one (best WER).
   - backend: nemo
     model: nvidia/nemotron-3.5-asr-streaming-0.6b
     batch_size: 16
     language: fr
+    chunk_ms: 1120
   # --- NVIDIA canary / parakeet ---------------------------------------------
   # language is required for canary (EncDecMultiTaskModel): the nemo interface
   # passes config["language"] as source_lang/target_lang, no default.
   - backend: nemo
     model:
     - nvidia/canary-180m-flash
+    - nvidia/canary-1b
     - nvidia/canary-1b-v2
     - nvidia/parakeet-tdt-0.6b-v3
     batch_size: 16
@@ -78,8 +88,18 @@ benchmarks:
     batch_size: 16
     decoder:
     - ctc
+  # --- BuzzASR French (whisper-large-v3 fine-tune, own French tokenizer) -----
+  # No language: the prompt is baked into its generation config. Decoding
+  # recommended by the model card. transformers-whisper: the ASR pipeline
+  # of the `transformers` backend decodes an empty text with its tokenizer.
+  - backend: transformers-whisper
+    model: BuzzASR/french
+    generate_kwargs:
+      no_repeat_ngram_size: 3
+      repetition_penalty: 1.2
   # --- OpenAI whisper -------------------------------------------------------
   - backend: faster-whisper
     model:
+    - large-v3
     - large-v3-turbo
     precision: float16

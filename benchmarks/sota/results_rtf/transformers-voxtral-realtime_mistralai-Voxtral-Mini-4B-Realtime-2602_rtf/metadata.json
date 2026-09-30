@@ -1,0 +1,22 @@
+{
+  "startup_timeout": 7200,
+  "backend": "transformers-voxtral-realtime",
+  "model": "mistralai/Voxtral-Mini-4B-Realtime-2602",
+  "language": "fr",
+  "device": "cuda",
+  "max_tokens": 512,
+  "temperature": 0.0,
+  "dtype": "float16",
+  "input_manifest": "benchmarks/sota/manifest_rtf.jsonl",
+  "compute_rtf": true,
+  "save_predictions": false,
+  "save_alignments": false,
+  "compute_latency": false,
+  "plot_monitoring": true,
+  "input_audios_paths": "",
+  "device_name": "NVIDIA GB10",
+  "word_timestamps": false,
+  "model_info": {
+    "params": 4429679360
+  }
+}

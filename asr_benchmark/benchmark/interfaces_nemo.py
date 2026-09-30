@@ -38,6 +38,7 @@ class NemoModel(Model):
 
     def load(self) -> None:
         self.decoder = None
+        self.streaming_context = {}
         logging.getLogger("nemo_logger").setLevel(logging.ERROR)
         if self.config['model'].endswith(".nemo"):
             self.model = nemo_asr.models.ASRModel.restore_from(self.config['model'], map_location=self.config['device'])
@@ -62,6 +63,31 @@ class NemoModel(Model):
             decode_cfg = self.model.cfg.decoding
             decode_cfg.beam.beam_size = 1
             self.model.change_decoding_strategy(decode_cfg)
+        self.set_chunk_size()
+
+    def set_chunk_size(self):
+        """Latency of cache-aware streaming models (att_context_style chunked_limited). Even when
+        transcribing whole files, the encoder masks attention as in streaming: each chunk of
+        right+1 frames only sees the `left` previous frames, so the chunk size changes the WER.
+        `chunk_ms` picks the [left, right] of the model's att_context_size list with that chunk;
+        without it the model's default (first of the list) is used. The effective value goes to
+        metadata.json (not to the config: the folder name must not change after loading)."""
+        encoder = self.model.encoder
+        contexts = getattr(encoder, "att_context_size_all", None)
+        if getattr(encoder, "att_context_style", None) != "chunked_limited" or not contexts:
+            if self.config.get("chunk_ms"):
+                raise ValueError(f"chunk_ms is only for cache-aware streaming models, not {self.config['model']}")
+            return
+        frame_ms = round(self.model.cfg.preprocessor.window_stride * encoder.subsampling_factor * 1000)
+        chunk_ms = lambda context: (context[1] + 1) * frame_ms
+        if self.config.get("chunk_ms"):
+            matching = [c for c in contexts if chunk_ms(c) == int(self.config["chunk_ms"])]
+            if not matching:
+                supported = sorted(chunk_ms(c) for c in contexts)
+                raise ValueError(f"chunk_ms {self.config['chunk_ms']} not supported by {self.config['model']}, choose among {supported}")
+            encoder.set_default_att_context_size(list(matching[0]))
+        context = list(encoder.att_context_size)
+        self.streaming_context = {"chunk_ms": chunk_ms(context), "att_context_size": context}
     
     def load_audio(self, audio: str, start=0.0, duration=None):
         return load_audio(audio, start=start, duration=duration)
@@ -170,6 +196,7 @@ class NemoModel(Model):
         if "ngram_model" in metadata:
             metadata["decoder"] = Path(self.config['ngram_model']).name
             del metadata['ngram_model']
+        metadata.update(getattr(self, "streaming_context", {}))
         return metadata
     
     def get_folder_name(self):
@@ -190,6 +217,8 @@ class NemoModel(Model):
             name += self.detail("_decoder-ctc")
         if self.is_prompt_model:
             name += self.detail(f"_lang-{tot_config['language']}")
+        if tot_config.get('chunk_ms'):
+            name += self.detail(f"_chunk{tot_config['chunk_ms']}ms")
         if tot_config['compute_rtf']:
             name += self.vad_tag()
         name += self.detail(f"_threads{tot_config['num_threads']}") if tot_config['device'] == 'cpu' else ""

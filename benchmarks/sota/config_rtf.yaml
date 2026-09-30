@@ -5,66 +5,87 @@ plot_monitoring: True
 skip_errors: False
 save_alignments: False
 save_predictions: False
+# vllm: seconds to wait for `vllm serve` (a 24B model on the GB10 takes ~20 min to start)
+startup_timeout: 7200
 
-# RTF + (V)RAM counterpart of config.yaml: same model list, but it measures
+# RTF + (V)RAM counterpart of config.yaml: same models, but it measures
 # speed/hardware on manifest_rtf.jsonl instead of WER. Keep both files in sync.
 #
-# The whisper, nemo and transformers-5.x (moss / voxtral / gemma3n / qwen3-omni /
-# vibevoice) extras conflict in pyproject.toml, so this file is run in several
-# passes, one per environment. Already-benched models are skipped; with
-# skip_errors: False a pass aborts at the first backend it cannot import, set it
-# to True to sweep:
-#   uv run --extra moss --extra voxtral --extra vibevoice python benchmarker.py benchmarks/sota/config_rtf.yaml
-#   uv run --extra nemo                 python benchmarker.py benchmarks/sota/config_rtf.yaml
-#   uv run --extra whisper              python benchmarker.py benchmarks/sota/config_rtf.yaml
-# On the DGX: tools/run_sota_dgx.sh -c benchmarks/sota/config_rtf.yaml ...
+# manifest_rtf.jsonl: 10 segments of 20-30 s drawn from manifest.jsonl (3 TEDx,
+# 3 Voxpopuli, 2 SUMM-RE, 2 MLS, random.Random(0)), short enough for the models
+# with a ~30 s window (canary, gemma3n, whisper...): on longer files they
+# transcribe only part of the audio, which makes them look faster.
+#
+# To compare models on the same machine, every model transcribes one file at a
+# time: compute_rtf calls model.transcribe() file by file (batch_size is not used),
+# and vllm entries keep concurrency: 1 (the default). The audio LLMs that vLLM can
+# serve run through it (faster than their transformers version). On transformers:
+# VibeVoice (no vLLM support) and Voxtral-Mini-Realtime, a streaming model that vLLM
+# only feeds audio through its /v1/realtime websocket, not the
+# /v1/audio/transcriptions route of the vllm backend (it would decode silence).
+#
+# The backends need separate environments (vllm server, nemo, whisper,
+# transformers 5.x), so this file is run in several passes. Already-benched models
+# are skipped. On the DGX:
+#   tools/run_sota_dgx.sh vllm         -c benchmarks/sota/config_rtf.yaml
+#   tools/run_sota_dgx.sh transformers -c benchmarks/sota/config_rtf.yaml
+#   tools/run_sota_dgx.sh nemo         -c benchmarks/sota/config_rtf.yaml
+#   tools/run_sota_dgx.sh whisper      -c benchmarks/sota/config_rtf.yaml
 
 benchmarks:
-  # https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602#vllm-recommended
+  # --- audio LLMs served by vLLM (one `vllm serve` per model) ----------------
+  - backend: vllm
+    model: mistralai/Voxtral-Small-24B-2507
+    port: 8101
+    language: fr
+  # No language set: auto-detect is the only documented prompt and the best on French.
+  - backend: vllm
+    model: OpenMOSS-Team/MOSS-Transcribe-Diarize
+    trust_remote_code: true
+    port: 8102
+  - backend: vllm
+    model: google/gemma-3n-e4b-it
+    port: 8103
+    language: fr
+  # MAX_JOBS caps the parallel nvcc jobs of the FlashInfer fused-MoE JIT build at
+  # startup: unset, they OOM the GB10 unified memory next to the 59 GiB of weights
+  # (server killed with exit -9).
+  - backend: vllm
+    model: Qwen/Qwen3-Omni-30B-A3B-Instruct
+    port: 8104
+    language: fr
+    env:
+      MAX_JOBS: 4
+  # --- Mistral Voxtral realtime (streaming model, transcribed offline) ------
   - backend: transformers-voxtral-realtime
     model: mistralai/Voxtral-Mini-4B-Realtime-2602
     language: fr
-  # --- Mistral Voxtral (audio LLM) ------------------------------------------
-  - backend: transformers-voxtral
-    model: mistralai/Voxtral-Small-24B-2507
+  # --- Qwen3-ASR (transformers) --------------------------------------------
+  - backend: qwen3-asr
+    model: Qwen/Qwen3-ASR-1.7B-hf
     dtype: bfloat16
+    max_new_tokens: 256
     language: fr
-  # --- MOSS-Transcribe-Diarize ----------------------------------------------
-  # No language set: auto-detect is the only documented prompt and the best on
-  # French. `language` is an unofficial knob (an English pin makes it translate).
-  - backend: moss
-    model: OpenMOSS-Team/MOSS-Transcribe-Diarize
-    dtype: bfloat16
-    batch_size: 8
-  # --- Google Gemma 3n (general multimodal LLM, needs timm) -----------------
-  - backend: gemma3n
-    model: google/gemma-3n-e4b-it
-    dtype: bfloat16
-  # --- Qwen3-Omni (30B MoE, large VRAM, not ASR-tuned) ----------------------
-  - backend: qwen3-omni
-    model: Qwen/Qwen3-Omni-30B-A3B-Instruct
-    dtype: bfloat16
-  # --- Microsoft VibeVoice-ASR (9B, transformers port of microsoft/VibeVoice-ASR) --
-  # No language setting: auto-detects. Needs transformers >= 5.3.
+  # --- Microsoft VibeVoice-ASR (no vLLM support). Auto-detects the language. --
   - backend: vibevoice-asr
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
-    batch_size: 8
   # --- NVIDIA Nemotron 3.5 ASR (streaming, language-ID prompt, needs NeMo >= 3.0) --
-  # Transcribed offline (full utterance), with the French prompt forced.
+  # Transcribed offline (full utterance), with the French prompt forced, at the
+  # largest chunk size (see config.yaml).
   - backend: nemo
     model: nvidia/nemotron-3.5-asr-streaming-0.6b
-    batch_size: 16
     language: fr
+    chunk_ms: 1120
   # --- NVIDIA canary / parakeet ---------------------------------------------
   # language is required for canary (EncDecMultiTaskModel): the nemo interface
   # passes config["language"] as source_lang/target_lang, no default.
   - backend: nemo
     model:
     - nvidia/canary-180m-flash
+    - nvidia/canary-1b
     - nvidia/canary-1b-v2
     - nvidia/parakeet-tdt-0.6b-v3
-    batch_size: 16
     language: fr
   # --- fastconformer hybrid, RNNT decoder -----------------------------------
   - backend: nemo
@@ -73,17 +94,25 @@ benchmarks:
     - bofenghuang/stt_fr_fastconformer_hybrid_large
     - linagora/linto_stt_fr_fastconformer
     - linagora/linto_stt_fr_fastconformer_pc
-    batch_size: 16
     decoder:
     - rnnt
   # --- LINTO fastconformer-pc, CTC decoder (RNNT is above) ------------------
   - backend: nemo
     model: linagora/linto_stt_fr_fastconformer_pc
-    batch_size: 16
     decoder:
     - ctc
-  # --- OpenAI whisper -------------------------------------------------------
+  # --- BuzzASR French (whisper-large-v3 fine-tune, own French tokenizer) -----
+  # No language: the prompt is baked into its generation config. Decoding
+  # recommended by the model card. transformers-whisper: the ASR pipeline
+  # of the `transformers` backend decodes an empty text with its tokenizer.
+  - backend: transformers-whisper
+    model: BuzzASR/french
+    generate_kwargs:
+      no_repeat_ngram_size: 3
+      repetition_penalty: 1.2
+  # --- OpenAI whisper (on the DGX, needs the CUDA build of ctranslate2) ------
   - backend: faster-whisper
     model:
+    - large-v3
     - large-v3-turbo
     precision: float16

@@ -8,8 +8,9 @@ on:
     branches: [main]
     paths:
       - "benchmarks/sota/results/**"
+      - "benchmarks/sota/results_rtf/**"
       - "benchmarks/sota/config*.yaml"
-      - "benchmarks/sota/manifest.jsonl"
+      - "benchmarks/sota/manifest*.jsonl"
       - "tools/leaderboard/**"
       - ".github/workflows/leaderboard.yml"
   workflow_dispatch:

@@ -1,0 +1,38 @@
+{
+  "Voxpopuli_max30_20090202-0900-PLENARY-12-fr_20090202-21:22:29_2": {
+    "audio_filepath": "/home/data/audio/converted_audios/transcript/fr/VoxPopuli/20090202-0900-PLENARY-12-fr_20090202-21:22:29_2.wav",
+    "id": "Voxpopuli_max30_20090202-0900-PLENARY-12-fr_20090202-21:22:29_2",
+    "audio_duration": 22.42,
+    "audio_offset": 0.0,
+    "dataset": "Voxpopuli",
+    "full_dataset": "Voxpopuli_max30",
+    "text": "L'expérience accablante et désastreuse de nos pays du Sud au mois de janvier, de même que les pronostics qui nous menacent d'un déficit considérable de l'énergie dans les deux prochaines décennies, tout cela implique que la politique énergétique doit être une partie essentielle",
+    "prediction_duration": 0.04559,
+    "rtf": 0.00203,
+    "prediction": "l'expérience accablante et sinistrante de nos pays du sud au mois de janvier de même que les prognostics qui nous menacent d'un déficit considérable de l'énergie dans les deux prochaines décennies tout cela implique que la politique énergétique doit être une partie essentielle"
+  },
+  "Voxpopuli_max30_20120614-0900-PLENARY-12-fr_20120614-15:07:20_7": {
+    "audio_filepath": "/home/data/audio/converted_audios/transcript/fr/VoxPopuli/20120614-0900-PLENARY-12-fr_20120614-15:07:20_7.wav",
+    "id": "Voxpopuli_max30_20120614-0900-PLENARY-12-fr_20120614-15:07:20_7",
+    "audio_duration": 28.297,
+    "audio_offset": 0.0,
+    "dataset": "Voxpopuli",
+    "full_dataset": "Voxpopuli_max30",
+    "text": "Eux réclamaient à cor et à cri une mission PESD qui est en projet, qui doit arriver, qui est préparée mais qui devrait arriver beaucoup plus vite pour stabiliser de manière militaire la région. Je ne suis pas pour les interventions militaires mais la PESD est absolument indispensable, sinon ces pays se considèrent comme les harkis de l'Europe, ceux qui ont été abandonnés lors de l'intervention libyenne.",
+    "prediction_duration": 0.05959,
+    "rtf": 0.00211,
+    "prediction": "et eux demandaient à corps et à cri une mission pèse qui est en projet qui doit préparée mais qui devrait arriver beaucoup plus vite pour stabiliser de manière militaire la région je suis pas pour les interventions militaires mais la peste est absolument indispensable sinon ces pays se considèrent comme les arkis de l'europe ceux qui ont été abandonnés lors de l'intervention libyenne"
+  },
+  "Voxpopuli_max30_20170704-0900-PLENARY-6-fr_20170704-12:23:52_9": {
+    "audio_filepath": "/home/data/audio/converted_audios/transcript/fr/VoxPopuli/20170704-0900-PLENARY-6-fr_20170704-12:23:52_9.wav",
+    "id": "Voxpopuli_max30_20170704-0900-PLENARY-6-fr_20170704-12:23:52_9",
+    "audio_duration": 21.459,
+    "audio_offset": 0.0,
+    "dataset": "Voxpopuli",
+    "full_dataset": "Voxpopuli_max30",
+    "text": "lorsqu'elle est nommée ministre de la santé en mille neuf cent soixante quatorze par valéry giscard d'estaing personne en fait n'aurait parié un ancien franc français sur cette haute fonctionnaire chargée de faire voter la promesse phare du président c'est à dire la dépénalisation de l'avortement.",
+    "prediction_duration": 0.04472,
+    "rtf": 0.00208,
+    "prediction": "et lorsqu'elle est nommée ministre de la santé en mille neuf cent soixante-quatre par valéry giscard d'estaing personne en fait n'aurait parié un ancien franc français sur cette haute fonctionnaire en charge de faire voter la promesse phare du président c'est à dire la dépinalisation de l'avortement"
+  }
+}

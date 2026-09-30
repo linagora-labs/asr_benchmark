@@ -5,7 +5,7 @@ import json
 import os
 import tempfile
 import time
-import torchaudio
+import soundfile
 import librosa
 from pathlib import Path
 import subprocess
@@ -28,14 +28,15 @@ def _tmp_wav():
 
 def load_audio(fname, return_format="librosa", start=0.0, duration=None):
     end = start + duration if duration else None
-    waveform = ssak.utils.audio.load_audio(fname, start=start, end=end, sample_rate=16000, mono=True, return_format="torch" if return_format=="file" else return_format)
-    if return_format == "file" or return_format=="torch":
-        waveform = waveform.unsqueeze(0)
     if return_format == "file":
-        torchaudio.save(_tmp_wav(), waveform, sample_rate=16000)
+        # Not through torchaudio: its load/save need torchcodec (no aarch64 wheel on PyPI)
+        waveform = ssak.utils.audio.load_audio(fname, start=start, end=end, sample_rate=16000, mono=True, return_format="array")
+        soundfile.write(_tmp_wav(), waveform, 16000)
         return _tmp_wav()
-    else:
-        return waveform
+    waveform = ssak.utils.audio.load_audio(fname, start=start, end=end, sample_rate=16000, mono=True, return_format=return_format)
+    if return_format == "torch":
+        waveform = waveform.unsqueeze(0)
+    return waveform
 
 def get_audio_duration(file_path):
     y, sr = librosa.load(file_path, sr=None)

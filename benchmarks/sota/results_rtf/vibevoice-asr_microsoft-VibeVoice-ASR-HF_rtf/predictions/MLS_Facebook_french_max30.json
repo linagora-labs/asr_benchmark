@@ -1,0 +1,26 @@
+{
+  "MLS_Facebook_french_max30_5207_2928_000015": {
+    "audio_filepath": "/home/data/audio/raw/transcript/multilang/MultilingualLibriSpeech/mls_french/test/audio/5207/2928/5207_2928_000015.flac",
+    "id": "MLS_Facebook_french_max30_5207_2928_000015",
+    "audio_duration": 20.0,
+    "audio_offset": 0.0,
+    "dataset": "MLS_Facebook_french",
+    "full_dataset": "MLS_Facebook_french_max30",
+    "text": "matériel l' ambulance était fondée on rit beaucoup à la mairie de montmartre de cette expédition que nul n' eût encouragée si nous en eussions fait confidence avant la réussite le jour où mesdames poirier blin excoffons vinrent me trouver à ma classe pour commencer le comité de vigilance",
+    "prediction_duration": 8.91286,
+    "rtf": 0.44564,
+    "prediction": "l'ambulance s'est effondrée Henri beaucoup à la mairie dans mon martre de cette expédition que nul n'eut encouragé si nous ont eussions fait confiance avant la réussite le jour où mes dames Poirier Blin excoffon vinrent me trouver à ma classe pour commencer le comité de vigilance"
+  },
+  "MLS_Facebook_french_max30_5207_2928_000023": {
+    "audio_filepath": "/home/data/audio/raw/transcript/multilang/MultilingualLibriSpeech/mls_french/test/audio/5207/2928/5207_2928_000023.flac",
+    "id": "MLS_Facebook_french_max30_5207_2928_000023",
+    "audio_duration": 20.0,
+    "audio_offset": 0.0,
+    "dataset": "MLS_Facebook_french",
+    "full_dataset": "MLS_Facebook_french_max30",
+    "text": "alors on réussissait à l' accomplir un jour il fut décidé que montmartre n' avait pas assez d' ambulances alors avec une amie de la société d' instruction élémentaire toute jeune à cette époque nous résolûmes de la fonder c' était jeanne a depuis",
+    "prediction_duration": 8.95913,
+    "rtf": 0.44796,
+    "prediction": "Alors, on réussissait à l'accomplir. Un jour, il fut décidé que Montmartre n'avait pas assez d'ambulance, alors avec une amie de la société d'instruction élémentaire, toute jeune à cette époque, nous résolûmes de la fonder. C'était Jeanne A. Dupuy-Madame."
+  }
+}

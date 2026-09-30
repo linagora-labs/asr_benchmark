@@ -1,0 +1,21 @@
+{
+  "startup_timeout": 7200,
+  "backend": "nemo",
+  "model": "linagora/linto_stt_fr_fastconformer_pc",
+  "decoder": "rnnt",
+  "vad": "false",
+  "device": "cuda",
+  "num_threads": null,
+  "input_manifest": "benchmarks/sota/manifest_rtf.jsonl",
+  "compute_rtf": true,
+  "save_predictions": false,
+  "save_alignments": false,
+  "compute_latency": false,
+  "plot_monitoring": true,
+  "input_audios_paths": "",
+  "device_name": "NVIDIA GB10",
+  "word_timestamps": true,
+  "model_info": {
+    "params": 114621442
+  }
+}
