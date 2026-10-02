@@ -16,6 +16,35 @@
   "device_name": "NVIDIA GB10",
   "word_timestamps": true,
   "model_info": {
-    "params": 962155520
+    "hf": "nvidia/canary-1b-v2",
+    "license": "cc-by-4.0",
+    "params": 962155520,
+    "languages": [
+      "bg",
+      "hr",
+      "cs",
+      "da",
+      "nl",
+      "en",
+      "et",
+      "fi",
+      "fr",
+      "de",
+      "el",
+      "hu",
+      "it",
+      "lv",
+      "lt",
+      "mt",
+      "pl",
+      "pt",
+      "ro",
+      "sk",
+      "sl",
+      "es",
+      "sv",
+      "ru",
+      "uk"
+    ]
   }
 }

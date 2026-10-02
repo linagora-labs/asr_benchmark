@@ -17,6 +17,35 @@
   "device_name": "NVIDIA GB10",
   "word_timestamps": true,
   "model_info": {
-    "params": 627008134
+    "hf": "nvidia/parakeet-tdt-0.6b-v3",
+    "license": "cc-by-4.0",
+    "params": 627008134,
+    "languages": [
+      "en",
+      "es",
+      "fr",
+      "de",
+      "bg",
+      "hr",
+      "cs",
+      "da",
+      "nl",
+      "et",
+      "fi",
+      "el",
+      "hu",
+      "it",
+      "lv",
+      "lt",
+      "mt",
+      "pl",
+      "pt",
+      "ro",
+      "sk",
+      "sl",
+      "sv",
+      "ru",
+      "uk"
+    ]
   }
 }

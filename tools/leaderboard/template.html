@@ -277,7 +277,8 @@ function render() {
                         : `<td class="muted" title="Not evaluated on all the selected test sets">—</td>`;
     const rankCell = avgRank != null ? cell(avgRank, null, rankClass(avgRank, rankValues), "Mean of the ranks over the selected test sets")
                                      : `<td class="muted">—</td>`;
-    const info = (m.rtfx != null ? `<td title="${esc([m.hardware && `On ${m.hardware}`, m.rtf_backend && `timed with ${m.rtf_backend}`].filter(Boolean).join(", "))}">${Math.round(m.rtfx)}×</td>` : `<td class="muted" title="Not measured yet">—</td>`) +
+    const speedTitle = [m.hardware && `On ${m.hardware}`, m.rtf_backend && `timed with ${m.rtf_backend}`].filter(Boolean).join(", ");
+    const info = (m.rtfx != null ? `<td title="${esc([speedTitle, m.rtf_note].filter(Boolean).join("\n"))}">${Math.round(m.rtfx)}×${m.rtf_note ? " ⚠️" : ""}</td>` : `<td class="muted" title="Not measured yet">—</td>`) +
       `<td>${m.params ? params(m.params) : "—"}</td><td class="left">${esc(m.license ? licenseText(m.license) : "—")}</td>` +
       `<td class="left" title="${esc(m.languages ? m.languages.join(" ") : "Not listed in the model card")}">${esc(languagesText(m.languages))}</td>`;
     return `<tr><td>${key != null ? ++rank : ""}</td><td>${name}<br><small>${esc([m.variant, m.backend].filter(Boolean).join(" · "))}</small></td>${avgCell}${rankCell}${cells}${info}</tr>`;
@@ -358,7 +359,8 @@ function renderChart(rows, datasets) {
     tip.innerHTML = `<b>${esc(p.m.model)}</b>${p.m.variant ? ` <span class="muted">${esc(p.m.variant)}</span>` : ""}<br>` +
       `Average ${state.metric.toUpperCase()}: ${f1(p.wer)}${p.pm != null ? ` ±${f1(p.pm)}` : ""}<br>RTFx: ${Math.round(p.rtfx)}×` +
       `${p.m.rtf_backend ? ` (timed with ${esc(p.m.rtf_backend)})` : ""}` +
-      `${p.m.params ? ` · ${params(p.m.params)} parameters` : ""}`;
+      `${p.m.params ? ` · ${params(p.m.params)} parameters` : ""}` +
+      (p.m.rtf_note ? `<br>⚠️ ${esc(p.m.rtf_note)}` : "");
     tip.hidden = false;
     const box = svg.parentElement.getBoundingClientRect();
     const px = e.clientX - box.left, py = e.clientY - box.top;
@@ -415,7 +417,7 @@ document.getElementById("notes").innerHTML = `
   <p><b>±</b>: half-width of the 95% confidence interval, by bootstrap over the utterances of each test set (hover a score for the exact interval and the error breakdown).</p>
   <p><b>Normalized</b> scores ignore case and punctuation; <b>Case &amp; punct.</b> counts them as errors; it leaves out the test sets whose references have no case and punctuation. Segments of at most 30 s.</p>
   <p><b>Size</b>, <b>License</b> and <b>Languages</b> (up to 5, "multi" beyond: hover for the list) come from the model cards.</p>
-  <p><b>RTFx</b>: seconds of audio transcribed per second of computation, higher is faster.</p>
+  <p><b>RTFx</b>: seconds of audio transcribed per second of computation, higher is faster. ⚠️: the speed was measured with a slower runtime than the model's own (hover for details).</p>
   <p>Results and configuration: <a href="${DATA.repo}/tree/main/benchmarks/sota">benchmarks/sota</a>. Raw data: <a href="leaderboard.json">leaderboard.json</a>.</p>`;
 
 // Tabs: the URL hash (#test-sets) picks the tab, so that it can be linked.

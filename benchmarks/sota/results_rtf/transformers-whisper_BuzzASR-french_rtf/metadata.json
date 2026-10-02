@@ -26,6 +26,11 @@
   "device_name": "NVIDIA GB10",
   "word_timestamps": false,
   "model_info": {
-    "params": 1545548800
+    "hf": "BuzzASR/french",
+    "license": "mit",
+    "params": 1545548800,
+    "languages": [
+      "fr"
+    ]
   }
 }

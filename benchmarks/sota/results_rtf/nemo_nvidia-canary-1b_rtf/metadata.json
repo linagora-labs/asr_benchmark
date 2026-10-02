@@ -16,6 +16,14 @@
   "device_name": "NVIDIA GB10",
   "word_timestamps": true,
   "model_info": {
-    "params": 1016677408
+    "hf": "nvidia/canary-1b",
+    "license": "cc-by-nc-4.0",
+    "params": 1016677408,
+    "languages": [
+      "en",
+      "de",
+      "es",
+      "fr"
+    ]
   }
 }

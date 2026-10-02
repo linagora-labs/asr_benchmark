@@ -77,6 +77,14 @@ benchmarks:
     model: nvidia/nemotron-3.5-asr-streaming-0.6b
     language: fr
     chunk_ms: 1120
+  # --- moondream Parakeet Ultra / Redux (post-trainings of parakeet-tdt-0.6b-v3) --
+  # transformers ParakeetForTDT (not moondream's Photon runtime, whose CUDA kernels are
+  # proprietary): processor/generation config of nvidia/parakeet-tdt-0.6b-v3, redux's
+  # ternary encoder unpacked to dense weights at load. No language setting.
+  - backend: transformers-parakeet
+    model:
+    - moondream/parakeet-ultra
+    - moondream/parakeet-redux
   # --- NVIDIA canary / parakeet ---------------------------------------------
   # language is required for canary (EncDecMultiTaskModel): the nemo interface
   # passes config["language"] as source_lang/target_lang, no default.

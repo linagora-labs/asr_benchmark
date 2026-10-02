@@ -54,5 +54,13 @@
   "plot_monitoring": true,
   "input_audios_paths": "",
   "device_name": "NVIDIA GB10",
-  "word_timestamps": false
+  "word_timestamps": false,
+  "model_info": {
+    "hf": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+    "license": "apache-2.0",
+    "params": 35259818545,
+    "languages": [
+      "en"
+    ]
+  }
 }

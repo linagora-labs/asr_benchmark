@@ -35,12 +35,12 @@ DEFAULT_LANGUAGE = "fr"
 METRICS = ["wer_nocasepunc", "wer", "cer_nocasepunc", "cer"]
 
 def speed(exp, rtf_results, model=None):
-    """RTFx (seconds of audio transcribed per second of computation), hardware and backend of
-    the speed run of `exp`: <rtf_results>/<exp>_rtf, from benchmarks/sota/config_rtf.yaml.
+    """RTFx (seconds of audio transcribed per second of computation), hardware, backend and
+    caveat (`rtf_note` of its model_info, filled by hand) of the speed run of `exp`: <rtf_results>/<exp>_rtf, from benchmarks/sota/config_rtf.yaml.
     Without it, the speed run of the same `model` with another backend: config_rtf.yaml times
     the audio LLMs through vLLM (faster) while their WER may come from transformers."""
     if not rtf_results or not rtf_results.exists():
-        return None, None, None
+        return None, None, None, None
     exp_rtf = rtf_results / f"{exp.name}_rtf"
     if not (exp_rtf / "metadata.json").exists():
         same_model = [
@@ -48,7 +48,7 @@ def speed(exp, rtf_results, model=None):
             if model and json.loads(p.read_text(encoding="utf-8")).get("model") == model
         ]
         if len(same_model) != 1:  # none, or ambiguous (several variants of the model)
-            return None, None, None
+            return None, None, None, None
         exp_rtf = same_model[0]
     audio = compute = 0
     for pred_file in (exp_rtf / "predictions").glob("*.json"):
@@ -57,7 +57,8 @@ def speed(exp, rtf_results, model=None):
                 audio += row["audio_duration"]
                 compute += row["prediction_duration"]
     meta = json.loads((exp_rtf / "metadata.json").read_text(encoding="utf-8"))
-    return (round(audio / compute, 1) if compute else None), meta.get("device_name") or meta.get("device"), meta.get("backend")
+    return ((round(audio / compute, 1) if compute else None), meta.get("device_name") or meta.get("device"),
+            meta.get("backend"), (meta.get("model_info") or {}).get("rtf_note"))
 HISTOGRAM_BIN = 2  # seconds, durations histogram of the test sets
 
 
@@ -79,7 +80,7 @@ def model_entry(exp, rtf_results=None):
     info = meta.get("model_info") or {}
     hf = info.get("hf") or display
     url = f"https://huggingface.co/{hf}" if "/" in hf and not hf.startswith(("/", ".")) else None
-    rtfx, hardware, rtf_backend = speed(exp, rtf_results, model)
+    rtfx, hardware, rtf_backend, rtf_note = speed(exp, rtf_results, model)
     scores = {}
     for perf_file in sorted((exp / "performances").glob("*.json")):
         perf = json.loads(perf_file.read_text(encoding="utf-8"))
@@ -103,6 +104,7 @@ def model_entry(exp, rtf_results=None):
         "rtfx": rtfx,
         "hardware": hardware,
         "rtf_backend": rtf_backend if rtf_backend != backend else None,  # set when timed with another backend
+        "rtf_note": rtf_note,  # caveat on the speed measure, shown with a warning sign
         "scores": scores,
     }
 

@@ -16,6 +16,14 @@
   "device_name": "NVIDIA GB10",
   "word_timestamps": true,
   "model_info": {
-    "params": 182643840
+    "hf": "nvidia/canary-180m-flash",
+    "license": "cc-by-4.0",
+    "params": 182643840,
+    "languages": [
+      "en",
+      "de",
+      "es",
+      "fr"
+    ]
   }
 }

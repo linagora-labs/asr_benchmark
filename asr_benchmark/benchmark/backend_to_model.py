@@ -17,6 +17,9 @@ def get_model(config):
     elif backend == "transformers-voxtral-realtime":
         import asr_benchmark.benchmark.interfaces_transformers as interfaces_transformers
         model = interfaces_transformers.TransformersVoxtralRealtimeModel(config)
+    elif backend == "transformers-parakeet":
+        import asr_benchmark.benchmark.interfaces_parakeet as interfaces_parakeet
+        model = interfaces_parakeet.TransformersParakeetModel(config)
     elif backend == "intel-transformers":
         import asr_benchmark.benchmark.interfaces_transformers as interfaces_transformers
         model = interfaces_transformers.IntelTransformersModel(config)

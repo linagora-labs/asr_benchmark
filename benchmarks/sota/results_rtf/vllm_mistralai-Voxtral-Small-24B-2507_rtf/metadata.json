@@ -52,5 +52,20 @@
   "plot_monitoring": true,
   "input_audios_paths": "",
   "device_name": "NVIDIA GB10",
-  "word_timestamps": false
+  "word_timestamps": false,
+  "model_info": {
+    "hf": "mistralai/Voxtral-Small-24B-2507",
+    "license": "apache-2.0",
+    "params": 24261800960,
+    "languages": [
+      "en",
+      "fr",
+      "de",
+      "es",
+      "it",
+      "pt",
+      "nl",
+      "hi"
+    ]
+  }
 }

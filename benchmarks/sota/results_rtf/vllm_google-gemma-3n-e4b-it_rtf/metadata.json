@@ -52,5 +52,11 @@
   "plot_monitoring": true,
   "input_audios_paths": "",
   "device_name": "NVIDIA GB10",
-  "word_timestamps": false
+  "word_timestamps": false,
+  "model_info": {
+    "hf": "google/gemma-3n-E4B-it",
+    "license": "gemma",
+    "params": 7849978192,
+    "languages": null
+  }
 }

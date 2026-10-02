@@ -338,10 +338,11 @@ def process_wer(output_folder, config):
     for dataset_file in tqdm(list(predictions_dir.iterdir()), desc="Computing WER"):
         dataset = dataset_file.stem
         perf_file = output_path / "performances" / f"{dataset}.json"
-        if perf_file.exists():
-            continue
         with open(dataset_file, "r", encoding="utf-8") as f:
             data = json.load(f)
+        # Rescored when predictions were added since (e.g. after a --debug run)
+        if perf_file.exists() and json.load(open(perf_file)).get("num_data") == len(data):
+            continue
         if not list(data.values())[0].get("text", False):
             logger.info(f"No reference for {dataset}, skipping WER computation")
             continue
