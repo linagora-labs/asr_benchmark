@@ -23,12 +23,13 @@ REPO_URL = "https://github.com/linagora-labs/asr_benchmark"
 
 # Display name, domain and language of the known test sets (file stem of
 # performances/*.json). Unknown datasets fall back to their stem, in DEFAULT_LANGUAGE.
+# Column order of the page; the datasets missing here come after, alphabetically.
 DATASETS = {
     "CommonVoice_max30": ("Common Voice", "Read speech", "fr"),
     "MLS_Facebook_french_max30": ("MLS", "Read audiobooks", "fr"),
-    "SUMM-RE_max30": ("SUMM-RE", "Spontaneous meetings", "fr"),
     "TEDX_fr_max30": ("TEDx", "Prepared talks", "fr"),
     "Voxpopuli_max30": ("VoxPopuli", "Parliament speeches", "fr"),
+    "SUMM-RE_max30": ("SUMM-RE", "Spontaneous meetings", "fr"),
     "YouTubeFr_max30_split6": ("YouTube", "Web videos", "fr"),
 }
 DEFAULT_LANGUAGE = "fr"
@@ -67,17 +68,21 @@ def model_entry(exp, rtf_results=None):
     backend, model = meta["backend"], meta["model"]
     # faster-whisper takes OpenAI size names ("large-v3"): show the original model.
     display = f"openai/whisper-{model}" if backend == "faster-whisper" and "/" not in model else model
+    # vLLM serves local checkpoints (model is a path) under served_model_name: show it,
+    # or the Hugging Face repo of the checkpoint (model_info.hf) when there is one.
+    info = meta.get("model_info") or {}
+    name = meta.get("served_model_name") and (info.get("hf") or meta["served_model_name"]) or display
     # What the folder name adds after <backend>_<model> (e.g. "decoder-ctc") tells
     # apart several runs of the same model. Some backends (NeMo) write "_" as "-" there.
     variant = ""
-    for prefix in {f"{backend}_{model.replace('/', '-')}", f"{backend}_{re.sub('[/_]', '-', model)}"}:
+    folder_model = meta.get("served_model_name") or model
+    for prefix in {f"{backend}_{folder_model.replace('/', '-')}", f"{backend}_{re.sub('[/_]', '-', folder_model)}"}:
         if exp.name.startswith(prefix):
             variant = exp.name[len(prefix):].strip("_")
     # Streaming models run with their default chunk size have no chunk in the folder name.
     if meta.get("chunk_ms") and f"chunk{meta['chunk_ms']}ms" not in variant:
         variant = "_".join(filter(None, [variant, f"chunk{meta['chunk_ms']}ms"]))
     # License, size and languages: filled by tools/fill_model_info.py.
-    info = meta.get("model_info") or {}
     hf = info.get("hf") or display
     url = f"https://huggingface.co/{hf}" if "/" in hf and not hf.startswith(("/", ".")) else None
     rtfx, hardware, rtf_backend, rtf_note = speed(exp, rtf_results, model)
@@ -94,7 +99,7 @@ def model_entry(exp, rtf_results=None):
         scores[perf_file.stem]["seconds"] = perf.get("duration")
     return {
         "id": exp.name,
-        "model": display,
+        "model": name,
         "variant": variant,
         "backend": backend,
         "url": url,
@@ -173,7 +178,9 @@ def build(results, manifest, output, rtf_results=None, rtf_manifest=None):
     experiments = sorted(p for p in results.iterdir() if (p / "metadata.json").exists())
     models = [model_entry(exp, rtf_results) for exp in experiments]
     durations = manifest_durations(manifest)
-    stems = sorted({stem for m in models for stem in m["scores"]}, key=lambda s: DATASETS.get(s, (s,))[0].lower())
+    order = list(DATASETS)
+    stems = sorted({stem for m in models for stem in m["scores"]},
+                   key=lambda s: (order.index(s), "") if s in DATASETS else (len(order), s.lower()))
     datasets = [
         {
             "id": stem,
