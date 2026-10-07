@@ -137,9 +137,39 @@ class VllmTranscriptionModel(Model):
         return load_audio(audio, return_format="file", start=start, duration=duration)
 
     def _post(self, audio_path: str) -> str:
+        text = self._post_chat(audio_path) if self.config["endpoint"] == "chat" else self._post_transcription(audio_path)
+        if self.config["strip_diarization"]:
+            text = self._strip_annotations(text)
+        return text.strip()
+
+    def _post_chat(self, audio_path: str) -> str:
+        """POST one audio file with `prompt` to /v1/chat/completions, for audio LLMs that
+        vLLM does not serve as transcription models (NeMo SALM / Luciole-Audio, ...)."""
+        import base64
+
+        with open(audio_path, "rb") as f:
+            audio_b64 = base64.b64encode(f.read()).decode()
+        data = {
+            "model": self.config["request_model"],
+            "messages": [{"role": "user", "content": [
+                {"type": "text", "text": self.config["prompt"]},
+                {"type": "input_audio", "input_audio": {"data": audio_b64, "format": "wav"}},
+            ]}],
+            "max_tokens": self.config["max_tokens"],
+        }
+        if self.config["temperature"] is not None:
+            data["temperature"] = self.config["temperature"]
+        res = requests.post(
+            f"{self.server_url}/v1/chat/completions", json=data, timeout=self.config["request_timeout"]
+        )
+        if res.status_code != 200:
+            raise RuntimeError(f"vLLM chat completion failed (HTTP {res.status_code}): {res.text[:500]}")
+        return res.json()["choices"][0]["message"]["content"] or ""
+
+    def _post_transcription(self, audio_path: str) -> str:
         """POST one audio file to /v1/audio/transcriptions and return the transcript."""
         data = {
-            "model": self.config["served_model_name"] or self.config["model"],
+            "model": self.config["request_model"],
             "response_format": "json",
         }
         if self.config["language"]:
@@ -156,10 +186,7 @@ class VllmTranscriptionModel(Model):
         if res.status_code != 200:
             raise RuntimeError(f"vLLM transcription failed (HTTP {res.status_code}): {res.text[:500]}")
         parsed = res.json()
-        text = parsed["text"] if isinstance(parsed, dict) and "text" in parsed else str(parsed)
-        if self.config["strip_diarization"]:
-            text = self._strip_annotations(text)
-        return text.strip()
+        return parsed["text"] if isinstance(parsed, dict) and "text" in parsed else str(parsed)
 
     def transcribe(self, audio: str) -> dict:
         # Serial per-file path (used when compute_rtf is True): latency-based RTF, with
@@ -277,6 +304,9 @@ class VllmTranscriptionModel(Model):
         config["vllm_command"] = vllm_command.split() if isinstance(vllm_command, str) else list(vllm_command)
         config["trust_remote_code"] = config.get("trust_remote_code", False)
         config["served_model_name"] = config.get("served_model_name", None)
+        # Model name sent in the requests: a LoRA adapter declared in extra_args
+        # (--lora-modules name=path) to apply it, e.g. the audio LoRA of granite-speech.
+        config["request_model"] = config.get("request_model") or config["served_model_name"] or config["model"]
         # Fraction of GPU memory vLLM reserves (weights + KV cache). Set None to use
         # vLLM's own default (0.9). Passed to `vllm serve --gpu-memory-utilization`.
         config["gpu_memory_utilization"] = config.get("gpu_memory_utilization", 0.85)
@@ -284,6 +314,20 @@ class VllmTranscriptionModel(Model):
         config["extra_args"] = extra_args.split() if isinstance(extra_args, str) else list(extra_args)
         config["language"] = config.get("language", None)
         config["temperature"] = config.get("temperature", 0.0)
+        # "transcriptions" (/v1/audio/transcriptions) or "chat" (/v1/chat/completions
+        # with `prompt` + the audio, for models without vLLM's transcription interface).
+        # `language` only applies to "transcriptions": with "chat", say it in the prompt.
+        config["endpoint"] = config.get("endpoint", "transcriptions")
+        if config["endpoint"] not in ("transcriptions", "chat"):
+            raise ValueError(f"Invalid vLLM endpoint: {config['endpoint']} (transcriptions|chat)")
+        # The audio goes where the prompt has the model's placeholder (<|audio|> for
+        # NeMo SALM); without one, vLLM puts it before the text. `audio_placeholder`
+        # appends it to the prompt (audio after the instruction), if not already there.
+        config["prompt"] = config.get("prompt", "Transcris cet audio en français.")
+        config["audio_placeholder"] = config.get("audio_placeholder", None)
+        if config["audio_placeholder"] and config["audio_placeholder"] not in config["prompt"]:
+            config["prompt"] = f"{config['prompt']} {config['audio_placeholder']}"
+        config["max_tokens"] = int(config.get("max_tokens", 512))
         # Concurrent in-flight requests for the throughput path (transcribe_batch, used
         # when compute_rtf is False). 1 = serial. Ignored on the compute_rtf latency path.
         config["concurrency"] = int(config.get("concurrency", 1))
@@ -308,12 +352,13 @@ class VllmTranscriptionModel(Model):
         # _get_num_workers reads it); the built kernel is then cached under
         # ~/.cache/flashinfer, so the cost is paid once.
         config["env"] = dict(config.get("env", {}) or {})
-        config["log_file"] = config.get("log_file") or str(log_path(f"vllm_{config['model']}.log"))
+        config["log_file"] = config.get("log_file") or str(log_path(f"vllm_{config['served_model_name'] or config['model']}.log"))
         return super().add_defaults_to_config(config)
 
     def get_folder_name(self):
         c = self.config
-        name = f"vllm_{c['model'].replace('/', '-')}"
+        # served_model_name names local checkpoints (model is then a path)
+        name = f"vllm_{(c['served_model_name'] or c['model']).replace('/', '-')}"
         if c["language"]:
             name += self.detail(f"_lang-{c['language']}")
         if c["concurrency"] > 1:

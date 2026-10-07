@@ -20,6 +20,37 @@ benchmarks:
   - backend: transformers-voxtral-realtime
     model: mistralai/Voxtral-Mini-4B-Realtime-2602
     language: fr
+  # --- Luciole-Audio (Linagora NeMo SALM: parakeet-tdt-0.6b-v3 + Luciole LLM) --
+  # Local checkpoints (on the DGX), served by vLLM through the SALM plugin of the
+  # NeMo fork (~/NeMo, branch luciole_speech): run with `tools/run_sota_dgx.sh salm`
+  # (the vllm part skips them). No transcription interface in the plugin: chat
+  # endpoint, default prompt with the audio after it (as in the model cards).
+  - backend: vllm
+    model: /home/abert/models/salm/Luciole-1B/luciole_v4_singlephase/hf_checkpoints/step_100000
+    served_model_name: linagora/Luciole-Audio-1B-v4-singlephase-step100k
+    port: 8111
+    endpoint: chat
+    audio_placeholder: "<|audio|>"
+    concurrency: 16
+  - backend: vllm
+    model: /home/abert/models/salm/Luciole-8B/luciole8b_v4_singlephase/hf_checkpoints/step_100000
+    served_model_name: linagora/Luciole-Audio-8B-v4-singlephase-step100k
+    port: 8112
+    endpoint: chat
+    audio_placeholder: "<|audio|>"
+    concurrency: 16
+  # --- IBM Granite Speech 3.3 (conformer + granite-3.3-8b-instruct, ASR in en/fr/de/es/pt) --
+  # vLLM's transcription prompt is the model card's ("can you transcribe the speech into
+  # a written format?", no language). The audio LoRA of the repo only applies to the
+  # requests that name it (request_model). --max-model-len 2048 (IBM's vLLM example)
+  # caps the generation: without it, looping outputs run until the request timeout.
+  - backend: vllm
+    model: ibm-granite/granite-speech-3.3-8b
+    port: 8113
+    language: fr
+    extra_args: --max-model-len 2048 --enable-lora --max-lora-rank 64 --lora-modules speech=ibm-granite/granite-speech-3.3-8b
+    request_model: speech
+    concurrency: 16
   # --- Mistral Voxtral (audio LLM) ------------------------------------------
   - backend: transformers-voxtral
     model: mistralai/Voxtral-Small-24B-2507
