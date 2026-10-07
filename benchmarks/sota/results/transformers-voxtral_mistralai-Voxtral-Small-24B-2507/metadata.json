@@ -28,6 +28,9 @@
       "pt",
       "nl",
       "hi"
-    ]
+    ],
+    "architecture": "Audio LLM",
+    "task": "Multi",
+    "streaming": false
   }
 }

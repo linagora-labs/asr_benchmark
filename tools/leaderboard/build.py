@@ -106,10 +106,14 @@ def model_entry(exp, rtf_results=None):
         "license": info.get("license"),
         "params": info.get("params"),
         "languages": info.get("languages"),
+        "architecture": info.get("architecture"),  # Encoder | Encoder-decoder | Audio LLM
+        "streaming": info.get("streaming"),
+        "task": info.get("task"),  # ASR | ASR/AST | Multi
         "rtfx": rtfx,
         "hardware": hardware,
         "rtf_backend": rtf_backend if rtf_backend != backend else None,  # set when timed with another backend
         "rtf_note": rtf_note,  # caveat on the speed measure, shown with a warning sign
+        "wer_note": info.get("wer_note"),  # caveat on the WER, by the model name with a warning sign
         "scores": scores,
     }
 

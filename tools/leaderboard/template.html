@@ -20,7 +20,13 @@
   main { max-width: 1680px; margin: 0 auto; padding: 32px 16px 64px; }
   h1 { margin: 0 0 4px; font-size: 26px; }
   .muted { color: var(--muted); }
-  .controls { display: flex; flex-wrap: wrap; gap: 12px 24px; margin: 24px 0 12px; align-items: center; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px 32px; margin: 24px 0 12px; align-items: center; }
+  #filters { margin-top: 0; }
+  .group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .group > span:not(.group-label) { display: flex; flex-wrap: wrap; gap: 6px; }
+  .group-label { color: var(--muted); margin-right: 2px; }
+  .group-label.all { cursor: pointer; user-select: none; text-decoration: underline dotted; text-underline-offset: 3px; }
+  .group-label.all:hover { color: var(--accent); }
   select, button { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
   button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
   button:disabled { opacity: .4; cursor: not-allowed; }
@@ -75,9 +81,16 @@
   </nav>
 
   <div class="controls" id="controls">
-    <span id="metric"><button data-v="wer" aria-pressed="true">WER</button> <button data-v="cer">CER</button></span>
-    <span id="norm"><button data-v="1" aria-pressed="true" title="Lowercase, punctuation removed">Normalized</button> <button data-v="0" title="Case and punctuation count as errors">Case &amp; punct.</button></span>
-    <span id="datasets"></span>
+    <div class="group"><span class="group-label">Metric</span>
+      <span id="metric"><button data-v="wer" aria-pressed="true">WER</button> <button data-v="cer">CER</button></span></div>
+    <div class="group"><span class="group-label">Text</span>
+      <span id="norm"><button data-v="1" aria-pressed="true" title="Lowercase, punctuation removed">Normalized</button> <button data-v="0" title="Case and punctuation count as errors">Case &amp; punct.</button></span></div>
+    <div class="group"><span class="group-label all" data-all="datasets" title="Select all / none">Test sets</span> <span id="datasets"></span></div>
+  </div>
+  <div class="controls" id="filters">
+    <div class="group"><span class="group-label all" data-all="filter-architecture" title="Select all / none">Architecture</span> <span id="filter-architecture"></span></div>
+    <div class="group"><span class="group-label all" data-all="filter-task" title="Select all / none">Task</span> <span id="filter-task"></span></div>
+    <div class="group" id="columns-control"><span class="group-label all" data-all="columns" title="Select all / none">Columns</span> <span id="columns"></span></div>
   </div>
 
   <section id="tab-board">
@@ -113,7 +126,8 @@
 const DATA = /*__DATA__*/null;
 const LANGUAGES = { fr: "French", en: "English", ar: "Arabic", de: "German", es: "Spanish", it: "Italian" };
 // sort: id of the test set whose column orders the table, null for the average.
-const state = { language: "fr", metric: "wer", norm: true, selected: new Set(), sort: null };
+const state = { language: "fr", metric: "wer", norm: true, selected: new Set(), sort: null,
+                hidden: new Set(), architecture: new Set(), task: new Set() };
 
 const f1 = v => v.toFixed(1);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -224,6 +238,40 @@ function cell(value, pm, cls, title) {
   return `<td class="${cls}" title="${esc(title)}">${f1(value)}${pm != null ? ` <small>±${f1(pm)}</small>` : ""}</td>`;
 }
 
+// Model info columns, after the test sets. sort: sortable by its header (key in byInfo).
+const speedTitle = m => [m.hardware && `On ${m.hardware}`, m.rtf_backend && `timed with ${m.rtf_backend}`].filter(Boolean).join(", ");
+const INFO = [
+  { key: "rtfx", label: "RTFx", sub: "speed", sort: true,
+    title: "Seconds of audio transcribed per second of computation (higher is faster). Sort by speed",
+    cell: m => m.rtfx != null ? `<td title="${esc([speedTitle(m), m.rtf_note].filter(Boolean).join("\n"))}">${Math.round(m.rtfx)}×${m.rtf_note ? " ⚠️" : ""}</td>`
+                              : `<td class="muted" title="Not measured yet">—</td>` },
+  { key: "params", label: "Size", sub: "parameters", sort: true, title: "Number of parameters. Sort by size",
+    cell: m => `<td>${m.params ? params(m.params) : "—"}</td>` },
+  { key: "license", label: "License", title: "License of the weights",
+    cell: m => `<td class="left">${esc(m.license ? licenseText(m.license) : "—")}</td>` },
+  { key: "languages", label: "Languages", title: "Languages supported according to the model card",
+    cell: m => `<td class="left" title="${esc(m.languages ? m.languages.join(" ") : "Not listed in the model card")}">${esc(languagesText(m.languages))}</td>` },
+  { key: "architecture", label: "Architecture",
+    title: "Encoder: CTC / transducer decoding. Encoder-decoder: attention decoder. Audio LLM: audio encoder + LLM decoder. Streaming: model built for streaming, transcribed offline here",
+    cell: m => `<td class="left">${esc([m.architecture || "—", m.streaming && "streaming"].filter(Boolean).join(" · "))}</td>` },
+  { key: "task", label: "Task", title: "ASR: transcription only. ASR/AST: transcription and speech translation. Multi: general audio tasks (QA, summarization...)",
+    cell: m => `<td class="left">${esc(m.task || "—")}</td>` },
+];
+// Columns that can be hidden (Columns buttons): the average rank and the model info.
+const COLUMNS = [{ key: "rank", label: "Avg rank" }, ...INFO];
+const shownColumn = key => !state.hidden.has(key);
+// Architecture filter: a streaming model is shown when its architecture or Streaming is selected.
+const architectureOf = m => m.architecture || "—";
+const taskOf = m => m.task || "—";
+const shownModel = m => (state.architecture.has(architectureOf(m)) || (m.streaming && state.architecture.has("Streaming")))
+  && state.task.has(taskOf(m));
+const ARCHITECTURES = ["Encoder", "Encoder-decoder", "Audio LLM", "Streaming"];
+const TASKS = ["ASR", "ASR/AST", "Multi"];
+const valuesOf = (get, order) => {
+  const found = new Set(DATA.models.map(get));
+  return [...order.filter(v => found.has(v)), ...[...found].filter(v => !order.includes(v)).sort()];
+};
+
 function render() {
   const datasets = datasetsOf(state.language).filter(d => state.selected.has(d.id) && scored(d));
   for (const d of datasetsOf(state.language)) {
@@ -235,7 +283,7 @@ function render() {
   const byRank = state.sort === "rank";
   const byInfo = { params: m => m.params, rtfx: m => m.rtfx != null ? -m.rtfx : null }[state.sort];  // RTFx: fastest first
   const sortedId = byRank || byInfo ? state.sort : sortBy ? sortBy.id : "";
-  const rows = modelsOf(state.language).map(m => ({ m, avg: average(m, datasets) }));
+  const rows = modelsOf(state.language).filter(shownModel).map(m => ({ m, avg: average(m, datasets) }));
   const ranks = averageRanks(rows.filter(r => r.avg).map(r => r.m), datasets);
   for (const r of rows) {
     r.rank = ranks.get(r.m);
@@ -254,14 +302,14 @@ function render() {
       `${sorted ? "▲ " : ""}${label}<br><small>${sub}</small></th>`;
   };
   const head = `<tr><th>#</th><th>Model</th>${th("", "Average", `${datasets.length} test sets`, "Sort by the average")}` +
-    th("rank", "Avg rank", `${datasets.length} test sets`, "Sort by the average rank") +
+    (shownColumn("rank") ? th("rank", "Avg rank", `${datasets.length} test sets`, "Sort by the average rank") : "") +
     datasets.map(d => th(d.id, esc(d.name), d.hours != null ? f1(d.hours) + " h" : "", `${d.domain}. Sort by this test set`)).join("") +
-    th("rtfx", "RTFx", "speed", "Seconds of audio transcribed per second of computation (higher is faster). Sort by speed") +
-    th("params", "Size", "parameters", "Number of parameters. Sort by size") +
-    `<th class="left">License</th><th class="left" title="Languages supported according to the model card">Languages</th></tr>`;
+    INFO.filter(c => shownColumn(c.key)).map(c => c.sort ? th(c.key, c.label, c.sub, c.title) :
+      `<th class="left" title="${esc(c.title)}">${c.label}</th>`).join("") + "</tr>";
   let rank = 0;
   const body = rows.map(({ m, avg, rank: avgRank, key }) => {
-    const name = m.url ? `<a href="${esc(m.url)}">${esc(m.model)}</a>` : esc(m.model);
+    const name = (m.url ? `<a href="${esc(m.url)}">${esc(m.model)}</a>` : esc(m.model)) +
+      (m.wer_note ? ` <span title="${esc(m.wer_note)}">⚠️</span>` : "");
     const cells = datasets.map(d => {
       const r = result(m, d);
       if (!r) return cell(null);
@@ -277,11 +325,9 @@ function render() {
                         : `<td class="muted" title="Not evaluated on all the selected test sets">—</td>`;
     const rankCell = avgRank != null ? cell(avgRank, null, rankClass(avgRank, rankValues), "Mean of the ranks over the selected test sets")
                                      : `<td class="muted">—</td>`;
-    const speedTitle = [m.hardware && `On ${m.hardware}`, m.rtf_backend && `timed with ${m.rtf_backend}`].filter(Boolean).join(", ");
-    const info = (m.rtfx != null ? `<td title="${esc([speedTitle, m.rtf_note].filter(Boolean).join("\n"))}">${Math.round(m.rtfx)}×${m.rtf_note ? " ⚠️" : ""}</td>` : `<td class="muted" title="Not measured yet">—</td>`) +
-      `<td>${m.params ? params(m.params) : "—"}</td><td class="left">${esc(m.license ? licenseText(m.license) : "—")}</td>` +
-      `<td class="left" title="${esc(m.languages ? m.languages.join(" ") : "Not listed in the model card")}">${esc(languagesText(m.languages))}</td>`;
-    return `<tr><td>${key != null ? ++rank : ""}</td><td>${name}<br><small>${esc([m.variant, m.backend].filter(Boolean).join(" · "))}</small></td>${avgCell}${rankCell}${cells}${info}</tr>`;
+    const info = INFO.filter(c => shownColumn(c.key)).map(c => c.cell(m)).join("");
+    return `<tr><td>${key != null ? ++rank : ""}</td><td>${name}<br><small>${esc([m.variant, m.backend].filter(Boolean).join(" · "))}</small></td>` +
+      `${avgCell}${shownColumn("rank") ? rankCell : ""}${cells}${info}</tr>`;
   }).join("");
   document.getElementById("board").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
   renderChart(rows, datasets);
@@ -360,6 +406,7 @@ function renderChart(rows, datasets) {
       `Average ${state.metric.toUpperCase()}: ${f1(p.wer)}${p.pm != null ? ` ±${f1(p.pm)}` : ""}<br>RTFx: ${Math.round(p.rtfx)}×` +
       `${p.m.rtf_backend ? ` (timed with ${esc(p.m.rtf_backend)})` : ""}` +
       `${p.m.params ? ` · ${params(p.m.params)} parameters` : ""}` +
+      (p.m.wer_note ? `<br>⚠️ ${esc(p.m.wer_note)}` : "") +
       (p.m.rtf_note ? `<br>⚠️ ${esc(p.m.rtf_note)}` : "");
     tip.hidden = false;
     const box = svg.parentElement.getBoundingClientRect();
@@ -406,6 +453,41 @@ document.getElementById("datasets").onclick = e => {
   render();
 };
 
+function toggleButtons(id, items, pressed, toggle) {
+  const el = document.getElementById(id);
+  el.innerHTML = items.map(([v, label, title]) =>
+    `<button data-v="${esc(v)}" aria-pressed="${pressed(v)}"${title ? ` title="${esc(title)}"` : ""}>${esc(label)}</button>`).join(" ");
+  el.onclick = e => {
+    const v = e.target.dataset.v;
+    if (v == null) return;
+    toggle(v);
+    e.target.setAttribute("aria-pressed", pressed(v));
+    render();
+  };
+}
+const flip = (set, v) => set.has(v) ? set.delete(v) : set.add(v);
+const architectures = [...valuesOf(architectureOf, ARCHITECTURES).filter(v => v !== "Streaming"),
+  ...(DATA.models.some(m => m.streaming) ? ["Streaming"] : [])];
+architectures.forEach(v => state.architecture.add(v));
+valuesOf(taskOf, TASKS).forEach(v => state.task.add(v));
+toggleButtons("filter-architecture", architectures.map(v => [v, v, `Show the ${v} models`]),
+  v => state.architecture.has(v), v => flip(state.architecture, v));
+toggleButtons("filter-task", valuesOf(taskOf, TASKS).map(v => [v, v, `Show the ${v} models`]),
+  v => state.task.has(v), v => flip(state.task, v));
+toggleButtons("columns", COLUMNS.map(c => [c.key, c.label, `Show the ${c.label} column`]),
+  v => shownColumn(v), v => {
+    flip(state.hidden, v);
+    if (state.sort === v && !shownColumn(v)) state.sort = null;  // hidden sort column: back to the average
+  });
+
+
+// A click on the label of a group of toggles selects all of them, or none if all are selected.
+document.querySelectorAll(".group-label[data-all]").forEach(label => label.onclick = () => {
+  const buttons = [...document.querySelectorAll(`#${label.dataset.all} button:not(:disabled)`)];
+  const allOn = buttons.every(b => b.getAttribute("aria-pressed") === "true");
+  buttons.filter(b => (b.getAttribute("aria-pressed") === "true") === allOn).forEach(b => b.click());
+});
+
 // Texts
 const updated = DATA.results_updated && new Date(DATA.results_updated).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 document.getElementById("meta").innerHTML = `${updated ? `Updated on ${updated} · ` : ""}<a href="${DATA.repo}">${DATA.repo.replace("https://", "")}</a>`;
@@ -417,6 +499,7 @@ document.getElementById("notes").innerHTML = `
   <p><b>±</b>: half-width of the 95% confidence interval, by bootstrap over the utterances of each test set (hover a score for the exact interval and the error breakdown).</p>
   <p><b>Normalized</b> scores ignore case and punctuation; <b>Case &amp; punct.</b> counts them as errors; it leaves out the test sets whose references have no case and punctuation. Segments of at most 30 s.</p>
   <p><b>Size</b>, <b>License</b> and <b>Languages</b> (up to 5, "multi" beyond: hover for the list) come from the model cards.</p>
+  <p><b>Architecture</b> and <b>Task</b> buttons filter the models (table and chart); <b>Columns</b> show or hide the columns after the scores. A click on the label of a group (Test sets, Architecture, Task, Columns) selects all its buttons, or none.</p>
   <p><b>RTFx</b>: seconds of audio transcribed per second of computation, higher is faster. ⚠️: the speed was measured with a slower runtime than the model's own (hover for details).</p>
   <p>Results and configuration: <a href="${DATA.repo}/tree/main/benchmarks/sota">benchmarks/sota</a>. Raw data: <a href="leaderboard.json">leaderboard.json</a>.</p>`;
 
@@ -427,6 +510,8 @@ function showTab() {
   document.getElementById("tab-speed").hidden = tab !== "#speed";
   document.getElementById("tab-testsets").hidden = tab !== "#test-sets";
   document.getElementById("controls").hidden = tab === "#test-sets";  // the test sets tab does not use them
+  document.getElementById("filters").hidden = tab === "#test-sets";
+  document.getElementById("columns-control").hidden = tab === "#speed";  // the chart has no columns
   document.querySelectorAll(".tabs a").forEach(a => a.setAttribute("aria-current", a.hash === tab ? "page" : "false"));
 }
 window.onhashchange = showTab;

@@ -43,6 +43,9 @@
       "bg",
       "el",
       "mt"
-    ]
+    ],
+    "architecture": "Encoder",
+    "task": "ASR",
+    "streaming": false
   }
 }

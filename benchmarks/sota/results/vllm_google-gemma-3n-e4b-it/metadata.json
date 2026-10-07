@@ -36,6 +36,9 @@
     "hf": "google/gemma-3n-E4B-it",
     "license": "gemma",
     "params": 7849978192,
-    "languages": null
+    "languages": null,
+    "architecture": "Audio LLM",
+    "task": "Multi",
+    "streaming": false
   }
 }

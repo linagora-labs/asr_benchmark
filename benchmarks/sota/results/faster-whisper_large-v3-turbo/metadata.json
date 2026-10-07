@@ -121,6 +121,9 @@
       "ba",
       "jw",
       "su"
-    ]
+    ],
+    "architecture": "Encoder-decoder",
+    "task": "ASR",
+    "streaming": false
   }
 }

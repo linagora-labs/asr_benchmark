@@ -34,6 +34,7 @@
       "ar",
       "hi",
       "ko"
-    ]
+    ],
+    "rtf_note": "Not representative: a realtime (streaming) model, not timed in its best conditions (offline with transformers on full utterances, not streamed through vLLM's /v1/realtime)"
   }
 }

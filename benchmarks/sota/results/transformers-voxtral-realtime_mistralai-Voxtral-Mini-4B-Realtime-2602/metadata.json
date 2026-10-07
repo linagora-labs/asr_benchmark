@@ -32,6 +32,10 @@
       "ar",
       "hi",
       "ko"
-    ]
+    ],
+    "wer_note": "Streaming model, transcribed offline (full utterances): penalized on the WER compared to the offline models of this benchmark",
+    "architecture": "Audio LLM",
+    "task": "ASR",
+    "streaming": true
   }
 }

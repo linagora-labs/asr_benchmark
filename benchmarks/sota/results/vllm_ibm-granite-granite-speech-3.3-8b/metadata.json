@@ -75,6 +75,9 @@
       "de",
       "es",
       "pt"
-    ]
+    ],
+    "architecture": "Audio LLM",
+    "task": "ASR/AST",
+    "streaming": false
   }
 }

@@ -49,6 +49,9 @@
       "hu",
       "mk",
       "ro"
-    ]
+    ],
+    "architecture": "Audio LLM",
+    "task": "ASR",
+    "streaming": false
   }
 }

@@ -55,6 +55,9 @@
       "yue",
       "ar",
       "ur"
-    ]
+    ],
+    "architecture": "Audio LLM",
+    "task": "Multi",
+    "streaming": false
   }
 }

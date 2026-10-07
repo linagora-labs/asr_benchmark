@@ -71,6 +71,9 @@
       "de",
       "nl",
       "pt"
-    ]
+    ],
+    "architecture": "Audio LLM",
+    "task": "Multi",
+    "streaming": false
   }
 }

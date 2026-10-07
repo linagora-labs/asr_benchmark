@@ -70,6 +70,9 @@
       "mn",
       "hy",
       "jv"
-    ]
+    ],
+    "architecture": "Audio LLM",
+    "task": "ASR",
+    "streaming": false
   }
 }

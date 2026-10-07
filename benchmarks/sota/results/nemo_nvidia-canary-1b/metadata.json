@@ -22,6 +22,9 @@
       "de",
       "es",
       "fr"
-    ]
+    ],
+    "architecture": "Encoder-decoder",
+    "task": "ASR/AST",
+    "streaming": false
   }
 }

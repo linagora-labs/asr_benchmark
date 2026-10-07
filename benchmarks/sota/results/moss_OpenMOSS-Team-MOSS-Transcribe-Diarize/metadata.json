@@ -25,6 +25,9 @@
     "languages": [
       "en",
       "zh"
-    ]
+    ],
+    "architecture": "Audio LLM",
+    "task": "ASR",
+    "streaming": false
   }
 }

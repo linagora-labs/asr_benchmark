@@ -43,6 +43,9 @@
       "sv",
       "ru",
       "uk"
-    ]
+    ],
+    "architecture": "Encoder-decoder",
+    "task": "ASR/AST",
+    "streaming": false
   }
 }

@@ -19,6 +19,9 @@
     "params": 115000000,
     "languages": [
       "fr"
-    ]
+    ],
+    "architecture": "Encoder",
+    "task": "ASR",
+    "streaming": false
   }
 }

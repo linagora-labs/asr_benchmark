@@ -29,6 +29,9 @@
     "params": 1545548800,
     "languages": [
       "fr"
-    ]
+    ],
+    "architecture": "Encoder-decoder",
+    "task": "ASR",
+    "streaming": false
   }
 }
