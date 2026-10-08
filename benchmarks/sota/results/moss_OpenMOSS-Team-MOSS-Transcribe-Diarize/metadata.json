@@ -2,11 +2,11 @@
   "backend": "moss",
   "model": "OpenMOSS-Team/MOSS-Transcribe-Diarize",
   "dtype": "bfloat16",
+  "prompt": "Transcris l’audio en texte français ; chaque segment commence par un horodatage de début et le numéro du locuteur ([S01], [S02], [S03]…), suivi du contenu parlé, et se termine par un horodatage de fin.",
   "device": "cuda",
   "max_new_tokens": 2048,
   "do_sample": false,
   "language": null,
-  "prompt": "请将音频转写为文本，每一段需以起始时间戳和说话人编号（[S01]、[S02]、[S03]…）开头，正文为对应的语音内容，并在段末标注结束时间戳，以清晰标明该段语音范围。",
   "no_repeat_ngram_size": 0,
   "repetition_penalty": 1.0,
   "raw_output": false,
@@ -29,6 +29,6 @@
     "architecture": "Audio LLM",
     "task": "ASR",
     "streaming": false,
-    "prompt_source": "model card (auto-detect prompt)"
+    "prompt_source": "model card's prompt, translated into French"
   }
 }

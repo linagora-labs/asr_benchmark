@@ -3,7 +3,7 @@
   "model": "ibm-granite/granite-speech-4.1-2b",
   "port": 8114,
   "endpoint": "chat",
-  "prompt": "<|audio|>transcribe the French speech with proper punctuation and capitalization.",
+  "prompt": "<|audio|>transcris la parole française avec la ponctuation et les majuscules appropriées.",
   "extra_args": [
     "--max-model-len",
     "2048"
@@ -75,6 +75,6 @@
     "architecture": "Audio LLM",
     "task": "ASR/AST",
     "streaming": false,
-    "prompt_source": "model card's punctuated-ASR prompt, French added"
+    "prompt_source": "model card's punctuated-ASR prompt, translated into French"
   }
 }

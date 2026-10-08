@@ -97,12 +97,11 @@ benchmarks:
     dtype: bfloat16
     max_new_tokens: 256
     language: fr
-  # VibeVoice: no language setting, the language as context (19.1, none 21.7)
+  # VibeVoice: no language setting.
   - backend: vibevoice-asr
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
     batch_size: 8
-    prompt: "L’audio est en français."
   # --- NVIDIA -------------------------------------------------------------------------
   # Nemotron: streaming model transcribed offline, largest chunk (best WER)
   - backend: nemo

@@ -109,11 +109,10 @@ benchmarks:
     dtype: bfloat16
     max_new_tokens: 256
     language: fr
-  # --- Microsoft VibeVoice-ASR (no vLLM support). Language as context (see config.yaml). --
+  # --- Microsoft VibeVoice-ASR (no vLLM support). Auto-detects the language. --
   - backend: vibevoice-asr
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
-    prompt: "L’audio est en français."
   # --- NVIDIA Nemotron 3.5 ASR (streaming, language-ID prompt, needs NeMo >= 3.0) --
   # Transcribed offline (full utterance), with the French prompt forced, at the
   # largest chunk size (see config.yaml).
