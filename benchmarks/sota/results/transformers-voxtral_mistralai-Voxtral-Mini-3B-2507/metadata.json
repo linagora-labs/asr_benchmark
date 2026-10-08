@@ -1,0 +1,35 @@
+{
+  "backend": "transformers-voxtral",
+  "model": "mistralai/Voxtral-Mini-3B-2507",
+  "dtype": "bfloat16",
+  "language": "fr",
+  "device": "cuda",
+  "max_new_tokens": 2048,
+  "do_sample": false,
+  "input_manifest": "benchmarks/sota/manifest.jsonl",
+  "compute_rtf": false,
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": false,
+  "model_info": {
+    "hf": "mistralai/Voxtral-Mini-3B-2507",
+    "license": "apache-2.0",
+    "params": 4676271104,
+    "languages": [
+      "en",
+      "fr",
+      "de",
+      "es",
+      "it",
+      "pt",
+      "nl",
+      "hi"
+    ],
+    "architecture": "Audio LLM",
+    "task": "Multi",
+    "streaming": false
+  }
+}

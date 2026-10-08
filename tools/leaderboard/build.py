@@ -114,6 +114,12 @@ def model_entry(exp, rtf_results=None):
         "rtf_backend": rtf_backend if rtf_backend != backend else None,  # set when timed with another backend
         "rtf_note": rtf_note,  # caveat on the speed measure, shown with a warning sign
         "wer_note": info.get("wer_note"),  # caveat on the WER, by the model name with a warning sign
+        # Prompt of the prompted models: the text sent (not for vLLM's transcription endpoint,
+        # which builds the model's own) and where it comes from (model_info, filled by hand).
+        # Built-in prompts (vLLM transcription endpoint, transcription modes) are written in
+        # model_info.prompt by hand.
+        "prompt": (meta.get("prompt") if backend != "vllm" or meta.get("endpoint") == "chat" else None) or info.get("prompt"),
+        "prompt_source": info.get("prompt_source"),
         "scores": scores,
     }
 

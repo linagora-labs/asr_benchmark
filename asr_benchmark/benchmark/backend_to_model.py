@@ -61,6 +61,15 @@ def get_model(config):
     elif backend == "vibevoice-asr":
         import asr_benchmark.benchmark.interfaces_vibevoice as interfaces_vibevoice
         model = interfaces_vibevoice.VibeVoiceASRModel(config)
+    elif backend == "ark-asr":
+        import asr_benchmark.benchmark.interfaces_ark as interfaces_ark
+        model = interfaces_ark.ArkASRModel(config)
+    elif backend == "kyutai-stt":
+        import asr_benchmark.benchmark.interfaces_kyutai as interfaces_kyutai
+        model = interfaces_kyutai.KyutaiSTTModel(config)
+    elif backend == "hojo-asr":
+        import asr_benchmark.benchmark.interfaces_hojo as interfaces_hojo
+        model = interfaces_hojo.HojoASRModel(config)
     else:
         raise ValueError(f"Invalid backend: {backend}")
     return model

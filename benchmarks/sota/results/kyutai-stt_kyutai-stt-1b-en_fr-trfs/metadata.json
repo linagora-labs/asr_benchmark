@@ -1,0 +1,28 @@
+{
+  "backend": "kyutai-stt",
+  "model": "kyutai/stt-1b-en_fr-trfs",
+  "device": "cuda",
+  "dtype": "bfloat16",
+  "sampling_rate": 24000,
+  "input_manifest": "benchmarks/sota/manifest.jsonl",
+  "compute_rtf": false,
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": false,
+  "model_info": {
+    "hf": "kyutai/stt-1b-en_fr-trfs",
+    "license": "cc-by-4.0",
+    "params": 1068517185,
+    "languages": [
+      "en",
+      "fr"
+    ],
+    "architecture": "Audio LLM",
+    "task": "ASR",
+    "streaming": true,
+    "wer_note": "Streaming model, transcribed offline (full utterances): penalized on the WER compared to the offline models of this benchmark"
+  }
+}

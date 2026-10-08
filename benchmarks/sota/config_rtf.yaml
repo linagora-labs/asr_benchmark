@@ -76,6 +76,29 @@ benchmarks:
     port: 8112
     endpoint: chat
     audio_placeholder: "<|audio|>"
+  - backend: vllm
+    model: mistralai/Voxtral-Mini-3B-2507
+    port: 8116
+    language: fr
+  - backend: vllm
+    model: ibm-granite/granite-speech-4.1-2b
+    port: 8114
+    endpoint: chat
+    prompt: <|audio|>transcribe the French speech with proper punctuation and capitalization.
+    extra_args: --max-model-len 2048
+  - backend: vllm
+    model: CohereLabs/cohere-transcribe-03-2026
+    trust_remote_code: true
+    port: 8115
+    language: fr
+  # --- ARK-ASR, Kyutai STT, Hojo-ASR: transformers 4.57 (part transformers4) ----
+  - backend: ark-asr
+    model: Edge0/ARK-ASR-3B
+    prompt: Transcris cet audio en français.
+  - backend: kyutai-stt
+    model: kyutai/stt-1b-en_fr-trfs
+  - backend: hojo-asr
+    model: HojoAI/Hojo-ASR-Multi-V1
   # --- Mistral Voxtral realtime (streaming model, transcribed offline) ------
   - backend: transformers-voxtral-realtime
     model: mistralai/Voxtral-Mini-4B-Realtime-2602

@@ -28,6 +28,7 @@
     ],
     "architecture": "Audio LLM",
     "task": "ASR",
-    "streaming": false
+    "streaming": false,
+    "prompt_source": "model card (auto-detect prompt)"
   }
 }

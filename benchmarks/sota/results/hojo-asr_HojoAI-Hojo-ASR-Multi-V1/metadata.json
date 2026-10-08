@@ -1,0 +1,28 @@
+{
+  "backend": "hojo-asr",
+  "model": "HojoAI/Hojo-ASR-Multi-V1",
+  "device": "cuda",
+  "input_manifest": "benchmarks/sota/manifest.jsonl",
+  "compute_rtf": false,
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": false,
+  "model_info": {
+    "hf": "HojoAI/Hojo-ASR-Multi-V1",
+    "license": "apache-2.0",
+    "params": 5181417344,
+    "languages": [
+      "de",
+      "fr",
+      "it",
+      "pt",
+      "es"
+    ],
+    "architecture": "Audio LLM",
+    "task": "ASR",
+    "streaming": false
+  }
+}

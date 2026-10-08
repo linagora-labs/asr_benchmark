@@ -355,6 +355,14 @@ class VllmTranscriptionModel(Model):
         config["log_file"] = config.get("log_file") or str(log_path(f"vllm_{config['served_model_name'] or config['model']}.log"))
         return super().add_defaults_to_config(config)
 
+    def get_metadata(self):
+        metadata = super().get_metadata()
+        if metadata["endpoint"] != "chat":
+            # The transcription endpoint builds the model's own prompt: ours is not used.
+            for key in ("prompt", "audio_placeholder", "max_tokens"):
+                metadata.pop(key, None)
+        return metadata
+
     def get_folder_name(self):
         c = self.config
         # served_model_name names local checkpoints (model is then a path)

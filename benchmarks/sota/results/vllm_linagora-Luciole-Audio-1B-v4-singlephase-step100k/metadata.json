@@ -74,6 +74,7 @@
     ],
     "architecture": "Audio LLM",
     "task": "Multi",
-    "streaming": false
+    "streaming": false,
+    "prompt_source": "model card"
   }
 }

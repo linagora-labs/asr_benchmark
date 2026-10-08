@@ -25,6 +25,7 @@
   .group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .group > span:not(.group-label) { display: flex; flex-wrap: wrap; gap: 6px; }
   .group-label { color: var(--muted); margin-right: 2px; }
+  .prompt-info { cursor: help; font-size: 12px; }
   .group-label.all { cursor: pointer; user-select: none; text-decoration: underline dotted; text-underline-offset: 3px; }
   .group-label.all:hover { color: var(--accent); }
   select, button { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
@@ -139,6 +140,8 @@ const result = (m, d) => (m.scores[d.id] || {})[metricKey()];  // {wer, sub, del
 const params = n => n >= 1e9 ? `${(n / 1e9).toFixed(n < 1e10 ? 1 : 0)}B` : `${Math.round(n / 1e6)}M`;
 const licenseText = l => ({ "apache-2.0": "Apache-2.0", gemma: "Gemma" })[l] || l.toUpperCase();
 const languagesText = l => l && l.length <= 5 ? l.join(", ") : "multi";
+// Hover text of the prompt sign: the prompt sent and its source.
+const promptText = m => [m.prompt && `Prompt: ${m.prompt}`, m.prompt_source && `(${m.prompt_source})`].filter(Boolean).join("\n");
 const halfWidth = r => r && r.ci95 ? (r.ci95[1] - r.ci95[0]) / 2 : null;
 // Test sets without casing/punctuation in their references (MLS, SUMM-RE) have no
 // "Case & punct." score: they are left out of that mode.
@@ -309,7 +312,8 @@ function render() {
   let rank = 0;
   const body = rows.map(({ m, avg, rank: avgRank, key }) => {
     const name = (m.url ? `<a href="${esc(m.url)}">${esc(m.model)}</a>` : esc(m.model)) +
-      (m.wer_note ? ` <span title="${esc(m.wer_note)}">⚠️</span>` : "");
+      (m.wer_note ? ` <span title="${esc(m.wer_note)}">⚠️</span>` : "") +
+      (m.prompt || m.prompt_source ? ` <span class="prompt-info" title="${esc(promptText(m))}">💬</span>` : "");
     const cells = datasets.map(d => {
       const r = result(m, d);
       if (!r) return cell(null);
@@ -500,6 +504,7 @@ document.getElementById("notes").innerHTML = `
   <p><b>Normalized</b> scores ignore case and punctuation; <b>Case &amp; punct.</b> counts them as errors; it leaves out the test sets whose references have no case and punctuation. Segments of at most 30 s.</p>
   <p><b>Size</b>, <b>License</b> and <b>Languages</b> (up to 5, "multi" beyond: hover for the list) come from the model cards.</p>
   <p><b>Architecture</b> and <b>Task</b> buttons filter the models (table and chart); <b>Columns</b> show or hide the columns after the scores. A click on the label of a group (Test sets, Architecture, Task, Columns) selects all its buttons, or none.</p>
+  <p>💬: model run with a text prompt; hover it for the prompt and where it comes from (model card, built-in transcription prompt, or ours).</p>
   <p><b>RTFx</b>: seconds of audio transcribed per second of computation, higher is faster. ⚠️: the speed was measured with a slower runtime than the model's own (hover for details).</p>
   <p>Results and configuration: <a href="${DATA.repo}/tree/main/benchmarks/sota">benchmarks/sota</a>. Raw data: <a href="leaderboard.json">leaderboard.json</a>.</p>`;
 

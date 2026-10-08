@@ -1,0 +1,18 @@
+{
+  "startup_timeout": 7200,
+  "backend": "hojo-asr",
+  "model": "HojoAI/Hojo-ASR-Multi-V1",
+  "device": "cuda",
+  "input_manifest": "benchmarks/sota/manifest_rtf.jsonl",
+  "compute_rtf": true,
+  "save_predictions": false,
+  "save_alignments": false,
+  "compute_latency": false,
+  "plot_monitoring": true,
+  "input_audios_paths": "",
+  "device_name": "NVIDIA GB10",
+  "word_timestamps": false,
+  "model_info": {
+    "params": 5181417344
+  }
+}

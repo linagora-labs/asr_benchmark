@@ -51,18 +51,59 @@ benchmarks:
     extra_args: --max-model-len 2048 --enable-lora --max-lora-rank 64 --lora-modules speech=ibm-granite/granite-speech-3.3-8b
     request_model: speech
     concurrency: 16
+  # --- IBM Granite Speech 4.1 (no LoRA, granite-4.0-1b decoder) ----------------
+  # Chat endpoint with the model card's prompt for punctuated, cased transcripts, the
+  # language added (it wants an English prompt for non-English ASR; vLLM's transcription
+  # prompt gives raw lowercase text).
+  - backend: vllm
+    model: ibm-granite/granite-speech-4.1-2b
+    port: 8114
+    endpoint: chat
+    prompt: <|audio|>transcribe the French speech with proper punctuation and capitalization.
+    extra_args: --max-model-len 2048
+    concurrency: 16
+  # --- Cohere Transcribe (gated: accept the terms on its HF page) -------------
+  - backend: vllm
+    model: CohereLabs/cohere-transcribe-03-2026
+    trust_remote_code: true
+    port: 8115
+    language: fr
+    concurrency: 16
   # --- Mistral Voxtral (audio LLM) ------------------------------------------
   - backend: transformers-voxtral
     model: mistralai/Voxtral-Small-24B-2507
     dtype: bfloat16
     language: fr
+  - backend: transformers-voxtral
+    model: mistralai/Voxtral-Mini-3B-2507
+    dtype: bfloat16
+    language: fr
+  # --- ARK-ASR, Kyutai STT, Hojo-ASR: transformers 4.57 (part transformers4) ----
+  # ARK: the model card's prompt ("Please transcribe this audio.") makes it translate
+  # into English (even Chinese); on 60 segments, mean WER 31.0 with this French prompt,
+  # 42.6 with "Please transcribe this French audio." (logs/ark_prompt_test on the DGX).
+  # No language setting otherwise: they detect it. Kyutai: the transformers port (-trfs) of
+  # stt-1b-en_fr (stt-2.6b-en is English only), a streaming model transcribed offline.
+  - backend: ark-asr
+    model: Edge0/ARK-ASR-3B
+    prompt: Transcris cet audio en français.
+    batch_size: 8
+  - backend: kyutai-stt
+    model: kyutai/stt-1b-en_fr-trfs
+    batch_size: 8
+  - backend: hojo-asr
+    model: HojoAI/Hojo-ASR-Multi-V1
+    batch_size: 8
   # --- MOSS-Transcribe-Diarize ----------------------------------------------
-  # No language set: auto-detect is the only documented prompt and the best on
-  # French. `language` is an unofficial knob (an English pin makes it translate).
+  # The model card's (Chinese, auto-detect) prompt translated into French: on 120
+  # segments, mean WER 15.9 against 17.2 for the model card's and for its Chinese
+  # version pinned on French, 27.0 for a short "Transcris cet audio en français."
+  # (logs/prompt_test on the DGX). An English prompt makes it translate.
   - backend: moss
     model: OpenMOSS-Team/MOSS-Transcribe-Diarize
     dtype: bfloat16
     batch_size: 8
+    prompt: "Transcris l’audio en texte français ; chaque segment commence par un horodatage de début et le numéro du locuteur ([S01], [S02], [S03]…), suivi du contenu parlé, et se termine par un horodatage de fin."
   # --- Google Gemma 3n (general multimodal LLM, needs timm) -----------------
   - backend: gemma3n
     model: google/gemma-3n-e4b-it

@@ -49,9 +49,6 @@
   "gpu_memory_utilization": 0.85,
   "temperature": 0.0,
   "endpoint": "transcriptions",
-  "prompt": "Transcris cet audio en français.",
-  "audio_placeholder": null,
-  "max_tokens": 512,
   "strip_diarization": true,
   "startup_timeout": 2400,
   "request_timeout": 600,
@@ -78,6 +75,8 @@
     ],
     "architecture": "Audio LLM",
     "task": "ASR/AST",
-    "streaming": false
+    "streaming": false,
+    "prompt_source": "vLLM default prompt for this model",
+    "prompt": "<|audio|>can you transcribe the speech into a written format?"
   }
 }

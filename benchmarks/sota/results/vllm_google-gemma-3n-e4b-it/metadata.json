@@ -39,6 +39,8 @@
     "languages": null,
     "architecture": "Audio LLM",
     "task": "Multi",
-    "streaming": false
+    "streaming": false,
+    "prompt_source": "vLLM default prompt for this model",
+    "prompt": "Transcribe this audio into French: <audio_soft_token>"
   }
 }
