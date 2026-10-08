@@ -84,7 +84,7 @@ benchmarks:
     model: ibm-granite/granite-speech-4.1-2b
     port: 8114
     endpoint: chat
-    prompt: <|audio|>transcribe the French speech with proper punctuation and capitalization.
+    prompt: <|audio|>transcris la parole française avec la ponctuation et les majuscules appropriées.
     extra_args: --max-model-len 2048
   - backend: vllm
     model: CohereLabs/cohere-transcribe-03-2026
@@ -109,10 +109,11 @@ benchmarks:
     dtype: bfloat16
     max_new_tokens: 256
     language: fr
-  # --- Microsoft VibeVoice-ASR (no vLLM support). Auto-detects the language. --
+  # --- Microsoft VibeVoice-ASR (no vLLM support). Language as context (see config.yaml). --
   - backend: vibevoice-asr
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
+    prompt: "L’audio est en français."
   # --- NVIDIA Nemotron 3.5 ASR (streaming, language-ID prompt, needs NeMo >= 3.0) --
   # Transcribed offline (full utterance), with the French prompt forced, at the
   # largest chunk size (see config.yaml).

@@ -6,25 +6,16 @@ skip_errors: False
 save_alignments: True
 save_predictions: False
 
-# The whisper, nemo and transformers-5.x (moss / voxtral / gemma3n / qwen3-omni /
-# vibevoice) extras conflict in pyproject.toml, so this file is run in several
-# passes, one per environment. Already-benched models are skipped; with
-# skip_errors: False a pass aborts at the first backend it cannot import, set it
-# to True to sweep:
-#   uv run --extra moss --extra voxtral --extra vibevoice python benchmarker.py benchmarks/sota/config.yaml
-#   uv run --extra nemo                 python benchmarker.py benchmarks/sota/config.yaml
-#   uv run --extra whisper              python benchmarker.py benchmarks/sota/config.yaml
+# Backends need separate environments: on the DGX, run one part at a time with
+# tools/run_sota_dgx.sh <part> (already-benched models are skipped).
+# Prompts: chosen on 120 segments (logs/prompt_test on the DGX), WER in comments.
 
 benchmarks:
-  # https://huggingface.co/mistralai/Voxtral-Mini-4B-Realtime-2602#vllm-recommended
+  # Streaming model, transcribed offline
   - backend: transformers-voxtral-realtime
     model: mistralai/Voxtral-Mini-4B-Realtime-2602
     language: fr
-  # --- Luciole-Audio (Linagora NeMo SALM: parakeet-tdt-0.6b-v3 + Luciole LLM) --
-  # Local checkpoints (on the DGX), served by vLLM through the SALM plugin of the
-  # NeMo fork (~/NeMo, branch luciole_speech): run with `tools/run_sota_dgx.sh salm`
-  # (the vllm part skips them). No transcription interface in the plugin: chat
-  # endpoint, default prompt with the audio after it (as in the model cards).
+  # --- Luciole-Audio (local NeMo SALM checkpoints): tools/run_sota_dgx.sh salm --
   - backend: vllm
     model: /home/abert/models/salm/Luciole-1B/luciole_v4_singlephase/hf_checkpoints/step_100000
     served_model_name: linagora/Luciole-Audio-1B-v4-singlephase-step100k
@@ -39,11 +30,10 @@ benchmarks:
     endpoint: chat
     audio_placeholder: "<|audio|>"
     concurrency: 16
-  # --- IBM Granite Speech 3.3 (conformer + granite-3.3-8b-instruct, ASR in en/fr/de/es/pt) --
-  # vLLM's transcription prompt is the model card's ("can you transcribe the speech into
-  # a written format?", no language). The audio LoRA of the repo only applies to the
-  # requests that name it (request_model). --max-model-len 2048 (IBM's vLLM example)
-  # caps the generation: without it, looping outputs run until the request timeout.
+  # --- IBM Granite Speech -----------------------------------------------------
+  # 3.3: vLLM's default prompt (20.1); translated into French, it is copied into the
+  # output (41.3). The audio LoRA only applies to requests naming it (request_model).
+  # --max-model-len caps looping generations.
   - backend: vllm
     model: ibm-granite/granite-speech-3.3-8b
     port: 8113
@@ -51,25 +41,22 @@ benchmarks:
     extra_args: --max-model-len 2048 --enable-lora --max-lora-rank 64 --lora-modules speech=ibm-granite/granite-speech-3.3-8b
     request_model: speech
     concurrency: 16
-  # --- IBM Granite Speech 4.1 (no LoRA, granite-4.0-1b decoder) ----------------
-  # Chat endpoint with the model card's prompt for punctuated, cased transcripts, the
-  # language added (it wants an English prompt for non-English ASR; vLLM's transcription
-  # prompt gives raw lowercase text).
+  # 4.1: model card's punctuated-ASR prompt translated into French (22.0, English 25.0)
   - backend: vllm
     model: ibm-granite/granite-speech-4.1-2b
     port: 8114
     endpoint: chat
-    prompt: <|audio|>transcribe the French speech with proper punctuation and capitalization.
+    prompt: <|audio|>transcris la parole française avec la ponctuation et les majuscules appropriées.
     extra_args: --max-model-len 2048
     concurrency: 16
-  # --- Cohere Transcribe (gated: accept the terms on its HF page) -------------
+  # --- Cohere Transcribe (gated) ------------------------------------------------
   - backend: vllm
     model: CohereLabs/cohere-transcribe-03-2026
     trust_remote_code: true
     port: 8115
     language: fr
     concurrency: 16
-  # --- Mistral Voxtral (audio LLM) ------------------------------------------
+  # --- Mistral Voxtral ------------------------------------------------------------
   - backend: transformers-voxtral
     model: mistralai/Voxtral-Small-24B-2507
     dtype: bfloat16
@@ -78,73 +65,57 @@ benchmarks:
     model: mistralai/Voxtral-Mini-3B-2507
     dtype: bfloat16
     language: fr
-  # --- ARK-ASR, Kyutai STT, Hojo-ASR: transformers 4.57 (part transformers4) ----
-  # ARK: the model card's prompt ("Please transcribe this audio.") makes it translate
-  # into English (even Chinese); on 60 segments, mean WER 31.0 with this French prompt,
-  # 42.6 with "Please transcribe this French audio." (logs/ark_prompt_test on the DGX).
-  # No language setting otherwise: they detect it. Kyutai: the transformers port (-trfs) of
-  # stt-1b-en_fr (stt-2.6b-en is English only), a streaming model transcribed offline.
+  # --- transformers 4.57 (part transformers4) -------------------------------------
+  # ARK: the model card's prompt translates into English (31.0 here, 42.6 in English)
   - backend: ark-asr
     model: Edge0/ARK-ASR-3B
     prompt: Transcris cet audio en français.
     batch_size: 8
+  # stt-1b-en_fr (stt-2.6b-en is English only), streaming model transcribed offline
   - backend: kyutai-stt
     model: kyutai/stt-1b-en_fr-trfs
     batch_size: 8
   - backend: hojo-asr
     model: HojoAI/Hojo-ASR-Multi-V1
     batch_size: 8
-  # --- MOSS-Transcribe-Diarize ----------------------------------------------
-  # The model card's (Chinese, auto-detect) prompt translated into French: on 120
-  # segments, mean WER 15.9 against 17.2 for the model card's and for its Chinese
-  # version pinned on French, 27.0 for a short "Transcris cet audio en français."
-  # (logs/prompt_test on the DGX). An English prompt makes it translate.
+  # --- MOSS-Transcribe-Diarize --------------------------------------------------
+  # Model card's prompt translated into French (15.9, Chinese 17.2)
   - backend: moss
     model: OpenMOSS-Team/MOSS-Transcribe-Diarize
     dtype: bfloat16
     batch_size: 8
     prompt: "Transcris l’audio en texte français ; chaque segment commence par un horodatage de début et le numéro du locuteur ([S01], [S02], [S03]…), suivi du contenu parlé, et se termine par un horodatage de fin."
-  # --- Google Gemma 3n (general multimodal LLM, needs timm) -----------------
+  # --- Other audio LLMs -------------------------------------------------------------
   - backend: gemma3n
     model: google/gemma-3n-e4b-it
     dtype: bfloat16
-  # --- Qwen3-Omni (30B MoE, large VRAM, not ASR-tuned) ----------------------
   - backend: qwen3-omni
     model: Qwen/Qwen3-Omni-30B-A3B-Instruct
     dtype: bfloat16
-  # --- Qwen3-ASR (transformers) --------------------------------------------
   - backend: qwen3-asr
     model: Qwen/Qwen3-ASR-1.7B-hf
     dtype: bfloat16
     max_new_tokens: 256
     language: fr
-  # --- Microsoft VibeVoice-ASR (9B, transformers port of microsoft/VibeVoice-ASR) --
-  # No language setting: auto-detects. Needs transformers >= 5.3.
+  # VibeVoice: no language setting, the language as context (19.1, none 21.7)
   - backend: vibevoice-asr
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
     batch_size: 8
-  # --- NVIDIA Nemotron 3.5 ASR (streaming, language-ID prompt, needs NeMo >= 3.0) --
-  # Transcribed offline (full utterance), with the French prompt forced. The
-  # encoder still masks attention as in streaming: chunk_ms picks the latency
-  # (80, 320 = model default, 560, 1120 ms), here the largest one (best WER).
+    prompt: "L’audio est en français."
+  # --- NVIDIA -------------------------------------------------------------------------
+  # Nemotron: streaming model transcribed offline, largest chunk (best WER)
   - backend: nemo
     model: nvidia/nemotron-3.5-asr-streaming-0.6b
     batch_size: 16
     language: fr
     chunk_ms: 1120
-  # --- moondream Parakeet Ultra / Redux (post-trainings of parakeet-tdt-0.6b-v3) --
-  # transformers ParakeetForTDT (not moondream's Photon runtime, whose CUDA kernels are
-  # proprietary): processor/generation config of nvidia/parakeet-tdt-0.6b-v3, redux's
-  # ternary encoder unpacked to dense weights at load. No language setting.
+  # moondream post-trainings of parakeet-tdt-0.6b-v3 (transformers, no language setting)
   - backend: transformers-parakeet
     model:
     - moondream/parakeet-ultra
     - moondream/parakeet-redux
     batch_size: 16
-  # --- NVIDIA canary / parakeet ---------------------------------------------
-  # language is required for canary (EncDecMultiTaskModel): the nemo interface
-  # passes config["language"] as source_lang/target_lang, no default.
   - backend: nemo
     model:
     - nvidia/canary-180m-flash
@@ -153,7 +124,6 @@ benchmarks:
     - nvidia/parakeet-tdt-0.6b-v3
     batch_size: 16
     language: fr
-  # --- fastconformer hybrid, RNNT decoder -----------------------------------
   - backend: nemo
     model:
     - nvidia/stt_fr_fastconformer_hybrid_large_pc
@@ -163,22 +133,18 @@ benchmarks:
     batch_size: 16
     decoder:
     - rnnt
-  # --- LINTO fastconformer-pc, CTC decoder (RNNT is above) ------------------
   - backend: nemo
     model: linagora/linto_stt_fr_fastconformer_pc
     batch_size: 16
     decoder:
     - ctc
-  # --- BuzzASR French (whisper-large-v3 fine-tune, own French tokenizer) -----
-  # No language: the prompt is baked into its generation config. Decoding
-  # recommended by the model card. transformers-whisper: the ASR pipeline
-  # of the `transformers` backend decodes an empty text with its tokenizer.
+  # --- Whisper ------------------------------------------------------------------------
+  # BuzzASR: whisper-large-v3 French fine-tune, decoding from its model card
   - backend: transformers-whisper
     model: BuzzASR/french
     generate_kwargs:
       no_repeat_ngram_size: 3
       repetition_penalty: 1.2
-  # --- OpenAI whisper -------------------------------------------------------
   - backend: faster-whisper
     model:
     - large-v3
