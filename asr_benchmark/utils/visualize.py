@@ -55,6 +55,12 @@ def load_data(input_folder, selected_dataset=None, casepunc=False):
             row['dataset'] = json_pred_data[next(iter(json_pred_data))]['dataset']
             row['wer'] = json_data[key]['wer']
             row['wer_details'] = json_data[key]
+            preds = list(json_pred_data.values())
+            if all(p.get('prediction_duration') is not None for p in preds):
+                row['process_duration'] = [p['prediction_duration'] for p in preds]
+                row['audio_duration'] = [p['audio_duration'] for p in preds]
+            else:
+                row['process_duration'] = None
             monitoring_file = experiment / 'monitoring.json'
             if monitoring_file.exists():
                 with open(monitoring_file, 'r') as f:
