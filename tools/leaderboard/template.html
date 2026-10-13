@@ -115,6 +115,7 @@
 
   <section id="tab-testsets" hidden>
   <div class="scroll"><table id="testsets"></table></div>
+  <div class="notes" id="testsets-notes"></div>
   <div id="speed" hidden>
     <h2>Speed test set (RTFx)</h2>
     <div class="notes" id="speed-notes"></div>
@@ -169,15 +170,20 @@ function histogramSvg(counts, bins) {
       `${t}${t === bins * step ? " s" : ""}</text>`).join("") + "</svg>";
 }
 
+// Test set name, linked to its source when public.
+const datasetLink = d => d.url ? `<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.name)}</a>` : esc(d.name);
+
 function renderTestSets() {
   const datasets = datasetsOf(state.language);
   const bins = Math.max(0, ...datasets.map(d => (d.histogram || []).length));
   const head = `<tr><th>Test set</th><th>Type</th><th>Utterances</th><th>Duration</th><th>Mean length</th><th>Median length</th><th>Length distribution</th></tr>`;
-  const body = datasets.map(d => `<tr><td>${esc(d.name)}</td><td>${esc(d.domain)}</td><td>${d.utterances}</td>` +
+  const body = datasets.map(d => `<tr><td>${datasetLink(d)}</td><td>${esc(d.domain)}</td><td>${d.utterances}</td>` +
     `<td>${d.hours != null ? f1(d.hours) + " h" : "—"}</td><td>${d.mean_seconds != null ? f1(d.mean_seconds) + " s" : "—"}</td>` +
     `<td>${d.median_seconds != null ? f1(d.median_seconds) + " s" : "—"}</td>` +
     `<td>${d.histogram ? histogramSvg(d.histogram, bins) : "—"}</td></tr>`).join("");
   document.getElementById("testsets").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
+  document.getElementById("testsets-notes").innerHTML =
+    `<p>The exact utterances and reference transcripts are listed in <a href="${DATA.repo}/blob/main/benchmarks/sota/manifest.jsonl">manifest.jsonl</a>.</p>`;
   renderSpeedSet(bins);
 }
 
@@ -189,15 +195,15 @@ function renderSpeedSet(testsetBins) {
   if (!set) return;
   const t = set.total;
   const bins = Math.max(testsetBins, t.histogram.length);  // same x scale as the test sets when possible
-  const row = (name, domain, d, cls = "") => `<tr class="${cls}"><td>${esc(name)}</td><td>${esc(domain)}</td><td>${d.utterances}</td>` +
+  const row = (name, domain, d, cls = "") => `<tr class="${cls}"><td>${name}</td><td>${esc(domain)}</td><td>${d.utterances}</td>` +
     `<td>${duration(d.seconds)}</td><td>${f1(d.mean_seconds)} s</td><td>${f1(d.median_seconds)} s</td><td>${histogramSvg(d.histogram, bins)}</td></tr>`;
   const head = `<tr><th>Drawn from</th><th>Type</th><th>Segments</th><th>Duration</th><th>Mean length</th><th>Median length</th><th>Length distribution</th></tr>`;
-  const body = set.sources.map(d => row(d.name, d.domain, d)).join("") + row("Total", "", t, "total");
+  const body = set.sources.map(d => row(datasetLink(d), d.domain, d)).join("") + row("Total", "", t, "total");
   document.getElementById("speedset").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
   document.getElementById("speed-notes").innerHTML = `
     <p><b>RTFx</b> (inverse real-time factor): seconds of audio transcribed per second of computation, higher is faster.<br>
-      Measured on ${t.utterances} segments ranging from ${Math.round(t.min_seconds)} to ${Math.round(t.max_seconds)} s.<br>
-      No batching, only the transcription is timed.${set.hardware.length ? `<br>GPU: ${esc(set.hardware.join(", "))}` : ""}</p>`;
+      Measured on ${t.utterances} segments ranging from ${Math.round(t.min_seconds)} to ${Math.round(t.max_seconds)} s, listed in <a href="${DATA.repo}/blob/main/benchmarks/sota/manifest_rtf.jsonl">manifest_rtf.jsonl</a>.<br>
+      No batching, only the transcription is timed. Batched inference can reach a much higher RTFx (throughput).${set.hardware.length ? `<br>GPU: ${esc(set.hardware.join(", "))}` : ""}</p>`;
 }
 
 // Mean of the per-test-set scores; its ± combines the per-set half-widths as independent errors.

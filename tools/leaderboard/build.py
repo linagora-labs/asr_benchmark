@@ -21,19 +21,25 @@ from pathlib import Path
 HERE = Path(__file__).parent
 REPO_URL = "https://github.com/linagora-labs/asr_benchmark"
 
-# Display name, domain and language of the known test sets (file stem of
-# performances/*.json). Unknown datasets fall back to their stem, in DEFAULT_LANGUAGE.
-# Column order of the page; the datasets missing here come after, alphabetically.
+# Display name, domain, language and source (None for internal corpora) of the known test
+# sets (file stem of performances/*.json). Unknown datasets fall back to their stem, in
+# DEFAULT_LANGUAGE. Column order of the page; the datasets missing here come after, alphabetically.
 DATASETS = {
-    "CommonVoice_max30": ("Common Voice", "Read speech", "fr"),
-    "MLS_Facebook_french_max30": ("MLS", "Read audiobooks", "fr"),
-    "TEDX_fr_max30": ("TEDx", "Prepared talks", "fr"),
-    "Voxpopuli_max30": ("VoxPopuli", "Parliament speeches", "fr"),
-    "SUMM-RE_max30": ("SUMM-RE", "Spontaneous meetings", "fr"),
-    "YouTubeFr_max30_split6": ("YouTube", "Web videos", "fr"),
+    "CommonVoice_max30": ("Common Voice 18.0", "Read speech", "fr", "https://commonvoice.mozilla.org/en/datasets"),
+    "MLS_Facebook_french_max30": ("MLS", "Read audiobooks", "fr", "https://openslr.org/94/"),
+    "TEDX_fr_max30": ("TEDx", "Prepared talks", "fr", "https://www.openslr.org/100/"),
+    "Voxpopuli_max30": ("VoxPopuli", "Parliament speeches", "fr", "https://huggingface.co/datasets/facebook/voxpopuli"),
+    "SUMM-RE_max30": ("SUMM-RE", "Spontaneous meetings", "fr", "https://huggingface.co/datasets/linagora/SUMM-RE"),
+    "YouTubeFr_max30_split6": ("YouTube", "Web videos", "fr", None),  # internal corpus
 }
 DEFAULT_LANGUAGE = "fr"
 METRICS = ["wer_nocasepunc", "wer", "cer_nocasepunc", "cer"]
+
+
+def dataset_info(stem):
+    name, domain, language, url = DATASETS.get(stem, (stem, "", DEFAULT_LANGUAGE, None))
+    return {"name": name, "domain": domain, "language": language, "url": url}
+
 
 def speed(exp, rtf_results, model=None):
     """RTFx (seconds of audio transcribed per second of computation), hardware, backend and
@@ -142,7 +148,7 @@ def speed_set(manifest, rtf_results):
     if not durations:
         return None
     rows = [
-        {"name": DATASETS.get(stem, (stem,))[0], "domain": DATASETS.get(stem, (stem, ""))[1], "durations": d}
+        {k: v for k, v in dataset_info(stem).items() if k != "language"} | {"durations": d}
         for stem, d in sorted(durations.items(), key=lambda kv: -len(kv[1]))
     ]
     everything = [x for d in durations.values() for x in d]
@@ -160,7 +166,7 @@ def speed_set(manifest, rtf_results):
         "histogram": histogram(d),
     }
     return {
-        "sources": [{"name": r["name"], "domain": r["domain"]} | stats(r["durations"]) for r in rows],
+        "sources": [{"name": r["name"], "domain": r["domain"], "url": r["url"]} | stats(r["durations"]) for r in rows],
         "total": stats(everything),
         "hardware": hardware,
     }
@@ -194,9 +200,7 @@ def build(results, manifest, output, rtf_results=None, rtf_manifest=None):
     datasets = [
         {
             "id": stem,
-            "name": DATASETS.get(stem, (stem,))[0],
-            "domain": DATASETS.get(stem, (stem, ""))[1],
-            "language": DATASETS.get(stem, (stem, "", DEFAULT_LANGUAGE))[2],
+            **dataset_info(stem),
             "hours": round(max((m["scores"][stem]["seconds"] or 0) for m in models if stem in m["scores"]) / 3600, 2) or None,
             "utterances": max((m["scores"][stem]["n"] or 0) for m in models if stem in m["scores"]),
         }
