@@ -15,21 +15,29 @@ benchmarks:
   - backend: transformers-voxtral-realtime
     model: mistralai/Voxtral-Mini-4B-Realtime-2602
     language: fr
-  # --- Luciole-Audio (local NeMo SALM checkpoints): tools/run_sota_dgx.sh salm --
+  # --- Luciole-Audio (NeMo SALM checkpoints): tools/run_sota_dgx.sh salm --
+  # ASR prompt of the model cards ("Example prompts for each task")
   - backend: vllm
-    model: /home/abert/models/salm/Luciole-1B/luciole_v4_singlephase/hf_checkpoints/step_100000
-    served_model_name: linagora/Luciole-Audio-1B-v4-singlephase-step100k
+    model: OpenLLM-France/Luciole-1B-Audio-1.0
     port: 8111
     endpoint: chat
     audio_placeholder: "<|audio|>"
+    prompt: "Fais une transcription mot pour mot en français du contenu parlé."
     concurrency: 16
   - backend: vllm
-    model: /home/abert/models/salm/Luciole-8B/luciole8b_v4_singlephase/hf_checkpoints/step_100000
-    served_model_name: linagora/Luciole-Audio-8B-v4-singlephase-step100k
+    model: OpenLLM-France/Luciole-8B-Audio-1.0
     port: 8112
     endpoint: chat
     audio_placeholder: "<|audio|>"
+    prompt: "Fais une transcription mot pour mot en français du contenu parlé."
     concurrency: 16
+  - backend: vllm
+    model: OpenLLM-France/Luciole-23B-Audio-1.0
+    port: 8117
+    endpoint: chat
+    audio_placeholder: "<|audio|>"
+    prompt: "Fais une transcription mot pour mot en français du contenu parlé."
+    concurrency: 32
   # --- IBM Granite Speech -----------------------------------------------------
   # 3.3: vLLM's default prompt (20.1); translated into French, it is copied into the
   # output (41.3). The audio LoRA only applies to requests naming it (request_model).

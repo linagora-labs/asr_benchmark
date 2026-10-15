@@ -63,19 +63,25 @@ benchmarks:
     language: fr
     extra_args: --max-model-len 2048 --enable-lora --max-lora-rank 64 --lora-modules speech=ibm-granite/granite-speech-3.3-8b
     request_model: speech
-  # Luciole-Audio (NeMo SALM, local checkpoints): `tools/run_sota_dgx.sh salm` (see config.yaml).
+  # Luciole-Audio (NeMo SALM checkpoints): `tools/run_sota_dgx.sh salm` (see config.yaml).
   - backend: vllm
-    model: /home/abert/models/salm/Luciole-1B/luciole_v4_singlephase/hf_checkpoints/step_100000
-    served_model_name: linagora/Luciole-Audio-1B-v4-singlephase-step100k
+    model: OpenLLM-France/Luciole-1B-Audio-1.0
     port: 8111
     endpoint: chat
     audio_placeholder: "<|audio|>"
+    prompt: "Fais une transcription mot pour mot en français du contenu parlé."
   - backend: vllm
-    model: /home/abert/models/salm/Luciole-8B/luciole8b_v4_singlephase/hf_checkpoints/step_100000
-    served_model_name: linagora/Luciole-Audio-8B-v4-singlephase-step100k
+    model: OpenLLM-France/Luciole-8B-Audio-1.0
     port: 8112
     endpoint: chat
     audio_placeholder: "<|audio|>"
+    prompt: "Fais une transcription mot pour mot en français du contenu parlé."
+  - backend: vllm
+    model: OpenLLM-France/Luciole-23B-Audio-1.0
+    port: 8117
+    endpoint: chat
+    audio_placeholder: "<|audio|>"
+    prompt: "Fais une transcription mot pour mot en français du contenu parlé."
   - backend: vllm
     model: mistralai/Voxtral-Mini-3B-2507
     port: 8116
