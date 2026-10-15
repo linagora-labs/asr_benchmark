@@ -26,6 +26,7 @@
   .group > span:not(.group-label) { display: flex; flex-wrap: wrap; gap: 6px; }
   .group-label { color: var(--muted); margin-right: 2px; }
   .prompt-info { cursor: help; font-size: 12px; }
+  .hint { cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; }
   .group-label.all { cursor: pointer; user-select: none; text-decoration: underline dotted; text-underline-offset: 3px; }
   .group-label.all:hover { color: var(--accent); }
   select, button { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
@@ -173,17 +174,22 @@ function histogramSvg(counts, bins) {
 // Test set name, linked to its source when public.
 const datasetLink = d => d.url ? `<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.name)}</a>` : esc(d.name);
 
+// Share of the test split kept, its details (extra filter, removed segments) on hover.
+const selectionCell = d => !d.selection ? "—" : !d.selection_note ? esc(d.selection) :
+  `<span class="hint" title="${esc(d.selection_note)}">${esc(d.selection)}</span>`;
+
 function renderTestSets() {
   const datasets = datasetsOf(state.language);
   const bins = Math.max(0, ...datasets.map(d => (d.histogram || []).length));
-  const head = `<tr><th>Test set</th><th>Type</th><th>Utterances</th><th>Duration</th><th>Mean length</th><th>Median length</th><th>Length distribution</th></tr>`;
-  const body = datasets.map(d => `<tr><td>${datasetLink(d)}</td><td>${esc(d.domain)}</td><td>${d.utterances}</td>` +
+  const head = `<tr><th>Test set</th><th>Type</th><th title="Share of the test split kept">Selection</th><th>Utterances</th><th>Duration</th><th>Mean length</th><th>Median length</th><th>Length distribution</th></tr>`;
+  const body = datasets.map(d => `<tr><td>${datasetLink(d)}</td><td>${esc(d.domain)}</td><td>${selectionCell(d)}</td><td>${d.utterances}</td>` +
     `<td>${d.hours != null ? f1(d.hours) + " h" : "—"}</td><td>${d.mean_seconds != null ? f1(d.mean_seconds) + " s" : "—"}</td>` +
     `<td>${d.median_seconds != null ? f1(d.median_seconds) + " s" : "—"}</td>` +
     `<td>${d.histogram ? histogramSvg(d.histogram, bins) : "—"}</td></tr>`).join("");
   document.getElementById("testsets").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
   document.getElementById("testsets-notes").innerHTML =
-    `<p>The exact utterances and reference transcripts are listed in <a href="${DATA.repo}/blob/main/benchmarks/sota/manifest.jsonl">manifest.jsonl</a>.</p>`;
+    `<p>Only segments of 1 to 30 s are kept; some test sets are then randomly subsampled (seed 42): the selection column gives the share of the test split kept (hover for details). ` +
+    `The exact utterances and reference transcripts are listed in <a href="${DATA.repo}/blob/main/benchmarks/sota/manifest.jsonl">manifest.jsonl</a>.</p>`;
   renderSpeedSet(bins);
 }
 

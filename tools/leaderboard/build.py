@@ -31,6 +31,19 @@ DATASETS = {
     "Voxpopuli_max30": ("VoxPopuli", "Parliament speeches", "fr", "https://huggingface.co/datasets/facebook/voxpopuli"),
     "SUMM-RE_max30": ("SUMM-RE", "Spontaneous meetings", "fr", "https://huggingface.co/datasets/linagora/SUMM-RE"),
     "YouTubeFr_max30_split6": ("YouTube", "Web videos", "fr", None),  # internal corpus
+    "FLEURS_max30": ("FLEURS", "Read Wikipedia sentences", "fr", "https://huggingface.co/datasets/google/fleurs"),
+}
+# How the segments of each test set were selected from its test split (tools/subsample_data.py:
+# segments of 1 to 30 s, then a random subset, seed 42): share kept, and details shown on
+# hover in the test sets tab.
+SELECTION = {
+    "CommonVoice_max30": ("15%", None),
+    "MLS_Facebook_french_max30": ("33%", None),
+    "TEDX_fr_max30": ("Whole", None),
+    "Voxpopuli_max30": ("33%", "Minus 5 segments with wrong references"),
+    "SUMM-RE_max30": ("33%", "Segments of 4 s or more only"),
+    "YouTubeFr_max30_split6": ("50%", None),
+    "FLEURS_max30": ("Whole", None),
 }
 DEFAULT_LANGUAGE = "fr"
 METRICS = ["wer_nocasepunc", "wer", "cer_nocasepunc", "cer"]
@@ -38,7 +51,9 @@ METRICS = ["wer_nocasepunc", "wer", "cer_nocasepunc", "cer"]
 
 def dataset_info(stem):
     name, domain, language, url = DATASETS.get(stem, (stem, "", DEFAULT_LANGUAGE, None))
-    return {"name": name, "domain": domain, "language": language, "url": url}
+    return {"name": name, "domain": domain, "language": language, "url": url,
+            "selection": SELECTION.get(stem, (None, None))[0],
+            "selection_note": SELECTION.get(stem, (None, None))[1]}
 
 
 def speed(exp, rtf_results, model=None):
@@ -148,7 +163,7 @@ def speed_set(manifest, rtf_results):
     if not durations:
         return None
     rows = [
-        {k: v for k, v in dataset_info(stem).items() if k != "language"} | {"durations": d}
+        {k: v for k, v in dataset_info(stem).items() if k not in ("language", "selection", "selection_note")} | {"durations": d}
         for stem, d in sorted(durations.items(), key=lambda kv: -len(kv[1]))
     ]
     everything = [x for d in durations.values() for x in d]
