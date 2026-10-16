@@ -94,12 +94,20 @@ benchmarks:
     batch_size: 8
     prompt: "Transcris l’audio en texte français ; chaque segment commence par un horodatage de début et le numéro du locuteur ([S01], [S02], [S03]…), suivi du contenu parlé, et se termine par un horodatage de fin."
   # --- Other audio LLMs -------------------------------------------------------------
-  - backend: gemma3n
+  - backend: vllm
     model: google/gemma-3n-e4b-it
-    dtype: bfloat16
-  - backend: qwen3-omni
+    port: 8104
+    language: fr
+    concurrency: 8
+    startup_timeout: 7200
+  - backend: vllm
     model: Qwen/Qwen3-Omni-30B-A3B-Instruct
-    dtype: bfloat16
+    port: 8105
+    language: fr
+    concurrency: 8
+    startup_timeout: 7200
+    env:
+      MAX_JOBS: 4
   - backend: qwen3-asr
     model: Qwen/Qwen3-ASR-1.7B-hf
     dtype: bfloat16

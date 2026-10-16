@@ -318,7 +318,8 @@ function render() {
   };
   const head = `<tr><th>#</th><th>Model</th>${th("", "Average", `${datasets.length} test sets`, "Sort by the average")}` +
     (shownColumn("rank") ? th("rank", "Avg rank", `${datasets.length} test sets`, "Sort by the average rank") : "") +
-    datasets.map(d => th(d.id, esc(d.name), d.hours != null ? f1(d.hours) + " h" : "", `${d.domain}. Sort by this test set`)).join("") +
+    // last word + version on their own line ("Common<br>Voice 18.0"): keeps the column as narrow as the others
+    datasets.map(d => th(d.id, esc(d.name).replace(/ (\S+ \d[\d.]*)$/, "<br>$1"), d.hours != null ? f1(d.hours) + " h" : "", `${d.domain}. Sort by this test set`)).join("") +
     INFO.filter(c => shownColumn(c.key)).map(c => c.sort ? th(c.key, c.label, c.sub, c.title) :
       `<th class="left" title="${esc(c.title)}">${c.label}</th>`).join("") + "</tr>";
   let rank = 0;

@@ -25,13 +25,13 @@ REPO_URL = "https://github.com/linagora-labs/asr_benchmark"
 # sets (file stem of performances/*.json). Unknown datasets fall back to their stem, in
 # DEFAULT_LANGUAGE. Column order of the page; the datasets missing here come after, alphabetically.
 DATASETS = {
+    "FLEURS_max30": ("FLEURS", "Read Wikipedia sentences", "fr", "https://huggingface.co/datasets/google/fleurs"),
     "CommonVoice_max30": ("Common Voice 18.0", "Read speech", "fr", "https://commonvoice.mozilla.org/en/datasets"),
     "MLS_Facebook_french_max30": ("MLS", "Read audiobooks", "fr", "https://openslr.org/94/"),
     "TEDX_fr_max30": ("TEDx", "Prepared talks", "fr", "https://www.openslr.org/100/"),
     "Voxpopuli_max30": ("VoxPopuli", "Parliament speeches", "fr", "https://huggingface.co/datasets/facebook/voxpopuli"),
     "SUMM-RE_max30": ("SUMM-RE", "Spontaneous meetings", "fr", "https://huggingface.co/datasets/linagora/SUMM-RE"),
     "YouTubeFr_max30_split6": ("YouTube", "Web videos", "fr", None),  # internal corpus
-    "FLEURS_max30": ("FLEURS", "Read Wikipedia sentences", "fr", "https://huggingface.co/datasets/google/fleurs"),
 }
 # How the segments of each test set were selected from its test split (tools/subsample_data.py:
 # segments of 1 to 30 s, then a random subset, seed 42): share kept, and details shown on
