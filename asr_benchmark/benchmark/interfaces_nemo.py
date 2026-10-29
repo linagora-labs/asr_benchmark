@@ -20,8 +20,9 @@ class NemoModel(Model):
 
     def __init__(self, config) -> None:
         model_type = nemo_asr.models.EncDecCTCModelBPE
-        if "nemotron-3.5-asr" in config['model']:
-            # Language-ID prompt-conditioned cache-aware RNNT (nvidia/nemotron-3.5-asr-streaming-0.6b).
+        if "nemotron-3.5-asr" in config['model'] or "nemotron-labs-unified-asr" in config['model']:
+            # Language-ID prompt-conditioned RNNT: cache-aware streaming (nvidia/nemotron-3.5-asr-streaming-0.6b)
+            # or unified offline/streaming (nvidia/nemotron-labs-unified-asr-0.6b, full context by default).
             model_type = getattr(nemo_asr.models, "EncDecRNNTBPEModelWithPrompt", None)
             if model_type is None:
                 raise ImportError(f"{config['model']} needs nemo_toolkit>=3.0.0 (EncDecRNNTBPEModelWithPrompt)")

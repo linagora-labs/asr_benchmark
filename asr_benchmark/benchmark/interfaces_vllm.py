@@ -159,6 +159,7 @@ class VllmTranscriptionModel(Model):
         }
         if self.config["temperature"] is not None:
             data["temperature"] = self.config["temperature"]
+        data.update(self.config["extra_body"])
         res = requests.post(
             f"{self.server_url}/v1/chat/completions", json=data, timeout=self.config["request_timeout"]
         )
@@ -328,6 +329,9 @@ class VllmTranscriptionModel(Model):
         if config["audio_placeholder"] and config["audio_placeholder"] not in config["prompt"]:
             config["prompt"] = f"{config['prompt']} {config['audio_placeholder']}"
         config["max_tokens"] = int(config.get("max_tokens", 512))
+        # Extra fields of the chat request, e.g. {chat_template_kwargs: {enable_thinking: false}}
+        # to turn off the reasoning of models that think by default (Nemotron 3.5 Transcribe).
+        config["extra_body"] = dict(config.get("extra_body", {}) or {})
         # Concurrent in-flight requests for the throughput path (transcribe_batch, used
         # when compute_rtf is False). 1 = serial. Ignored on the compute_rtf latency path.
         config["concurrency"] = int(config.get("concurrency", 1))
@@ -359,8 +363,10 @@ class VllmTranscriptionModel(Model):
         metadata = super().get_metadata()
         if metadata["endpoint"] != "chat":
             # The transcription endpoint builds the model's own prompt: ours is not used.
-            for key in ("prompt", "audio_placeholder", "max_tokens"):
+            for key in ("prompt", "audio_placeholder", "max_tokens", "extra_body"):
                 metadata.pop(key, None)
+        if not metadata.get("extra_body"):
+            metadata.pop("extra_body", None)
         return metadata
 
     def get_folder_name(self):

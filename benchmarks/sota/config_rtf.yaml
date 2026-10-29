@@ -82,6 +82,18 @@ benchmarks:
     endpoint: chat
     audio_placeholder: "<|audio|>"
     prompt: "Fais une transcription mot pour mot en français du contenu parlé."
+  # --- NVIDIA Nemotron 3.5 Transcribe (NeMo SALM, vllm plugin of NeMo Speech) ----------
+  # NeMo Speech main needs vLLM >= 0.31 (our venv: 0.28)
+  - backend: vllm
+    model: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B
+    launch: false
+    server: http://172.17.0.1
+    port: 8118
+    endpoint: chat
+    prompt: "Audio transcription. Language: French. Wording: verbatim, including fillers and repetitions. Formatting: punctuation and capitalization. Output: transcript only."
+    extra_body: {chat_template_kwargs: {enable_thinking: false}}
+    trust_remote_code: true
+    extra_args: --max-model-len 8192 --enable-chunked-prefill --no-enable-prefix-caching --mamba-cache-mode none --mm-processor-cache-gb 0 --speculative-config {"method":"mtp","num_speculative_tokens":2} --gpu-memory-utilization 0.8
   - backend: vllm
     model: mistralai/Voxtral-Mini-3B-2507
     port: 8116
@@ -126,6 +138,11 @@ benchmarks:
     model: nvidia/nemotron-3.5-asr-streaming-0.6b
     language: fr
     chunk_ms: 1120
+  # --- NVIDIA Nemotron-Labs Unified ASR (offline/streaming, needs NeMo Speech 3.1) --
+  # NEMO_REF=main tools/run_sota_dgx.sh nemo -m unified. Offline (full context).
+  - backend: nemo
+    model: nvidia/nemotron-labs-unified-asr-0.6b
+    language: fr
   # --- moondream Parakeet Ultra / Redux (post-trainings of parakeet-tdt-0.6b-v3) --
   # transformers ParakeetForTDT (not moondream's Photon runtime, whose CUDA kernels are
   # proprietary): processor/generation config of nvidia/parakeet-tdt-0.6b-v3, redux's

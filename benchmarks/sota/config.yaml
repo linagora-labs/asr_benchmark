@@ -38,6 +38,19 @@ benchmarks:
     audio_placeholder: "<|audio|>"
     prompt: "Fais une transcription mot pour mot en français du contenu parlé."
     concurrency: 32
+  # --- NVIDIA Nemotron 3.5 Transcribe (NeMo SALM, vllm plugin of NeMo Speech) ----------
+  # NeMo Speech main needs vLLM >= 0.31 (our venv: 0.28)
+  - backend: vllm
+    model: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B
+    launch: false
+    server: http://172.17.0.1
+    port: 8118
+    endpoint: chat
+    prompt: "Audio transcription. Language: French. Wording: verbatim, including fillers and repetitions. Formatting: punctuation and capitalization. Output: transcript only."
+    extra_body: {chat_template_kwargs: {enable_thinking: false}}
+    concurrency: 32
+    trust_remote_code: true
+    extra_args: --max-model-len 8192 --enable-chunked-prefill --no-enable-prefix-caching --mamba-cache-mode none --mm-processor-cache-gb 0 --speculative-config {"method":"mtp","num_speculative_tokens":2} --gpu-memory-utilization 0.8
   # --- IBM Granite Speech -----------------------------------------------------
   # 3.3: vLLM's default prompt (20.1); translated into French, it is copied into the
   # output (41.3). The audio LoRA only applies to requests naming it (request_model).
@@ -125,6 +138,11 @@ benchmarks:
     batch_size: 16
     language: fr
     chunk_ms: 1120
+  # Unified offline/streaming model, transcribed offline (full context, its default)
+  - backend: nemo
+    model: nvidia/nemotron-labs-unified-asr-0.6b
+    batch_size: 16
+    language: fr
   # moondream post-trainings of parakeet-tdt-0.6b-v3 (transformers, no language setting)
   - backend: transformers-parakeet
     model:
