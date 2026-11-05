@@ -1,11 +1,6 @@
 """Build the static leaderboard page from benchmark results.
 
-Reads every <results>/<experiment>/{metadata.json (with its model_info: license, size,
-languages, see tools/fill_model_info.py), performances/*.json}, the test
-manifest (utterance durations) and the speed runs (<rtf_results>/<experiment>_rtf, for
-the RTFx, and their manifest, described in the test sets tab), and writes <output>/index.html (the page, data
-embedded) and <output>/leaderboard.json.
-Standard library only, so the GitHub Action needs no install.
+Writes <output>/index.html and <output>/leaderboard.json. Standard library only (GitHub Action).
 
     python tools/leaderboard/build.py                       # benchmarks/sota/results -> site/
     python tools/leaderboard/build.py --results X --manifest M --output Y
@@ -21,36 +16,35 @@ from pathlib import Path
 HERE = Path(__file__).parent
 REPO_URL = "https://github.com/linagora-labs/asr_benchmark"
 
-# Display name, domain, language and source (None for internal corpora) of the known test
-# sets (file stem of performances/*.json). Unknown datasets fall back to their stem, in
-# DEFAULT_LANGUAGE. Column order of the page; the datasets missing here come after, alphabetically.
+# Display name, domain, language, source; column order of the page
 DATASETS = {
-    "FLEURS_max30": ("FLEURS", "Read Wikipedia sentences", "fr", "https://huggingface.co/datasets/google/fleurs"),
-    "CommonVoice_max30": ("Common Voice 18.0", "Read speech", "fr", "https://commonvoice.mozilla.org/en/datasets"),
-    "MLS_Facebook_french_max30": ("MLS", "Read audiobooks", "fr", "https://openslr.org/94/"),
-    "TEDX_fr_max30": ("TEDx", "Prepared talks", "fr", "https://www.openslr.org/100/"),
-    "Voxpopuli_max30": ("VoxPopuli", "Parliament speeches", "fr", "https://huggingface.co/datasets/facebook/voxpopuli"),
-    "SUMM-RE_max30": ("SUMM-RE", "Spontaneous meetings", "fr", "https://huggingface.co/datasets/linagora/SUMM-RE"),
-    "YouTubeFr_max30_split6": ("YouTube", "Web videos", "fr", None),  # internal corpus
+    "FLEURS": ("FLEURS", "Read Wikipedia sentences", "fr", "https://huggingface.co/datasets/google/fleurs"),
+    "CommonVoice": ("Common Voice 22.0", "Read speech", "fr", "https://commonvoice.mozilla.org/en/datasets"),
+    "MLS_Facebook_french": ("MLS", "Read audiobooks", "fr", "https://openslr.org/94/"),
+    "TEDX_fr": ("TEDx", "Prepared talks", "fr", "https://www.openslr.org/100/"),
+    "Voxpopuli": ("VoxPopuli", "Parliament speeches", "fr", "https://huggingface.co/datasets/facebook/voxpopuli"),
+    "SUMM-RE": ("SUMM-RE", "Spontaneous meetings", "fr", "https://huggingface.co/datasets/linagora/SUMM-RE"),
+    "YouTubeFr_split6": ("YouTube", "Web videos", "fr", None),  # internal corpus
 }
-# How the segments of each test set were selected from its test split (tools/subsample_data.py:
-# segments of 1 to 30 s, then a random subset, seed 42): share kept, and details shown on
-# hover in the test sets tab.
+# Share kept (`datasets` of config.yaml), details on hover
 SELECTION = {
-    "CommonVoice_max30": ("15%", None),
-    "MLS_Facebook_french_max30": ("33%", None),
-    "TEDX_fr_max30": ("Whole", None),
-    "Voxpopuli_max30": ("33%", "Minus 5 segments with wrong references"),
-    "SUMM-RE_max30": ("33%", "Segments of 4 s or more only"),
-    "YouTubeFr_max30_split6": ("50%", None),
-    "FLEURS_max30": ("Whole", None),
+    "CommonVoice": ("20%", None),
+    "MLS_Facebook_french": ("50%", None),
+    "TEDX_fr": ("Whole", None),
+    "Voxpopuli": ("50%", None),
+    "SUMM-RE": ("50%", "Segments of 4 s or more only"),
+    "YouTubeFr_split6": ("Whole", None),
+    "FLEURS": ("Whole", None),
 }
 DEFAULT_LANGUAGE = "fr"
 METRICS = ["wer_nocasepunc", "wer", "cer_nocasepunc", "cer"]
+EMPTY_WARNING = 0.01  # share of empty outputs from which the model gets a caveat
+SPECIAL_TOKEN = re.compile(r"<\|[^|]*\|>")
 
 
 def dataset_info(stem):
-    name, domain, language, url = DATASETS.get(stem, (stem, "", DEFAULT_LANGUAGE, None))
+    # Speed runs keep the old names
+    name, domain, language, url = DATASETS.get(stem.replace("_max30", ""), (stem, "", DEFAULT_LANGUAGE, None))
     return {"name": name, "domain": domain, "language": language, "url": url,
             "selection": SELECTION.get(stem, (None, None))[0],
             "selection_note": SELECTION.get(stem, (None, None))[1]}
@@ -82,6 +76,21 @@ def speed(exp, rtf_results, model=None):
     return ((round(audio / compute, 1) if compute else None), meta.get("device_name") or meta.get("device"),
             meta.get("backend"), (meta.get("model_info") or {}).get("rtf_note"))
 HISTOGRAM_BIN = 2  # seconds, durations histogram of the test sets
+
+
+def count_empty(pred_file):
+    """Outputs with no letter or digit left once the special tokens (<|...|>) are removed."""
+    rows = json.loads(pred_file.read_text(encoding="utf-8")).values()
+    return sum(not any(c.isalnum() for c in SPECIAL_TOKEN.sub("", row.get("prediction") or "")) for row in rows)
+
+
+def empty_note(scores):
+    """Caveat on the WER of a model with more than EMPTY_WARNING of empty outputs."""
+    total = sum(s.get("n") or 0 for s in scores.values() if "empty" in s)
+    empty = sum(s.get("empty", 0) for s in scores.values())
+    if not total or empty / total <= EMPTY_WARNING:
+        return None
+    return f"Empty outputs: {empty} / {total} ({100 * empty / total:.1f}%)."
 
 
 def model_entry(exp, rtf_results=None):
@@ -118,6 +127,9 @@ def model_entry(exp, rtf_results=None):
         }
         scores[perf_file.stem]["n"] = perf.get("num_data")
         scores[perf_file.stem]["seconds"] = perf.get("duration")
+        pred_file = exp / "predictions" / perf_file.name
+        if pred_file.exists():
+            scores[perf_file.stem]["empty"] = count_empty(pred_file)
     return {
         "id": exp.name,
         "model": name,
@@ -134,11 +146,7 @@ def model_entry(exp, rtf_results=None):
         "hardware": hardware,
         "rtf_backend": rtf_backend if rtf_backend != backend else None,  # set when timed with another backend
         "rtf_note": rtf_note,  # caveat on the speed measure, shown with a warning sign
-        "wer_note": info.get("wer_note"),  # caveat on the WER, by the model name with a warning sign
-        # Prompt of the prompted models: the text sent (not for vLLM's transcription endpoint,
-        # which builds the model's own) and where it comes from (model_info, filled by hand).
-        # Built-in prompts (vLLM transcription endpoint, transcription modes) are written in
-        # model_info.prompt by hand.
+        "wer_note": "\n".join(n.rstrip(".") + "." for n in (info.get("wer_note"), empty_note(scores)) if n) or None,
         "prompt": (meta.get("prompt") if backend != "vllm" or meta.get("endpoint") == "chat" else None) or info.get("prompt"),
         "prompt_source": info.get("prompt_source"),
         "scores": scores,
@@ -212,6 +220,13 @@ def build(results, manifest, output, rtf_results=None, rtf_manifest=None):
     order = list(DATASETS)
     stems = sorted({stem for m in models for stem in m["scores"]},
                    key=lambda s: (order.index(s), "") if s in DATASETS else (len(order), s.lower()))
+    stats = lambda d: {
+        "hours": round(sum(d) / 3600, 2),
+        "utterances": len(d),
+        "mean_seconds": round(statistics.mean(d), 1),
+        "median_seconds": round(statistics.median(d), 1),
+        "histogram": histogram(d),
+    }
     datasets = [
         {
             "id": stem,
@@ -219,22 +234,23 @@ def build(results, manifest, output, rtf_results=None, rtf_manifest=None):
             "hours": round(max((m["scores"][stem]["seconds"] or 0) for m in models if stem in m["scores"]) / 3600, 2) or None,
             "utterances": max((m["scores"][stem]["n"] or 0) for m in models if stem in m["scores"]),
         }
-        # The manifest, when it has the test set, gives the exact figures and the histogram.
-        | ({
-            "hours": round(sum(durations[stem]) / 3600, 2),
-            "utterances": len(durations[stem]),
-            "mean_seconds": round(statistics.mean(durations[stem]), 1),
-            "median_seconds": round(statistics.median(durations[stem]), 1),
-            "histogram": histogram(durations[stem]),
-        } if durations.get(stem) else {})
+        | (stats(durations[stem]) if durations.get(stem) else {})
         for stem in stems
     ]
+    totals = {}
+    for language in {d["language"] for d in datasets}:
+        rows = [d for d in datasets if d["language"] == language]
+        totals[language] = (
+            stats([x for d in rows for x in durations[d["id"]]]) if all(durations.get(d["id"]) for d in rows)
+            else {"hours": round(sum(d["hours"] or 0 for d in rows), 2), "utterances": sum(d["utterances"] for d in rows)}
+        )
     data = {
         "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "results_updated": last_commit_date(results),
         "repo": REPO_URL,
         "histogram_bin": HISTOGRAM_BIN,
         "datasets": datasets,
+        "dataset_totals": totals,
         "speed_set": speed_set(rtf_manifest, rtf_results),
         "models": models,
     }

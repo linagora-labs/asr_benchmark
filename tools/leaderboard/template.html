@@ -180,15 +180,18 @@ const selectionCell = d => !d.selection ? "—" : !d.selection_note ? esc(d.sele
 
 function renderTestSets() {
   const datasets = datasetsOf(state.language);
-  const bins = Math.max(0, ...datasets.map(d => (d.histogram || []).length));
+  const bins = Math.max(0, ...datasets.map(d => (d.histogram || []).length));  // the total's is as long as the longest
   const head = `<tr><th>Test set</th><th>Type</th><th title="Share of the test split kept">Selection</th><th>Utterances</th><th>Duration</th><th>Mean length</th><th>Median length</th><th>Length distribution</th></tr>`;
-  const body = datasets.map(d => `<tr><td>${datasetLink(d)}</td><td>${esc(d.domain)}</td><td>${selectionCell(d)}</td><td>${d.utterances}</td>` +
+  const row = (name, domain, selection, d, cls = "") => `<tr class="${cls}"><td>${name}</td><td>${domain}</td><td>${selection}</td><td>${d.utterances}</td>` +
     `<td>${d.hours != null ? f1(d.hours) + " h" : "—"}</td><td>${d.mean_seconds != null ? f1(d.mean_seconds) + " s" : "—"}</td>` +
     `<td>${d.median_seconds != null ? f1(d.median_seconds) + " s" : "—"}</td>` +
-    `<td>${d.histogram ? histogramSvg(d.histogram, bins) : "—"}</td></tr>`).join("");
+    `<td>${d.histogram ? histogramSvg(d.histogram, bins) : "—"}</td></tr>`;
+  const total = DATA.dataset_totals[state.language];
+  const body = datasets.map(d => row(datasetLink(d), esc(d.domain), selectionCell(d), d)).join("") +
+    (total ? row("Total", "", "", total, "total") : "");
   document.getElementById("testsets").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
   document.getElementById("testsets-notes").innerHTML =
-    `<p>Only segments of 1 to 30 s are kept; some test sets are then randomly subsampled (seed 42): the selection column gives the share of the test split kept (hover for details). ` +
+    `<p>Only segments of 1 to 30 s are kept (longer ones are dropped, not cut); some test sets are then subsampled: the selection column gives the share of the test split kept (hover for details). ` +
     `The exact utterances and reference transcripts are listed in <a href="${DATA.repo}/blob/main/benchmarks/sota/manifest.jsonl">manifest.jsonl</a>.</p>`;
   renderSpeedSet(bins);
 }
@@ -331,10 +334,11 @@ function render() {
       const r = result(m, d);
       if (!r) return cell(null);
       const title = [
-        `${d.name} · ${m.model}${m.variant ? ` (${m.variant})` : ""}`,
+        `${d.name} · ${m.model} (${[m.variant, m.backend].filter(Boolean).join(" · ")})`,
         r.ci95 && `95% CI: ${f1(r.ci95[0])} – ${f1(r.ci95[1])}`,
         `Substitutions: ${f1(r.sub)}`, `Deletions: ${f1(r.del)}`, `Insertions: ${f1(r.ins)}`,
         `Utterances: ${m.scores[d.id].n}`,
+        m.scores[d.id].empty != null && `Empty outputs: ${m.scores[d.id].empty}`,
       ].filter(Boolean).join("\n");
       return cell(r.wer, halfWidth(r), rankClass(r.wer, values[d.id]), title);
     }).join("");
@@ -384,13 +388,12 @@ function renderChart(rows, datasets) {
   const dots = points.map((p, i) => `<circle class="dot ${p.front ? "front" : "other"}" data-i="${i}" cx="${x(p.rtfx)}" cy="${y(p.wer)}" r="${p.front ? 6 : 5}"/>`).join("");
   // Labels: for each model (best trade-offs first), the first of a few positions around its dot
   // that overlaps no dot and no other label; none fits: no label (the tooltip still names it).
-  // Same name as in the leaderboard, plus the variant when several runs of a model are shown.
   const homonyms = new Set(points.map(p => p.m.model).filter((n, i, all) => all.indexOf(n) !== i));
   const boxes = points.map(p => ({ x0: x(p.rtfx) - 7, x1: x(p.rtfx) + 7, y0: y(p.wer) - 7, y1: y(p.wer) + 7 }));
   const overlaps = b => b.x0 < L || b.x1 > W - R || b.y0 < T || b.y1 > H - B ||
     boxes.some(o => b.x0 < o.x1 && o.x0 < b.x1 && b.y0 < o.y1 && o.y0 < b.y1);
   const text = [...points].sort((a, b) => b.front - a.front || b.rtfx - a.rtfx).map(p => {
-    const name = p.m.model + (homonyms.has(p.m.model) && p.m.variant ? ` (${p.m.variant})` : "");
+    const name = p.m.model + (homonyms.has(p.m.model) ? ` (${p.m.variant || p.m.backend})` : "");
     const w = name.length * 6.6, cx = x(p.rtfx), cy = y(p.wer);
     const candidates = [[10, 4, "start"], [-10, 4, "end"], [0, -12, "middle"], [0, 20, "middle"],
                         [10, -10, "start"], [10, 18, "start"], [-10, -10, "end"], [-10, 18, "end"],
@@ -419,11 +422,11 @@ function renderChart(rows, datasets) {
     const dot = svg.querySelector(`.dot[data-i="${i}"]`);
     dot.classList.add("hover");
     svg.appendChild(dot);  // on top of the dot it overlaps
-    tip.innerHTML = `<b>${esc(p.m.model)}</b>${p.m.variant ? ` <span class="muted">${esc(p.m.variant)}</span>` : ""}<br>` +
+    tip.innerHTML = `<b>${esc(p.m.model)}</b><span class="muted"> ${esc([p.m.variant, p.m.backend].filter(Boolean).join(" · "))}</span><br>` +
       `Average ${state.metric.toUpperCase()}: ${f1(p.wer)}${p.pm != null ? ` ±${f1(p.pm)}` : ""}<br>RTFx: ${Math.round(p.rtfx)}×` +
       `${p.m.rtf_backend ? ` (timed with ${esc(p.m.rtf_backend)})` : ""}` +
       `${p.m.params ? ` · ${params(p.m.params)} parameters` : ""}` +
-      (p.m.wer_note ? `<br>⚠️ ${esc(p.m.wer_note)}` : "") +
+      (p.m.wer_note ? `<br>⚠️ ${esc(p.m.wer_note).replaceAll("\n", "<br>⚠️ ")}` : "") +
       (p.m.rtf_note ? `<br>⚠️ ${esc(p.m.rtf_note)}` : "");
     tip.hidden = false;
     const box = svg.parentElement.getBoundingClientRect();

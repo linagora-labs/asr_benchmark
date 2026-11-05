@@ -76,6 +76,9 @@ Some tools are available in the `tools` folder:
 - leaderboard/build.py: builds the leaderboard page (`site/`) from a results folder (and the speed runs of `results_rtf` for the RTFx column)
 - fill_model_info.py: fills the `model_info` (license, size, languages) of results `metadata.json` from the Hugging Face API
 - rescore_results.py: recomputes the scores (and confidence intervals) of existing results from their predictions, after a scoring change
+- build_manifests.py: builds the manifests of the whole test sets of the sota benchmark (`benchmarks/sota/manifests/`), with their references normalized
+- select_manifest.py: writes the segments selected by the `datasets` block of a config (durations and ratio of each test set) in a manifest
+- migrate_results.py: aligns existing results on a new manifest (reuses the predictions of the segments still selected, with their new references, removes the others, rescores)
 
 ## Backends (interfaces)
 

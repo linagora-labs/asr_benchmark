@@ -1,8 +1,15 @@
 import argparse
+import atexit
+import json
+import logging
+import os
+import tempfile
+from collections import Counter
 from pathlib import Path
 import yaml
 from asr_benchmark.benchmark import launch_benchmark
 from asr_benchmark.utils import setup_logging
+from asr_benchmark.utils.benchmark import select_datasets
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Benchmarking tool for STT models")
@@ -56,6 +63,16 @@ if __name__ == "__main__":
             if args.input_manifest is not None
             else config.pop("input_manifest", None)
         )
+        datasets = config.pop("datasets", None)
+        durations = {k: config.pop(k) for k in ("min_duration", "max_duration") if k in config}
+        if input_manifest is None and datasets:
+            rows = select_datasets(datasets, **durations)
+            with tempfile.NamedTemporaryFile("w", suffix=".jsonl", prefix="manifest_", delete=False, encoding="utf-8") as f:
+                f.writelines(json.dumps(row, ensure_ascii=False) + "\n" for row in rows)
+            input_manifest = f.name
+            atexit.register(os.remove, input_manifest)
+            for name, n in Counter(row["name"] for row in rows).items():
+                logging.info(f"{name}: {n} segments selected")
         output_folder = (
             args.output_folder
             if args.output_folder is not None

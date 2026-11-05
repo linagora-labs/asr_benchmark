@@ -175,8 +175,13 @@ class VllmTranscriptionModel(Model):
         }
         if self.config["language"]:
             data["language"] = self.config["language"]
+        if self.config["transcription_prompt"]:
+            data["prompt"] = self.config["transcription_prompt"]
+        if self.config["max_tokens"]:
+            data["max_completion_tokens"] = self.config["max_tokens"]
         if self.config["temperature"] is not None:
             data["temperature"] = self.config["temperature"]
+        data.update(self.config["extra_body"])
         with open(audio_path, "rb") as f:
             res = requests.post(
                 f"{self.server_url}/v1/audio/transcriptions",
@@ -310,7 +315,8 @@ class VllmTranscriptionModel(Model):
         config["request_model"] = config.get("request_model") or config["served_model_name"] or config["model"]
         # Fraction of GPU memory vLLM reserves (weights + KV cache). Set None to use
         # vLLM's own default (0.9). Passed to `vllm serve --gpu-memory-utilization`.
-        config["gpu_memory_utilization"] = config.get("gpu_memory_utilization", 0.85)
+        # 0.85 crashes the DGX Spark
+        config["gpu_memory_utilization"] = config.get("gpu_memory_utilization", 0.6)
         extra_args = config.get("extra_args", [])
         config["extra_args"] = extra_args.split() if isinstance(extra_args, str) else list(extra_args)
         config["language"] = config.get("language", None)
@@ -328,13 +334,12 @@ class VllmTranscriptionModel(Model):
         config["audio_placeholder"] = config.get("audio_placeholder", None)
         if config["audio_placeholder"] and config["audio_placeholder"] not in config["prompt"]:
             config["prompt"] = f"{config['prompt']} {config['audio_placeholder']}"
-        config["max_tokens"] = int(config.get("max_tokens", 512))
-        # Extra fields of the chat request, e.g. {chat_template_kwargs: {enable_thinking: false}}
-        # to turn off the reasoning of models that think by default (Nemotron 3.5 Transcribe).
+        config["transcription_prompt"] = config.get("transcription_prompt", None)
+        # Caps looping generations
+        config["max_tokens"] = config.get("max_tokens", 256)
+        config["max_tokens"] = int(config["max_tokens"]) if config["max_tokens"] else None
         config["extra_body"] = dict(config.get("extra_body", {}) or {})
-        # Concurrent in-flight requests for the throughput path (transcribe_batch, used
-        # when compute_rtf is False). 1 = serial. Ignored on the compute_rtf latency path.
-        config["concurrency"] = int(config.get("concurrency", 1))
+        config["concurrency"] = int(config.get("concurrency", 1 if config.get("compute_rtf", True) else 64))
         # Strip [timestamp]/[speaker] tags for WER (needed for MOSS; a no-op otherwise).
         config["strip_diarization"] = config.get("strip_diarization", True)
         # Seconds to wait for `vllm serve` to become ready. Big models on slow hardware
@@ -363,10 +368,12 @@ class VllmTranscriptionModel(Model):
         metadata = super().get_metadata()
         if metadata["endpoint"] != "chat":
             # The transcription endpoint builds the model's own prompt: ours is not used.
-            for key in ("prompt", "audio_placeholder", "max_tokens", "extra_body"):
+            for key in ("prompt", "audio_placeholder"):
                 metadata.pop(key, None)
         if not metadata.get("extra_body"):
             metadata.pop("extra_body", None)
+        if not metadata.get("transcription_prompt"):
+            metadata.pop("transcription_prompt", None)
         return metadata
 
     def get_folder_name(self):

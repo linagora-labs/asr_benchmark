@@ -14,6 +14,7 @@ from itertools import product
 import asr_benchmark.utils.benchmark as utils
 from asr_benchmark.benchmark.backend_to_model import get_model
 from asr_benchmark.utils import logger
+from ssak.utils.text_latin import numbers_and_symbols_to_letters
 from ssak.utils.wer import compute_wer
 from ssak.utils.monitoring import Monitoring
 
@@ -51,6 +52,13 @@ def normalize_punctuation(text):
     Example: "c\u2019est \u2014 oui\u2026" -> "c'est - oui..."
     """
     return _UNICODE_PUNCTUATION_RE.sub(lambda m: UNICODE_PUNCTUATION[m.group()], text)
+
+
+def spell_numbers(text, language="fr"):
+    """"le 15 décembre" -> "le quinze décembre", as the nocasepunc normalization does."""
+    if not re.search(r"\d", text):
+        return text
+    return numbers_and_symbols_to_letters(text, lang=language)
 
 
 def separate_punctuation(text):
@@ -291,6 +299,14 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
     if any(re.search( r"[^\w\s'-]", ref) for ref in references):
         modes = ["wer", "cer", "wer_nocasepunc", "cer_nocasepunc"]
 
+    texts = {"nocasepunc": (references, predictions)}
+    if "wer" in modes:
+        texts = {
+            "nocasepunc": ([separate_punctuation(ref) for ref in references], [separate_punctuation(pred) for pred in predictions]),
+            "punc": ([separate_punctuation(spell_numbers(ref, language)) for ref in references],
+                     [separate_punctuation(spell_numbers(pred, language)) for pred in predictions]),
+        }
+
     word_alignments = {}  # normalization -> word-level alignment, reused by the cer mode
     for key in modes:
         # The word-level alignment feeds the confidence intervals; its text dump is
@@ -299,13 +315,11 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
         if alignment_dir:
             (Path(alignment_dir) / key).mkdir(parents=True, exist_ok=True)
             alignment = str(Path(alignment_dir) / key / (dataset + ".txt"))
-        if "wer" in modes:
-            references = [separate_punctuation(ref) for ref in references]
-            predictions = [separate_punctuation(pred) for pred in predictions]
         normalization = f"{language}+" if "nocasepunc" in key else ""
+        refs, preds = texts["nocasepunc" if "nocasepunc" in key else "punc"]
         wer_score = compute_wer(
-            references,
-            predictions,
+            refs,
+            preds,
             normalization=normalization,
             character_level="cer" in key,
             use_percents=True,
@@ -421,9 +435,10 @@ def launch_benchmark(
     progress_bar = tqdm(configs, desc="Backends and models...".ljust(45))
     logger.info(f"Starting benchmarking with {len(configs)} configurations")
     for config in progress_bar:
+        # Read by get_model
+        config['compute_rtf'] = config.get('compute_rtf', compute_rtf)
         model = get_model(config)
         config['input_manifest'] = config.get('input_manifest', input_manifest)
-        config['compute_rtf'] = config.get('compute_rtf', compute_rtf)
         config['save_predictions'] = config.get('save_predictions', save_predictions)
         config['save_alignments'] = config.get('save_alignments', save_alignments)
         config['compute_latency'] = config.get('compute_latency', compute_latency)

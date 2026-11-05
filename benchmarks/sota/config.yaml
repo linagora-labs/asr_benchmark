@@ -1,4 +1,26 @@
-input_manifest: benchmarks/sota/manifest.jsonl
+# After a change: python tools/select_manifest.py benchmarks/sota/config.yaml benchmarks/sota/manifest.jsonl
+min_duration: 1
+max_duration: 30
+datasets:
+  CommonVoice:  # Common Voice 22.0
+    manifest: benchmarks/sota/manifests/CommonVoice.jsonl
+    ratio: 0.2
+  MLS_Facebook_french:
+    manifest: benchmarks/sota/manifests/MLS_Facebook_french.jsonl
+    ratio: 0.5
+  TEDX_fr:
+    manifest: benchmarks/sota/manifests/TEDX_fr.jsonl
+  Voxpopuli:
+    manifest: benchmarks/sota/manifests/Voxpopuli.jsonl
+    ratio: 0.5
+  SUMM-RE:
+    manifest: benchmarks/sota/manifests/SUMM-RE.jsonl
+    ratio: 0.5
+    min_duration: 4
+  YouTubeFr_split6:
+    manifest: benchmarks/sota/manifests/YouTubeFr_split6.jsonl
+  FLEURS:
+    manifest: benchmarks/sota/manifests/FLEURS.jsonl
 output_folder: benchmarks/sota/results
 compute_rtf: False
 plot_monitoring: False
@@ -6,31 +28,23 @@ skip_errors: False
 save_alignments: True
 save_predictions: False
 
-# Backends need separate environments: on the DGX, run one part at a time with
-# tools/run_sota_dgx.sh <part> (already-benched models are skipped).
-# Prompts: chosen on 120 segments (logs/prompt_test on the DGX), WER in comments.
-
 benchmarks:
-  # Streaming model, transcribed offline
   - backend: transformers-voxtral-realtime
     model: mistralai/Voxtral-Mini-4B-Realtime-2602
     language: fr
-  # --- Luciole-Audio (NeMo SALM checkpoints): tools/run_sota_dgx.sh salm --
-  # ASR prompt of the model cards ("Example prompts for each task")
+  # Luciole: part salm
   - backend: vllm
     model: OpenLLM-France/Luciole-1B-Audio-1.0
     port: 8111
     endpoint: chat
     audio_placeholder: "<|audio|>"
     prompt: "Fais une transcription mot pour mot en français du contenu parlé."
-    concurrency: 16
   - backend: vllm
     model: OpenLLM-France/Luciole-8B-Audio-1.0
     port: 8112
     endpoint: chat
     audio_placeholder: "<|audio|>"
     prompt: "Fais une transcription mot pour mot en français du contenu parlé."
-    concurrency: 16
   - backend: vllm
     model: OpenLLM-France/Luciole-23B-Audio-1.0
     port: 8117
@@ -38,8 +52,7 @@ benchmarks:
     audio_placeholder: "<|audio|>"
     prompt: "Fais une transcription mot pour mot en français du contenu parlé."
     concurrency: 32
-  # --- NVIDIA Nemotron 3.5 Transcribe (NeMo SALM, vllm plugin of NeMo Speech) ----------
-  # NeMo Speech main needs vLLM >= 0.31 (our venv: 0.28)
+  # Needs vLLM >= 0.31: tools/serve_salm_nvcr_dgx.sh
   - backend: vllm
     model: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B
     launch: false
@@ -50,112 +63,94 @@ benchmarks:
     extra_body: {chat_template_kwargs: {enable_thinking: false}}
     concurrency: 32
     trust_remote_code: true
-    extra_args: --max-model-len 8192 --enable-chunked-prefill --no-enable-prefix-caching --mamba-cache-mode none --mm-processor-cache-gb 0 --speculative-config {"method":"mtp","num_speculative_tokens":2} --gpu-memory-utilization 0.8
-  # --- IBM Granite Speech -----------------------------------------------------
-  # 3.3: vLLM's default prompt (20.1); translated into French, it is copied into the
-  # output (41.3). The audio LoRA only applies to requests naming it (request_model).
-  # --max-model-len caps looping generations.
+    extra_args: --max-model-len 8192 --enable-chunked-prefill --no-enable-prefix-caching --mamba-cache-mode none --mm-processor-cache-gb 0 --speculative-config {"method":"mtp","num_speculative_tokens":2} --gpu-memory-utilization 0.6
+  # Default prompt: a French one is copied into the output
   - backend: vllm
     model: ibm-granite/granite-speech-3.3-8b
     port: 8113
     language: fr
     extra_args: --max-model-len 2048 --enable-lora --max-lora-rank 64 --lora-modules speech=ibm-granite/granite-speech-3.3-8b
     request_model: speech
-    concurrency: 16
-  # 4.1: model card's punctuated-ASR prompt translated into French (22.0, English 25.0)
   - backend: vllm
     model: ibm-granite/granite-speech-4.1-2b
     port: 8114
     endpoint: chat
     prompt: <|audio|>transcris la parole française avec la ponctuation et les majuscules appropriées.
     extra_args: --max-model-len 2048
-    concurrency: 16
-  # --- Cohere Transcribe (gated) ------------------------------------------------
   - backend: vllm
     model: CohereLabs/cohere-transcribe-03-2026
     trust_remote_code: true
     port: 8115
     language: fr
-    concurrency: 16
-  # --- Mistral Voxtral ------------------------------------------------------------
-  - backend: transformers-voxtral
+  # concurrency 64 crashes the DGX Spark
+  - backend: vllm
     model: mistralai/Voxtral-Small-24B-2507
-    dtype: bfloat16
+    port: 8101
     language: fr
-  - backend: transformers-voxtral
+    concurrency: 32
+  - backend: vllm
     model: mistralai/Voxtral-Mini-3B-2507
-    dtype: bfloat16
+    port: 8116
     language: fr
-  # --- transformers 4.57 (part transformers4) -------------------------------------
-  # ARK: the model card's prompt translates into English (31.0 here, 42.6 in English)
+  # Part transformers4 (with Kyutai, Hojo). The card's prompt translates into English
   - backend: ark-asr
     model: Edge0/ARK-ASR-3B
     prompt: Transcris cet audio en français.
-    batch_size: 8
-  # stt-1b-en_fr (stt-2.6b-en is English only), streaming model transcribed offline
+    batch_size: 64
   - backend: kyutai-stt
     model: kyutai/stt-1b-en_fr-trfs
-    batch_size: 8
+    batch_size: 64
   - backend: hojo-asr
     model: HojoAI/Hojo-ASR-Multi-V1
-    batch_size: 8
-  # --- MOSS-Transcribe-Diarize --------------------------------------------------
-  # Model card's prompt translated into French (15.9, Chinese 17.2)
-  - backend: moss
+    batch_size: 16
+  - backend: vllm
     model: OpenMOSS-Team/MOSS-Transcribe-Diarize
-    dtype: bfloat16
-    batch_size: 8
-    prompt: "Transcris l’audio en texte français ; chaque segment commence par un horodatage de début et le numéro du locuteur ([S01], [S02], [S03]…), suivi du contenu parlé, et se termine par un horodatage de fin."
-  # --- Other audio LLMs -------------------------------------------------------------
+    trust_remote_code: true
+    port: 8102
+    transcription_prompt: "Transcris l’audio en texte français ; chaque segment commence par un horodatage de début et le numéro du locuteur ([S01], [S02], [S03]…), suivi du contenu parlé, et se termine par un horodatage de fin."
   - backend: vllm
     model: google/gemma-3n-e4b-it
     port: 8104
     language: fr
-    concurrency: 8
     startup_timeout: 7200
   - backend: vllm
     model: Qwen/Qwen3-Omni-30B-A3B-Instruct
     port: 8105
     language: fr
-    concurrency: 8
     startup_timeout: 7200
     env:
       MAX_JOBS: 4
-  - backend: qwen3-asr
-    model: Qwen/Qwen3-ASR-1.7B-hf
-    dtype: bfloat16
-    max_new_tokens: 256
+  - backend: vllm
+    model: Qwen/Qwen3-ASR-1.7B
+    port: 8106
     language: fr
-  # VibeVoice: no language setting.
   - backend: vibevoice-asr
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
-    batch_size: 8
-  # --- NVIDIA -------------------------------------------------------------------------
-  # Nemotron: streaming model transcribed offline, largest chunk (best WER)
+    batch_size: 64
+  # Largest chunk: best WER
   - backend: nemo
     model: nvidia/nemotron-3.5-asr-streaming-0.6b
-    batch_size: 16
+    batch_size: 64
     language: fr
     chunk_ms: 1120
-  # Unified offline/streaming model, transcribed offline (full context, its default)
+  # NEMO_REF=main
   - backend: nemo
     model: nvidia/nemotron-labs-unified-asr-0.6b
-    batch_size: 16
+    batch_size: 64
     language: fr
-  # moondream post-trainings of parakeet-tdt-0.6b-v3 (transformers, no language setting)
   - backend: transformers-parakeet
     model:
     - moondream/parakeet-ultra
     - moondream/parakeet-redux
-    batch_size: 16
+    batch_size: 64
   - backend: nemo
     model:
     - nvidia/canary-180m-flash
     - nvidia/canary-1b
     - nvidia/canary-1b-v2
     - nvidia/parakeet-tdt-0.6b-v3
-    batch_size: 16
+    batch_size: 64
     language: fr
   - backend: nemo
     model:
@@ -163,18 +158,18 @@ benchmarks:
     - bofenghuang/stt_fr_fastconformer_hybrid_large
     - linagora/linto_stt_fr_fastconformer
     - linagora/linto_stt_fr_fastconformer_pc
-    batch_size: 16
+    batch_size: 64
     decoder:
     - rnnt
   - backend: nemo
     model: linagora/linto_stt_fr_fastconformer_pc
-    batch_size: 16
+    batch_size: 64
     decoder:
     - ctc
-  # --- Whisper ------------------------------------------------------------------------
-  # BuzzASR: whisper-large-v3 French fine-tune, decoding from its model card
+  # Not through vLLM: it outputs garbage
   - backend: transformers-whisper
     model: BuzzASR/french
+    batch_size: 64
     generate_kwargs:
       no_repeat_ngram_size: 3
       repetition_penalty: 1.2
@@ -183,3 +178,7 @@ benchmarks:
     - large-v3
     - large-v3-turbo
     precision: float16
+  - backend: vllm
+    model: openai/whisper-large-v3-turbo
+    port: 8107
+    language: fr

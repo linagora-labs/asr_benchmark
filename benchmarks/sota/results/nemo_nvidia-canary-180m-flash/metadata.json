@@ -1,30 +1,30 @@
 {
-  "backend": "nemo",
-  "model": "nvidia/canary-180m-flash",
-  "language": "fr",
-  "vad": "false",
-  "device": "cuda",
-  "num_threads": null,
-  "input_manifest": "benchmarks/sota/manifest.jsonl",
-  "compute_rtf": false,
-  "save_predictions": false,
-  "save_alignments": true,
-  "compute_latency": false,
-  "plot_monitoring": false,
-  "input_audios_paths": "",
-  "word_timestamps": true,
-  "model_info": {
-    "hf": "nvidia/canary-180m-flash",
-    "license": "cc-by-4.0",
-    "params": 182000000,
-    "languages": [
-      "en",
-      "de",
-      "es",
-      "fr"
-    ],
-    "architecture": "Encoder-decoder",
-    "task": "ASR/AST",
-    "streaming": false
-  }
+    "backend": "nemo",
+    "model": "nvidia/canary-180m-flash",
+    "language": "fr",
+    "vad": "false",
+    "device": "cuda",
+    "num_threads": null,
+    "input_manifest": "benchmarks/sota/manifest.jsonl",
+    "compute_rtf": false,
+    "save_predictions": false,
+    "save_alignments": true,
+    "compute_latency": false,
+    "plot_monitoring": false,
+    "input_audios_paths": "",
+    "word_timestamps": true,
+    "model_info": {
+        "hf": "nvidia/canary-180m-flash",
+        "license": "cc-by-4.0",
+        "params": 182000000,
+        "languages": [
+            "en",
+            "de",
+            "es",
+            "fr"
+        ],
+        "architecture": "Encoder-decoder",
+        "task": "ASR/AST",
+        "streaming": false
+    }
 }

@@ -1,3 +1,5 @@
+# Speed counterpart of config.yaml: keep the same models.
+# manifest_rtf.jsonl: 10 segments of 20-30 s, short enough for models with a ~30 s window.
 input_manifest: benchmarks/sota/manifest_rtf.jsonl
 output_folder: benchmarks/sota/results_rtf
 compute_rtf: True
@@ -5,65 +7,36 @@ plot_monitoring: True
 skip_errors: False
 save_alignments: False
 save_predictions: False
-# vllm: seconds to wait for `vllm serve` (a 24B model on the GB10 takes ~20 min to start)
 startup_timeout: 7200
 
-# RTF + (V)RAM counterpart of config.yaml: same models, but it measures
-# speed/hardware on manifest_rtf.jsonl instead of WER. Keep both files in sync.
-#
-# manifest_rtf.jsonl: 10 segments of 20-30 s drawn from manifest.jsonl (3 TEDx,
-# 3 Voxpopuli, 2 SUMM-RE, 2 MLS, random.Random(0)), short enough for the models
-# with a ~30 s window (canary, gemma3n, whisper...): on longer files they
-# transcribe only part of the audio, which makes them look faster.
-#
-# To compare models on the same machine, every model transcribes one file at a
-# time: compute_rtf calls model.transcribe() file by file (batch_size is not used),
-# and vllm entries keep concurrency: 1 (the default). The audio LLMs that vLLM can
-# serve run through it (faster than their transformers version). On transformers:
-# VibeVoice (no vLLM support) and Voxtral-Mini-Realtime, a streaming model that vLLM
-# only feeds audio through its /v1/realtime websocket, not the
-# /v1/audio/transcriptions route of the vllm backend (it would decode silence).
-#
-# The backends need separate environments (vllm server, nemo, whisper,
-# transformers 5.x), so this file is run in several passes. Already-benched models
-# are skipped. On the DGX:
-#   tools/run_sota_dgx.sh vllm         -c benchmarks/sota/config_rtf.yaml
-#   tools/run_sota_dgx.sh transformers -c benchmarks/sota/config_rtf.yaml
-#   tools/run_sota_dgx.sh nemo         -c benchmarks/sota/config_rtf.yaml
-#   tools/run_sota_dgx.sh whisper      -c benchmarks/sota/config_rtf.yaml
-
 benchmarks:
-  # --- audio LLMs served by vLLM (one `vllm serve` per model) ----------------
   - backend: vllm
     model: mistralai/Voxtral-Small-24B-2507
     port: 8101
     language: fr
-  # No language set: auto-detect is the only documented prompt and the best on French.
   - backend: vllm
     model: OpenMOSS-Team/MOSS-Transcribe-Diarize
     trust_remote_code: true
     port: 8102
+    transcription_prompt: "Transcris l’audio en texte français ; chaque segment commence par un horodatage de début et le numéro du locuteur ([S01], [S02], [S03]…), suivi du contenu parlé, et se termine par un horodatage de fin."
   - backend: vllm
     model: google/gemma-3n-e4b-it
     port: 8103
     language: fr
-  # MAX_JOBS caps the parallel nvcc jobs of the FlashInfer fused-MoE JIT build at
-  # startup: unset, they OOM the GB10 unified memory next to the 59 GiB of weights
-  # (server killed with exit -9).
+  # MAX_JOBS: its unset JIT build runs out of memory at startup
   - backend: vllm
     model: Qwen/Qwen3-Omni-30B-A3B-Instruct
     port: 8104
     language: fr
     env:
       MAX_JOBS: 4
-  # Audio LoRA applied by naming it in the requests (see config.yaml).
   - backend: vllm
     model: ibm-granite/granite-speech-3.3-8b
     port: 8113
     language: fr
     extra_args: --max-model-len 2048 --enable-lora --max-lora-rank 64 --lora-modules speech=ibm-granite/granite-speech-3.3-8b
     request_model: speech
-  # Luciole-Audio (NeMo SALM checkpoints): `tools/run_sota_dgx.sh salm` (see config.yaml).
+  # Luciole: part salm
   - backend: vllm
     model: OpenLLM-France/Luciole-1B-Audio-1.0
     port: 8111
@@ -82,8 +55,7 @@ benchmarks:
     endpoint: chat
     audio_placeholder: "<|audio|>"
     prompt: "Fais une transcription mot pour mot en français du contenu parlé."
-  # --- NVIDIA Nemotron 3.5 Transcribe (NeMo SALM, vllm plugin of NeMo Speech) ----------
-  # NeMo Speech main needs vLLM >= 0.31 (our venv: 0.28)
+  # Needs vLLM >= 0.31: tools/serve_salm_nvcr_dgx.sh
   - backend: vllm
     model: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B
     launch: false
@@ -109,7 +81,7 @@ benchmarks:
     trust_remote_code: true
     port: 8115
     language: fr
-  # --- ARK-ASR, Kyutai STT, Hojo-ASR: transformers 4.57 (part transformers4) ----
+  # Part transformers4 (with Kyutai, Hojo)
   - backend: ark-asr
     model: Edge0/ARK-ASR-3B
     prompt: Transcris cet audio en français.
@@ -117,43 +89,31 @@ benchmarks:
     model: kyutai/stt-1b-en_fr-trfs
   - backend: hojo-asr
     model: HojoAI/Hojo-ASR-Multi-V1
-  # --- Mistral Voxtral realtime (streaming model, transcribed offline) ------
+  # vLLM only feeds it through /v1/realtime
   - backend: transformers-voxtral-realtime
     model: mistralai/Voxtral-Mini-4B-Realtime-2602
     language: fr
-  # --- Qwen3-ASR (transformers) --------------------------------------------
-  - backend: qwen3-asr
-    model: Qwen/Qwen3-ASR-1.7B-hf
-    dtype: bfloat16
-    max_new_tokens: 256
+  - backend: vllm
+    model: Qwen/Qwen3-ASR-1.7B
+    port: 8106
     language: fr
-  # --- Microsoft VibeVoice-ASR (no vLLM support). Auto-detects the language. --
+  # No vLLM support
   - backend: vibevoice-asr
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
-  # --- NVIDIA Nemotron 3.5 ASR (streaming, language-ID prompt, needs NeMo >= 3.0) --
-  # Transcribed offline (full utterance), with the French prompt forced, at the
-  # largest chunk size (see config.yaml).
   - backend: nemo
     model: nvidia/nemotron-3.5-asr-streaming-0.6b
     language: fr
     chunk_ms: 1120
-  # --- NVIDIA Nemotron-Labs Unified ASR (offline/streaming, needs NeMo Speech 3.1) --
-  # NEMO_REF=main tools/run_sota_dgx.sh nemo -m unified. Offline (full context).
+  # NEMO_REF=main
   - backend: nemo
     model: nvidia/nemotron-labs-unified-asr-0.6b
     language: fr
-  # --- moondream Parakeet Ultra / Redux (post-trainings of parakeet-tdt-0.6b-v3) --
-  # transformers ParakeetForTDT (not moondream's Photon runtime, whose CUDA kernels are
-  # proprietary): processor/generation config of nvidia/parakeet-tdt-0.6b-v3, redux's
-  # ternary encoder unpacked to dense weights at load. No language setting.
+  # transformers: moondream's Photon runtime is proprietary
   - backend: transformers-parakeet
     model:
     - moondream/parakeet-ultra
     - moondream/parakeet-redux
-  # --- NVIDIA canary / parakeet ---------------------------------------------
-  # language is required for canary (EncDecMultiTaskModel): the nemo interface
-  # passes config["language"] as source_lang/target_lang, no default.
   - backend: nemo
     model:
     - nvidia/canary-180m-flash
@@ -161,7 +121,6 @@ benchmarks:
     - nvidia/canary-1b-v2
     - nvidia/parakeet-tdt-0.6b-v3
     language: fr
-  # --- fastconformer hybrid, RNNT decoder -----------------------------------
   - backend: nemo
     model:
     - nvidia/stt_fr_fastconformer_hybrid_large_pc
@@ -170,23 +129,22 @@ benchmarks:
     - linagora/linto_stt_fr_fastconformer_pc
     decoder:
     - rnnt
-  # --- LINTO fastconformer-pc, CTC decoder (RNNT is above) ------------------
   - backend: nemo
     model: linagora/linto_stt_fr_fastconformer_pc
     decoder:
     - ctc
-  # --- BuzzASR French (whisper-large-v3 fine-tune, own French tokenizer) -----
-  # No language: the prompt is baked into its generation config. Decoding
-  # recommended by the model card. transformers-whisper: the ASR pipeline
-  # of the `transformers` backend decodes an empty text with its tokenizer.
+  # transformers-whisper: the `transformers` pipeline decodes an empty text
   - backend: transformers-whisper
     model: BuzzASR/french
     generate_kwargs:
       no_repeat_ngram_size: 3
       repetition_penalty: 1.2
-  # --- OpenAI whisper (on the DGX, needs the CUDA build of ctranslate2) ------
   - backend: faster-whisper
     model:
     - large-v3
     - large-v3-turbo
     precision: float16
+  - backend: vllm
+    model: openai/whisper-large-v3-turbo
+    port: 8107
+    language: fr

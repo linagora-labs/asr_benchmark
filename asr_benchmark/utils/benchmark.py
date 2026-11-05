@@ -1,5 +1,6 @@
 import asyncio
 import atexit
+import hashlib
 import io
 import json
 import os
@@ -42,6 +43,30 @@ def get_audio_duration(file_path):
     y, sr = librosa.load(file_path, sr=None)
     duration = librosa.get_duration(y=y, sr=sr)
     return duration
+
+def segment_hash(row):
+    """Number in [0, 1) from the audio file name and offset of a segment."""
+    key = f"{Path(row['audio_filepath']).stem}_{float(row.get('offset') or 0.0):.2f}"
+    return int(hashlib.md5(key.encode("utf-8")).hexdigest(), 16) / 16**32
+
+
+def select_datasets(datasets, min_duration=1.0, max_duration=30.0):
+    """Segments of `datasets` ({name: {manifest, ratio, min_duration, max_duration}}), named after
+    their key. Kept when within the durations (the dataset's, else the arguments) and when
+    segment_hash() is below the ratio (default 1): raising a ratio only adds segments."""
+    rows = []
+    for name, conf in datasets.items():
+        low, high = conf.get("min_duration", min_duration), conf.get("max_duration", max_duration)
+        ratio = conf.get("ratio", 1.0)
+        with open(conf["manifest"], "r", encoding="utf-8") as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                row = json.loads(line)
+                if low <= float(row["duration"]) <= high and segment_hash(row) < ratio:
+                    rows.append(row | {"name": name})
+    return rows
+
 
 def get_data(input_file, input_audio_path=''):
     all_data = []
