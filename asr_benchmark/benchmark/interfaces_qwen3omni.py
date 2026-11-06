@@ -29,9 +29,15 @@ class Qwen3OmniModel(Model):
 
         torch_dtype = _DTYPES.get(self.config["dtype"], torch.bfloat16)
         device = self.config["device"]
-        # A 30B MoE rarely fits one GPU; device_map="auto" shards it. On CPU/explicit
-        # devices we honour the request.
-        device_map = "auto" if device == "cuda" else device
+        # A 30B MoE rarely fits one GPU: with several GPUs, device_map="auto" shards it.
+        # With a single one, load everything on it: "auto" sizes the GPU from
+        # torch.cuda.mem_get_info(), which on unified-memory devices (DGX Spark / GB10)
+        # excludes reclaimable page cache, so it offloads layers to CPU, where the MoE
+        # kernel aten::_grouped_mm does not exist. Override with `device_map` in the config.
+        if device == "cuda":
+            device_map = self.config.get("device_map") or ("auto" if torch.cuda.device_count() > 1 else "cuda")
+        else:
+            device_map = device
         self.processor = Qwen3OmniMoeProcessor.from_pretrained(self.config["model"])
         self.model = Qwen3OmniMoeThinkerForConditionalGeneration.from_pretrained(
             self.config["model"], torch_dtype=torch_dtype, device_map=device_map,
@@ -84,14 +90,10 @@ class Qwen3OmniModel(Model):
         config["prompt"] = config.get("prompt", "Transcribe this audio.")
         return super().add_defaults_to_config(config)
 
-    def get_metadata(self):
-        metadata = super().get_metadata()
-        metadata["model"] = self.config["model"].replace("_", "-")
-        return metadata
-
     def get_folder_name(self):
         c = self.config
-        name = f"qwen3-omni_{c['model'].replace('/', '-')}_device-{c['device']}_dtype-{c['dtype']}"
+        name = f"qwen3-omni_{c['model'].replace('/', '-')}{self.device_tag()}"
+        name += self.detail(f"_dtype-{c['dtype']}")
         name = name.replace("/", "-")
         name += "_rtf" if c.get("compute_rtf") else ""
         return name

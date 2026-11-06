@@ -33,7 +33,7 @@ class OpenAIModel(Model):
 
     def get_folder_name(self):
         tot_config = self.config.copy()
-        name = f"openai_{tot_config['model']}_vad-{tot_config['vad']}_device-{tot_config['device']}"
+        name = f"openai_{tot_config['model']}{self.vad_tag()}{self.device_tag()}"
         name = name.replace("/", "-")
         name += "_rtf" if tot_config['compute_rtf'] else ""
         return name
@@ -58,6 +58,8 @@ class FasterWhisperModel(Model):
         if model_kwargs['device']=="cpu" and model_kwargs['precision'] =="float16":
             raise ValueError("Float16 is not supported on CPU")
         model_kwargs['compute_type'] = model_kwargs.pop('precision', '')
+        if model_kwargs['device'] == "cpu":
+            model_kwargs['cpu_threads'] = self.config.get('num_threads') or 0  # 0: ctranslate2 default (4)
         self.model = WhisperModel(self.config['model'], download_root=self.config.get('cache_dir', None), **model_kwargs)
         if self.config['batch_size']>1:
             self.model = BatchedInferencePipeline(model=self.model)
@@ -89,10 +91,11 @@ class FasterWhisperModel(Model):
 
     def get_folder_name(self):
         tot_config = self.config.copy()
-        name = f"faster-whisper_{tot_config['model']}_vad-{tot_config['vad']}_device-{tot_config['device']}_precision-{tot_config['precision']}"
-        name += f"_accurate-{tot_config['accurate']}_previous-{tot_config['previous_text']}"
+        name = f"faster-whisper_{tot_config['model']}{self.vad_tag()}{self.device_tag()}"
+        name += self.detail(f"_precision-{tot_config['precision']}")
+        name += self.detail(f"_accurate-{tot_config['accurate']}_previous-{tot_config['previous_text']}")
         if tot_config['batch_size']>1:
-            name += f"_batchsize-{tot_config['batch_size']}"
+            name += self.detail(f"_batchsize-{tot_config['batch_size']}")
         name = name.replace("/", "-")
         name += "_rtf" if tot_config['compute_rtf'] else ""
         return name

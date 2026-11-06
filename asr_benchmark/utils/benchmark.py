@@ -1,29 +1,72 @@
 import asyncio
+import atexit
+import hashlib
+import io
 import json
 import os
+import tempfile
 import time
-import torchaudio
+import soundfile
 import librosa
 from pathlib import Path
 import subprocess
 import ssak.utils.audio
 
 
+# load_audio(return_format="file") rewrites the same wav at each call (callers use it
+# right away). One file per process, so parallel benchmarks never overwrite each other.
+_TMP_WAV = None
+
+
+def _tmp_wav():
+    global _TMP_WAV
+    if _TMP_WAV is None:
+        fd, _TMP_WAV = tempfile.mkstemp(prefix="asr_benchmark_", suffix=".wav")
+        os.close(fd)
+        atexit.register(lambda: os.path.exists(_TMP_WAV) and os.remove(_TMP_WAV))
+    return _TMP_WAV
+
+
 def load_audio(fname, return_format="librosa", start=0.0, duration=None):
     end = start + duration if duration else None
-    waveform = ssak.utils.audio.load_audio(fname, start=start, end=end, sample_rate=16000, mono=True, return_format="torch" if return_format=="file" else return_format)
-    if return_format == "file" or return_format=="torch":
-        waveform = waveform.unsqueeze(0)
     if return_format == "file":
-        torchaudio.save("tmp.wav", waveform, sample_rate=16000)
-        return "tmp.wav"
-    else:
-        return waveform
+        # Not through torchaudio: its load/save need torchcodec (no aarch64 wheel on PyPI)
+        waveform = ssak.utils.audio.load_audio(fname, start=start, end=end, sample_rate=16000, mono=True, return_format="array")
+        soundfile.write(_tmp_wav(), waveform, 16000)
+        return _tmp_wav()
+    waveform = ssak.utils.audio.load_audio(fname, start=start, end=end, sample_rate=16000, mono=True, return_format=return_format)
+    if return_format == "torch":
+        waveform = waveform.unsqueeze(0)
+    return waveform
 
 def get_audio_duration(file_path):
     y, sr = librosa.load(file_path, sr=None)
     duration = librosa.get_duration(y=y, sr=sr)
     return duration
+
+def segment_hash(row):
+    """Number in [0, 1) from the audio file name and offset of a segment."""
+    key = f"{Path(row['audio_filepath']).stem}_{float(row.get('offset') or 0.0):.2f}"
+    return int(hashlib.md5(key.encode("utf-8")).hexdigest(), 16) / 16**32
+
+
+def select_datasets(datasets, min_duration=1.0, max_duration=30.0):
+    """Segments of `datasets` ({name: {manifest, ratio, min_duration, max_duration}}), named after
+    their key. Kept when within the durations (the dataset's, else the arguments) and when
+    segment_hash() is below the ratio (default 1): raising a ratio only adds segments."""
+    rows = []
+    for name, conf in datasets.items():
+        low, high = conf.get("min_duration", min_duration), conf.get("max_duration", max_duration)
+        ratio = conf.get("ratio", 1.0)
+        with open(conf["manifest"], "r", encoding="utf-8") as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                row = json.loads(line)
+                if low <= float(row["duration"]) <= high and segment_hash(row) < ratio:
+                    rows.append(row | {"name": name})
+    return rows
+
 
 def get_data(input_file, input_audio_path=''):
     all_data = []
@@ -149,8 +192,9 @@ async def _linstt_streaming(
     import logging
     logger = logging.getLogger(__name__)
     stream_config = {"language": language, "sample_rate": 16000, "vad": apply_vad, "stream_duration": stream_duration, "stream_wait": stream_wait}
-    subprocess.run(["ffmpeg", "-y", "-i", audio_file, "-acodec", "pcm_s16le", "-ar", str(stream_config['sample_rate']), "-ac", "1", "tmp.wav"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stream = open("tmp.wav", "rb")
+    with tempfile.NamedTemporaryFile(suffix=".wav") as wav_file:
+        subprocess.run(["ffmpeg", "-y", "-i", audio_file, "-acodec", "pcm_s16le", "-ar", str(stream_config['sample_rate']), "-ac", "1", wav_file.name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stream = io.BytesIO(Path(wav_file.name).read_bytes())
     stream_config["audio_file"] = audio_file
     text = ""
     partial = None

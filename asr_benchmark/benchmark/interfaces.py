@@ -27,7 +27,24 @@ class Model():
             audio = self.load_audio(row['audio_filepath'], start=row['offset'], duration=row['duration'])
             predictions.append(self.transcribe(audio))
         return predictions
-    
+
+    def transcribe_by_batches(self, data: list, batch_size: int) -> list[dict]:
+        """Batched version of transcribe_batch for models implementing
+        transcribe_many(audios) -> list[dict]. Rows are grouped by similar duration
+        (longest first, so an OOM shows up immediately) to limit padding; predictions
+        are returned in the order of `data`."""
+        order = sorted(range(len(data)), key=lambda i: data[i].get('duration') or 0, reverse=True)
+        predictions = [None] * len(data)
+        batches = [order[i:i + batch_size] for i in range(0, len(order), batch_size)]
+        for batch in tqdm(batches, desc=f"Transcribing {data[0]['name']} with {self.config['model']} (batches of {batch_size})"):
+            audios = [self.load_audio(data[i]['audio_filepath'], start=data[i]['offset'], duration=data[i]['duration']) for i in batch]
+            for i, prediction in zip(batch, self.transcribe_many(audios)):
+                predictions[i] = prediction
+        return predictions
+
+    def transcribe_many(self, audios: list) -> list[dict]:
+        raise NotImplementedError("Not supposed to be called")
+
     def cleanup(self):
         pass
     
@@ -40,8 +57,38 @@ class Model():
         metadata['word_timestamps'] = self.can_output_word_timestamps()
         return metadata
     
+    def count_parameters(self):
+        """Number of parameters of the loaded model (self.model, or the model of a
+        transformers pipeline), None when it is not a torch module of this process
+        (servers, CTranslate2...)."""
+        model = getattr(self, "model", None)
+        for module in (model, getattr(model, "model", None)):
+            if callable(getattr(module, "parameters", None)):
+                try:
+                    return sum(p.numel() for p in module.parameters())
+                except Exception:
+                    return None
+        return None
+
     def get_folder_name(self):
         raise NotImplementedError("Not supposed to be called")
+
+    # Folder names: by default only the model identity (backend, model, decoder...) so
+    # that model comparisons stay readable. With `full_name: true` in the config, the
+    # settings (dtype, device, vad, decoding params...) are added, to compare several
+    # settings of the same model.
+    def detail(self, tag):
+        """`tag` if the config asks for full folder names, else ""."""
+        return tag if self.config.get("full_name", False) else ""
+
+    # vad/device are left out even in full names for the usual values (no VAD, cuda).
+    def vad_tag(self):
+        vad = self.config.get("vad")
+        return "" if str(vad).lower() in ("false", "none", "") else self.detail(f"_vad-{vad}")
+
+    def device_tag(self):
+        device = self.config.get("device")
+        return "" if device in ("cuda", None) else self.detail(f"_device-{device}")
     
     def add_defaults_to_config(self, config):
         # config["language"] = config.get("language", "fr")

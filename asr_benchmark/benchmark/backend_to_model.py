@@ -5,6 +5,9 @@ def get_model(config):
     if backend == "transformers":
         import asr_benchmark.benchmark.interfaces_transformers as interfaces_transformers
         model = interfaces_transformers.TransformersModel(config)
+    elif backend == "transformers-whisper":
+        import asr_benchmark.benchmark.interfaces_transformers as interfaces_transformers
+        model = interfaces_transformers.TransformersWhisperModel(config)
     elif backend == "transformers-facebook":
         import asr_benchmark.benchmark.interfaces_transformers as interfaces_transformers
         model = interfaces_transformers.TransformersFacebookModel(config)
@@ -14,6 +17,9 @@ def get_model(config):
     elif backend == "transformers-voxtral-realtime":
         import asr_benchmark.benchmark.interfaces_transformers as interfaces_transformers
         model = interfaces_transformers.TransformersVoxtralRealtimeModel(config)
+    elif backend == "transformers-parakeet":
+        import asr_benchmark.benchmark.interfaces_parakeet as interfaces_parakeet
+        model = interfaces_parakeet.TransformersParakeetModel(config)
     elif backend == "intel-transformers":
         import asr_benchmark.benchmark.interfaces_transformers as interfaces_transformers
         model = interfaces_transformers.IntelTransformersModel(config)
@@ -52,6 +58,18 @@ def get_model(config):
     elif backend == "qwen3-asr":
         import asr_benchmark.benchmark.interfaces_qwen3asr as interfaces_qwen3asr
         model = interfaces_qwen3asr.Qwen3ASRModel(config)
+    elif backend == "vibevoice-asr":
+        import asr_benchmark.benchmark.interfaces_vibevoice as interfaces_vibevoice
+        model = interfaces_vibevoice.VibeVoiceASRModel(config)
+    elif backend == "ark-asr":
+        import asr_benchmark.benchmark.interfaces_ark as interfaces_ark
+        model = interfaces_ark.ArkASRModel(config)
+    elif backend == "kyutai-stt":
+        import asr_benchmark.benchmark.interfaces_kyutai as interfaces_kyutai
+        model = interfaces_kyutai.KyutaiSTTModel(config)
+    elif backend == "hojo-asr":
+        import asr_benchmark.benchmark.interfaces_hojo as interfaces_hojo
+        model = interfaces_hojo.HojoASRModel(config)
     else:
         raise ValueError(f"Invalid backend: {backend}")
     return model

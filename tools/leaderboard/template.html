@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>French ASR Leaderboard</title>
+<meta name="description" content="Transcription errors of open-weight speech recognition models on French test sets.">
+<style>
+  /* Light theme only for now. */
+  :root { color-scheme: light; --bg: #fbfbfa; --surface: #fff; --text: #1d1d1b; --muted: #6b6a66; --line: #e6e4df; --accent: #1f6f78; }
+  /* Rank colors of each column (same as our other leaderboards). */
+  .first { background: #5dade2; } .second { background: #82e0aa; }
+  .second-last { background: #fdcb6e; } .last { background: #e74c3c; }
+  td.first, td.second, td.second-last, td.last { color: #1d1d1b; }
+
+  [hidden] { display: none !important; }
+  html { overflow-y: scroll; }  /* no layout shift between the tabs */
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, sans-serif; }
+  a { color: var(--accent); }
+  main { max-width: 1680px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { margin: 0 0 4px; font-size: 26px; }
+  .muted { color: var(--muted); }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px 32px; margin: 24px 0 12px; align-items: center; }
+  #filters { margin-top: 0; }
+  .group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .group > span:not(.group-label) { display: flex; flex-wrap: wrap; gap: 6px; }
+  .group-label { color: var(--muted); margin-right: 2px; }
+  .prompt-info { cursor: help; font-size: 12px; }
+  .hint { cursor: help; text-decoration: underline dotted; text-underline-offset: 3px; }
+  .group-label.all { cursor: pointer; user-select: none; text-decoration: underline dotted; text-underline-offset: 3px; }
+  .group-label.all:hover { color: var(--accent); }
+  select, button { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; margin-bottom: 12px; }
+  .swatch { display: inline-block; width: 12px; height: 12px; margin-right: 5px; border-radius: 2px; vertical-align: -1px; }
+  .scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  th { font-size: 13px; vertical-align: bottom; }
+  th:nth-child(-n+2), td:nth-child(-n+2), .left { text-align: left; }
+  td.avg { font-weight: 700; }
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover, th[aria-sort="ascending"] { color: var(--accent); }
+  small { font-size: 11px; opacity: .75; }
+  .notes { margin-top: 20px; font-size: 14px; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 4px 24px; align-items: center; margin-top: 24px; border-bottom: 1px solid var(--line); }
+  .tabs a { padding: 8px 2px; margin-bottom: -1px; color: var(--muted); text-decoration: none; font-weight: 600; border-bottom: 2px solid transparent; }
+  .tabs a[aria-current="page"] { color: var(--accent); border-color: var(--accent); }
+  .tabs label { margin-left: auto; }
+  .intro { margin: 16px 0 0; }
+  #tab-testsets .scroll { margin-top: 24px; }
+  h2 { margin: 40px 0 0; font-size: 19px; }
+  tr.total td { font-weight: 700; }
+  .chart { position: relative; padding: 8px 8px 0; }
+  .chart svg { display: block; width: 100%; height: auto; font-size: 12px; }
+  .chart .grid { stroke: var(--line); }
+  .chart .axis text, .chart .axis-title { fill: var(--muted); }
+  .chart .label { fill: var(--text); font-size: 12px; } .chart .label.muted { fill: var(--muted); }
+  .chart .ci { stroke: var(--muted); stroke-width: 1.5; opacity: .45; }
+  .chart .front-line { fill: none; stroke: var(--accent); stroke-width: 2; opacity: .45; }
+  .chart .dot { stroke: var(--surface); stroke-width: 2; }
+  .chart .dot.front { fill: var(--accent); } .chart .dot.other { fill: #a3a19b; }
+  .chart .dot.hover { stroke: var(--text); }
+  .tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+         padding: 6px 10px; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,.08); white-space: nowrap; }
+  .swatch.front { background: var(--accent); border-radius: 50%; } .swatch.other { background: #a3a19b; border-radius: 50%; }
+  #tab-speed .legend { margin: 12px 0 0; }
+  .hist rect { fill: var(--accent); }
+  .hist text { fill: var(--muted); font-size: 10px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>French ASR Leaderboard</h1>
+  <div class="muted" id="meta"></div>
+  <p class="intro">Transcription errors of open-weight speech recognition models on French test sets.
+    Only models whose weights are publicly available are evaluated.</p>
+
+  <nav class="tabs">
+    <a href="#">Leaderboard</a> <a href="#speed">WER vs RTFx</a> <a href="#test-sets">Test sets</a>
+    <label>Language <select id="language"></select></label>
+  </nav>
+
+  <div class="controls" id="controls">
+    <div class="group"><span class="group-label">Metric</span>
+      <span id="metric"><button data-v="wer" aria-pressed="true">WER</button> <button data-v="cer">CER</button></span></div>
+    <div class="group"><span class="group-label">Text</span>
+      <span id="norm"><button data-v="1" aria-pressed="true" title="Lowercase, punctuation removed">Normalized</button> <button data-v="0" title="Case and punctuation count as errors">Case &amp; punct.</button></span></div>
+    <div class="group"><span class="group-label all" data-all="datasets" title="Select all / none">Test sets</span> <span id="datasets"></span></div>
+  </div>
+  <div class="controls" id="filters">
+    <div class="group"><span class="group-label all" data-all="filter-architecture" title="Select all / none">Architecture</span> <span id="filter-architecture"></span></div>
+    <div class="group"><span class="group-label all" data-all="filter-task" title="Select all / none">Task</span> <span id="filter-task"></span></div>
+    <div class="group" id="columns-control"><span class="group-label all" data-all="columns" title="Select all / none">Columns</span> <span id="columns"></span></div>
+  </div>
+
+  <section id="tab-board">
+  <div class="legend">
+    <span><span class="swatch first"></span>1st</span> <span><span class="swatch second"></span>2nd</span>
+    <span><span class="swatch second-last"></span>Second to last</span> <span><span class="swatch last"></span>Last</span>
+  </div>
+
+  <div class="scroll"><table id="board"></table></div>
+  <div class="notes muted" id="notes"></div>
+  </section>
+
+  <section id="tab-speed" hidden>
+  <div class="scroll chart"><svg id="scatter" role="img"></svg><div class="tip" id="tip" hidden></div></div>
+  <div class="legend">
+    <span><span class="swatch front"></span>Best trade-off: no other model is both faster and more accurate</span>
+    <span><span class="swatch other"></span>Other models</span>
+  </div>
+  <div class="notes muted" id="chart-notes"></div>
+  </section>
+
+  <section id="tab-testsets" hidden>
+  <div class="scroll"><table id="testsets"></table></div>
+  <div class="notes" id="testsets-notes"></div>
+  <div id="speed" hidden>
+    <h2>Speed test set (RTFx)</h2>
+    <div class="notes" id="speed-notes"></div>
+    <div class="scroll"><table id="speedset"></table></div>
+  </div>
+  </section>
+</main>
+
+<script>
+const DATA = /*__DATA__*/null;
+const LANGUAGES = { fr: "French", en: "English", ar: "Arabic", de: "German", es: "Spanish", it: "Italian" };
+// sort: id of the test set whose column orders the table, null for the average.
+const state = { language: "fr", metric: "wer", norm: true, selected: new Set(), sort: null,
+                hidden: new Set(), architecture: new Set(), task: new Set() };
+
+const f1 = v => v.toFixed(1);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const metricKey = () => state.metric + (state.norm ? "_nocasepunc" : "");
+const datasetsOf = lang => DATA.datasets.filter(d => d.language === lang);
+const modelsOf = lang => DATA.models.filter(m => datasetsOf(lang).some(d => d.id in m.scores));
+const result = (m, d) => (m.scores[d.id] || {})[metricKey()];  // {wer, sub, del, ins, ci95} or undefined
+// Model info columns.
+const params = n => n >= 1e9 ? `${(n / 1e9).toFixed(n < 1e10 ? 1 : 0)}B` : `${Math.round(n / 1e6)}M`;
+const licenseText = l => ({ "apache-2.0": "Apache-2.0", gemma: "Gemma" })[l] || l.toUpperCase();
+const languagesText = l => l && l.length <= 5 ? l.join(", ") : "multi";
+// Hover text of the prompt sign: the prompt sent and its source.
+const promptText = m => [m.prompt && `Prompt: ${m.prompt}`, m.prompt_source && `(${m.prompt_source})`].filter(Boolean).join("\n");
+const halfWidth = r => r && r.ci95 ? (r.ci95[1] - r.ci95[0]) / 2 : null;
+// Test sets without casing/punctuation in their references (MLS, SUMM-RE) have no
+// "Case & punct." score: they are left out of that mode.
+const scored = d => DATA.models.some(m => result(m, d));
+
+// All the test sets of a language are selected by default.
+function selectLanguage(lang) {
+  state.language = lang;
+  state.selected = new Set(datasetsOf(lang).map(d => d.id));
+  document.getElementById("datasets").innerHTML = datasetsOf(lang).map(d =>
+    `<button data-id="${esc(d.id)}" aria-pressed="${state.selected.has(d.id)}">${esc(d.name)}</button>`).join(" ");
+  renderTestSets();
+  render();
+}
+
+// Durations histogram as an inline SVG. Same x scale (seconds) for every test set,
+// y scale relative to the test set's highest bin.
+const ticks = max => Array.from({ length: Math.floor(max / 10) + 1 }, (_, i) => i * 10);  // 0, 10, 20... s
+function histogramSvg(counts, bins) {
+  const w = 12, h = 48, top = Math.max(...counts), step = DATA.histogram_bin;
+  const bars = counts.map((c, i) => `<rect x="${i * w}" y="${h - h * c / top}" width="${w - 1}" height="${h * c / top}">` +
+    `<title>${i * step}–${(i + 1) * step} s: ${c} utterances</title></rect>`).join("");
+  return `<svg class="hist" width="${bins * w}" height="${h + 12}" role="img" aria-label="Durations histogram">${bars}` +
+    ticks(bins * step).map(t => `<text x="${t / step * w}" y="${h + 11}" text-anchor="${t ? t === bins * step ? "end" : "middle" : "start"}">` +
+      `${t}${t === bins * step ? " s" : ""}</text>`).join("") + "</svg>";
+}
+
+// Test set name, linked to its source when public.
+const datasetLink = d => d.url ? `<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.name)}</a>` : esc(d.name);
+
+// Share of the test split kept, its details (extra filter, removed segments) on hover.
+const selectionCell = d => !d.selection ? "—" : !d.selection_note ? esc(d.selection) :
+  `<span class="hint" title="${esc(d.selection_note)}">${esc(d.selection)}</span>`;
+
+function renderTestSets() {
+  const datasets = datasetsOf(state.language);
+  const bins = Math.max(0, ...datasets.map(d => (d.histogram || []).length));  // the total's is as long as the longest
+  const head = `<tr><th>Test set</th><th>Type</th><th title="Share of the test split kept">Selection</th><th>Utterances</th><th>Duration</th><th>Mean length</th><th>Median length</th><th>Length distribution</th></tr>`;
+  const row = (name, domain, selection, d, cls = "") => `<tr class="${cls}"><td>${name}</td><td>${domain}</td><td>${selection}</td><td>${d.utterances}</td>` +
+    `<td>${d.hours != null ? f1(d.hours) + " h" : "—"}</td><td>${d.mean_seconds != null ? f1(d.mean_seconds) + " s" : "—"}</td>` +
+    `<td>${d.median_seconds != null ? f1(d.median_seconds) + " s" : "—"}</td>` +
+    `<td>${d.histogram ? histogramSvg(d.histogram, bins) : "—"}</td></tr>`;
+  const total = DATA.dataset_totals[state.language];
+  const body = datasets.map(d => row(datasetLink(d), esc(d.domain), selectionCell(d), d)).join("") +
+    (total ? row("Total", "", "", total, "total") : "");
+  document.getElementById("testsets").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
+  document.getElementById("testsets-notes").innerHTML =
+    `<p>Only segments of 1 to 30 s are kept (longer ones are dropped, not cut); some test sets are then subsampled: the selection column gives the share of the test split kept (hover for details). ` +
+    `The exact utterances and reference transcripts are listed in <a href="${DATA.repo}/blob/main/benchmarks/sota/manifest.jsonl">manifest.jsonl</a>.</p>`;
+  renderSpeedSet(bins);
+}
+
+// Segments the RTFx is measured on (separate from the test sets), per source test set.
+const duration = s => s >= 90 ? f1(s / 60) + " min" : f1(s) + " s";
+function renderSpeedSet(testsetBins) {
+  const set = DATA.speed_set;
+  document.getElementById("speed").hidden = !set;
+  if (!set) return;
+  const t = set.total;
+  const bins = Math.max(testsetBins, t.histogram.length);  // same x scale as the test sets when possible
+  const row = (name, domain, d, cls = "") => `<tr class="${cls}"><td>${name}</td><td>${esc(domain)}</td><td>${d.utterances}</td>` +
+    `<td>${duration(d.seconds)}</td><td>${f1(d.mean_seconds)} s</td><td>${f1(d.median_seconds)} s</td><td>${histogramSvg(d.histogram, bins)}</td></tr>`;
+  const head = `<tr><th>Drawn from</th><th>Type</th><th>Segments</th><th>Duration</th><th>Mean length</th><th>Median length</th><th>Length distribution</th></tr>`;
+  const body = set.sources.map(d => row(datasetLink(d), d.domain, d)).join("") + row("Total", "", t, "total");
+  document.getElementById("speedset").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
+  document.getElementById("speed-notes").innerHTML = `
+    <p><b>RTFx</b> (inverse real-time factor): seconds of audio transcribed per second of computation, higher is faster.<br>
+      Measured on ${t.utterances} segments ranging from ${Math.round(t.min_seconds)} to ${Math.round(t.max_seconds)} s, listed in <a href="${DATA.repo}/blob/main/benchmarks/sota/manifest_rtf.jsonl">manifest_rtf.jsonl</a>.<br>
+      No batching, only the transcription is timed. Batched inference can reach a much higher RTFx (throughput).${set.hardware.length ? `<br>GPU: ${esc(set.hardware.join(", "))}` : ""}</p>`;
+}
+
+// Mean of the per-test-set scores; its ± combines the per-set half-widths as independent errors.
+function average(m, datasets) {
+  const results = datasets.map(d => result(m, d));
+  if (!datasets.length || results.some(r => !r)) return null;
+  const hw = results.map(halfWidth);
+  return {
+    wer: results.reduce((a, r) => a + r.wer, 0) / results.length,
+    pm: hw.every(h => h != null) ? Math.sqrt(hw.reduce((a, h) => a + h * h, 0)) / hw.length : null,
+  };
+}
+
+// Mean over the test sets of each model's rank (1 = best score of the column). Ranked
+// among the models that have an average, so that all compare on the same test sets;
+// displayed-equal scores share a rank.
+function averageRanks(models, datasets) {
+  const shown = v => Math.round(v * 10) / 10;
+  const ranks = new Map(models.map(m => [m, 0]));
+  for (const d of datasets) {
+    const scores = models.map(m => shown(result(m, d).wer));
+    models.forEach((m, i) => ranks.set(m, ranks.get(m) + 1 + scores.filter(v => v < scores[i]).length));
+  }
+  models.forEach(m => ranks.set(m, ranks.get(m) / datasets.length));
+  return ranks;
+}
+
+// Class of a score by its rank in its column: first, second, second-last, last.
+// Ranks are over the distinct displayed values: ties share a color and the next value
+// still gets the following one (two last -> both red, the value above them orange).
+function rankClass(value, values) {
+  if (value == null || values.length < 4) return "";
+  const shown = v => Math.round(v * 10) / 10;
+  const sorted = [...new Set(values.map(shown))].sort((a, b) => a - b);
+  const i = sorted.indexOf(shown(value)), n = sorted.length;
+  return i === 0 ? "first" : i === 1 ? "second" : i === n - 1 ? "last" : i === n - 2 ? "second-last" : "";
+}
+
+function cell(value, pm, cls, title) {
+  if (value == null) return `<td class="muted">—</td>`;
+  return `<td class="${cls}" title="${esc(title)}">${f1(value)}${pm != null ? ` <small>±${f1(pm)}</small>` : ""}</td>`;
+}
+
+// Model info columns, after the test sets. sort: sortable by its header (key in byInfo).
+const speedTitle = m => [m.hardware && `On ${m.hardware}`, m.rtf_backend && `timed with ${m.rtf_backend}`].filter(Boolean).join(", ");
+const INFO = [
+  { key: "rtfx", label: "RTFx", sub: "speed", sort: true,
+    title: "Seconds of audio transcribed per second of computation (higher is faster). Sort by speed",
+    cell: m => m.rtfx != null ? `<td title="${esc([speedTitle(m), m.rtf_note].filter(Boolean).join("\n"))}">${Math.round(m.rtfx)}×${m.rtf_note ? " ⚠️" : ""}</td>`
+                              : `<td class="muted" title="Not measured yet">—</td>` },
+  { key: "params", label: "Size", sub: "parameters", sort: true, title: "Number of parameters. Sort by size",
+    cell: m => `<td>${m.params ? params(m.params) : "—"}</td>` },
+  { key: "license", label: "License", title: "License of the weights",
+    cell: m => `<td class="left">${esc(m.license ? licenseText(m.license) : "—")}</td>` },
+  { key: "languages", label: "Languages", title: "Languages supported according to the model card",
+    cell: m => `<td class="left" title="${esc(m.languages ? m.languages.join(" ") : "Not listed in the model card")}">${esc(languagesText(m.languages))}</td>` },
+  { key: "architecture", label: "Architecture",
+    title: "Encoder: CTC / transducer decoding. Encoder-decoder: attention decoder. Audio LLM: audio encoder + LLM decoder. Streaming: model built for streaming, transcribed offline here",
+    cell: m => `<td class="left">${esc([m.architecture || "—", m.streaming && "streaming"].filter(Boolean).join(" · "))}</td>` },
+  { key: "task", label: "Task", title: "ASR: transcription only. ASR/AST: transcription and speech translation. Multi: general audio tasks (QA, summarization...)",
+    cell: m => `<td class="left">${esc(m.task || "—")}</td>` },
+];
+// Columns that can be hidden (Columns buttons): the average rank and the model info.
+const COLUMNS = [{ key: "rank", label: "Avg rank" }, ...INFO];
+const shownColumn = key => !state.hidden.has(key);
+// Architecture filter: a streaming model is shown when its architecture or Streaming is selected.
+const architectureOf = m => m.architecture || "—";
+const taskOf = m => m.task || "—";
+const shownModel = m => (state.architecture.has(architectureOf(m)) || (m.streaming && state.architecture.has("Streaming")))
+  && state.task.has(taskOf(m));
+const ARCHITECTURES = ["Encoder", "Encoder-decoder", "Audio LLM", "Streaming"];
+const TASKS = ["ASR", "ASR/AST", "Multi"];
+const valuesOf = (get, order) => {
+  const found = new Set(DATA.models.map(get));
+  return [...order.filter(v => found.has(v)), ...[...found].filter(v => !order.includes(v)).sort()];
+};
+
+function render() {
+  const datasets = datasetsOf(state.language).filter(d => state.selected.has(d.id) && scored(d));
+  for (const d of datasetsOf(state.language)) {
+    const button = document.querySelector(`#datasets button[data-id="${d.id}"]`);
+    button.disabled = !scored(d);
+    button.title = scored(d) ? d.domain : "No score in this mode (references without case and punctuation)";
+  }
+  const sortBy = datasets.find(d => d.id === state.sort);  // undefined: sort by the average or the rank
+  const byRank = state.sort === "rank";
+  const byInfo = { params: m => m.params, rtfx: m => m.rtfx != null ? -m.rtfx : null }[state.sort];  // RTFx: fastest first
+  const sortedId = byRank || byInfo ? state.sort : sortBy ? sortBy.id : "";
+  const rows = modelsOf(state.language).filter(shownModel).map(m => ({ m, avg: average(m, datasets) }));
+  const ranks = averageRanks(rows.filter(r => r.avg).map(r => r.m), datasets);
+  for (const r of rows) {
+    r.rank = ranks.get(r.m);
+    r.key = byInfo ? byInfo(r.m) : byRank ? r.rank : sortBy ? (result(r.m, sortBy) || {}).wer : r.avg && r.avg.wer;
+  }
+  // Models without a score in the sorted column go last, by name.
+  rows.sort((a, b) => (a.key ?? Infinity) - (b.key ?? Infinity) || a.m.model.localeCompare(b.m.model));
+  const column = get => rows.map(get).filter(v => v != null);
+  const avgValues = column(r => r.avg && r.avg.wer);
+  const rankValues = column(r => r.rank);
+  const values = Object.fromEntries(datasets.map(d => [d.id, column(r => (result(r.m, d) || {}).wer)]));
+
+  const th = (id, label, sub, title) => {
+    const sorted = id === sortedId;
+    return `<th data-sort="${esc(id)}" class="sortable" aria-sort="${sorted ? "ascending" : "none"}" title="${esc(title)}">` +
+      `${sorted ? "▲ " : ""}${label}<br><small>${sub}</small></th>`;
+  };
+  const head = `<tr><th>#</th><th>Model</th>${th("", "Average", `${datasets.length} test sets`, "Sort by the average")}` +
+    (shownColumn("rank") ? th("rank", "Avg rank", `${datasets.length} test sets`, "Sort by the average rank") : "") +
+    // last word + version on their own line ("Common<br>Voice 18.0"): keeps the column as narrow as the others
+    datasets.map(d => th(d.id, esc(d.name).replace(/ (\S+ \d[\d.]*)$/, "<br>$1"), d.hours != null ? f1(d.hours) + " h" : "", `${d.domain}. Sort by this test set`)).join("") +
+    INFO.filter(c => shownColumn(c.key)).map(c => c.sort ? th(c.key, c.label, c.sub, c.title) :
+      `<th class="left" title="${esc(c.title)}">${c.label}</th>`).join("") + "</tr>";
+  let rank = 0;
+  const body = rows.map(({ m, avg, rank: avgRank, key }) => {
+    const name = (m.url ? `<a href="${esc(m.url)}">${esc(m.model)}</a>` : esc(m.model)) +
+      (m.wer_note ? ` <span title="${esc(m.wer_note)}">⚠️</span>` : "") +
+      (m.prompt || m.prompt_source ? ` <span class="prompt-info" title="${esc(promptText(m))}">💬</span>` : "");
+    const cells = datasets.map(d => {
+      const r = result(m, d);
+      if (!r) return cell(null);
+      const title = [
+        `${d.name} · ${m.model} (${[m.variant, m.backend].filter(Boolean).join(" · ")})`,
+        r.ci95 && `95% CI: ${f1(r.ci95[0])} – ${f1(r.ci95[1])}`,
+        `Substitutions: ${f1(r.sub)}`, `Deletions: ${f1(r.del)}`, `Insertions: ${f1(r.ins)}`,
+        `Utterances: ${m.scores[d.id].n}`,
+        m.scores[d.id].empty != null && `Empty outputs: ${m.scores[d.id].empty}`,
+      ].filter(Boolean).join("\n");
+      return cell(r.wer, halfWidth(r), rankClass(r.wer, values[d.id]), title);
+    }).join("");
+    const avgCell = avg ? cell(avg.wer, avg.pm, "avg " + rankClass(avg.wer, avgValues), "Mean over the selected test sets")
+                        : `<td class="muted" title="Not evaluated on all the selected test sets">—</td>`;
+    const rankCell = avgRank != null ? cell(avgRank, null, rankClass(avgRank, rankValues), "Mean of the ranks over the selected test sets")
+                                     : `<td class="muted">—</td>`;
+    const info = INFO.filter(c => shownColumn(c.key)).map(c => c.cell(m)).join("");
+    return `<tr><td>${key != null ? ++rank : ""}</td><td>${name}<br><small>${esc([m.variant, m.backend].filter(Boolean).join(" · "))}</small></td>` +
+      `${avgCell}${shownColumn("rank") ? rankCell : ""}${cells}${info}</tr>`;
+  }).join("");
+  document.getElementById("board").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
+  renderChart(rows, datasets);
+}
+
+// Average WER (same selection as the leaderboard) against RTFx, log scale.
+function renderChart(rows, datasets) {
+  const W = 1000, H = 540, L = 60, R = 24, T = 16, B = 52;
+  const points = rows.filter(r => r.avg && r.m.rtfx).map(r => ({ m: r.m, wer: r.avg.wer, pm: r.avg.pm, rtfx: r.m.rtfx }));
+  // Best trade-offs: from the fastest, each model more accurate than all the faster ones.
+  let best = Infinity;
+  [...points].sort((a, b) => b.rtfx - a.rtfx).forEach(p => { p.front = p.wer < best; best = Math.min(best, p.wer); });
+  const svg = document.getElementById("scatter");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("aria-label", `Average ${state.metric.toUpperCase()} against RTFx of ${points.length} models`);
+  if (!points.length) { svg.innerHTML = ""; return; }
+  const lo = Math.floor(Math.log10(Math.min(...points.map(p => p.rtfx))));
+  const hi = Math.ceil(Math.log10(Math.max(...points.map(p => p.rtfx))));
+  const x = v => L + (Math.log10(v) - lo) / (hi - lo) * (W - L - R);
+  const top = Math.max(...points.map(p => p.wer + (p.pm || 0)));
+  const step = top > 40 ? 10 : 5, yMax = Math.ceil(top / step) * step;
+  const y = v => T + (1 - v / yMax) * (H - T - B);
+  const xTicks = [];
+  for (let e = lo; e <= hi; e++) for (const k of [1, 3]) if (e + Math.log10(k) <= hi) xTicks.push(k * 10 ** e);
+  const yTicks = Array.from({ length: yMax / step + 1 }, (_, i) => i * step);
+  const grid = xTicks.map(t => `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="${T}" y2="${H - B}"/>` +
+      `<text x="${x(t)}" y="${H - B + 18}" text-anchor="middle">${t}×</text>`).join("") +
+    yTicks.map(t => `<line class="grid" x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}"/>` +
+      `<text x="${L - 8}" y="${y(t) + 4}" text-anchor="end">${t}</text>`).join("");
+  const metric = `${state.metric.toUpperCase()} (%)${state.norm ? "" : ", case & punct."}`;
+  const titles = `<text class="axis-title" x="${(L + W - R) / 2}" y="${H - 8}" text-anchor="middle">RTFx, log scale (faster →)</text>` +
+    `<text class="axis-title" transform="translate(16 ${(T + H - B) / 2}) rotate(-90)" text-anchor="middle">Average ${metric}, ${datasets.length} test sets (lower is better)</text>`;
+  const front = points.filter(p => p.front).sort((a, b) => a.rtfx - b.rtfx);
+  const line = `<polyline class="front-line" points="${front.map(p => `${x(p.rtfx)},${y(p.wer)}`).join(" ")}"/>`;
+  const ci = points.filter(p => p.pm).map(p => `<line class="ci" x1="${x(p.rtfx)}" x2="${x(p.rtfx)}" y1="${y(p.wer - p.pm)}" y2="${y(p.wer + p.pm)}"/>`).join("");
+  // Front points first in the DOM so that the others are drawn over the line, all after the whiskers.
+  const dots = points.map((p, i) => `<circle class="dot ${p.front ? "front" : "other"}" data-i="${i}" cx="${x(p.rtfx)}" cy="${y(p.wer)}" r="${p.front ? 6 : 5}"/>`).join("");
+  // Labels: for each model (best trade-offs first), the first of a few positions around its dot
+  // that overlaps no dot and no other label; none fits: no label (the tooltip still names it).
+  const homonyms = new Set(points.map(p => p.m.model).filter((n, i, all) => all.indexOf(n) !== i));
+  const boxes = points.map(p => ({ x0: x(p.rtfx) - 7, x1: x(p.rtfx) + 7, y0: y(p.wer) - 7, y1: y(p.wer) + 7 }));
+  const overlaps = b => b.x0 < L || b.x1 > W - R || b.y0 < T || b.y1 > H - B ||
+    boxes.some(o => b.x0 < o.x1 && o.x0 < b.x1 && b.y0 < o.y1 && o.y0 < b.y1);
+  const text = [...points].sort((a, b) => b.front - a.front || b.rtfx - a.rtfx).map(p => {
+    const name = p.m.model + (homonyms.has(p.m.model) ? ` (${p.m.variant || p.m.backend})` : "");
+    const w = name.length * 6.6, cx = x(p.rtfx), cy = y(p.wer);
+    const candidates = [[10, 4, "start"], [-10, 4, "end"], [0, -12, "middle"], [0, 20, "middle"],
+                        [10, -10, "start"], [10, 18, "start"], [-10, -10, "end"], [-10, 18, "end"],
+                        [0, -26, "middle"], [0, 34, "middle"], [-10, -24, "end"], [10, -24, "start"], [-10, 32, "end"], [10, 32, "start"]];
+    for (const [dx, dy, anchor] of candidates) {
+      const x0 = cx + dx - (anchor === "end" ? w : anchor === "middle" ? w / 2 : 0);
+      const box = { x0, x1: x0 + w, y0: cy + dy - 11, y1: cy + dy + 3 };
+      if (overlaps(box)) continue;
+      boxes.push(box);
+      return `<text class="label${p.front ? "" : " muted"}" x="${cx + dx}" y="${cy + dy}" text-anchor="${anchor}">${esc(name)}</text>`;
+    }
+    return "";
+  }).join("");
+  svg.innerHTML = `<g class="axis">${grid}</g>${titles}${line}${ci}${dots}${text}`;
+
+  const tip = document.getElementById("tip");
+  // Hover: the dot whose center is the nearest to the pointer (within 20 px), so that each of
+  // two overlapping dots can be reached from its own side.
+  svg.onmousemove = e => {
+    const m = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.getScreenCTM().inverse());
+    let i = -1, dMin = 20;
+    points.forEach((p, j) => { const d = Math.hypot(x(p.rtfx) - m.x, y(p.wer) - m.y); if (d < dMin) { dMin = d; i = j; } });
+    svg.querySelectorAll(".dot.hover").forEach(d => d.classList.remove("hover"));
+    if (i < 0) { tip.hidden = true; return; }
+    const p = points[i];
+    const dot = svg.querySelector(`.dot[data-i="${i}"]`);
+    dot.classList.add("hover");
+    svg.appendChild(dot);  // on top of the dot it overlaps
+    tip.innerHTML = `<b>${esc(p.m.model)}</b><span class="muted"> ${esc([p.m.variant, p.m.backend].filter(Boolean).join(" · "))}</span><br>` +
+      `Average ${state.metric.toUpperCase()}: ${f1(p.wer)}${p.pm != null ? ` ±${f1(p.pm)}` : ""}<br>RTFx: ${Math.round(p.rtfx)}×` +
+      `${p.m.rtf_backend ? ` (timed with ${esc(p.m.rtf_backend)})` : ""}` +
+      `${p.m.params ? ` · ${params(p.m.params)} parameters` : ""}` +
+      (p.m.wer_note ? `<br>⚠️ ${esc(p.m.wer_note).replaceAll("\n", "<br>⚠️ ")}` : "") +
+      (p.m.rtf_note ? `<br>⚠️ ${esc(p.m.rtf_note)}` : "");
+    tip.hidden = false;
+    const box = svg.parentElement.getBoundingClientRect();
+    const px = e.clientX - box.left, py = e.clientY - box.top;
+    tip.style.left = Math.min(px + 14, box.width - tip.offsetWidth - 8) + "px";
+    tip.style.top = Math.max(py - tip.offsetHeight - 10, 4) + "px";
+  };
+  svg.onmouseleave = () => { tip.hidden = true; svg.querySelectorAll(".dot.hover").forEach(d => d.classList.remove("hover")); };
+
+  const missing = (list, why) => list.length ? `<p>${why}: ${list.map(r => esc(r.m.model + (r.m.variant ? ` (${r.m.variant})` : ""))).join(", ")}.</p>` : "";
+  document.getElementById("chart-notes").innerHTML =
+    `<p>Each dot is a model: its average over the test sets selected above, against its RTFx (seconds of audio transcribed per second of computation, ` +
+    `see the <a href="#test-sets">test sets</a> tab). Vertical bars: 95% confidence interval of the average. Hover a dot for the details.</p>` +
+    missing(rows.filter(r => r.avg && !r.m.rtfx), "Speed not measured yet") +
+    missing(rows.filter(r => !r.avg), "Not evaluated on all the selected test sets");
+}
+
+// Controls
+const languages = [...new Set(DATA.datasets.map(d => d.language))];
+const languageSelect = document.getElementById("language");
+languageSelect.innerHTML = languages.map(l => `<option value="${l}">${LANGUAGES[l] || l}</option>`).join("");
+languageSelect.value = languages.includes("fr") ? "fr" : languages[0];
+languageSelect.onchange = () => selectLanguage(languageSelect.value);
+languageSelect.parentElement.hidden = languages.length < 2;  // only French for now
+for (const [id, apply] of [["metric", v => state.metric = v], ["norm", v => state.norm = v === "1"]]) {
+  document.getElementById(id).onclick = e => {
+    if (!e.target.dataset.v) return;
+    document.querySelectorAll(`#${id} button`).forEach(b => b.setAttribute("aria-pressed", b === e.target));
+    apply(e.target.dataset.v);
+    render();
+  };
+}
+document.getElementById("board").onclick = e => {
+  const header = e.target.closest("th[data-sort]");
+  if (!header) return;
+  state.sort = header.dataset.sort || null;
+  render();
+};
+document.getElementById("datasets").onclick = e => {
+  const id = e.target.dataset.id;
+  if (!id) return;
+  state.selected.has(id) ? state.selected.delete(id) : state.selected.add(id);
+  e.target.setAttribute("aria-pressed", state.selected.has(id));
+  render();
+};
+
+function toggleButtons(id, items, pressed, toggle) {
+  const el = document.getElementById(id);
+  el.innerHTML = items.map(([v, label, title]) =>
+    `<button data-v="${esc(v)}" aria-pressed="${pressed(v)}"${title ? ` title="${esc(title)}"` : ""}>${esc(label)}</button>`).join(" ");
+  el.onclick = e => {
+    const v = e.target.dataset.v;
+    if (v == null) return;
+    toggle(v);
+    e.target.setAttribute("aria-pressed", pressed(v));
+    render();
+  };
+}
+const flip = (set, v) => set.has(v) ? set.delete(v) : set.add(v);
+const architectures = [...valuesOf(architectureOf, ARCHITECTURES).filter(v => v !== "Streaming"),
+  ...(DATA.models.some(m => m.streaming) ? ["Streaming"] : [])];
+architectures.forEach(v => state.architecture.add(v));
+valuesOf(taskOf, TASKS).forEach(v => state.task.add(v));
+toggleButtons("filter-architecture", architectures.map(v => [v, v, `Show the ${v} models`]),
+  v => state.architecture.has(v), v => flip(state.architecture, v));
+toggleButtons("filter-task", valuesOf(taskOf, TASKS).map(v => [v, v, `Show the ${v} models`]),
+  v => state.task.has(v), v => flip(state.task, v));
+toggleButtons("columns", COLUMNS.map(c => [c.key, c.label, `Show the ${c.label} column`]),
+  v => shownColumn(v), v => {
+    flip(state.hidden, v);
+    if (state.sort === v && !shownColumn(v)) state.sort = null;  // hidden sort column: back to the average
+  });
+
+
+// A click on the label of a group of toggles selects all of them, or none if all are selected.
+document.querySelectorAll(".group-label[data-all]").forEach(label => label.onclick = () => {
+  const buttons = [...document.querySelectorAll(`#${label.dataset.all} button:not(:disabled)`)];
+  const allOn = buttons.every(b => b.getAttribute("aria-pressed") === "true");
+  buttons.filter(b => (b.getAttribute("aria-pressed") === "true") === allOn).forEach(b => b.click());
+});
+
+// Texts
+const updated = DATA.results_updated && new Date(DATA.results_updated).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+document.getElementById("meta").innerHTML = `${updated ? `Updated on ${updated} · ` : ""}<a href="${DATA.repo}">${DATA.repo.replace("https://", "")}</a>`;
+document.getElementById("notes").innerHTML = `
+  <p><b>WER</b> (word error rate) and <b>CER</b> (character error rate), in %: lower is better. Click a column header to sort by that test set, or by the average.</p>
+  <p><b>Capped at 100% per segment</b>: the errors of each segment count at most as many as the words (or characters) of its reference, so that one or two hallucinated segments cannot inflate a score on their own. The excess is removed from the insertions.</p>
+  <p><b>Average</b>: mean of the scores over the selected test sets. A model not evaluated on all the selected test sets gets no average (—): unselect a test set to compare it.</p>
+  <p><b>Avg rank</b>: mean of the model's rank on each selected test set (1 = best), among the models that have an average. Unlike the average, a test set with high error rates does not weigh more than the others.</p>
+  <p><b>±</b>: half-width of the 95% confidence interval, by bootstrap over the utterances of each test set (hover a score for the exact interval and the error breakdown).</p>
+  <p><b>Normalized</b> scores ignore case and punctuation; <b>Case &amp; punct.</b> counts them as errors; it leaves out the test sets whose references have no case and punctuation. Segments of at most 30 s.</p>
+  <p><b>Size</b>, <b>License</b> and <b>Languages</b> (up to 5, "multi" beyond: hover for the list) come from the model cards.</p>
+  <p><b>Architecture</b> and <b>Task</b> buttons filter the models (table and chart); <b>Columns</b> show or hide the columns after the scores. A click on the label of a group (Test sets, Architecture, Task, Columns) selects all its buttons, or none.</p>
+  <p>💬: model run with a text prompt; hover it for the prompt and where it comes from (model card, built-in transcription prompt, or ours).</p>
+  <p><b>RTFx</b>: seconds of audio transcribed per second of computation, higher is faster. ⚠️: the speed was measured with a slower runtime than the model's own (hover for details).</p>
+  <p>Results and configuration: <a href="${DATA.repo}/tree/main/benchmarks/sota">benchmarks/sota</a>. Raw data: <a href="leaderboard.json">leaderboard.json</a>.</p>`;
+
+// Tabs: the URL hash (#test-sets) picks the tab, so that it can be linked.
+function showTab() {
+  const tab = ["#speed", "#test-sets"].includes(location.hash) ? location.hash : "";
+  document.getElementById("tab-board").hidden = tab !== "";
+  document.getElementById("tab-speed").hidden = tab !== "#speed";
+  document.getElementById("tab-testsets").hidden = tab !== "#test-sets";
+  document.getElementById("controls").hidden = tab === "#test-sets";  // the test sets tab does not use them
+  document.getElementById("filters").hidden = tab === "#test-sets";
+  document.getElementById("columns-control").hidden = tab === "#speed";  // the chart has no columns
+  document.querySelectorAll(".tabs a").forEach(a => a.setAttribute("aria-current", a.hash === tab ? "page" : "false"));
+}
+window.onhashchange = showTab;
+showTab();
+
+selectLanguage(languageSelect.value);
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "SUMM-RE_max30_025b_EBDH_072_448.2": {
+    "audio_filepath": "/home/data/audio/raw/transcript/fr/SUMM-RE/full_corpus/individual/audio/test/025b_EBDH_072.wav",
+    "id": "SUMM-RE_max30_025b_EBDH_072_448.2",
+    "audio_duration": 29.941,
+    "audio_offset": 448.164,
+    "dataset": "SUMM-RE",
+    "full_dataset": "SUMM-RE_max30",
+    "text": "petit oui c' est c' est plus oui c' est plus petit hein euh ben par exemple dans euh avec le driving tu tu peux accueillir des participants euh donc dans une voiture donc le le nombre de places est pas limité euh mais interagir avec les autres c' est compliqué bon après quand tu regardes un film t es pas censé communiquer avec quelqu' un t es censé communiquer avec le le projecteur mais c' est tout donc ensuite euh t as le cinéma art deco donc ça ça peut permettre d' accueillir des participants donc dans un environnement",
+    "prediction_duration": 0.12229,
+    "rtf": 0.00408,
+    "prediction": "Petit. For example with the driving, you can accue participants in the world. The number of places is not limited. But interagar those is complicated. After when you regard a film, you're not supposed to communicate with people, you're supposed to communicate with the projector, but it's all the cinema art echo, so that perfect accuracy participants in an environment."
+  },
+  "SUMM-RE_max30_045b_EADH_114_458.0": {
+    "audio_filepath": "/home/data/audio/raw/transcript/fr/SUMM-RE/full_corpus/individual/audio/test/045b_EADH_114.wav",
+    "id": "SUMM-RE_max30_045b_EADH_114_458.0",
+    "audio_duration": 25.035,
+    "audio_offset": 458.005,
+    "dataset": "SUMM-RE",
+    "full_dataset": "SUMM-RE_max30",
+    "text": "on pourrait faireceuh un stand de formation où justement les gens avec les qr code pourraient télécharger des petites vidéos qu ils auraient sur leur téléphone et qu ils pourraient garder et regarder des vidéos qu on présenterait bien sûr au stand euh et avec un intervenant aussi qui interviendrait et pareil cet intervenant ferait un document euh qui euh serait après euh diffusé encore par le biais d un qr code",
+    "prediction_duration": 0.09516,
+    "rtf": 0.0038,
+    "prediction": "On pourrait faire un stand de formation où justement les gens avec les QR codes pourraient télécharger des petites vidéos qu'ils auraient sur leur téléphone et qu'ils pourraient garder et regarder. Des vidéos qu'on présenterait bien sûr au stand et avec un intervenant aussi qui interviendrait. Et pareil, cet intervenant ferait un document qui serait après diffusé encore par le biais d'un QR code."
+  }
+}

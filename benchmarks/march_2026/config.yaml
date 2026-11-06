@@ -1,5 +1,7 @@
 input_manifest: benchmarks/march_2026/manifest.jsonl
 output_folder: benchmarks/march_2026/local_bench
+# Long folder names (dtype, decoding params...): the results were produced with them.
+full_name: True
 compute_rtf: False
 plot_monitoring: False
 skip_errors: False

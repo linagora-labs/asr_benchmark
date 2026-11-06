@@ -11,9 +11,7 @@ def prepare_data(df, return_format="df", target_wer_column="model"):
     df = df.copy()
     if len(df) == 0:
         raise RuntimeError(f"No data to plot: {df}")
-    mask = df.map(type) != bool
-    d = {True: "TRUE", False: "FALSE"}
-    df = df.where(mask, df.replace(d))
+    df = df.map(lambda v: str(v).upper() if isinstance(v, bool) else v)
     if return_format == "df":
         return df
     elif return_format == "dict":

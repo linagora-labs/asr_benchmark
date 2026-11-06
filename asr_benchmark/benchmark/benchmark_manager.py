@@ -1,9 +1,12 @@
 from pathlib import Path
+import os
 import re
 import time
 import json
 import matplotlib
 matplotlib.use("Agg")
+import jiwer
+import numpy as np
 import torch
 from tqdm import tqdm
 from itertools import product
@@ -11,6 +14,7 @@ from itertools import product
 import asr_benchmark.utils.benchmark as utils
 from asr_benchmark.benchmark.backend_to_model import get_model
 from asr_benchmark.utils import logger
+from ssak.utils.text_latin import numbers_and_symbols_to_letters
 from ssak.utils.wer import compute_wer
 from ssak.utils.monitoring import Monitoring
 
@@ -48,6 +52,13 @@ def normalize_punctuation(text):
     Example: "c\u2019est \u2014 oui\u2026" -> "c'est - oui..."
     """
     return _UNICODE_PUNCTUATION_RE.sub(lambda m: UNICODE_PUNCTUATION[m.group()], text)
+
+
+def spell_numbers(text, language="fr"):
+    """"le 15 décembre" -> "le quinze décembre", as the nocasepunc normalization does."""
+    if not re.search(r"\d", text):
+        return text
+    return numbers_and_symbols_to_letters(text, lang=language)
 
 
 def separate_punctuation(text):
@@ -229,51 +240,128 @@ def process_result(iterator, bench_result, output_folder, config, save_interval=
             write_results(bench_result, dataset)
     write_results(bench_result, dataset)
 
+def utterance_errors(raw_alignment, character_level=False):
+    """(errors, reference length) of each utterance, from compute_wer's word-level
+    alignment ("raw_alignement"). compute_wer aligns characters over the whole corpus
+    at once, so character counts are recomputed per utterance from the normalized
+    words of the word-level alignment."""
+    if character_level:
+        counts = []
+        for ref, hyp in zip(raw_alignment.references, raw_alignment.hypotheses):
+            ref, hyp = " ".join(ref), " ".join(hyp)
+            if not ref:
+                counts.append((len(hyp), 0))
+                continue
+            out = jiwer.process_characters(ref, hyp)
+            counts.append((out.substitutions + out.deletions + out.insertions, out.substitutions + out.deletions + out.hits))
+        return counts
+    counts = []
+    for chunks in raw_alignment.alignments:
+        errors = length = 0
+        for chunk in chunks:
+            if chunk.type == "insert":
+                errors += chunk.hyp_end_idx - chunk.hyp_start_idx
+            else:
+                ref_len = chunk.ref_end_idx - chunk.ref_start_idx
+                length += ref_len
+                errors += ref_len if chunk.type != "equal" else 0
+        counts.append((errors, length))
+    return counts
+
+
+def bootstrap_ci(counts, score, n_resamples=1000, level=0.95, seed=0):
+    """Confidence interval (in %) of an error rate, by bootstrap over the utterances:
+    each resample draws as many (errors, reference length) pairs as the test set,
+    with replacement, and recomputes sum(errors) / sum(lengths).
+
+    The interval is shifted onto `score`, the corpus-level rate: per-utterance
+    character counts slightly differ from compute_wer's (which aligns the whole
+    corpus as one string), word counts do not."""
+    counts = np.array(counts, dtype=float)
+    idx = np.random.default_rng(seed).integers(0, len(counts), size=(n_resamples, len(counts)))
+    sample = counts[idx].sum(axis=1)
+    rates = 100 * sample[:, 0] / np.maximum(sample[:, 1], 1)
+    total = counts.sum(axis=0)
+    shift = score - 100 * total[0] / max(total[1], 1)
+    tail = 100 * (1 - level) / 2
+    return [round(float(v + shift), 3) for v in np.percentile(rates, [tail, 100 - tail])]
+
+
+def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
+    """WER/CER of one dataset's predictions ({id: {"text", "prediction", ...}}), in
+    every mode, each with its 95% confidence interval ("ci95"). Each file's errors are
+    capped at its reference length (100% WER per file)."""
+    predictions = [data[id]["prediction"] for id in data]
+    references = [data[id]["text"] for id in data]
+    results = dict(num_data=len(predictions), duration=sum([data[id]["audio_duration"] for id in data]))
+
+    modes = ["wer_nocasepunc", "cer_nocasepunc"]
+    if any(re.search( r"[^\w\s'-]", ref) for ref in references):
+        modes = ["wer", "cer", "wer_nocasepunc", "cer_nocasepunc"]
+
+    texts = {"nocasepunc": (references, predictions)}
+    if "wer" in modes:
+        texts = {
+            "nocasepunc": ([separate_punctuation(ref) for ref in references], [separate_punctuation(pred) for pred in predictions]),
+            "punc": ([separate_punctuation(spell_numbers(ref, language)) for ref in references],
+                     [separate_punctuation(spell_numbers(pred, language)) for pred in predictions]),
+        }
+
+    word_alignments = {}  # normalization -> word-level alignment, reused by the cer mode
+    for key in modes:
+        # The word-level alignment feeds the confidence intervals; its text dump is
+        # only kept when asked (alignment_dir).
+        alignment = os.devnull
+        if alignment_dir:
+            (Path(alignment_dir) / key).mkdir(parents=True, exist_ok=True)
+            alignment = str(Path(alignment_dir) / key / (dataset + ".txt"))
+        normalization = f"{language}+" if "nocasepunc" in key else ""
+        refs, preds = texts["nocasepunc" if "nocasepunc" in key else "punc"]
+        wer_score = compute_wer(
+            refs,
+            preds,
+            normalization=normalization,
+            character_level="cer" in key,
+            use_percents=True,
+            alignment=alignment,
+            replacements_pred=REPLACEMENTS_WER,
+            replacements_ref=REPLACEMENTS_WER,
+        )
+        if "cer" in key:
+            counts = utterance_errors(word_alignments[normalization], character_level=True)
+        else:
+            word_alignments[normalization] = wer_score["raw_alignement"]
+            counts = utterance_errors(wer_score["raw_alignement"])
+        # Each file's errors are capped at its reference length (100% WER), so that one
+        # hallucination loop does not dominate the dataset score. Only insertions can
+        # exceed the reference length, so the excess is removed from them.
+        capped = [(min(errors, max(length, 1)), length) for errors, length in counts]
+        excess = 100 * sum(e - c for (e, _), (c, _) in zip(counts, capped)) / max(wer_score["count"], 1)
+        wer_score["ins"] -= excess
+        wer_score["wer"] -= excess
+        wer_score["ci95"] = bootstrap_ci(capped, wer_score["wer"])
+        del wer_score['alignment']
+        del wer_score['raw_alignement']
+        results[key] = wer_score
+    return results
+
+
 def process_wer(output_folder, config):
     output_path = Path(output_folder)
     predictions_dir = output_path / "predictions"
     for dataset_file in tqdm(list(predictions_dir.iterdir()), desc="Computing WER"):
         dataset = dataset_file.stem
         perf_file = output_path / "performances" / f"{dataset}.json"
-        if perf_file.exists():
-            continue
         with open(dataset_file, "r", encoding="utf-8") as f:
             data = json.load(f)
+        # Rescored when predictions were added since (e.g. after a --debug run)
+        if perf_file.exists() and json.load(open(perf_file)).get("num_data") == len(data):
+            continue
         if not list(data.values())[0].get("text", False):
             logger.info(f"No reference for {dataset}, skipping WER computation")
             continue
-        predictions = [data[id]["prediction"] for id in data]
-        references = [data[id]["text"] for id in data]
-        results = dict(num_data=len(predictions), duration=sum([data[id]["audio_duration"] for id in data]))
-
-        modes = ["wer_nocasepunc", "cer_nocasepunc"]
-        if any(re.search( r"[^\w\s'-]", ref) for ref in references):
-            modes = ["wer", "cer", "wer_nocasepunc", "cer_nocasepunc"]
-
-        for key in modes:
-            alignment = None
-            if config.get("save_alignments", True):
-                alignment_dir = output_path / "alignments" / key
-                alignment_dir.mkdir(parents=True, exist_ok=True)
-                alignment = str(alignment_dir / (dataset + ".txt"))
-            if "wer" in modes:
-                references = [separate_punctuation(ref) for ref in references]
-                predictions = [separate_punctuation(pred) for pred in predictions]
-            language = config.get("language") or "fr"
-            wer_score = compute_wer(
-                references,
-                predictions,
-                normalization=f"{language}+" if "nocasepunc" in key else "",
-                character_level="cer" in key,
-                use_percents=True,
-                alignment=alignment,
-                replacements_pred=REPLACEMENTS_WER,
-                replacements_ref=REPLACEMENTS_WER,
-            )
-            if alignment:
-                del wer_score['alignment']
-                del wer_score['raw_alignement']
-            results[key] = wer_score
+        alignment_dir = output_path / "alignments" if config.get("save_alignments", True) else None
+        results = score_dataset(data, config.get("language") or "fr", alignment_dir, dataset)
         with open(perf_file, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=4)
 
@@ -284,6 +372,7 @@ def bench_model(config, input_manifest, output_folder, debug=False):
     if len(data)>0:
         model = get_model(config)
         model.load()
+        n_params = model.count_parameters()
         audio = model.load_audio(PATH_TO_WARMUP_FILE)
         _ = model.transcribe(audio)
         for dataset in data:
@@ -298,8 +387,20 @@ def bench_model(config, input_manifest, output_folder, debug=False):
                 iterator = transcribe_fast(model, dataset_data, output_folder, config)
             process_result(iterator, bench_dataset_result, output_folder, config, save_interval=1 if config.get('compute_rtf', True) else None)
         model.cleanup()
-        with open(Path(output_folder) / "metadata.json", "w", encoding="utf-8") as f:
-            f.write(json.dumps(model.get_metadata(), indent=2, ensure_ascii=False))
+        metadata = model.get_metadata()
+        # model_info (license, size, languages: tools/fill_model_info.py, or edited by hand)
+        # is not part of the config: keep it across reruns. The size is counted on the
+        # loaded model when the API cannot give it (e.g. .nemo checkpoints, no safetensors).
+        metadata_file = Path(output_folder) / "metadata.json"
+        model_info = {}
+        if metadata_file.exists():
+            model_info = json.loads(metadata_file.read_text(encoding="utf-8")).get("model_info") or {}
+        if n_params and not model_info.get("params"):
+            model_info["params"] = n_params
+        if model_info:
+            metadata["model_info"] = model_info
+        with open(metadata_file, "w", encoding="utf-8") as f:
+            f.write(json.dumps(metadata, indent=2, ensure_ascii=False))
     else:
         logger.info(f"Skipping transcriptions, it has already been transcribed")
     process_wer(output_folder, config)
@@ -334,9 +435,10 @@ def launch_benchmark(
     progress_bar = tqdm(configs, desc="Backends and models...".ljust(45))
     logger.info(f"Starting benchmarking with {len(configs)} configurations")
     for config in progress_bar:
+        # Read by get_model
+        config['compute_rtf'] = config.get('compute_rtf', compute_rtf)
         model = get_model(config)
         config['input_manifest'] = config.get('input_manifest', input_manifest)
-        config['compute_rtf'] = config.get('compute_rtf', compute_rtf)
         config['save_predictions'] = config.get('save_predictions', save_predictions)
         config['save_alignments'] = config.get('save_alignments', save_alignments)
         config['compute_latency'] = config.get('compute_latency', compute_latency)
@@ -377,10 +479,9 @@ def launch_benchmark(
                     torch.cuda.empty_cache()
                 predictions_dir = config_output / "predictions"
                 if len(list(predictions_dir.iterdir())) == 0 and not (config_output / "error.log").exists():
-                    predictions_dir.rmdir()
-                    (config_output / "performances").rmdir()
-                    (config_output / "wer").rmdir()
-                    config_output.rmdir()
+                    for folder in (predictions_dir, config_output / "performances", config_output / "wer", config_output):
+                        if folder.exists():
+                            folder.rmdir()
                     logger.error(f"Benched folder is empty, removing it")
                 else:
                     logger.error(f"Benched folder is not empty")

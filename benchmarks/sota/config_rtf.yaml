@@ -1,0 +1,150 @@
+# Speed counterpart of config.yaml: keep the same models.
+# manifest_rtf.jsonl: 10 segments of 20-30 s, short enough for models with a ~30 s window.
+input_manifest: benchmarks/sota/manifest_rtf.jsonl
+output_folder: benchmarks/sota/results_rtf
+compute_rtf: True
+plot_monitoring: True
+skip_errors: False
+save_alignments: False
+save_predictions: False
+startup_timeout: 7200
+
+benchmarks:
+  - backend: vllm
+    model: mistralai/Voxtral-Small-24B-2507
+    port: 8101
+    language: fr
+  - backend: vllm
+    model: OpenMOSS-Team/MOSS-Transcribe-Diarize
+    trust_remote_code: true
+    port: 8102
+    transcription_prompt: "Transcris l’audio en texte français ; chaque segment commence par un horodatage de début et le numéro du locuteur ([S01], [S02], [S03]…), suivi du contenu parlé, et se termine par un horodatage de fin."
+  - backend: vllm
+    model: google/gemma-3n-e4b-it
+    port: 8103
+    language: fr
+  # MAX_JOBS: its unset JIT build runs out of memory at startup
+  - backend: vllm
+    model: Qwen/Qwen3-Omni-30B-A3B-Instruct
+    port: 8104
+    language: fr
+    env:
+      MAX_JOBS: 4
+  - backend: vllm
+    model: ibm-granite/granite-speech-3.3-8b
+    port: 8113
+    language: fr
+    extra_args: --max-model-len 2048 --enable-lora --max-lora-rank 64 --lora-modules speech=ibm-granite/granite-speech-3.3-8b
+    request_model: speech
+  # Luciole: part salm
+  - backend: vllm
+    model: OpenLLM-France/Luciole-1B-Audio-1.0
+    port: 8111
+    endpoint: chat
+    audio_placeholder: "<|audio|>"
+    prompt: "Fais une transcription mot pour mot en français du contenu parlé."
+  - backend: vllm
+    model: OpenLLM-France/Luciole-8B-Audio-1.0
+    port: 8112
+    endpoint: chat
+    audio_placeholder: "<|audio|>"
+    prompt: "Fais une transcription mot pour mot en français du contenu parlé."
+  - backend: vllm
+    model: OpenLLM-France/Luciole-23B-Audio-1.0
+    port: 8117
+    endpoint: chat
+    audio_placeholder: "<|audio|>"
+    prompt: "Fais une transcription mot pour mot en français du contenu parlé."
+  # Needs vLLM >= 0.31: tools/serve_salm_nvcr_dgx.sh
+  - backend: vllm
+    model: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B
+    launch: false
+    server: http://172.17.0.1
+    port: 8118
+    endpoint: chat
+    prompt: "Audio transcription. Language: French. Wording: verbatim, including fillers and repetitions. Formatting: punctuation and capitalization. Output: transcript only."
+    extra_body: {chat_template_kwargs: {enable_thinking: false}}
+    trust_remote_code: true
+    extra_args: --max-model-len 8192 --enable-chunked-prefill --no-enable-prefix-caching --mamba-cache-mode none --mm-processor-cache-gb 0 --speculative-config {"method":"mtp","num_speculative_tokens":2} --gpu-memory-utilization 0.8
+  - backend: vllm
+    model: mistralai/Voxtral-Mini-3B-2507
+    port: 8116
+    language: fr
+  - backend: vllm
+    model: ibm-granite/granite-speech-4.1-2b
+    port: 8114
+    endpoint: chat
+    prompt: <|audio|>transcris la parole française avec la ponctuation et les majuscules appropriées.
+    extra_args: --max-model-len 2048
+  - backend: vllm
+    model: CohereLabs/cohere-transcribe-03-2026
+    trust_remote_code: true
+    port: 8115
+    language: fr
+  # Part transformers4 (with Kyutai, Hojo)
+  - backend: ark-asr
+    model: Edge0/ARK-ASR-3B
+    prompt: Transcris cet audio en français.
+  - backend: kyutai-stt
+    model: kyutai/stt-1b-en_fr-trfs
+  - backend: hojo-asr
+    model: HojoAI/Hojo-ASR-Multi-V1
+  # vLLM only feeds it through /v1/realtime
+  - backend: transformers-voxtral-realtime
+    model: mistralai/Voxtral-Mini-4B-Realtime-2602
+    language: fr
+  - backend: vllm
+    model: Qwen/Qwen3-ASR-1.7B
+    port: 8106
+    language: fr
+  # No vLLM support
+  - backend: vibevoice-asr
+    model: microsoft/VibeVoice-ASR-HF
+    dtype: bfloat16
+  - backend: nemo
+    model: nvidia/nemotron-3.5-asr-streaming-0.6b
+    language: fr
+    chunk_ms: 1120
+  # NEMO_REF=main
+  - backend: nemo
+    model: nvidia/nemotron-labs-unified-asr-0.6b
+    language: fr
+  # transformers: moondream's Photon runtime is proprietary
+  - backend: transformers-parakeet
+    model:
+    - moondream/parakeet-ultra
+    - moondream/parakeet-redux
+  - backend: nemo
+    model:
+    - nvidia/canary-180m-flash
+    - nvidia/canary-1b
+    - nvidia/canary-1b-v2
+    - nvidia/parakeet-tdt-0.6b-v3
+    language: fr
+  - backend: nemo
+    model:
+    - nvidia/stt_fr_fastconformer_hybrid_large_pc
+    - bofenghuang/stt_fr_fastconformer_hybrid_large
+    - linagora/linto_stt_fr_fastconformer
+    - linagora/linto_stt_fr_fastconformer_pc
+    decoder:
+    - rnnt
+  - backend: nemo
+    model: linagora/linto_stt_fr_fastconformer_pc
+    decoder:
+    - ctc
+  # transformers-whisper: the `transformers` pipeline decodes an empty text
+  - backend: transformers-whisper
+    model: BuzzASR/french
+    generate_kwargs:
+      no_repeat_ngram_size: 3
+      repetition_penalty: 1.2
+  - backend: faster-whisper
+    model:
+    - large-v3
+    - large-v3-turbo
+    precision: float16
+  - backend: vllm
+    model: openai/whisper-large-v3-turbo
+    port: 8107
+    language: fr

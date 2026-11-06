@@ -95,16 +95,12 @@ class Gemma3nModel(Model):
         config["repetition_penalty"] = float(config.get("repetition_penalty", 1.2))
         return super().add_defaults_to_config(config)
 
-    def get_metadata(self):
-        metadata = super().get_metadata()
-        metadata["model"] = self.config["model"].replace("_", "-")
-        return metadata
-
     def get_folder_name(self):
         c = self.config
-        name = f"gemma3n_{c['model'].replace('/', '-')}_device-{c['device']}_dtype-{c['dtype']}"
+        name = f"gemma3n_{c['model'].replace('/', '-')}{self.device_tag()}"
+        name += self.detail(f"_dtype-{c['dtype']}")
         name = name.replace("/", "-")
         if c["no_repeat_ngram_size"] or (c["repetition_penalty"] and c["repetition_penalty"] != 1.0):
-            name += f"_norep{c['no_repeat_ngram_size']}-rep{c['repetition_penalty']}"
+            name += self.detail(f"_norep{c['no_repeat_ngram_size']}-rep{c['repetition_penalty']}")
         name += "_rtf" if c.get("compute_rtf") else ""
         return name

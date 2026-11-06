@@ -1,0 +1,38 @@
+{
+  "TEDX_fr_max30_0u7tTptBo9I_155.3": {
+    "audio_filepath": "/home/data/audio/converted_audios/transcript/fr/Multilingual_TEDx/0u7tTptBo9I.wav",
+    "id": "TEDX_fr_max30_0u7tTptBo9I_155.3",
+    "audio_duration": 20.55,
+    "audio_offset": 155.27,
+    "dataset": "TEDX_fr",
+    "full_dataset": "TEDX_fr_max30",
+    "text": "Et, la vie marine part du phytoplancton qui, lui, fournit l'oxygène, jusqu'aux grandes baleines, en passant par les grands prédateurs, les thons, les dauphins... Et parmi ces espèces, il y en a qui sont écologiquement plus importantes que les autres, notamment les requins.",
+    "prediction_duration": 1.17992,
+    "rtf": 0.05742,
+    "prediction": "Et dans la vie marine, ça part du phytoplancton qui lui fournit l'oxygène jusqu'aux grandes baleines, en passant par les grands prédateurs, les thons, les dauphins. Et parmi ces espèces, il y en a qui sont écologiquement plus importantes que les autres, notamment les requins."
+  },
+  "TEDX_fr_max30_n5Pq6o9rIZQ_782.8": {
+    "audio_filepath": "/home/data/audio/converted_audios/transcript/fr/Multilingual_TEDx/n5Pq6o9rIZQ.wav",
+    "id": "TEDX_fr_max30_n5Pq6o9rIZQ_782.8",
+    "audio_duration": 23.13,
+    "audio_offset": 782.82,
+    "dataset": "TEDX_fr",
+    "full_dataset": "TEDX_fr_max30",
+    "text": "Curiosity est aussi équipé d'une petite perceuse, d'une petite foreuse, je vais faire un zoom sur cette photo, on peut voir le trou qui a été creusé dans la roche, qui se révèle être une argile, donc une roche qui s'est formée en présence d'eau aussi, et on remarque que la poudre de cette roche a une couleur différente, elle est grisâtre, elle est différente de la couleur de la surface martienne qui est rouge.",
+    "prediction_duration": 1.78777,
+    "rtf": 0.07729,
+    "prediction": "Curiosity est aussi équipé d'une petite perceuse, d'une petite foreuse. Je vais faire un zoom sur cette photo. On peut voir le trou qui a été creusé dans la roche, qui se révèle être une argile, donc une roche qui s'est formée en présence d'eau aussi. Et on remarque que la poudre de cette roche a une couleur différente. Elle est grisâtre, elle est différente de la couleur de la surface martienne qui est rouge."
+  },
+  "TEDX_fr_max30_n5Pq6o9rIZQ_812.3": {
+    "audio_filepath": "/home/data/audio/converted_audios/transcript/fr/Multilingual_TEDx/n5Pq6o9rIZQ.wav",
+    "id": "TEDX_fr_max30_n5Pq6o9rIZQ_812.3",
+    "audio_duration": 20.66,
+    "audio_offset": 812.26,
+    "dataset": "TEDX_fr",
+    "full_dataset": "TEDX_fr_max30",
+    "text": "Eh bien, en réunissant tous les résultats, de tous ces instruments, et le savoir de tous ces chercheurs impliqués sur ce projet, on est arrivé à la conclusion, que cette région de Mars, lorsque ces roches se sont formées, il y a plusieurs milliards d'années, réunissaient les conditions de l'habitabilité.",
+    "prediction_duration": 1.38465,
+    "rtf": 0.06702,
+    "prediction": "Eh bien, en réunissant tous les résultats de tous ces instruments, et le savoir de tous ces chercheurs impliqués sur ce projet, on est arrivé à la conclusion que cette région de Mars, lorsque ces roches se sont formées il y a plusieurs milliards d'années, réunissaient les conditions de l'habitabilité."
+  }
+}
