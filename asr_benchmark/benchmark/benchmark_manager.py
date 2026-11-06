@@ -240,21 +240,21 @@ def process_result(iterator, bench_result, output_folder, config, save_interval=
             write_results(bench_result, dataset)
     write_results(bench_result, dataset)
 
-def utterance_errors(raw_alignment, character_level=False):
-    """(errors, reference length) of each utterance, from compute_wer's word-level
-    alignment ("raw_alignement"). compute_wer aligns characters over the whole corpus
-    at once, so character counts are recomputed per utterance from the normalized
-    words of the word-level alignment."""
-    if character_level:
-        counts = []
-        for ref, hyp in zip(raw_alignment.references, raw_alignment.hypotheses):
-            ref, hyp = " ".join(ref), " ".join(hyp)
-            if not ref:
-                counts.append((len(hyp), 0))
-                continue
-            out = jiwer.process_characters(ref, hyp)
-            counts.append((out.substitutions + out.deletions + out.insertions, out.substitutions + out.deletions + out.hits))
-        return counts
+def character_measures(raw_alignment):
+    """(substitutions, deletions, insertions, hits) in characters of each utterance, aligned
+    one by one from the normalized words of compute_wer's word-level alignment. Not
+    compute_wer(character_level=True), which aligns the whole corpus as one string: a
+    prediction could match a neighbouring reference, so the score depended on the order."""
+    measures = []
+    for ref, hyp in zip(raw_alignment.references, raw_alignment.hypotheses):
+        ref, hyp = " ".join(ref), " ".join(hyp)
+        out = jiwer.process_characters(ref, hyp) if ref else None
+        measures.append((out.substitutions, out.deletions, out.insertions, out.hits) if out else (0, 0, len(hyp), 0))
+    return measures
+
+
+def utterance_errors(raw_alignment):
+    """(errors, reference length) in words of each utterance, from compute_wer's word-level alignment ("raw_alignement")."""
     counts = []
     for chunks in raw_alignment.alignments:
         errors = length = 0
@@ -274,9 +274,8 @@ def bootstrap_ci(counts, score, n_resamples=1000, level=0.95, seed=0):
     each resample draws as many (errors, reference length) pairs as the test set,
     with replacement, and recomputes sum(errors) / sum(lengths).
 
-    The interval is shifted onto `score`, the corpus-level rate: per-utterance
-    character counts slightly differ from compute_wer's (which aligns the whole
-    corpus as one string), word counts do not."""
+    The interval is shifted onto `score`, the rate of the counts after the per-file
+    cap is removed from the insertions only (a no-op shift when nothing is capped)."""
     counts = np.array(counts, dtype=float)
     idx = np.random.default_rng(seed).integers(0, len(counts), size=(n_resamples, len(counts)))
     sample = counts[idx].sum(axis=1)
@@ -309,29 +308,34 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
 
     word_alignments = {}  # normalization -> word-level alignment, reused by the cer mode
     for key in modes:
-        # The word-level alignment feeds the confidence intervals; its text dump is
-        # only kept when asked (alignment_dir).
-        alignment = os.devnull
-        if alignment_dir:
-            (Path(alignment_dir) / key).mkdir(parents=True, exist_ok=True)
-            alignment = str(Path(alignment_dir) / key / (dataset + ".txt"))
         normalization = f"{language}+" if "nocasepunc" in key else ""
-        refs, preds = texts["nocasepunc" if "nocasepunc" in key else "punc"]
-        wer_score = compute_wer(
-            refs,
-            preds,
-            normalization=normalization,
-            character_level="cer" in key,
-            use_percents=True,
-            alignment=alignment,
-            replacements_pred=REPLACEMENTS_WER,
-            replacements_ref=REPLACEMENTS_WER,
-        )
         if "cer" in key:
-            counts = utterance_errors(word_alignments[normalization], character_level=True)
+            measures = character_measures(word_alignments[normalization])
+            sub, dele, ins, hits = map(sum, zip(*measures))
+            count = sub + dele + hits
+            pct = lambda x: 100 * x / max(count, 1)
+            wer_score = {"del": pct(dele), "ins": pct(ins), "sub": pct(sub), "hits": pct(hits), "count": count, "wer": pct(sub + dele + ins)}
+            counts = [(s + d + i, s + d + h) for s, d, i, h in measures]
         else:
-            word_alignments[normalization] = wer_score["raw_alignement"]
-            counts = utterance_errors(wer_score["raw_alignement"])
+            # The word-level alignment feeds the cer mode and the confidence intervals;
+            # its text dump is only kept when asked (alignment_dir).
+            alignment = os.devnull
+            if alignment_dir:
+                (Path(alignment_dir) / key).mkdir(parents=True, exist_ok=True)
+                alignment = str(Path(alignment_dir) / key / (dataset + ".txt"))
+            refs, preds = texts["nocasepunc" if "nocasepunc" in key else "punc"]
+            wer_score = compute_wer(
+                refs,
+                preds,
+                normalization=normalization,
+                use_percents=True,
+                alignment=alignment,
+                replacements_pred=REPLACEMENTS_WER,
+                replacements_ref=REPLACEMENTS_WER,
+            )
+            word_alignments[normalization] = wer_score.pop("raw_alignement")
+            del wer_score["alignment"]
+            counts = utterance_errors(word_alignments[normalization])
         # Each file's errors are capped at its reference length (100% WER), so that one
         # hallucination loop does not dominate the dataset score. Only insertions can
         # exceed the reference length, so the excess is removed from them.
@@ -340,8 +344,6 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
         wer_score["ins"] -= excess
         wer_score["wer"] -= excess
         wer_score["ci95"] = bootstrap_ci(capped, wer_score["wer"])
-        del wer_score['alignment']
-        del wer_score['raw_alignement']
         results[key] = wer_score
     return results
 
