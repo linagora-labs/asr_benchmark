@@ -124,6 +124,11 @@ benchmarks:
     model: Qwen/Qwen3-ASR-1.7B
     port: 8106
     language: fr
+  - backend: vllm
+    model: Qwen/Qwen3-ASR-0.6B
+    port: 8119
+    language: fr
+    concurrency: 128
   - backend: vibevoice-asr
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
@@ -151,6 +156,10 @@ benchmarks:
     - nvidia/canary-1b-v2
     - nvidia/parakeet-tdt-0.6b-v3
     batch_size: 64
+    language: fr
+  - backend: nemo
+    model: nvidia/canary-1b-flash
+    batch_size: 128
     language: fr
   - backend: nemo
     model:
@@ -182,3 +191,8 @@ benchmarks:
     model: openai/whisper-large-v3-turbo
     port: 8107
     language: fr
+  - backend: vllm
+    model: bofenghuang/whisper-large-v3-french-distil-dec16
+    port: 8120
+    language: fr
+    concurrency: 128

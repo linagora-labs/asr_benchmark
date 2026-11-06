@@ -1,0 +1,30 @@
+{
+    "backend": "nemo",
+    "model": "nvidia/canary-1b-flash",
+    "language": "fr",
+    "compute_rtf": false,
+    "vad": "false",
+    "device": "cuda",
+    "num_threads": null,
+    "input_manifest": "/tmp/manifest_b3y4pzc5.jsonl",
+    "save_predictions": false,
+    "save_alignments": true,
+    "compute_latency": false,
+    "plot_monitoring": false,
+    "input_audios_paths": "",
+    "word_timestamps": true,
+    "model_info": {
+        "hf": "nvidia/canary-1b-flash",
+        "license": "cc-by-4.0",
+        "params": 883554432,
+        "languages": [
+            "en",
+            "de",
+            "es",
+            "fr"
+        ],
+        "architecture": "Encoder-decoder",
+        "task": "ASR/AST",
+        "streaming": false
+    }
+}
