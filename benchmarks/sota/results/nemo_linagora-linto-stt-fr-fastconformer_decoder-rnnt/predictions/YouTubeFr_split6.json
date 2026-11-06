@@ -626,7 +626,7 @@
     "audio_offset": 3291.601,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Non. Queer, I love., Queer!",
+    "text": "Non. Queer, I love. Queer!",
     "prediction": "mieux"
   },
   "YouTubeFr_split6_tavhYxieStE_410.1": {
@@ -826,7 +826,7 @@
     "audio_offset": 1006.253,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Est-ce que c'est nécessaire d'aller sur une autre planète avec des armes?, Bien, oui, quand même, pour se défendre des extraterrestres. Tu sais, ceux qui vivent dans l'espace., Ah, ouais, se défendre... Moi, je ferais plus ça à coups de poésie, peut-être.",
+    "text": "Est-ce que c'est nécessaire d'aller sur une autre planète avec des armes? Bien, oui, quand même, pour se défendre des extraterrestres. Tu sais, ceux qui vivent dans l'espace. Ah, ouais, se défendre... Moi, je ferais plus ça à coups de poésie, peut-être.",
     "prediction": "est-ce que c'est nécessaire d'aller sur une autre planète avec des armes oui quand même un petit peu pour se défendre des extraterrestres se défend moi je repluse ça à coup de poing peut-être"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1021.5": {
@@ -836,7 +836,7 @@
     "audio_offset": 1021.468,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Écoutez, j'ai pas l'impression que vous avez... Tu sais, quand on a mis l'annonce sur Internet, il y avait un gros triangle avec un point d'exclamation dedans disant : Urgence. J'ai pas l'impression que..., L'urgence de l'art, ouais. Aller sur Mars, aller faire de la poésie, ou peut-être, je sais pas, mettre en scène des spectacles qui touchent les valeurs des gens qui sont sur Mars. J'ai envie qu'on explore l'univers puis qu'on découvre leur sensibilité, puis qu'on puisse la mettre..., Karmminna?",
+    "text": "Écoutez, j'ai pas l'impression que vous avez... Tu sais, quand on a mis l'annonce sur Internet, il y avait un gros triangle avec un point d'exclamation dedans disant : Urgence. J'ai pas l'impression que... L'urgence de l'art, ouais. Aller sur Mars, aller faire de la poésie, ou peut-être, je sais pas, mettre en scène des spectacles qui touchent les valeurs des gens qui sont sur Mars. J'ai envie qu'on explore l'univers puis qu'on découvre leur sensibilité, puis qu'on puisse la mettre... Karmminna?",
     "prediction": "écoutez j'ai pas l'impression que vous avez quand on a mis l'annonce sur internet il y avait un gros triangle avec un point d'exclamation dedans urgent que vous avez comme l'urgence de l'art aller sur mars allez faire de la poésie ou peut-être je sais pas mettre en scène des spectacles qui touchent les valeurs des gens qui sont sur mars j'ai envie qu'on explore l'univers puisqu'on découvre leur sensibilité puisqu'on puisse la mettre"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1050.2": {
@@ -846,7 +846,7 @@
     "audio_offset": 1050.199,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Là, je comprends que t'es sensible. Toi, t'es poisson, dans la vie?, Hum-hum., Là, il va vraiment falloir que tu prennes sur toi, parce qu'on est les deux seuls ; il n'y a plus personne. Je sais pas si tu as vu, mais il n'y a plus personne. Moi, j'ai pris ton CV, je l'ai pris, puis on va y aller. Peut-être que tu pourrais faire de l'art, des couleurs, dans l'espace, je sais pas. Tu pitcheras des pots de peinture et ils flotteront.",
+    "text": "Là, je comprends que t'es sensible. Toi, t'es poisson, dans la vie? Hum-hum. Là, il va vraiment falloir que tu prennes sur toi, parce qu'on est les deux seuls ; il n'y a plus personne. Je sais pas si tu as vu, mais il n'y a plus personne. Moi, j'ai pris ton CV, je l'ai pris, puis on va y aller. Peut-être que tu pourrais faire de l'art, des couleurs, dans l'espace, je sais pas. Tu pitcheras des pots de peinture et ils flotteront.",
     "prediction": "si je comprends que tu es sent tes poissons envie il va vraiment savoir que tu prennes par dessus parce qu'on est de celle de plus personne tu peux te vu là il n'y a plus personne moi j'ai pris ton service j'ai pris on voit y aller que tu préfères de l'air des couleurs dans l'espace je sais pas que tu seras des pots de peinture ils flotteront"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_106.2": {
@@ -876,7 +876,7 @@
     "audio_offset": 1076.756,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "O... O... OK, mais..., Tu sais, on... Vas-y. Mais quoi?",
+    "text": "O... O... OK, mais... Tu sais, on... Vas-y. Mais quoi?",
     "prediction": "ok ok mais quoi"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1082.6": {
@@ -886,7 +886,7 @@
     "audio_offset": 1082.595,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Je me disais : Si on apportait les machines à violence, mais qu'on les gardait loin de nous, pour le premier contact, peut-être que ça serait moins menaçant, puis qu'il y aurait moins besoin de l'utiliser., Ouais, je comprends. On va faire une simulation. OK?",
+    "text": "Je me disais : Si on apportait les machines à violence, mais qu'on les gardait loin de nous, pour le premier contact, peut-être que ça serait moins menaçant, puis qu'il y aurait moins besoin de l'utiliser. Ouais, je comprends. On va faire une simulation. OK?",
     "prediction": "me disait si on apportait les machines à violence mais qu'on les gardait loin de nous pour le premier contact peut-être que ce serait moins menaçant et qui aurait moins besoin de l'utiliser ouais je comprends on va faire une similation oui"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1099.2": {
@@ -906,7 +906,7 @@
     "audio_offset": 1108.639,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Moi, je suis venue de l'espace. Je suis... Je suis... J'ai quatre tentacules. Je suis quelqu'un d'autre. Attaque-moi avec ton coeur., Je t'offre amour et bienveillance. J'ai envie que tu saches que tu existes et c'est correct., Ah, c'est correct., Ouais!",
+    "text": "Moi, je suis venue de l'espace. Je suis... Je suis... J'ai quatre tentacules. Je suis quelqu'un d'autre. Attaque-moi avec ton coeur. Je t'offre amour et bienveillance. J'ai envie que tu saches que tu existes et c'est correct. Ah, c'est correct. Ouais!",
     "prediction": "je suis quelqu'un d'autre attaque moi avec tes mots ton coeur ce top amour est bienveillant oui j'envie que tu saches tu existes"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1125.3": {
@@ -936,7 +936,7 @@
     "audio_offset": 1138.027,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Ah, je saigne du nez. C'est con., Je m'excuse. Je m'excuse., Non, c'est correct., C'est le bisou très puissant., Ouais, j'ai vu ça., Je vous ai peut-être sous-estimée. Peut-être que vous avez une puissance. Avez-vous autre chose? Êtes-vous capable de... Ah! Êtes-vous capable de faire autre chose que juste des bisous?",
+    "text": "Ah, je saigne du nez. C'est con. Je m'excuse. Je m'excuse. Non, c'est correct. C'est le bisou très puissant. Ouais, j'ai vu ça. Je vous ai peut-être sous-estimée. Peut-être que vous avez une puissance. Avez-vous autre chose? Êtes-vous capable de... Ah! Êtes-vous capable de faire autre chose que juste des bisous?",
     "prediction": "très puissant une puissance approche capable de vous capable d'avoir une chose que je dis bisous"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1153.5": {
@@ -946,7 +946,7 @@
     "audio_offset": 1153.524,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "C'est tout ce que j'ai envie de faire., Ah, merde, j'ai l'impression qu'avec vous, je deviens une meilleure personne, c'est niaiseux...",
+    "text": "C'est tout ce que j'ai envie de faire. Ah, merde, j'ai l'impression qu'avec vous, je deviens une meilleure personne, c'est niaiseux...",
     "prediction": "c'était tout ce que j'ai envie de faire merci avec vous j'avais une meilleure personne seigneur"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_116.7": {
@@ -966,7 +966,7 @@
     "audio_offset": 1163.694,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Oh! Très belle rencontre., Et on poursuit avec une improvisation de nature mixte ayant pour thème :",
+    "text": "Oh! Très belle rencontre. Et on poursuit avec une improvisation de nature mixte ayant pour thème :",
     "prediction": "très bonne rencontre et en pour ceux qui l'improvisations de nature mixte et en pour thème"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1171.8": {
@@ -1016,7 +1016,7 @@
     "audio_offset": 1202.415,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "C'est un thème qu'on ne savait pas avant le match., Non, c'est ça, on vient juste de l'apprendre nous aussi., On a demandé à des gens de nous donner des idées.",
+    "text": "C'est un thème qu'on ne savait pas avant le match. Non, c'est ça, on vient juste de l'apprendre nous aussi. On a demandé à des gens de nous donner des idées.",
     "prediction": "on ne savait pas à main on a déjà"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1214.9": {
@@ -1036,7 +1036,7 @@
     "audio_offset": 1219.631,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "où on pourrait pas arriver à un terrain d'entente. Comme, par exemple, je mets mes petits sacs sur le bord de la porte..., Ouais.,... puis un moment donné, ils disparaissent, puis je sais pas si c'est de votre faute ou non., Hum-hum.",
+    "text": "où on pourrait pas arriver à un terrain d'entente. Comme, par exemple, je mets mes petits sacs sur le bord de la porte... Ouais. puis un moment donné, ils disparaissent, puis je sais pas si c'est de votre faute ou non. Hum-hum.",
     "prediction": "où on pourrait pas arriver à un terrain d'entente comme par exemple je mets mes petits sacs sur le bord de la porte pis un moment donné ils disparaissent puis je sais pas si c'est que votre fond"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1235.6": {
@@ -1056,7 +1056,7 @@
     "audio_offset": 1242.219,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Je comprends que je te charge peut-être cher, mais moi, de la marde devant chez nous, ça m'intéresse pas., Ouais, je comprends.",
+    "text": "Je comprends que je te charge peut-être cher, mais moi, de la marde devant chez nous, ça m'intéresse pas. Ouais, je comprends.",
     "prediction": "je comprends que je te charge tes chairs mais moi de la marque devant chez nous ça monsieur'intéresse pas on rend tu comprends"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1256.4": {
@@ -1066,7 +1066,7 @@
     "audio_offset": 1256.424,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "J'ai tout ferait ça moi-même., Mais je vais rester ferme sur mes intentions,",
+    "text": "J'ai tout ferait ça moi-même. Mais je vais rester ferme sur mes intentions,",
     "prediction": "peut-être ça moi mais je vois rester ferme sur mes intentions"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1271.5": {
@@ -1086,7 +1086,7 @@
     "audio_offset": 1277.226,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "C'est du pavé uni., C'est du pavé uni.",
+    "text": "C'est du pavé uni. C'est du pavé uni.",
     "prediction": "tu pas fait uni c'est pas vu unique"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1282.7": {
@@ -1096,7 +1096,7 @@
     "audio_offset": 1282.737,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "c'est tout en quinconce.,... c'est tout en quinconce.",
+    "text": "c'est tout en quinconce. c'est tout en quinconce.",
     "prediction": "tout en quincon tout en quincon"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1286.8": {
@@ -1106,7 +1106,7 @@
     "audio_offset": 1286.75,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Toute cette roche-là, c'est moi qui l'ai coupée., Ah ouais?, À la main.",
+    "text": "Toute cette roche-là, c'est moi qui l'ai coupée. Ah ouais? À la main.",
     "prediction": "c'est moi qui l'a coupé"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1292.6": {
@@ -1116,7 +1116,7 @@
     "audio_offset": 1292.6,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Ça fait que tes petits crisses de sacs de vidanges..., Je vais vous demander d'être poli, M. Tanguay. Je vois pas pourquoi on mêlerait Jésus à ça.",
+    "text": "Ça fait que tes petits crisses de sacs de vidanges... Je vais vous demander d'être poli, M. Tanguay. Je vois pas pourquoi on mêlerait Jésus à ça.",
     "prediction": "affective de sacs de vidange à vous demander d'être poli monsieur tangué je vois pas pourquoi on mêlerait jésus à son"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1310.4": {
@@ -1126,7 +1126,7 @@
     "audio_offset": 1310.371,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "j'aimerais que vous aillez les portez chez le voisin., Mais il y a beaucoup de choses que j'aimerais, si on ouvre la porte à nos envies., Allez-y!",
+    "text": "j'aimerais que vous aillez les portez chez le voisin. Mais il y a beaucoup de choses que j'aimerais, si on ouvre la porte à nos envies. Allez-y!",
     "prediction": "j'aimerais que vous ayez porter chez le voisin il y a beaucoup de choses que j'aimerais si on ouvre la porte à nos enfants"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1325.9": {
@@ -1146,7 +1146,7 @@
     "audio_offset": 1332.061,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "J'ai jamais même eu d'accusé de réception. Ça fait que tant que j'aurai pas au moins un accusé de réception, vos petits crisses... Ah non!, Ouais., Je suis en train de mêler Jésus!",
+    "text": "J'ai jamais même eu d'accusé de réception. Ça fait que tant que j'aurai pas au moins un accusé de réception, vos petits crisses... Ah non! Ouais. Je suis en train de mêler Jésus!",
     "prediction": "jamais aimé d'accuser réception mais que j'aurais beau tuer à une accusé réception"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1346.1": {
@@ -1156,7 +1156,7 @@
     "audio_offset": 1346.149,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Vos petits crimes-bines de sacs de marde, ils vont rester sur votre pavé uni en quinconce., Je peux-tu vous dire quelque chose, Sabrina?, Oui.",
+    "text": "Vos petits crimes-bines de sacs de marde, ils vont rester sur votre pavé uni en quinconce. Je peux-tu vous dire quelque chose, Sabrina? Oui.",
     "prediction": "groupe scrambin de sacs de marge ils vont rester sur votre pavé huni à king kong je peux tout vous dire quelque chose à brin oui"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1356.0": {
@@ -1166,7 +1166,7 @@
     "audio_offset": 1355.959,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "La raison pourquoi je veux pas qu'il y ait de sacs de vidanges sur mon pavé..., Je voudrais que vous me parliez de l'amour que j'ai pour vous., Regardez, que je les enlève, vos sacs,, Ouais.",
+    "text": "La raison pourquoi je veux pas qu'il y ait de sacs de vidanges sur mon pavé... Je voudrais que vous me parliez de l'amour que j'ai pour vous. Regardez, que je les enlève, vos sacs, Ouais.",
     "prediction": "la raison pourquoi je veux pas qu'il y ait des sacs de vidange sur mon pavé je voudrais que vous me parliez de l'amour que j'ai pour vous garder quand j'ai"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1375.3": {
@@ -1176,7 +1176,7 @@
     "audio_offset": 1375.294,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "pour que vous le voyiez de votre troisième!, Mais pourquoi vous avez pas répondu à mon échange?",
+    "text": "pour que vous le voyiez de votre troisième! Mais pourquoi vous avez pas répondu à mon échange?",
     "prediction": "vous le moyenne ma troisième pourquoi ça dépend répondu à mon écharge"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_138.3": {
@@ -1216,7 +1216,7 @@
     "audio_offset": 1398.812,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Hé, ç'a commencé dans la confrontation. Ça va sans doute finir dans une réception dans les Cantons-de-l'Est., C'est maintenant la dernière improvisation de cette première période.",
+    "text": "Hé, ç'a commencé dans la confrontation. Ça va sans doute finir dans une réception dans les Cantons-de-l'Est. C'est maintenant la dernière improvisation de cette première période.",
     "prediction": "commencé la confrontation c'est maintenant la dernière improvisation de cette première période"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_14.5": {
@@ -1286,7 +1286,7 @@
     "audio_offset": 1452.777,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "durée de deux minutes. Consultation!, Oh! Alors, là, Zoé, Thomas, il y a beaucoup de paramètres à mettre dans la tête des improvisateurs. Très rapidement, un joueur par équipe. Il va être seul. Il ne pourra pas être aidé. Il doit donc chanter avec un thème et une contrainte. Wow!, Je voudrais pas être à leur place.",
+    "text": "durée de deux minutes. Consultation! Oh! Alors, là, Zoé, Thomas, il y a beaucoup de paramètres à mettre dans la tête des improvisateurs. Très rapidement, un joueur par équipe. Il va être seul. Il ne pourra pas être aidé. Il doit donc chanter avec un thème et une contrainte. Wow! Je voudrais pas être à leur place.",
     "prediction": "durée de deux minutes consultablement il y a beaucoup de paramètres à mettre dans la tête des avant savants très rapidement rejoints par équipe va traîner doit donc chanter avec un thème contraint"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1488.1": {
@@ -1436,7 +1436,7 @@
     "audio_offset": 1609.875,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Bada bim! Bada boum!, J'en reviens pas., Oh my God!",
+    "text": "Bada bim! Bada boum! J'en reviens pas. Oh my God!",
     "prediction": "ô my gars"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1617.8": {
@@ -1446,7 +1446,7 @@
     "audio_offset": 1617.78,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Oui, enchantée., Wow!",
+    "text": "Oui, enchantée. Wow!",
     "prediction": ""
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1623.8": {
@@ -1576,7 +1576,7 @@
     "audio_offset": 1766.473,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Et l'arbitre, Simon Rousseau, comme d'habitude, mais juste avant de démarrer les hostilités, de la deuxième période, j'accueille, encore une fois, Zoé, Thomas, qui vont nous expliquer, on a un petit quelque chose à vous faire faire, une petite participation. Les joueurs, joueuses, vous êtes pas au courant, vous êtes un petit peu impliqués dans ce qui s'en vient., Oh, que oui!, Surprise!",
+    "text": "Et l'arbitre, Simon Rousseau, comme d'habitude, mais juste avant de démarrer les hostilités, de la deuxième période, j'accueille, encore une fois, Zoé, Thomas, qui vont nous expliquer, on a un petit quelque chose à vous faire faire, une petite participation. Les joueurs, joueuses, vous êtes pas au courant, vous êtes un petit peu impliqués dans ce qui s'en vient. Oh, que oui! Surprise!",
     "prediction": "et l'armée de simon rousseau comme d'habitude est juste avant de démarrer les hostilités de la deuxième période j'accueille encore une fois zo et thomas qui vont nous expliquer on a dit quelque chose à vous faire faire petite participation les joueurs joueurs vous êtes au courant mais vous êtes un petit peu impliqué dans ce"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1785.5": {
@@ -1596,7 +1596,7 @@
     "audio_offset": 1796.589,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Et cette pauvre personne va être obligée de faire une entrevue avec moi devant tout le monde., Vous allez être obligés de dire la vérité.",
+    "text": "Et cette pauvre personne va être obligée de faire une entrevue avec moi devant tout le monde. Vous allez être obligés de dire la vérité.",
     "prediction": "cette pauvre personne va être obligé de faire une entrevue avec moi devant tout le monde elle est obligé de rire de dire la vérité"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1802.5": {
@@ -1606,7 +1606,7 @@
     "audio_offset": 1802.453,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Thomas, je te demande de piger., On pige., On va voir qui a voté pour le parti conservateur ici.",
+    "text": "Thomas, je te demande de piger. On pige. On va voir qui a voté pour le parti conservateur ici.",
     "prediction": "je te demande de piger on le"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1807.6": {
@@ -1626,7 +1626,7 @@
     "audio_offset": 1814.151,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Alors, t'es bien prêt? Voilà, tu peux te mettre en nous deux., Oh, attention., Alors, on commence. T'es prêt?, Un, deux... Oui., Friperie ou vêtements neufs?, Euh, vêtements neufs., Oh là là, ça commence fort!",
+    "text": "Alors, t'es bien prêt? Voilà, tu peux te mettre en nous deux. Oh, attention. Alors, on commence. T'es prêt? Un, deux... Oui. Friperie ou vêtements neufs? Euh, vêtements neufs. Oh là là, ça commence fort!",
     "prediction": "alors c'est bien prêt voilà tu peux être deux alors commencer ou vêtements neuf vêtements neuf"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1827.9": {
@@ -1636,7 +1636,7 @@
     "audio_offset": 1827.876,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Mais très, très rarement!, Non, mais eille, on a dit en rafale, hein?, OK, excuse-moi, c'est parce que j'ai des vêtements qui datent de vingt ans, pareil, mais...",
+    "text": "Mais très, très rarement! Non, mais eille, on a dit en rafale, hein? OK, excuse-moi, c'est parce que j'ai des vêtements qui datent de vingt ans, pareil, mais...",
     "prediction": "parce que je suis vêtement qui date de"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1838.9": {
@@ -1646,7 +1646,7 @@
     "audio_offset": 1838.94,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Euh, une douche aux deux jours., Yes, sir, bonne réponse!, Bien, une douche par jour., Ça dépend pour qui. Tu te cuisines de la bouffe ou tu te commandes du resto?, Cuisine!, Yes, sir, ouais! T'achètes en vrac ou c'est trop de trouble?, Euh, j'essaie!",
+    "text": "Euh, une douche aux deux jours. Yes, sir, bonne réponse! Bien, une douche par jour. Ça dépend pour qui. Tu te cuisines de la bouffe ou tu te commandes du resto? Cuisine! Yes, sir, ouais! T'achètes en vrac ou c'est trop de trouble? Euh, j'essaie!",
     "prediction": "deux choses deux jours sûr cuisine de la bouffe ou tu te commandes du restaurant cuisine t'achète en vrac ou se mette trop trouble j'essaie"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1857.3": {
@@ -1656,7 +1656,7 @@
     "audio_offset": 1857.344,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Vérité, vérité!, Je sens qu'il va avoir une conséquence à un moment donné. En tout cas! Euh, oui, ça, c'est bon. Quelle action fais-tu chaque jour pour la planète?",
+    "text": "Vérité, vérité! Je sens qu'il va avoir une conséquence à un moment donné. En tout cas! Euh, oui, ça, c'est bon. Quelle action fais-tu chaque jour pour la planète?",
     "prediction": "conséquence c'est bon quelle action faites-tu chaque jour pour la planète"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1874.2": {
@@ -1666,7 +1666,7 @@
     "audio_offset": 1874.188,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Chauffer ton appart ou ta maison à vingt-trois degrés ou t'habiller plus chaudement, puis il fait dix-huit?, Non, il fait dix-neuf tout le temps chez nous., OK, that's it, est-ce que tu laisses couler l'eau du robinet quand tu te brosses les dents?, Pantoute!, Yes, sir! Fais-tu pipi dans la douche?, Euh, non, je le fais devant chez le voisin., Ha! Ha! Ha!",
+    "text": "Chauffer ton appart ou ta maison à vingt-trois degrés ou t'habiller plus chaudement, puis il fait dix-huit? Non, il fait dix-neuf tout le temps chez nous. OK, that's it, est-ce que tu laisses couler l'eau du robinet quand tu te brosses les dents? Pantoute! Yes, sir! Fais-tu pipi dans la douche? Euh, non, je le fais devant chez le voisin. Ha! Ha! Ha!",
     "prediction": "sauf ton appare ta maison à vingt-trois degrés ou tablier plus chaudement puis fait dix-huit alors il fait dix-neuf tout le temps chez nous est-ce que tu laisses couler l'eau du robinet quand tu te brosses les dents pas toutes tu pipi dans la douche non je le fais le voisin"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_189.1": {
@@ -1676,7 +1676,7 @@
     "audio_offset": 189.056,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Clyde., Brandon.",
+    "text": "Clyde. Brandon.",
     "prediction": "brandon"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1894.0": {
@@ -1686,7 +1686,7 @@
     "audio_offset": 1893.95,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Oh, my God! OK et dernière question : c'est quoi, ta pire habitude environnementale?, Je l'ai dit, je gère mal mon frigo, mais ça s'arrange, là, je vais être meilleur., Oui, c'est-tu moi, Zoé, ou ça, ça se mérite une..., Conséquence!, Eh oui!",
+    "text": "Oh, my God! OK et dernière question : c'est quoi, ta pire habitude environnementale? Je l'ai dit, je gère mal mon frigo, mais ça s'arrange, là, je vais être meilleur. Oui, c'est-tu moi, Zoé, ou ça, ça se mérite une... Conséquence! Eh oui!",
     "prediction": "dernière question c'est quoi taper l'habitude environnementale je l'ai dit german mon frigo mais ça s'arrange meilleur ou ça se mérite une conséquence"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1910.0": {
@@ -1696,7 +1696,7 @@
     "audio_offset": 1909.962,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Frédéric., Oui., Ta conséquence va être d'utiliser un mot très compliqué, en lien avec l'environnement, bien sûr, dans une des prochaines improvisations, d'ici la fin du match.",
+    "text": "Frédéric. Oui. Ta conséquence va être d'utiliser un mot très compliqué, en lien avec l'environnement, bien sûr, dans une des prochaines improvisations, d'ici la fin du match.",
     "prediction": "frédéric oui sa conséquence va être d'utiliser un mot très compliqué en lien avec l'environnement bien sûr dans une des prochaines improvisations d'ici à la fin du match"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1922.0": {
@@ -1706,7 +1706,7 @@
     "audio_offset": 1921.979,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Le mot que tu vas devoir utiliser est... eutrophisation!, Eutrophisation, parfait!",
+    "text": "Le mot que tu vas devoir utiliser est... eutrophisation! Eutrophisation, parfait!",
     "prediction": "le mot que tu dois devoir utiliser est eutraphisation"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_193.3": {
@@ -1726,7 +1726,7 @@
     "audio_offset": 1930.41,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Eutrophisation, OK?, Oh, my God!, Eutrophisation, mettons qu'on se met une petite mise en contexte pour tout le monde, là, c'est quand un milieu aquatique va finir par mourir, à cause d'une accumulation de nutriments, ça fait que là, ça va faire qu'il n'y a comme plus d'oxygène. Ça fait que là..., En version simple, Zoé?, Dans le fond, c'est quand un lac meurt.",
+    "text": "Eutrophisation, OK? Oh, my God! Eutrophisation, mettons qu'on se met une petite mise en contexte pour tout le monde, là, c'est quand un milieu aquatique va finir par mourir, à cause d'une accumulation de nutriments, ça fait que là, ça va faire qu'il n'y a comme plus d'oxygène. Ça fait que là... En version simple, Zoé? Dans le fond, c'est quand un lac meurt.",
     "prediction": "un concerne en contexte pour tout le monde c'est quand un milieu aquatique va finir par mourir à cause d'une accumulation de nutriment avec le savant qui a comme plus d'oxygène avec en version cinq zoé c'est quand un lac mark"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1948.1": {
@@ -1736,7 +1736,7 @@
     "audio_offset": 1948.144,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Il eutrophie., C'est ça. Puis, là, public, on essaie d'être réactif parce qu'on veut, entendre quand il va dire : Eutrophisation., Vous êtes complices!, On est comme... on est là.",
+    "text": "Il eutrophie. C'est ça. Puis, là, public, on essaie d'être réactif parce qu'on veut, entendre quand il va dire : Eutrophisation. Vous êtes complices! On est comme... on est là.",
     "prediction": "public on essaie d'être très actif"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1956.2": {
@@ -1746,7 +1746,7 @@
     "audio_offset": 1956.176,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Parfait, j'ai tellement hâte de voir dans quel contexte il va utiliser le mot eutrophisation., J'ai très hâte. Mais là, Frédéric, on comprend que c'est quand même une contrainte de plus pour vous, votre équipe, alors on a décidé d'aussi donner une conséquence à l'autre équipe., Eh oui, bien oui!, Alors, Frédéric, je te demanderais de choisir quelqu'un de l'autre équipe qui va se mériter une conséquence. Qui va peut-être pas se mériter, mais nous..., Euh, non, tu veux trop en disant non.",
+    "text": "Parfait, j'ai tellement hâte de voir dans quel contexte il va utiliser le mot eutrophisation. J'ai très hâte. Mais là, Frédéric, on comprend que c'est quand même une contrainte de plus pour vous, votre équipe, alors on a décidé d'aussi donner une conséquence à l'autre équipe. Eh oui, bien oui! Alors, Frédéric, je te demanderais de choisir quelqu'un de l'autre équipe qui va se mériter une conséquence. Qui va peut-être pas se mériter, mais nous... Euh, non, tu veux trop en disant non.",
     "prediction": "dans quel contexte utiliser le mot utrophisation mais frédéric on comprend que c'est quand même une contrainte de plus pour vous votre équipe alors on a décidé d'aussi donner une conséquence à leur équipe je demanderai de choisir quelqu'un de leur petit vas-mérite une conséquence"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_196.4": {
@@ -1756,7 +1756,7 @@
     "audio_offset": 196.356,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "C'était rendu à ton tour, non?, Je ne m'en rappelle plus. Mais la dernière fois que j'ai pissé, c'était ma pisse, et c'est la pisse que j'avais bue la dernière fois.",
+    "text": "C'était rendu à ton tour, non? Je ne m'en rappelle plus. Mais la dernière fois que j'ai pissé, c'était ma pisse, et c'est la pisse que j'avais bue la dernière fois.",
     "prediction": "s'est rendu à ton tour non répète plume la dernière fois que j'y pissais c'était ma pipe c'est la cisse que j'avais bue la dernière fois"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1981.4": {
@@ -1766,7 +1766,7 @@
     "audio_offset": 1981.441,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Euh, Gabrielle., Gabrielle la capitaine!, Oh!, Gabrielle...",
+    "text": "Euh, Gabrielle. Gabrielle la capitaine! Oh! Gabrielle...",
     "prediction": "gabriel le capitaine"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1990.3": {
@@ -1776,7 +1776,7 @@
     "audio_offset": 1990.284,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Même si elle la veut pas, elle pognée avec., Ouais, c'est ça, je la veux absolument., C'est super le fun., Je veux eutrophisation., Ce sera pas ça., Ça va être un autre mot., OK, c'est pas grave!",
+    "text": "Même si elle la veut pas, elle pognée avec. Ouais, c'est ça, je la veux absolument. C'est super le fun. Je veux eutrophisation. Ce sera pas ça. Ça va être un autre mot. OK, c'est pas grave!",
     "prediction": "je la veux absolument c'est pas je veux être visation"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_1998.2": {
@@ -1786,7 +1786,7 @@
     "audio_offset": 1998.208,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Mais ça va être dans le même concept, on reste avec les mots. Ton mot, ta conséquence, va être d'utiliser, d'ici la fin du match, dans une improvisation, le mot... pergélisol!, OK., Ouais!",
+    "text": "Mais ça va être dans le même concept, on reste avec les mots. Ton mot, ta conséquence, va être d'utiliser, d'ici la fin du match, dans une improvisation, le mot... pergélisol! OK. Ouais!",
     "prediction": "ça va être dans le même contexte que moi on récon ta conséquence va être d'utiliser s'il a fait du match dans une imprécisation le mot pergélisol"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2011.6": {
@@ -1796,7 +1796,7 @@
     "audio_offset": 2011.616,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Ça va, pergélisol, c'est vraiment moins pire., C'est moins pire? Ah, on a une pro du pergélisol ici.",
+    "text": "Ça va, pergélisol, c'est vraiment moins pire. C'est moins pire? Ah, on a une pro du pergélisol ici.",
     "prediction": "j'ai seul c'est vraiment moi été moi on est"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2017.8": {
@@ -1806,7 +1806,7 @@
     "audio_offset": 2017.824,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "C'est quoi, donc?, OK, parfait.",
+    "text": "C'est quoi, donc? OK, parfait.",
     "prediction": ""
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2020.3": {
@@ -1826,7 +1826,7 @@
     "audio_offset": 2050.232,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Ça fait que tu sais..., Écoanxiété, écoanxiété..., C'est ça, tu sais, on entend..., Le but, c'est pas ça. Je sens mon écoanxiété monter., Ça m'angoisse., Est-ce que ça va? Un type de sol qui est gelé., Oui, pendant deux ans., C'est ça., Alors, pergélisol... Eutrophisation pour Frédéric, pergélisol pour Gabrielle!",
+    "text": "Ça fait que tu sais... Écoanxiété, écoanxiété... C'est ça, tu sais, on entend... Le but, c'est pas ça. Je sens mon écoanxiété monter. Ça m'angoisse. Est-ce que ça va? Un type de sol qui est gelé. Oui, pendant deux ans. C'est ça. Alors, pergélisol... Eutrophisation pour Frédéric, pergélisol pour Gabrielle!",
     "prediction": "est-ce que ça veut un type de sol qui est gelé quoi eut"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_206.8": {
@@ -1836,7 +1836,7 @@
     "audio_offset": 206.795,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Hé! C'est ma pisse!, On a dit qu'on partageait tout.",
+    "text": "Hé! C'est ma pisse! On a dit qu'on partageait tout.",
     "prediction": "on a dit qu'on partageait tout"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2069.2": {
@@ -1856,7 +1856,7 @@
     "audio_offset": 2075.201,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "J'ai réparé mon vêtement., On poursuit avec une improvisation de nature mixte ayant pour thème : Le jour du compost.",
+    "text": "J'ai réparé mon vêtement. On poursuit avec une improvisation de nature mixte ayant pour thème : Le jour du compost.",
     "prediction": "emboursu avec une improvisation de nature mixte ayant pour thème le jour du comporte"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2088.4": {
@@ -1886,7 +1886,7 @@
     "audio_offset": 211.431,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Merde!, Clyde!, Brandon!, Tu en gardes pour toi.",
+    "text": "Merde! Clyde! Brandon! Tu en gardes pour toi.",
     "prediction": "clyn bradan changer pour toi"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2110.1": {
@@ -1906,7 +1906,7 @@
     "audio_offset": 2124.028,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "doit être sorti dans le bac brun., Non!",
+    "text": "doit être sorti dans le bac brun. Non!",
     "prediction": "sortie dans"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2128.4": {
@@ -1926,7 +1926,7 @@
     "audio_offset": 2131.467,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Tu l'es plus que moi. Moi, je vais rester à l'intérieur et je ne bougerai pas., Mais j'ai fait ce jour",
+    "text": "Tu l'es plus que moi. Moi, je vais rester à l'intérieur et je ne bougerai pas. Mais j'ai fait ce jour",
     "prediction": "plus l'est plus que moi moi je vais rester à l'intérieur et je ne bougerai pas mais j'ai fait ce jour"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2148.8": {
@@ -1936,7 +1936,7 @@
     "audio_offset": 2148.824,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Ce fardeau, nous allons le faire ensemble, Mathis., Mais je l'ai assez fait pour nous deux!, Pourquoi tu me prends encore la main? J'ai dit non!",
+    "text": "Ce fardeau, nous allons le faire ensemble, Mathis. Mais je l'ai assez fait pour nous deux! Pourquoi tu me prends encore la main? J'ai dit non!",
     "prediction": "ce fardeau nous allons le faire ensemble ma mais je l'ai assez fait pour nous deux pourquoi tu prends encore la main jétine"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_216.6": {
@@ -1966,7 +1966,7 @@
     "audio_offset": 2172.68,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Déjà que tu me forces, à laver la vaisselle avec du savon qui mousse pas et qui coûte trop cher!, Mathis, ne m'oblige pas!",
+    "text": "Déjà que tu me forces, à laver la vaisselle avec du savon qui mousse pas et qui coûte trop cher! Mathis, ne m'oblige pas!",
     "prediction": "déjà que tu me forces à la belle la messelle avec du savon qui mousse pas et qui coûte trop cher match"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2181.6": {
@@ -2066,7 +2066,7 @@
     "audio_offset": 2243.902,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Eutro!, Je dois me confesser.",
+    "text": "Eutro! Je dois me confesser.",
     "prediction": "et je dois me confesser"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2247.6": {
@@ -2086,7 +2086,7 @@
     "audio_offset": 2251.68,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Et le congélateur est déjà plein., Mathis!",
+    "text": "Et le congélateur est déjà plein. Mathis!",
     "prediction": "et le congélateur est déjà plein"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2256.2": {
@@ -2106,7 +2106,7 @@
     "audio_offset": 2267.129,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Je propose le suicide., Non!",
+    "text": "Je propose le suicide. Non!",
     "prediction": "qui repose le suicide"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_227.8": {
@@ -2136,7 +2136,7 @@
     "audio_offset": 2273.286,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "pour des gens aussi perfides que nous!, Qui le fera en premier? Moi, je suis la mère..., Je..., Eutro!",
+    "text": "pour des gens aussi perfides que nous! Qui le fera en premier? Moi, je suis la mère... Je... Eutro!",
     "prediction": "chose aussi perfide que nous qui le fera en premier moi je suis l'un dieu"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2283.1": {
@@ -2146,7 +2146,7 @@
     "audio_offset": 2283.139,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Tue-moi!, Un instant!, Tu tues notre enfant pour ton arrogance!",
+    "text": "Tue-moi! Un instant! Tu tues notre enfant pour ton arrogance!",
     "prediction": "c'est notre emporte pour ton arrogance"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2287.4": {
@@ -2156,7 +2156,7 @@
     "audio_offset": 2287.371,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Il est mort?, Oui, il est mort, il s'est percé le crâne., Et si on le remplissait de notre compost?, Tu as toujours d'excellentes idées. C'est pour ça que je t'ai marié., On le remplit de notre compost et on le fait rentrer",
+    "text": "Il est mort? Oui, il est mort, il s'est percé le crâne. Et si on le remplissait de notre compost? Tu as toujours d'excellentes idées. C'est pour ça que je t'ai marié. On le remplit de notre compost et on le fait rentrer",
     "prediction": "il est mort oui il est mort il s'est percé le crâne et si on le remplissait de notre composte tu as toujours d'excellentes idées si pour ça que je t'ai marié on le remplit de notre composte et on le fait rentrer"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2301.6": {
@@ -2166,7 +2166,7 @@
     "audio_offset": 2301.551,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "chez les voisins., Comme ça, personne ne se rend compte., Comme un cheval..., On le sort et on sort Eutro. On sort l'adolescent de notre vie.",
+    "text": "chez les voisins. Comme ça, personne ne se rend compte. Comme un cheval... On le sort et on sort Eutro. On sort l'adolescent de notre vie.",
     "prediction": "chez les voisins personne ne se rend compte comme un cheval on le sort et on sort trop on sort l'adolescent de notre vie"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2314.1": {
@@ -2176,7 +2176,7 @@
     "audio_offset": 2314.069,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "tu auras pour nous eu une raison d'être., Tu auras pour nous été un fils digne de ce nom.",
+    "text": "tu auras pour nous eu une raison d'être. Tu auras pour nous été un fils digne de ce nom.",
     "prediction": "tu auras pour nous eu une raison d'être tu auras pour nous été un fils digne de ce nom"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2324.4": {
@@ -2196,7 +2196,7 @@
     "audio_offset": 2328.534,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Trois, quatre..., Quatre...",
+    "text": "Trois, quatre... Quatre...",
     "prediction": "trois quatre"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2332.9": {
@@ -2236,7 +2236,7 @@
     "audio_offset": 2360.752,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Pas de pénalité là-dessus!, Ah non! Il y a une pénalité?, Très belle improvisation., Quelle construction incroyable!, Belle utilisation du mot eutrophisation.",
+    "text": "Pas de pénalité là-dessus! Ah non! Il y a une pénalité? Très belle improvisation. Quelle construction incroyable! Belle utilisation du mot eutrophisation.",
     "prediction": "incroyablement et fascination"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2370.4": {
@@ -2276,7 +2276,7 @@
     "audio_offset": 2397.397,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "une minute de chaque côté. Après, droit de réplique, trente secondes de chaque côté. On va finir avec quinze secondes pour l'argument final. La durée totale sera la somme de tout ça., Ha! Ha! Ha!",
+    "text": "une minute de chaque côté. Après, droit de réplique, trente secondes de chaque côté. On va finir avec quinze secondes pour l'argument final. La durée totale sera la somme de tout ça. Ha! Ha! Ha!",
     "prediction": "dix minutes de chaque côté après trois de réplique trente secondes de chaque côté et on va finir avec quinze secondes pour l'argument final la durée totale sera la somme"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_240.6": {
@@ -2496,7 +2496,7 @@
     "audio_offset": 265.568,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Qui parle?, Y a-t-il des survivants qui m'entendent? Allô! Allô?, Merde., Nous sommes présentement une poignée d'êtres humains, aux glissades d'eau de Bromont, et il y a de l'eau. De l'eau! Je répète, de l'eau aux glissades d'eau de Bromont., Les glissades d'eau de Bromont. Mais c'est...",
+    "text": "Qui parle? Y a-t-il des survivants qui m'entendent? Allô! Allô? Merde. Nous sommes présentement une poignée d'êtres humains, aux glissades d'eau de Bromont, et il y a de l'eau. De l'eau! Je répète, de l'eau aux glissades d'eau de Bromont. Les glissades d'eau de Bromont. Mais c'est...",
     "prediction": "qui parle jovimon qui monsieur'entend allons allons présentement une poignée d'être humain au glisseau de bromon il y a de l'eau de l'eau je répète de l'eau au glisse"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2651.0": {
@@ -2536,7 +2536,7 @@
     "audio_offset": 2676.662,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Alors, félicitations pour ce très beau débat., On poursuit avec une improvisation de nature mixte ayant pour thème : bordée de neige.",
+    "text": "Alors, félicitations pour ce très beau débat. On poursuit avec une improvisation de nature mixte ayant pour thème : bordée de neige.",
     "prediction": "l'organisation de ce très beau débat on sait avec une improvisation de nature mixte ayant pour thème bordée de neige"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2690.2": {
@@ -2546,7 +2546,7 @@
     "audio_offset": 2690.158,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Catégorie : à la manière d'une comédie musicale mettant en scène à la fois des personnages pro-environnementaux du côté de la LicUQÀM, et des personnages climatosceptiques du côté de la LNI., Ayoye!",
+    "text": "Catégorie : à la manière d'une comédie musicale mettant en scène à la fois des personnages pro-environnementaux du côté de la LicUQÀM, et des personnages climatosceptiques du côté de la LNI. Ayoye!",
     "prediction": "catégorie à la manière d'une comédie musicale mettant en scène à la fois des personnages pro-environnementaux du côté de la ligucam et des personnages climatosceptiques du côté de l'elenni"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2706.7": {
@@ -2556,7 +2556,7 @@
     "audio_offset": 2706.688,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Et cette belle comédie musicale sera d'une durée de six minutes., Oh!, Oooh!, Alors, on donne le rôle des méchants à la LNI, mais ça, attention, ça peut être un rôle très payant aussi., Vraiment, ça peut être intéressant de jouer les climatosceptiques dans ce genre de situation.",
+    "text": "Et cette belle comédie musicale sera d'une durée de six minutes. Oh! Oooh! Alors, on donne le rôle des méchants à la LNI, mais ça, attention, ça peut être un rôle très payant aussi. Vraiment, ça peut être intéressant de jouer les climatosceptiques dans ce genre de situation.",
     "prediction": "et cette belle comédie musicale sera d'une durée de six minutes alors on donne un rôle des pêcheurs à la rôle ça va les raisons joué dans cette situation"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2723.3": {
@@ -2566,7 +2566,7 @@
     "audio_offset": 2723.258,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Ils ont peut-être plus de modèles en ce moment., Ouais! Ha! Ha! Ha!, Avec l'animation de Christian depuis le début, on se demande, si tu n'en serais pas un, peut-être. Ha! Ha! Ha! Bien, non, on fait des blagues, évidemment.",
+    "text": "Ils ont peut-être plus de modèles en ce moment. Ouais! Ha! Ha! Ha! Avec l'animation de Christian depuis le début, on se demande, si tu n'en serais pas un, peut-être. Ha! Ha! Ha! Bien, non, on fait des blagues, évidemment.",
     "prediction": "on peut être plus de bonne heure voilà avec l'annoncé christian depuis on se demande on fait des blagues évidemment"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2751.6": {
@@ -2576,7 +2576,7 @@
     "audio_offset": 2751.586,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "J'ai mangé de la neige., Bien, oui, ça fond dans la bouche, là.",
+    "text": "J'ai mangé de la neige. Bien, oui, ça fond dans la bouche, là.",
     "prediction": "de la fonde embauche"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2757.4": {
@@ -2586,7 +2586,7 @@
     "audio_offset": 2757.401,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "C'est pas parce que ça te tombe dessus que tu vas mourir., Bien, non, c'est ça. Sacrament, c'est sur le bord d'une avalanche, ostie... À Tremblant, à part de ça., Ouais.",
+    "text": "C'est pas parce que ça te tombe dessus que tu vas mourir. Bien, non, c'est ça. Sacrament, c'est sur le bord d'une avalanche, ostie... À Tremblant, à part de ça. Ouais.",
     "prediction": "pas parce que ça te tombe dessus tu vas mourir c'est ça de l'avalanche en tremblant bord de ça ouais"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2770.1": {
@@ -2606,7 +2606,7 @@
     "audio_offset": 2774.884,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "En juin, toi!, Bien, oui, en juin, toi. Penses-tu que l'aréna en haut, là,",
+    "text": "En juin, toi! Bien, oui, en juin, toi. Penses-tu que l'aréna en haut, là,",
     "prediction": "j'ai oui oui"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2780.8": {
@@ -2636,7 +2636,7 @@
     "audio_offset": 2792.183,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "je te lancerais une réplique pas piquée des vers!, Ah oui! Vas-y. Mais je ne te comprends jamais",
+    "text": "je te lancerais une réplique pas piquée des vers! Ah oui! Vas-y. Mais je ne te comprends jamais",
     "prediction": "te lancer une réplique vos y mais je te comprends jamais"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2808.0": {
@@ -2716,7 +2716,7 @@
     "audio_offset": 2863.054,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Pourquoi tu te plains tant?, Bien, simonac!",
+    "text": "Pourquoi tu te plains tant? Bien, simonac!",
     "prediction": "pourquoi tu plais simona"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2867.2": {
@@ -2736,7 +2736,7 @@
     "audio_offset": 2877.935,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Tu me dis : Fais attention à tes affaires, réchauffement climatique, on pourra pas... Puis, là, t'es content. T'es content! C'est ça qui..., Je suis content de voir que la Terre ne se réchauffe pas!",
+    "text": "Tu me dis : Fais attention à tes affaires, réchauffement climatique, on pourra pas... Puis, là, t'es content. T'es content! C'est ça qui... Je suis content de voir que la Terre ne se réchauffe pas!",
     "prediction": "fais attention à tes enfants réchauffement climatique on pourrait pilotes content c'est content je suis désottent de voir que la terre ne se réjouit pas"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2892.0": {
@@ -2746,7 +2746,7 @@
     "audio_offset": 2891.975,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "No fighting here please., Woh, woh, woh, woh! Hey!",
+    "text": "No fighting here please. Woh, woh, woh, woh! Hey!",
     "prediction": ""
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2895.3": {
@@ -2836,7 +2836,7 @@
     "audio_offset": 2946.947,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Oui, je sais, je suis capable de les mettre., Nice to meet you., Yeah, it was nice to meet you man. Have a good night., Merci, M. Tremblant., Come back anytime!, Yeah, yeah., Gerry Tremblant.",
+    "text": "Oui, je sais, je suis capable de les mettre. Nice to meet you. Yeah, it was nice to meet you man. Have a good night. Merci, M. Tremblant. Come back anytime! Yeah, yeah. Gerry Tremblant.",
     "prediction": "je sais je suis je"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2958.8": {
@@ -2846,7 +2846,7 @@
     "audio_offset": 2958.845,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Là, regarde, c'est simple., Quoi?, Je vais pas te le redire huit fois si tu veux., Dis-moi-le juste une fois., OK.",
+    "text": "Là, regarde, c'est simple. Quoi? Je vais pas te le redire huit fois si tu veux. Dis-moi-le juste une fois. OK.",
     "prediction": "regarde c'est simple quoi te regarder huit fois si tu veux maintenant les choses une fois"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_2972.6": {
@@ -2926,7 +2926,7 @@
     "audio_offset": 3011.123,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Et on skiera encore., On skiera encore?, Oui, on skiera encore.",
+    "text": "Et on skiera encore. On skiera encore? Oui, on skiera encore.",
     "prediction": "et on se tire encore on se tire encore oui on se rend encore"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3019.3": {
@@ -2936,7 +2936,7 @@
     "audio_offset": 3019.337,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Je suis content qu'enfin, tu me comprennes., Moi aussi, je suis content. Puis, je suis content, que tu me comprennes., J'ai jamais osé te le dire, mais...",
+    "text": "Je suis content qu'enfin, tu me comprennes. Moi aussi, je suis content. Puis, je suis content, que tu me comprennes. J'ai jamais osé te le dire, mais...",
     "prediction": "je suis content qu'enfin tu me comprennes moi si je suis content que tu me comprennes j'ai jamais osé te le dire le"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3031.6": {
@@ -2946,7 +2946,7 @@
     "audio_offset": 3031.61,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "je comprends ta vision., Quoi? Je comprends la tienne!, Mais je ne la respecte pas.",
+    "text": "je comprends ta vision. Quoi? Je comprends la tienne! Mais je ne la respecte pas.",
     "prediction": "je comprends ta vision quoi je comprends la tienne mais je ne la respecte pas"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3040.3": {
@@ -2976,7 +2976,7 @@
     "audio_offset": 305.084,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Brandon, et si seulement tu me poussais, au lieu de parler et gaspiller ta salive., Ah!",
+    "text": "Brandon, et si seulement tu me poussais, au lieu de parler et gaspiller ta salive. Ah!",
     "prediction": "si seulement tu me poussais au lieu de parler gaspiller ta salut"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3054.4": {
@@ -3046,7 +3046,7 @@
     "audio_offset": 3086.278,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Non, oui peut-être. Moi, je te le dis la seule chose Qui est bien là-dedans C'est que la terre se réchauffe pas,, Ouais!",
+    "text": "Non, oui peut-être. Moi, je te le dis la seule chose Qui est bien là-dedans C'est que la terre se réchauffe pas, Ouais!",
     "prediction": "oui peut-être moi je t'ai dit la thel la date se réchauffe"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3104.6": {
@@ -3076,7 +3076,7 @@
     "audio_offset": 3117.448,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "écoresponsable, végane et non-binaire, chez Équiterre., Ha! Ha! Ha!",
+    "text": "écoresponsable, végane et non-binaire, chez Équiterre. Ha! Ha! Ha!",
     "prediction": "éco-responsable began et non binaire chez ikiter"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3126.3": {
@@ -3096,7 +3096,7 @@
     "audio_offset": 3152.76,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Je suis pas sûre..., Bien, non, mais qu'est-ce qui te fait douter de même, là?, Non, mais regarde mes pêches, là. Je suis pas sûre. T'es sûre que tout le cuir, ça le fait?, On s'est dit qu'on se déguise en chattes! Ça fait que là,",
+    "text": "Je suis pas sûre... Bien, non, mais qu'est-ce qui te fait douter de même, là? Non, mais regarde mes pêches, là. Je suis pas sûre. T'es sûre que tout le cuir, ça le fait? On s'est dit qu'on se déguise en chattes! Ça fait que là,",
     "prediction": "pas sûr mais non mais qu'est ce qui te fait douter de même le regard il pêche là tu peux sûr tu le cuir ça ça le fait on s'est dit on se déguise en chatte"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3167.3": {
@@ -3106,7 +3106,7 @@
     "audio_offset": 3167.323,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "il y a aucun autre matériel de tissu de vêtement qui fait plus chatte que le cuir. Moi, je suis en cuir de la tête au cul. Tu vas être en cuir de la tête au cul., De la tête au cul, mais là, j'ai des lacets dans le dos. On voit tout mon dos! Il me semble que c'est un peu osé..., Correct. T'as envie de respirer par tous les pores de ta peau., Tu m'as dit de mettre des griffes, mais je suis pas à l'aise, je suis comme : Qu'est-ce que tu veux que je fasse avec ça?, Tu vas tenir ton verre et tu vas rencontrer du monde. C'est ça que tu vas faire., Ah, je sais pas, là!",
+    "text": "il y a aucun autre matériel de tissu de vêtement qui fait plus chatte que le cuir. Moi, je suis en cuir de la tête au cul. Tu vas être en cuir de la tête au cul. De la tête au cul, mais là, j'ai des lacets dans le dos. On voit tout mon dos! Il me semble que c'est un peu osé... Correct. T'as envie de respirer par tous les pores de ta peau. Tu m'as dit de mettre des griffes, mais je suis pas à l'aise, je suis comme : Qu'est-ce que tu veux que je fasse avec ça? Tu vas tenir ton verre et tu vas rencontrer du monde. C'est ça que tu vas faire. Ah, je sais pas, là!",
     "prediction": "il n'y a aucun autre matériel de subvêtement qui fait plus chat que tu sacrer la tête au cul ça est en tuer la tête la tête au cul mais j'ai dit lancer dans le dos on va tourner mon dos ainsi oser envie de respirer pis va revenir mais je suis pas à l'eau je passe avec ça va tenir ton verre puis tu vas rencontrer du monde c'est ça tu as"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3195.9": {
@@ -3116,7 +3116,7 @@
     "audio_offset": 3195.949,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Tu le sais que j'aime pas ça, puis il va y avoir Mathieu là-bas, puis je suis comme... Peut-être que lui, il aime pas ça, le cuir., Peut-être qu'il aime pas ça, mais c'est pas grave. Hein?",
+    "text": "Tu le sais que j'aime pas ça, puis il va y avoir Mathieu là-bas, puis je suis comme... Peut-être que lui, il aime pas ça, le cuir. Peut-être qu'il aime pas ça, mais c'est pas grave. Hein?",
     "prediction": "tu sais que j'aime pas ce biban mathieu là-bas comme dès qu'il y a pas seul peut-être qu'il y a l'aime pas ça n'est-ce pas grave"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3206.3": {
@@ -3126,7 +3126,7 @@
     "audio_offset": 3206.35,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Bien, OK. OK, je comprends ce que tu veux faire, là. Ha! Ha! Ha! Tu te la joues comme il faut que je prenne confiance en moi, puis que je devienne la fille avec le cuir et c'est moi qui lui mets le cuir dessus, c'est ça qu'il faut que je fasse?, Oui, j'ai envie que tu fasses tout ce que tu veux. Moi, j'ai fait cent deux pains fourrés. Viens-t'en.",
+    "text": "Bien, OK. OK, je comprends ce que tu veux faire, là. Ha! Ha! Ha! Tu te la joues comme il faut que je prenne confiance en moi, puis que je devienne la fille avec le cuir et c'est moi qui lui mets le cuir dessus, c'est ça qu'il faut que je fasse? Oui, j'ai envie que tu fasses tout ce que tu veux. Moi, j'ai fait cent deux pains fourrés. Viens-t'en.",
     "prediction": "toute la joue comme il faut que je tienne confiance en moi j'adap et avec le cuir c'est moi qui met le cul dessus c'est quoi que je passe j'envie que tu fasses tout ce que tu veux moi j'ai fait cent deux pain faux"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3228.2": {
@@ -3146,7 +3146,7 @@
     "audio_offset": 3232.617,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Crisse qu'il parle du coeur, ce gars-là., Ça faisait longtemps que j'avais pas ri de même.",
+    "text": "Crisse qu'il parle du coeur, ce gars-là. Ça faisait longtemps que j'avais pas ri de même.",
     "prediction": "qu'est-ce qui parle du coeur ça gold longtemps que j'avais bougué de même"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_324.8": {
@@ -3156,7 +3156,7 @@
     "audio_offset": 324.826,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Il y a de cela si longtemps que j'ai bu de l'eau., Oui, c'est formidable! J'adore l'eau!",
+    "text": "Il y a de cela si longtemps que j'ai bu de l'eau. Oui, c'est formidable! J'adore l'eau!",
     "prediction": ""
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3249.1": {
@@ -3166,7 +3166,7 @@
     "audio_offset": 3249.131,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Allô!, Euh, vous avez pas eu le mémo?, Quel mémo?, Par rapport au costume., Ouais, c'est cool, hein?, C'est beau, mon costume en cuir. Il est tout en cuir., Non, mais c'est parce que c'est ça,",
+    "text": "Allô! Euh, vous avez pas eu le mémo? Quel mémo? Par rapport au costume. Ouais, c'est cool, hein? C'est beau, mon costume en cuir. Il est tout en cuir. Non, mais c'est parce que c'est ça,",
     "prediction": "allô vous avez pas eu mes mots calmeaux par rapport au costume ouais c'est co là c'est bon costume cuir il était en cuir non est-ce que c'est ça"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3266.7": {
@@ -3176,7 +3176,7 @@
     "audio_offset": 3266.661,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Je comprends pas., Bien, parce que vous êtes déguisés en chattes, de un. C'est biné, ça, je veux dire..., Tout à fait.",
+    "text": "Je comprends pas. Bien, parce que vous êtes déguisés en chattes, de un. C'est biné, ça, je veux dire... Tout à fait.",
     "prediction": "je comprends pas parce que vous êtes exact en chat de"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3274.0": {
@@ -3186,7 +3186,7 @@
     "audio_offset": 3274.042,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Le cuir, c'est clairement pas végane., T'aimes pas mon cuir, Mathieu? C'est ça que tu dis?, J'aime pas ton cuir., Dis-y que t'aimes pas son cuir., J'hais ton cuir!, Bien, voyons donc! J'ai mis mon cuir pour... Il me semble que ton profil Instagram, c'est écrit, genre : Cuir, I love.",
+    "text": "Le cuir, c'est clairement pas végane. T'aimes pas mon cuir, Mathieu? C'est ça que tu dis? J'aime pas ton cuir. Dis-y que t'aimes pas son cuir. J'hais ton cuir! Bien, voyons donc! J'ai mis mon cuir pour... Il me semble que ton profil Instagram, c'est écrit, genre : Cuir, I love.",
     "prediction": "j'aime pas ton cuir j'aille ton créé j'ai mis mon créer pour me semble que ton problème sagraphe c'est écrit j'env"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_33.8": {
@@ -3206,7 +3206,7 @@
     "audio_offset": 3301.633,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Bien, on... On peut-tu rentrer pareil?, Bien, oui, crisse!",
+    "text": "Bien, on... On peut-tu rentrer pareil? Bien, oui, crisse!",
     "prediction": "c'est pareil"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3307.1": {
@@ -3226,7 +3226,7 @@
     "audio_offset": 3314.505,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Euh..., Euh..., Euh, bien, j'ai fourré cent deux pains pour nous., Oui, elle a fourré..., Quoi?!",
+    "text": "Euh... Euh... Euh, bien, j'ai fourré cent deux pains pour nous. Oui, elle a fourré... Quoi?!",
     "prediction": "j'ai fourré tant de pain pour nous aller à l'effroi"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3321.2": {
@@ -3236,7 +3236,7 @@
     "audio_offset": 3321.151,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Fourrer..., Voyons donc! cent deux pains?",
+    "text": "Fourrer... Voyons donc! cent deux pains?",
     "prediction": ""
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3328.6": {
@@ -3246,7 +3246,7 @@
     "audio_offset": 3328.57,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Bien, voyons donc!, Oh, my God, ça s'en allait où, ça?, Eille, quel party chez Équiterre!",
+    "text": "Bien, voyons donc! Oh, my God, ça s'en allait où, ça? Eille, quel party chez Équiterre!",
     "prediction": ""
   },
   "YouTubeFr_split6_t1L3raSmXJ4_333.8": {
@@ -3256,7 +3256,7 @@
     "audio_offset": 333.826,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Mets-en dans mon dos., Ils ont pris toute la réserve., Ils ont pris toute la réserve pour s'asperger comme des...,... jouer dans l'eau!, Entends-tu quelqu'un?, Quelle idée ridicule!, Nous devons protéger l'eau à tout prix!",
+    "text": "Mets-en dans mon dos. Ils ont pris toute la réserve. Ils ont pris toute la réserve pour s'asperger comme des... jouer dans l'eau! Entends-tu quelqu'un? Quelle idée ridicule! Nous devons protéger l'eau à tout prix!",
     "prediction": "pour s'asperger comme des jouer dans l'eau entends-tu quelqu'un quel est des ridicules nous devons protéger l'eau à tout prix"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3334.2": {
@@ -3276,7 +3276,7 @@
     "audio_offset": 3337.683,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Merci, tout le monde!, Une bonne fin de soirée!, Merci, mesdames et messieurs!",
+    "text": "Merci, tout le monde! Une bonne fin de soirée! Merci, mesdames et messieurs!",
     "prediction": "bonjour tu ne vas pas troués j'ai bien cevé la bras et"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_3344.9": {
@@ -3326,7 +3326,7 @@
     "audio_offset": 349.783,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Je me battrai jusqu'à ma mort., Va chercher la carabine de papa., Oui!",
+    "text": "Je me battrai jusqu'à ma mort. Va chercher la carabine de papa. Oui!",
     "prediction": "je me battrai jusqu'à ma mort va chercher la carabine de papa oui"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_358.5": {
@@ -3336,7 +3336,7 @@
     "audio_offset": 358.499,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "La glissade spirale., Oui, oui., On l'appelle la toilette, dans mon coin.",
+    "text": "La glissade spirale. Oui, oui. On l'appelle la toilette, dans mon coin.",
     "prediction": "glisse on l'appelle la toilette dans mon coin"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_366.4": {
@@ -3346,7 +3346,7 @@
     "audio_offset": 366.444,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Êtes-vous ici pour notre eau?, Non, nous sommes ici pour s'amuser., Évidemment!, Amusez-vous à sec, alors!, Pardon?, Amusez-vous à sec!, À sec?, À sec!, Assez!",
+    "text": "Êtes-vous ici pour notre eau? Non, nous sommes ici pour s'amuser. Évidemment! Amusez-vous à sec, alors! Pardon? Amusez-vous à sec! À sec? À sec! Assez!",
     "prediction": "faites vous ici pour notre eau non nous sommes ici pour s'amuser évidemment amusez-vous à sec alors amusez-vous à sec à sec assez"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_390.5": {
@@ -3356,7 +3356,7 @@
     "audio_offset": 390.496,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Ah bon?, Ouais.",
+    "text": "Ah bon? Ouais.",
     "prediction": "bon ouais"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_392.8": {
@@ -3366,7 +3366,7 @@
     "audio_offset": 392.825,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Et si nous allions dans le plus creux?, Mais non, non, Clyde, c'est de valeur, parce que nous, nous voulions partager...",
+    "text": "Et si nous allions dans le plus creux? Mais non, non, Clyde, c'est de valeur, parce que nous, nous voulions partager...",
     "prediction": "ainsi nous allions dans le plus creux mais non là cette voila parce que nous nous voulions partager"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_401.4": {
@@ -3376,7 +3376,7 @@
     "audio_offset": 401.354,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "notre... notre piscine à remous!, Notre piscine à remous!, Une piscine à remous?, Vous avez une piscine à remous?, C'est très différent d'une piscine à vague., Tout à fait., Les remous se font...",
+    "text": "notre... notre piscine à remous! Notre piscine à remous! Une piscine à remous? Vous avez une piscine à remous? C'est très différent d'une piscine à vague. Tout à fait. Les remous se font...",
     "prediction": "notre piscine à remous piscine à rebous une piscine à remous vous avez une piscine à remous on va différent d'une piscine à vague les remous se font"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_41.9": {
@@ -3396,7 +3396,7 @@
     "audio_offset": 411.815,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "comme une toilette., En quoi, Clyde...",
+    "text": "comme une toilette. En quoi, Clyde...",
     "prediction": "en toilette"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_420.0": {
@@ -3426,7 +3426,7 @@
     "audio_offset": 436.631,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Mon amour?, Oui., As-tu fini avec le journal?, Euh, oui., Parce que je change le petit., Euh, oui, attends une minute, je vais te l'apporter.",
+    "text": "Mon amour? Oui. As-tu fini avec le journal? Euh, oui. Parce que je change le petit. Euh, oui, attends une minute, je vais te l'apporter.",
     "prediction": "amour oui le journal oui parce que la change est-ce que je veux la porter"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_444.7": {
@@ -3436,7 +3436,7 @@
     "audio_offset": 444.666,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Oui, oui, oui. Oui, bonjour, oui, oui, oui., Penses-tu que ça va lui faire faire de l'érythème fessier?",
+    "text": "Oui, oui, oui. Oui, bonjour, oui, oui, oui. Penses-tu que ça va lui faire faire de l'érythème fessier?",
     "prediction": "je pense que ça va y faire faire de l'érythème fessier"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_457.3": {
@@ -3446,7 +3446,7 @@
     "audio_offset": 457.28,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Origami., Il est quand même...",
+    "text": "Origami. Il est quand même...",
     "prediction": "dit quand même"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_460.7": {
@@ -3466,7 +3466,7 @@
     "audio_offset": 466.675,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Chantale., Oui., On s'est dit : Pas de couches., Non, non, je sais., On s'est dit : Pas de vêtements, puis pas de nourriture avant sept ans., Je le sais, mais là..., Chantale, veux-tu qu'il ait un avenir, cet enfant-là?, Je sais que je suis émotive à cause des hormones, mais j'ai vraiment mal aux seins, puis je me disais... Peut-être qu'on pourrait lui donner autre chose., Excuse-moi, voyons, je pensais pas que t'avais mal aux seins. On va le jeter à la poubelle. On va le jeter à la poubelle. Non, mais tant qu'à ça, pourquoi le faire vivre dans la marde?",
+    "text": "Chantale. Oui. On s'est dit : Pas de couches. Non, non, je sais. On s'est dit : Pas de vêtements, puis pas de nourriture avant sept ans. Je le sais, mais là... Chantale, veux-tu qu'il ait un avenir, cet enfant-là? Je sais que je suis émotive à cause des hormones, mais j'ai vraiment mal aux seins, puis je me disais... Peut-être qu'on pourrait lui donner autre chose. Excuse-moi, voyons, je pensais pas que t'avais mal aux seins. On va le jeter à la poubelle. On va le jeter à la poubelle. Non, mais tant qu'à ça, pourquoi le faire vivre dans la marde?",
     "prediction": "oui on s'est dit pas de couche non non je sais je sais on s'est dit pas de vêtements avant sept ans je sais mais le chantal c'est un avenir cet enfant là je sais que je suis motif à cause des hormones mais j'ai vraiment mal au sein puis je me disais peut-être qu'on pourrait lui donner autre chose que je voyons je pensais pas que tu as mal au sens poubelle on va le sapoubelle ça va le faire vivre dans marbre"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_495.3": {
@@ -3476,7 +3476,7 @@
     "audio_offset": 495.287,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "On va le jeter à la poubelle., Tant qu'à ça, compostons-le., Ah., Non, mais c'est une blague. Gilles, voyons donc!",
+    "text": "On va le jeter à la poubelle. Tant qu'à ça, compostons-le. Ah. Non, mais c'est une blague. Gilles, voyons donc!",
     "prediction": "compostons le nom est-ce qu'une blague j'ai le voyons donc"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_504.8": {
@@ -3496,7 +3496,7 @@
     "audio_offset": 517.788,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Ç'a essuyé..., Qu'est-ce qu'on peut faire d'autre que chier là-dessus?",
+    "text": "Ç'a essuyé... Qu'est-ce qu'on peut faire d'autre que chier là-dessus?",
     "prediction": "qu'est-ce qu'on peut faire d'autres que chier là dessus"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_532.8": {
@@ -3506,7 +3506,7 @@
     "audio_offset": 532.84,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Je peux aller le coucher?, Ah! Euh!, On a une sonnette?, Mais oui! Bien, oui, va le coucher., Mais quand est-ce que tu as acheté ça, une sonnette? T'as acheté ça sur Amazon, encore? Voyons donc!",
+    "text": "Je peux aller le coucher? Ah! Euh! On a une sonnette? Mais oui! Bien, oui, va le coucher. Mais quand est-ce que tu as acheté ça, une sonnette? T'as acheté ça sur Amazon, encore? Voyons donc!",
     "prediction": "va aller coucher on a une sonnet oui ça sera"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_546.9": {
@@ -3516,7 +3516,7 @@
     "audio_offset": 546.883,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Fais-moi pas peur de même. On consomme pas, ici!, Non, mais je fais plein de sons de bouche.",
+    "text": "Fais-moi pas peur de même. On consomme pas, ici! Non, mais je fais plein de sons de bouche.",
     "prediction": "fait bon smpoil si je fais plein de son bouche"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_554.0": {
@@ -3526,7 +3526,7 @@
     "audio_offset": 554.022,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Je vous ai apporté les vieux vêtements qu'on se passe de génération en génération chez nous., On a-tu le droit de ça, Gilles?, Ils sont faits où?",
+    "text": "Je vous ai apporté les vieux vêtements qu'on se passe de génération en génération chez nous. On a-tu le droit de ça, Gilles? Ils sont faits où?",
     "prediction": "je vous ai apporté les vieux vêtements qu'on se passe de génération en génération chez nous on a-tu le droit de faire gil son fait"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_56.1": {
@@ -3546,7 +3546,7 @@
     "audio_offset": 564.599,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Ils sont faits par ma grand-mère., OK, et puis?, Avec des restants de sécheuse., Bon, bien, je pense que c'est acceptable. C'est-tu une sécheuse verte?, Ah, vous avez... Vous mettez des couches en journal?, Ouais, ça fait partie de nos convictions.",
+    "text": "Ils sont faits par ma grand-mère. OK, et puis? Avec des restants de sécheuse. Bon, bien, je pense que c'est acceptable. C'est-tu une sécheuse verte? Ah, vous avez... Vous mettez des couches en journal? Ouais, ça fait partie de nos convictions.",
     "prediction": "sont faits par ma grand-mère ok avec des restants de sécheuses je pense que c'est acceptable ouais c'est une sécheuse verte oh vous avez vous mettez des couches un journal ouais ouais ça fait partie de nos convictions"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_583.9": {
@@ -3556,7 +3556,7 @@
     "audio_offset": 583.895,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Nous autres, Éric, il en avait pas, pas du tout., Ah, bien, attendez, c'était une joke. Voyons, regarde. Il est...",
+    "text": "Nous autres, Éric, il en avait pas, pas du tout. Ah, bien, attendez, c'était une joke. Voyons, regarde. Il est...",
     "prediction": "vous avez qu'elle avait pas du tout ah donc là"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_592.6": {
@@ -3566,7 +3566,7 @@
     "audio_offset": 592.64,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Non, non, mais je vous mets pas de pression., Bien, non! Bien, non!, Je mets pas de pression. Mais ça vous dérange si je prends le...",
+    "text": "Non, non, mais je vous mets pas de pression. Bien, non! Bien, non! Je mets pas de pression. Mais ça vous dérange si je prends le...",
     "prediction": "non mais je vous mets pas de pression alors je mets ça vous dérange je prends le"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_601.6": {
@@ -3576,7 +3576,7 @@
     "audio_offset": 601.641,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "pour mon jardin., Bien, non! Bien, oui, c'est... Vous avez un jardin?",
+    "text": "pour mon jardin. Bien, non! Bien, oui, c'est... Vous avez un jardin?",
     "prediction": "mon jardin elle est vous avez un jardin"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_606.5": {
@@ -3586,7 +3586,7 @@
     "audio_offset": 606.51,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Oh oui., Ah bon!",
+    "text": "Oh oui. Ah bon!",
     "prediction": "ah oui ah bon"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_610.3": {
@@ -3596,7 +3596,7 @@
     "audio_offset": 610.288,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "C'est louable. Nous aussi, on a... Chantale... On a... On élève des alpagas., Oui, exact., Dans le sous-sol., On te fera des tuques., On les tisse...,... nous-mêmes.",
+    "text": "C'est louable. Nous aussi, on a... Chantale... On a... On élève des alpagas. Oui, exact. Dans le sous-sol. On te fera des tuques. On les tisse... nous-mêmes.",
     "prediction": "louable aussi on élève des alpagas oui exact dans le sous-sol on te fera des tucs on les tisse"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_642.6": {
@@ -3606,7 +3606,7 @@
     "audio_offset": 642.608,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Parle-lui pas de même!, Hé!, Mais assis-toi, genre. Mon Dieu, c'est surprenant.",
+    "text": "Parle-lui pas de même! Hé! Mais assis-toi, genre. Mon Dieu, c'est surprenant.",
     "prediction": "mais assied toi jean mon dieu c'est surprenant"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_654.6": {
@@ -3616,7 +3616,7 @@
     "audio_offset": 654.605,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Vous trouvez pas que c'est un petit peu cave d'avoir un sac poubelle pour votre sac, monsieur?, C'est en plastique, ça., Ouais., Puis votre cup de café du Tim Horton, vous savez combien ça prend de litres d'eau pour faire un petit cup du Tim Horton?, Vas-y, si t'es si intelligente, dis moi le!, Ça en prend soixante.",
+    "text": "Vous trouvez pas que c'est un petit peu cave d'avoir un sac poubelle pour votre sac, monsieur? C'est en plastique, ça. Ouais. Puis votre cup de café du Tim Horton, vous savez combien ça prend de litres d'eau pour faire un petit cup du Tim Horton? Vas-y, si t'es si intelligente, dis moi le! Ça en prend soixante.",
     "prediction": "vous ne trouvez pas que c'est un peu câble d'avoir un sac poubelle pour votre sac monsieur'en plastique votre cop de café du timarting vous savez combien ça prend l'être donc pour faire un petit cop petit martin c'est si intelligent ça monsieur'entrend soixante"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_674.1": {
@@ -3626,7 +3626,7 @@
     "audio_offset": 674.115,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Ouais., Well, c'est-tu vrai?",
+    "text": "Ouais. Well, c'est-tu vrai?",
     "prediction": "toi c'est-tu vrai"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_677.0": {
@@ -3636,7 +3636,7 @@
     "audio_offset": 676.99,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Hum-hum., Wow, c'est quand même cool., Là, je vais vous demander de vous asseoir, s'il vous plaît., Non., Tu sauras, ça, là, c'est comme... Non., Ça, non.",
+    "text": "Hum-hum. Wow, c'est quand même cool. Là, je vais vous demander de vous asseoir, s'il vous plaît. Non. Tu sauras, ça, là, c'est comme... Non. Ça, non.",
     "prediction": "quand même c'est quand même cool je vous demande de vous asseoir s'il vous plaît non ça non"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_686.6": {
@@ -3656,7 +3656,7 @@
     "audio_offset": 691.724,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "quand vous, vous avez un cup qui prend plus que soixante l d'eau? Moi, ce matin, j'ai pas pris de douche., Non?, J'ai pas pris de douche., Moi, j'ai envie de faire comme au football., Vas-y., Respect, man.",
+    "text": "quand vous, vous avez un cup qui prend plus que soixante l d'eau? Moi, ce matin, j'ai pas pris de douche. Non? J'ai pas pris de douche. Moi, j'ai envie de faire comme au football. Vas-y. Respect, man.",
     "prediction": "ans que vous avez un code qui prend plus que soixante moi ce matin j'ai propre petite douche douche voilà j'ai envie de facum au football"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_70.7": {
@@ -3676,7 +3676,7 @@
     "audio_offset": 703.374,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "OK., Respect, bro., Tu sais-tu qu'en ce moment, tes souliers..., Ouais?",
+    "text": "OK. Respect, bro. Tu sais-tu qu'en ce moment, tes souliers... Ouais?",
     "prediction": "très faible c'est"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_715.6": {
@@ -3686,7 +3686,7 @@
     "audio_offset": 715.633,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Je pense que je vais prendre une chaise. Il a raison., Moi, je vais rester debout.",
+    "text": "Je pense que je vais prendre une chaise. Il a raison. Moi, je vais rester debout.",
     "prediction": "n'a pas je vais apprendre une chaise raison moi je vais rester de vous"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_720.7": {
@@ -3696,7 +3696,7 @@
     "audio_offset": 720.66,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Moi, je vais rester proche de Daniel., Vous savez pourquoi je reste debout?, Pourquoi?, Il ne reste plus assez de temps pour s'asseoir., C'est tellement vrai ce que tu dis., Je sais., Regarde, vas-y.",
+    "text": "Moi, je vais rester proche de Daniel. Vous savez pourquoi je reste debout? Pourquoi? Il ne reste plus assez de temps pour s'asseoir. C'est tellement vrai ce que tu dis. Je sais. Regarde, vas-y.",
     "prediction": "comme moi je vais rester proche de daniel vous savez pourquoi je reste debout pourquoi il reste assez tard pour s'asseoir c'est tellement est-ce que tu dis moi"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_732.1": {
@@ -3726,7 +3726,7 @@
     "audio_offset": 745.723,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Veux-tu nous faire ta présentation orale là-dessus?, Sur les poules urbaines?, Sur les poules urbaines., Ouais, vas-y, Samantha, parles-en, des poules urbaines., OK, ça tombe bien, j'étais plutôt prête.",
+    "text": "Veux-tu nous faire ta présentation orale là-dessus? Sur les poules urbaines? Sur les poules urbaines. Ouais, vas-y, Samantha, parles-en, des poules urbaines. OK, ça tombe bien, j'étais plutôt prête.",
     "prediction": "c'est une fois ta présentation orale là-dessus sur les pôles urbaines sur les poules urbaines ouais vois-y ça manta par exemple des pôles urbaines ok ça ton bien j'étais plutôt prête"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_759.2": {
@@ -3786,7 +3786,7 @@
     "audio_offset": 796.984,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "L'autosuffisance., Wow!, Un régal.",
+    "text": "L'autosuffisance. Wow! Un régal.",
     "prediction": "réglement un régal"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_80.5": {
@@ -3806,7 +3806,7 @@
     "audio_offset": 800.817,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Et c'est grâce à ça que je suis pleine d'oméga moins trois., Bien, regarde...",
+    "text": "Et c'est grâce à ça que je suis pleine d'oméga moins trois. Bien, regarde...",
     "prediction": "et c'est grâce à ceux qui suis plein d'omégat trois"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_812.7": {
@@ -3826,7 +3826,7 @@
     "audio_offset": 826.591,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Catégorie : libre. Et d'une durée de cinq minutes., Oh une belle durée pour un joueur de chaque côté. Fort à parier que Fabiola Aladin va faire sa première apparition ce soir., J'ai hâte de voir! moins vingt-trois novembre, quelle drôle de date. moins vingt-trois novembre, ça, c'est la date de fondation de l'Alternateur., Ah, pour vrai?, Oui. Exactement, mais plutôt que deux mille soixante-dix, c'était deux mille dix-neuf., Quel hasard!, Mais quel hasard!, Ouais! Je sais pas si les improvisateurs vont le savoir.",
+    "text": "Catégorie : libre. Et d'une durée de cinq minutes. Oh une belle durée pour un joueur de chaque côté. Fort à parier que Fabiola Aladin va faire sa première apparition ce soir. J'ai hâte de voir! moins vingt-trois novembre, quelle drôle de date. moins vingt-trois novembre, ça, c'est la date de fondation de l'Alternateur. Ah, pour vrai? Oui. Exactement, mais plutôt que deux mille soixante-dix, c'était deux mille dix-neuf. Quel hasard! Mais quel hasard! Ouais! Je sais pas si les improvisateurs vont le savoir.",
     "prediction": "catégorie libre et d'une durée de cinq minutes durer pour un joueur de chaque côté fort à paris que fabiola à la dernière fois sa première apparition ce soir avant quel tour d'avant oui plutôt de la deux mille cent quel hasard mais quel hasard je sais pas vous attends au savoir"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_865.5": {
@@ -3836,7 +3836,7 @@
     "audio_offset": 865.532,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "C'est gentil de me recevoir., Ça me fait plaisir.",
+    "text": "C'est gentil de me recevoir. Ça me fait plaisir.",
     "prediction": "c'est gentil de me recevoir ça te plaisir"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_869.5": {
@@ -3846,7 +3846,7 @@
     "audio_offset": 869.451,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Ça sera pas long., Pas de problème. Je... Je... Je patiente., Oui., J'ai attendu longtemps., Votre nom, déjà?, Karmminna., Karmminna? Avec un C ou un K?, Un K., D'accord.",
+    "text": "Ça sera pas long. Pas de problème. Je... Je... Je patiente. Oui. J'ai attendu longtemps. Votre nom, déjà? Karmminna. Karmminna? Avec un C ou un K? Un K. D'accord.",
     "prediction": "ça trouve pas de problème je patient oui j'ai attendu longtemps déjà carmina karmina ouais un cas d'accord"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_880.6": {
@@ -3856,7 +3856,7 @@
     "audio_offset": 880.578,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Mais deux N., Deux M ou deux N?, Les deux.",
+    "text": "Mais deux N. Deux M ou deux N? Les deux.",
     "prediction": "deux haine de hm de h"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_886.0": {
@@ -3866,7 +3866,7 @@
     "audio_offset": 885.978,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Kar-millimètres-i nn a., Kar-millimètres-i n n a., Ah!",
+    "text": "Kar-millimètres-i nn a. Kar-millimètres-i n n a. Ah!",
     "prediction": "armé"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_892.2": {
@@ -3876,7 +3876,7 @@
     "audio_offset": 892.226,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "C'est spécial. Au lieu de l'écrire, voulez-vous l'enregistrer avec votre voix, Oui, bien sûr., C'est un peu compliqué., Kar-millimètres-i nn a., Merci. Alors, ça va juste être ici, à l'arrière. Est-ce que vous êtes au courant du stage que vous allez faire?",
+    "text": "C'est spécial. Au lieu de l'écrire, voulez-vous l'enregistrer avec votre voix, Oui, bien sûr. C'est un peu compliqué. Kar-millimètres-i nn a. Merci. Alors, ça va juste être ici, à l'arrière. Est-ce que vous êtes au courant du stage que vous allez faire?",
     "prediction": "c'est spécial au lieu d'écrire voulez-vous l'enregistrer avec votre voix oui c'est un petit peu compliqué à ça va je vais faire est-ce que vous êtes au courant un peu du stage que vous apprêtez à faire"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_909.2": {
@@ -3886,7 +3886,7 @@
     "audio_offset": 909.228,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "On m'a pas expliqué beaucoup de choses, parce que j'ai envoyé mon nom un peu partout. Vous savez, à l'âge que j'ai, j'essaie de me réintégrer à cette société qui m'est un peu inconnue., Je comprends, bien, en fait, seize ans, pour aller dans l'espace puis développer une nouvelle société, c'est jeune?, Bien, écoutez, je fais ce que je peux avec ce que je suis.",
+    "text": "On m'a pas expliqué beaucoup de choses, parce que j'ai envoyé mon nom un peu partout. Vous savez, à l'âge que j'ai, j'essaie de me réintégrer à cette société qui m'est un peu inconnue. Je comprends, bien, en fait, seize ans, pour aller dans l'espace puis développer une nouvelle société, c'est jeune? Bien, écoutez, je fais ce que je peux avec ce que je suis.",
     "prediction": "on monsieur'a pas expliqué beaucoup de choses parce que j'ai envoyé mon nom un peu partout j'essaie juste de me réintégrer à cette société qui monsieur'est un peu inconnue tu comprends en fait seize ans pour aller dans l'espace puis développer une nouvelle société c'est jeune quand même je fais ce que je peux avec ce que je suis"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_927.9": {
@@ -3896,7 +3896,7 @@
     "audio_offset": 927.929,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Alors, bien, écoutez, il n'y a plus personne sur la Terre, pour nous aider, alors, ça va être moi et vous, vous et moi, Karmminna, et..., Et vous... Je m'excuse, j'ai été impolie., Moi, c'est Sophie. Avec un S puis un PH, bien, bien simple.",
+    "text": "Alors, bien, écoutez, il n'y a plus personne sur la Terre, pour nous aider, alors, ça va être moi et vous, vous et moi, Karmminna, et... Et vous... Je m'excuse, j'ai été impolie. Moi, c'est Sophie. Avec un S puis un PH, bien, bien simple.",
     "prediction": "écoutez il y a plus personne n'y a plus personne pour sur la terre pour nous aider alors ça voit que moi et vous et moi carmina et c'était je monsieur'excuse j'étais poli moi c'est sophie avec un sprint"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_941.7": {
@@ -3906,7 +3906,7 @@
     "audio_offset": 941.704,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Alors, tu peux venir ici. On va commencer par, bien... par s'habiller, tiens! Vu qu'on va dans l'espace, ça serait le fun, qu'on meure pas asphyxiés., Ah oui! Il y a un équipement associé à ça. Je pensais vraiment qu'au stade où on en était, on allait pouvoir sortir, comme ça, en bikini... en bikini dans l'espace., Ouais, mais quand vous avez mis dans votre CV : J'ai dix-sept ans d'expérience à la Nasa. C'était un mensonge?, Bien, la Nasa, c'est un peu un mode de vie.",
+    "text": "Alors, tu peux venir ici. On va commencer par, bien... par s'habiller, tiens! Vu qu'on va dans l'espace, ça serait le fun, qu'on meure pas asphyxiés. Ah oui! Il y a un équipement associé à ça. Je pensais vraiment qu'au stade où on en était, on allait pouvoir sortir, comme ça, en bikini... en bikini dans l'espace. Ouais, mais quand vous avez mis dans votre CV : J'ai dix-sept ans d'expérience à la Nasa. C'était un mensonge? Bien, la Nasa, c'est un peu un mode de vie.",
     "prediction": "venir ici on va commencer par s'habiller dans l'espace qu'on meurt pas six équipements je pensais vraiment qu'au stade où on en était on allait pouvoir sortir comme ça mais vous avez mis dans votre cv j'ai dix-sept ans d'expérience à la nasa c'est un mensonge la nasa c'est un peu un mode de vie"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_967.5": {
@@ -3926,7 +3926,7 @@
     "audio_offset": 977.412,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "Bravo pour votre intelligence., Bien, ça me fait plaisir., C'est surprenant. Dans le fond, c'est un gros scaphandre. C'est ça qu'on va mettre pour aller dans l'espace.",
+    "text": "Bravo pour votre intelligence. Bien, ça me fait plaisir. C'est surprenant. Dans le fond, c'est un gros scaphandre. C'est ça qu'on va mettre pour aller dans l'espace.",
     "prediction": "bravo pour votre intelligence ça peut prenant alors oui non c'est un gros scaphandre c'est ça qu'on va mettre très dans l'espace"
   },
   "YouTubeFr_split6_t1L3raSmXJ4_987.6": {
@@ -5046,7 +5046,7 @@
     "audio_offset": 3362.092,
     "dataset": "YouTubeFr_split6",
     "full_dataset": "YouTubeFr_split6",
-    "text": "à répondre aux gens qui la posent, c'est de regarder ce qu'on fait,, de nous lire. Et après, bien sûr qu'on peut faire des erreurs, bien sûr qu'on est évidemment critiquable, j'ai aucun problème avec ça. Dès qu'on critique sur des faits concrets, sur des articles concrets, sur des voies l'a pas pas en généralité, parce que ça c'est trop facile. Pour rebondir sur les sources, comment vous gérez les pressions personnelles, par exemple les menaces de suicide,",
+    "text": "à répondre aux gens qui la posent, c'est de regarder ce qu'on fait, de nous lire. Et après, bien sûr qu'on peut faire des erreurs, bien sûr qu'on est évidemment critiquable, j'ai aucun problème avec ça. Dès qu'on critique sur des faits concrets, sur des articles concrets, sur des voies l'a pas pas en généralité, parce que ça c'est trop facile. Pour rebondir sur les sources, comment vous gérez les pressions personnelles, par exemple les menaces de suicide,",
     "prediction": "répondre aux gens qui la posent c'est de regarder ce qu'on fait c'est tout de nous lire et après bien sûr qu'on peut faire des erreurs bien sûr qu'on peut on est évidemment critiquable si aucun problème avec ça mais qu'on critique sur des faits concrets sur des articles concrets sur des voilà pas en général parce que ça c'est trop facile sur les sauces comment vous gérez les pressions personnelles ou même des menaces de suicide"
   },
   "YouTubeFr_split6_tavhYxieStE_3401.8": {

@@ -30,8 +30,11 @@ def normalize_numbers(text):
 
 
 def normalize_youtube(text):
-    """YouTube: removes dialog dashes, numbers in letters..., keeps the spaces before ? and !"""
+    """YouTube: removes dialog dashes, numbers in letters..., keeps the spaces before ? and !.
+    Removes the commas added after a punctuation when the subtitles were merged ("Merde!, Clyde!,",
+    "des...,... jouer", "vos sacs,, Ouais"): format_text_latin also turns ". -J'ai" into "., J'ai"."""
     out = format_text_latin(text, lang="fr", lower_case=False, keep_punc=True, wer_format=False)
+    out = re.sub(r",{2,}", ",", re.sub(r"([.!?…]),(?:\s*(?:\.\.\.|…)(?=\s))?", r"\1", out))
     for p in "?!":
         if " " + p in text:
             out = re.sub(r"(?<=\S)" + re.escape(p), " " + p, out)
