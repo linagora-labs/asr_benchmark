@@ -157,3 +157,19 @@ benchmarks:
     model: bofenghuang/whisper-large-v3-french-distil-dec16
     port: 8120
     language: fr
+  - backend: vllm
+    model: ibm-granite/granite-speech-5.0-2b
+    served_model_name: ibm-granite/granite-speech-5.0-2b
+    port: 8122
+    endpoint: chat
+    prompt: <|audio|>La parole est en français. Transcrivez-la exactement ; ne la traduisez pas. Transcrivez la parole avec une ponctuation et des majuscules appropriées.
+    extra_args: --max-model-len 2048
+  # Card's ASR prompt (audio after the text), {LANGUAGE} = French
+  - backend: vllm
+    model:
+    - google/gemma-4-E4B-it
+    - google/gemma-4-E2B-it
+    port: 8123
+    endpoint: chat
+    prompt: "Transcribe the following speech segment in French into French text.\n\nFollow these specific instructions for formatting the answer:\n* Only output the transcription, with no newlines.\n* When transcribing numbers, write the digits, i.e. write 1.7 and not one point seven, and write 3 instead of three."
+    extra_args: --max-model-len 4096
