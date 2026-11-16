@@ -1,0 +1,11 @@
+{
+ "linto_stt_fr_fastconformer": {
+  "title": "linagora/linto_stt_fr_fastconformer vs ASR models",
+  "filters": {"architecture": ["Encoder", "Encoder-decoder"], "exclude": "^vllm_openai-whisper-large-v3-turbo$"},
+  "models": [
+   "all",
+   "nemo_linagora-linto-stt-fr-fastconformer_decoder-rnnt"
+  ],
+  "highlight": ["nemo_linagora-linto-stt-fr-fastconformer_decoder-rnnt"]
+ }
+}

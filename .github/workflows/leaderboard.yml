@@ -36,7 +36,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      # Standard library only: no dependency to install.
+      # Standard library only; rsvg-convert draws the PNG of the result cards (cards.json).
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends librsvg2-bin
       - run: python tools/leaderboard/build.py --results benchmarks/sota/results --manifest benchmarks/sota/manifest.jsonl --output site
       - uses: actions/upload-pages-artifact@v3
         with:

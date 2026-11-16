@@ -1,6 +1,7 @@
 """Build the static leaderboard page from benchmark results.
 
-Writes <output>/index.html and <output>/leaderboard.json. Standard library only (GitHub Action).
+Writes <output>/index.html, <output>/leaderboard.json and the result cards of cards.json
+(<output>/cards/*.svg, see cards.py). Standard library only (GitHub Action).
 
     python tools/leaderboard/build.py                       # benchmarks/sota/results -> site/
     python tools/leaderboard/build.py --results X --manifest M --output Y
@@ -13,8 +14,11 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
+from cards import build_cards
+
 HERE = Path(__file__).parent
 REPO_URL = "https://github.com/linagora-labs/asr_benchmark"
+SITE_URL = "https://linagora-labs.github.io/asr_benchmark/"
 
 # Display name, domain, language, source; column order of the page
 DATASETS = {
@@ -218,7 +222,7 @@ def last_commit_date(path):
         return None
 
 
-def build(results, manifest, output, rtf_results=None, rtf_manifest=None):
+def build(results, manifest, output, rtf_results=None, rtf_manifest=None, cards=None):
     experiments = sorted(p for p in results.iterdir() if (p / "metadata.json").exists())
     models = [model_entry(exp, rtf_results) for exp in experiments]
     durations = manifest_durations(manifest)
@@ -266,6 +270,7 @@ def build(results, manifest, output, rtf_results=None, rtf_manifest=None):
     payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
     (output / "index.html").write_text(template.replace("/*__DATA__*/null", payload), encoding="utf-8")
     print(f"{len(models)} models x {len(datasets)} datasets -> {output}/index.html")
+    build_cards(cards, data, output, SITE_URL)
 
 
 if __name__ == "__main__":
@@ -277,5 +282,7 @@ if __name__ == "__main__":
                         help="Results of the speed runs (config_rtf.yaml), for the RTFx column")
     parser.add_argument("--rtf_manifest", type=Path, default=Path("benchmarks/sota/manifest_rtf.jsonl"),
                         help="Manifest of the speed runs, described in the test sets tab")
+    parser.add_argument("--cards", type=Path, default=HERE / "cards.json",
+                        help="Result cards to draw (SVG for model cards), see cards.py")
     args = parser.parse_args()
-    build(args.results, args.manifest, args.output, args.rtf_results, args.rtf_manifest)
+    build(args.results, args.manifest, args.output, args.rtf_results, args.rtf_manifest, args.cards)
