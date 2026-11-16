@@ -172,7 +172,8 @@ function histogramSvg(counts, bins) {
 }
 
 // Test set name, linked to its source when public.
-const datasetLink = d => d.url ? `<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.name)}</a>` : esc(d.name);
+const datasetLink = d => d.url ? `<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.name)}</a>` :
+  d.note ? `<span class="hint" title="${esc(d.note)}">${esc(d.name)}</span>` : esc(d.name);
 
 // Share of the test split kept, its details (extra filter, removed segments) on hover.
 const selectionCell = d => !d.selection ? "—" : !d.selection_note ? esc(d.selection) :

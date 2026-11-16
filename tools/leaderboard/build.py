@@ -24,7 +24,11 @@ DATASETS = {
     "TEDX_fr": ("TEDx", "Prepared talks", "fr", "https://www.openslr.org/100/"),
     "Voxpopuli": ("VoxPopuli", "Parliament speeches", "fr", "https://huggingface.co/datasets/facebook/voxpopuli"),
     "SUMM-RE": ("SUMM-RE", "Spontaneous meetings", "fr", "https://huggingface.co/datasets/linagora/SUMM-RE"),
-    "YouTubeFr_split6": ("YouTube", "Web videos", "fr", None),  # internal corpus
+    "YouTubeFr_split6": ("YouTubeFr", "Web videos", "fr", None),
+}
+# Shown on hover of the name of the test sets without a link
+DATASET_NOTES = {
+    "YouTubeFr_split6": "Internal corpus of French YouTube videos",
 }
 # Share kept (`datasets` of config.yaml), details on hover
 SELECTION = {
@@ -46,6 +50,7 @@ def dataset_info(stem):
     # Speed runs keep the old names
     name, domain, language, url = DATASETS.get(stem.replace("_max30", ""), (stem, "", DEFAULT_LANGUAGE, None))
     return {"name": name, "domain": domain, "language": language, "url": url,
+            "note": DATASET_NOTES.get(stem.replace("_max30", "")),
             "selection": SELECTION.get(stem, (None, None))[0],
             "selection_note": SELECTION.get(stem, (None, None))[1]}
 
