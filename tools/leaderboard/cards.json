@@ -1,11 +1,77 @@
 {
  "linto_stt_fr_fastconformer": {
   "title": "linagora/linto_stt_fr_fastconformer vs ASR models",
-  "filters": {"architecture": ["Encoder", "Encoder-decoder"], "exclude": "^vllm_openai-whisper-large-v3-turbo$"},
+  "filters": {
+   "architecture": [
+    "Encoder",
+    "Encoder-decoder"
+   ],
+   "exclude": "^vllm_openai-whisper-large-v3-turbo$"
+  },
   "models": [
-   "all",
-   "nemo_linagora-linto-stt-fr-fastconformer_decoder-rnnt"
+   "all"
   ],
-  "highlight": ["nemo_linagora-linto-stt-fr-fastconformer_decoder-rnnt"]
+  "highlight": [
+   "nemo_linagora-linto-stt-fr-fastconformer_decoder-rnnt"
+  ]
+ },
+ "linto_stt_fr_fastconformer_pc": {
+  "title": "linagora/linto_stt_fr_fastconformer_pc vs ASR models (Audio LLMs excluded)",
+  "metric": "wer",
+  "filters": {
+   "architecture": [
+    "Encoder",
+    "Encoder-decoder"
+   ],
+   "exclude": "^vllm_openai-whisper-large-v3-turbo$"
+  },
+  "models": [
+   "all"
+  ],
+  "highlight": [
+   "linagora/linto_stt_fr_fastconformer_pc"
+  ]
+ },
+ "Luciole-1B-Audio-1.0": {
+  "title": "OpenLLM-France/Luciole-1B-Audio-1.0 vs ASR models",
+  "filters": {
+   "exclude": "^vllm_openai-whisper-large-v3-turbo$"
+  },
+  "models": [
+   "top:5",
+   "around:2",
+   "last:2"
+  ],
+  "highlight": [
+   "OpenLLM-France/Luciole-1B-Audio-1.0"
+  ]
+ },
+ "Luciole-8B-Audio-1.0": {
+  "title": "OpenLLM-France/Luciole-8B-Audio-1.0 vs ASR models",
+  "filters": {
+   "exclude": "^vllm_openai-whisper-large-v3-turbo$"
+  },
+  "models": [
+   "top:5",
+   "around:2",
+   "last:2"
+  ],
+  "highlight": [
+   "OpenLLM-France/Luciole-8B-Audio-1.0"
+  ]
+ },
+ "Luciole-23B-Audio-1.0": {
+  "title": "OpenLLM-France/Luciole-23B-Audio-1.0 vs ASR models",
+  "filters": {
+   "exclude": "^vllm_openai-whisper-large-v3-turbo$"
+  },
+  "models": [
+   "top:5",
+   "around:2",
+   "last:2"
+  ],
+  "highlight": [
+   "OpenLLM-France/Luciole-23B-Audio-1.0"
+  ]
  }
 }

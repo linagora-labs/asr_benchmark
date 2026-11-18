@@ -22,9 +22,11 @@ Spec keys, all optional:
     models      models shown, in any order (rows follow `sort`): folder ids, model names
                 (all their variants), or keywords resolved on the filtered models sorted
                 by `sort`, so they follow the leaderboard: first, second, third,
-                rank:N (Nth), top:N (N first), last, all. Default: top:10.
-    highlight   models drawn in bold on a tinted row (same syntax), default: the models
-                named explicitly in `models`
+                rank:N (Nth), top:N (N first), last, last:N (N last), around:N (N above
+                and N below each highlighted model), all. Default: top:10. A "…" row
+                marks the ranks skipped between two shown models.
+    highlight   models drawn in bold on a tinted row (same syntax, without around:N),
+                default: the models named explicitly in `models`
     columns     among average, rank, datasets, rtfx, params, license, architecture, task
                 (default: average, datasets, rtfx, params)
     short_names drop the organization of the model names, unless two would clash (default false)
@@ -45,6 +47,10 @@ METRIC_LABELS = {"wer_nocasepunc": "WER (%), without case and punctuation", "wer
                  "cer_nocasepunc": "CER (%), without case and punctuation", "cer": "CER (%), case and punctuation"}
 DEFAULT_COLUMNS = ["average", "datasets", "rtfx", "params"]
 KEYWORDS = {"first": 1, "second": 2, "third": 3}
+
+
+def is_keyword(name):
+    return name in KEYWORDS or re.fullmatch(r"(rank|top|last|around):\d+|last|all", name)
 
 
 def text_width(text, size):
@@ -105,17 +111,21 @@ def keep(m, filters):
     return True
 
 
-def resolve(names, ranked, models, card):
+def resolve(names, ranked, models, card, highlighted=()):
     """Models of `names` (ids, model names, keywords) in order, without duplicates."""
     found = []
     for name in names:
-        if name in KEYWORDS or re.fullmatch(r"(rank|top):\d+|last|all", name):
+        if is_keyword(name):
+            n = int(name.split(":")[1]) if ":" in name else 1
             if name == "all":
                 picked = ranked
-            elif name == "last":
-                picked = ranked[-1:]
+            elif name.startswith("last"):
+                picked = ranked[-n:] if n else []
             elif name.startswith("top:"):
-                picked = ranked[:int(name[4:])]
+                picked = ranked[:n]
+            elif name.startswith("around:"):
+                around = [i for i, m in enumerate(ranked) if m in highlighted]
+                picked = [m for i, m in enumerate(ranked) if any(abs(i - j) <= n for j in around)]
             else:
                 n = KEYWORDS.get(name) or int(name[5:])
                 picked = ranked[n - 1:n]
@@ -184,9 +194,11 @@ def card_rows(spec, data, card):
     ranked = [r["m"] for r in population]
     models = [r["m"] for r in rows.values()]
     names = spec.get("models", ["top:10"])
-    selected = resolve(names, ranked, models, card)
-    explicit = [n for n in names if not (n in KEYWORDS or re.fullmatch(r"(rank|top):\d+|last|all", n))]
-    highlighted = resolve(spec.get("highlight", explicit), ranked, models, card)
+    highlight = spec.get("highlight", [n for n in names if not is_keyword(n)])
+    if any(n.startswith("around:") for n in highlight):
+        raise ValueError(f"card {card}: around:N is for `models`, not `highlight`")
+    highlighted = resolve(highlight, ranked, models, card)
+    selected = resolve(names, ranked, models, card, highlighted)
     shown_rows = sorted((rows[m["id"]] for m in selected), key=lambda r: (r not in population, *order(r)))
     for r in shown_rows:
         r["highlight"] = r["m"] in highlighted
@@ -246,9 +258,19 @@ def render_card(spec, data, card):
     subtitle = spec.get("subtitle", f"{METRIC_LABELS[metric]}, lower is better · sorted by "
                         f"{ {'average': 'average', 'rank': 'average rank', 'rtfx': 'speed'}.get(sort, sort) }")
     footer = f"linagora-labs.github.io/asr_benchmark · updated {(data.get('results_updated') or data['generated'])[:10]}"
-    margin, top = 16, 62
+    margin, top, gap_h = 16, 62, 18
     width = max(sum(widths), text_width(subtitle, 12), text_width(footer, 11)) + 2 * margin
-    height = top + head_h + row_h * len(rows) + 34
+    # "…" rows (None) where ranks are skipped, before the models without rank.
+    items, last = [], 0
+    for r, row in zip(rows, cells):
+        position = r.get("position")
+        if position and position > last + 1 or not position and last and last < len(population):
+            items.append(None)
+        last = position or len(population)
+        items.append((r, row))
+    if last < len(population):
+        items.append(None)
+    height = top + head_h + sum(row_h if item else gap_h for item in items) + 34
 
     out = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width:.0f}" height="{height:.0f}" viewBox="0 0 {width:.0f} {height:.0f}" '
            f'font-family="{FONT}" font-size="{size}" fill="{TEXT}">',
@@ -265,7 +287,13 @@ def render_card(spec, data, card):
         x += w
     y = top + head_h
     out.append(f'<line x1="{margin}" x2="{width - margin:.0f}" y1="{y}" y2="{y}" stroke="{LINE}"/>')
-    for r, row in zip(rows, cells):
+    for item in items:
+        if item is None:
+            out.append(f'<text x="{width / 2:.0f}" y="{y + 13}" text-anchor="middle" fill="{MUTED}">…</text>')
+            y += gap_h
+            out.append(f'<line x1="{margin}" x2="{width - margin:.0f}" y1="{y}" y2="{y}" stroke="{LINE}"/>')
+            continue
+        r, row = item
         if r["highlight"]:
             out.append(f'<rect x="{margin}" y="{y}" width="{width - 2 * margin:.0f}" height="{row_h}" fill="{HIGHLIGHT}"/>')
         x = margin
