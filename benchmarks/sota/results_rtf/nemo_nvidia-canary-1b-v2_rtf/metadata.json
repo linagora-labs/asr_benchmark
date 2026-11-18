@@ -3,11 +3,11 @@
   "backend": "nemo",
   "model": "nvidia/canary-1b-v2",
   "language": "fr",
+  "compute_rtf": true,
   "vad": "false",
   "device": "cuda",
   "num_threads": null,
   "input_manifest": "benchmarks/sota/manifest_rtf.jsonl",
-  "compute_rtf": true,
   "save_predictions": false,
   "save_alignments": false,
   "compute_latency": false,
@@ -16,9 +16,9 @@
   "device_name": "NVIDIA GB10",
   "word_timestamps": true,
   "model_info": {
+    "params": 962155520,
     "hf": "nvidia/canary-1b-v2",
     "license": "cc-by-4.0",
-    "params": 962155520,
     "languages": [
       "bg",
       "hr",

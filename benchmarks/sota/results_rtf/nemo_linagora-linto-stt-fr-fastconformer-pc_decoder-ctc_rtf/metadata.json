@@ -3,11 +3,11 @@
   "backend": "nemo",
   "model": "linagora/linto_stt_fr_fastconformer_pc",
   "decoder": "ctc",
+  "compute_rtf": true,
   "vad": "false",
   "device": "cuda",
   "num_threads": null,
   "input_manifest": "benchmarks/sota/manifest_rtf.jsonl",
-  "compute_rtf": true,
   "save_predictions": false,
   "save_alignments": false,
   "compute_latency": false,
@@ -16,9 +16,9 @@
   "device_name": "NVIDIA GB10",
   "word_timestamps": true,
   "model_info": {
+    "params": 114621442,
     "hf": "linagora/linto_stt_fr_fastconformer_pc",
     "license": "cc-by-4.0",
-    "params": 114621442,
     "languages": [
       "fr"
     ]

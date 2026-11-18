@@ -1,5 +1,7 @@
 # Speed counterpart of config.yaml: keep the same models.
-# manifest_rtf.jsonl: 10 segments of 20-30 s, short enough for models with a ~30 s window.
+# manifest_rtf.jsonl: 20 segments of 20-30 s (short enough for models with a ~30 s window),
+# the 5 with the lowest segment_hash() of manifest.jsonl per test set (TEDX_fr, Voxpopuli,
+# SUMM-RE, MLS): python tools/select_rtf_manifest.py benchmarks/sota/manifest.jsonl benchmarks/sota/manifest_rtf.jsonl
 input_manifest: benchmarks/sota/manifest_rtf.jsonl
 output_folder: benchmarks/sota/results_rtf
 compute_rtf: True
@@ -157,6 +159,9 @@ benchmarks:
     model: bofenghuang/whisper-large-v3-french-distil-dec16
     port: 8120
     language: fr
+  # vLLM 0.28 loads every .safetensors of the repo and fails on out_llm.safetensors ('bias'):
+  # on the DGX, model: /models/granite-speech-5.0-2b-vllm (symlinks to the HF snapshot
+  # without out_llm.safetensors); served_model_name keeps the folder name.
   - backend: vllm
     model: ibm-granite/granite-speech-5.0-2b
     served_model_name: ibm-granite/granite-speech-5.0-2b

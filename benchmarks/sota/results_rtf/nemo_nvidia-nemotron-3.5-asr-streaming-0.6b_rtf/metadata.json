@@ -4,12 +4,12 @@
   "model": "nvidia/nemotron-3.5-asr-streaming-0.6b",
   "language": "fr",
   "chunk_ms": 1120,
+  "compute_rtf": true,
   "vad": "false",
   "device": "cuda",
   "num_threads": null,
   "decoder": "rnnt",
   "input_manifest": "benchmarks/sota/manifest_rtf.jsonl",
-  "compute_rtf": true,
   "save_predictions": false,
   "save_alignments": false,
   "compute_latency": false,
@@ -22,9 +22,9 @@
     13
   ],
   "model_info": {
+    "params": 637997088,
     "hf": "nvidia/nemotron-3.5-asr-streaming-0.6b",
     "license": "openmdw-1.1",
-    "params": 637997088,
     "languages": [
       "en",
       "es",

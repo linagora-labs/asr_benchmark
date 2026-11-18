@@ -1,0 +1,62 @@
+{
+  "TEDX_fr_0u7tTptBo9I_110.7": {
+    "audio_filepath": "/home/data/audio/converted_audios/transcript/fr/Multilingual_TEDx/0u7tTptBo9I.wav",
+    "id": "TEDX_fr_0u7tTptBo9I_110.7",
+    "audio_duration": 20.24,
+    "audio_offset": 110.74,
+    "dataset": "TEDX_fr",
+    "full_dataset": "TEDX_fr",
+    "text": "En fait, c'est la vie marine qui fait que cet océan est un principal régulateur du climat, le principal puits de carbone, et aussi, le principal producteur d'oxygène.",
+    "prediction_duration": 0.25745,
+    "rtf": 0.01272,
+    "prediction": "En fait, c'est la vie marine qui fait que cet océan est un principal régulateur du climat, le principal puits de carbone et aussi le principal producteur d'oxygène."
+  },
+  "TEDX_fr_UOY-nGZNNDM_131.7": {
+    "audio_filepath": "/home/data/audio/converted_audios/transcript/fr/Multilingual_TEDx/UOY-nGZNNDM.wav",
+    "id": "TEDX_fr_UOY-nGZNNDM_131.7",
+    "audio_duration": 25.89,
+    "audio_offset": 131.69,
+    "dataset": "TEDX_fr",
+    "full_dataset": "TEDX_fr",
+    "text": "On y trouve un Grec de la Rue de la Roquette qui aligne à peine trois mots de grec ; un pur tsigane de Serbie, un Bulgare, des Français oui, des Français comme moi, mais en grattant un peu, jamais vraiment français une Espagnole mais qui se revendique Catalane s'il vous plaît, de Barcelone.",
+    "prediction_duration": 0.28253,
+    "rtf": 0.01091,
+    "prediction": "On y trouve un grec de la rue de la Roquette qui aligne à peine trois mots de grec. Un pur dzigan de Serbie, un bulgare, des français, ah oui, des français comme moi, mais jamais, en grattant un peu, jamais vraiment français. Une espagnole, mais qui se revendique catalane, s'il vous plaît, de Barcelone."
+  },
+  "TEDX_fr_tTcrwOjAo30_189.5": {
+    "audio_filepath": "/home/data/audio/converted_audios/transcript/fr/Multilingual_TEDx/tTcrwOjAo30.wav",
+    "id": "TEDX_fr_tTcrwOjAo30_189.5",
+    "audio_duration": 22.87,
+    "audio_offset": 189.49,
+    "dataset": "TEDX_fr",
+    "full_dataset": "TEDX_fr",
+    "text": "En fait, le sang est composé de différentes cellules, mais la molécule qui transporte l'oxygène, l'oxygène indispensable à tous les organismes vivants, qui est un peu si je prenais un exemple lié à la mécanique l'oxygène, c'est un peu le carburant que vous allez mettre dans votre véhicule.",
+    "prediction_duration": 0.28393,
+    "rtf": 0.01241,
+    "prediction": "En fait, le sang est composé de différentes cellules, mais la molécule qui transporte l'oxygène, l'oxygène indispensable à tous les organismes vivants, qui est un peu, si je prenais un exemple lié à la mécanique, l'oxygène c'est un peu le carburant que vous allez mettre dans votre véhicule."
+  },
+  "TEDX_fr_tTcrwOjAo30_327.0": {
+    "audio_filepath": "/home/data/audio/converted_audios/transcript/fr/Multilingual_TEDx/tTcrwOjAo30.wav",
+    "id": "TEDX_fr_tTcrwOjAo30_327.0",
+    "audio_duration": 26.24,
+    "audio_offset": 326.98,
+    "dataset": "TEDX_fr",
+    "full_dataset": "TEDX_fr",
+    "text": "Et de retour au laboratoire, afin de tester cette hypothèse, je m'empressai d'aller sur la plage collecter quelques centaines d'arénicoles, tout simplement pour essayer de leur collecter l'hémoglobine contenue dans leur système circulatoire, et après purification de cette molécule par des techniques de laboratoire classiques, je m'empressai d'aller transfuser des rongeurs.",
+    "prediction_duration": 0.3003,
+    "rtf": 0.01144,
+    "prediction": "Et de retour au laboratoire, afin de tester cette hypothèse, je m'empressais d'aller sur la plage, collecter quelques centaines d'arénicoles, tout simplement pour essayer de leur collecter l'hémoglobine contenue dans leur système circulatoire. Et après purification de cette molécule, par des techniques de laboratoire classiques, je m'empressais d'aller transfuser des rongeurs."
+  },
+  "TEDX_fr_zJmV2ZOVvhA_701.1": {
+    "audio_filepath": "/home/data/audio/converted_audios/transcript/fr/Multilingual_TEDx/zJmV2ZOVvhA.wav",
+    "id": "TEDX_fr_zJmV2ZOVvhA_701.1",
+    "audio_duration": 20.26,
+    "audio_offset": 701.15,
+    "dataset": "TEDX_fr",
+    "full_dataset": "TEDX_fr",
+    "text": "L'Europe est bien cet endroit d'où les frères écrivent : Viens seulement, il y a du boulot ici. mais pour la plupart de ceux auxquels j'ai parlé, s'ils avaient eu le choix, ils auraient fait comme les générations précédentes : ils auraient migré à l'intérieur de l'Afrique, et en particulier en Libye.",
+    "prediction_duration": 0.29595,
+    "rtf": 0.01461,
+    "prediction": "L'Europe, c'est bien cet endroit d'où les frères écrivent « Viens seulement, il y a du boulot ici ». Mais pour la plupart de ceux auxquels j'ai parlé, s'ils avaient eu le choix, ils auraient fait, comme toutes les générations précédentes, ils auraient migré à l'intérieur de l'Afrique, et en particulier en Libye."
+  }
+}

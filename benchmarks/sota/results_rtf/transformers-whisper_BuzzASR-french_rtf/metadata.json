@@ -6,6 +6,7 @@
     "no_repeat_ngram_size": 3,
     "repetition_penalty": 1.2
   },
+  "compute_rtf": true,
   "language": null,
   "vad": "false",
   "device": "cuda",
@@ -17,7 +18,6 @@
   "do_sample": false,
   "num_beams": 1,
   "input_manifest": "benchmarks/sota/manifest_rtf.jsonl",
-  "compute_rtf": true,
   "save_predictions": false,
   "save_alignments": false,
   "compute_latency": false,
@@ -26,9 +26,9 @@
   "device_name": "NVIDIA GB10",
   "word_timestamps": false,
   "model_info": {
+    "params": 1545548800,
     "hf": "BuzzASR/french",
     "license": "mit",
-    "params": 1545548800,
     "languages": [
       "fr"
     ]

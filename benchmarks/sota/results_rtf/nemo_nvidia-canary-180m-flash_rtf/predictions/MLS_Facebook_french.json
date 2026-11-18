@@ -1,0 +1,62 @@
+{
+  "MLS_Facebook_french_5207_2928_000007": {
+    "audio_filepath": "/home/data/audio/raw/transcript/multilang/MultilingualLibriSpeech/mls_french/test/audio/5207/2928/5207_2928_000007.flac",
+    "id": "MLS_Facebook_french_5207_2928_000007",
+    "audio_duration": 20.0,
+    "audio_offset": 0.0,
+    "dataset": "MLS_Facebook_french",
+    "full_dataset": "MLS_Facebook_french",
+    "text": "menacer s'ils ne se taisaient pas de les envoyer chez trochu aussitôt ils crièrent avec effroi mademoiselle nous serons bien sages ne nous envoyez pas chez trochu ces cris et la patience avec laquelle ils attendirent me donnèrent l'idée qu'ils entendaient chez eux tenir en médiocre estime",
+    "prediction_duration": 0.47154,
+    "rtf": 0.02358,
+    "prediction": "menacés, s'ils ne se taisaient pas, de les envoyer chez Trochu. Aussitôt ils crièrent avec effroi. Mademoiselle, nous serons bien sages. Ne nous envoyez pas chez Trochu. Ces cris et la patience avec laquelle ils attendirent me donnèrent l'idée Qu'ils entendaient chez eux tenir en médiocre estime"
+  },
+  "MLS_Facebook_french_5207_2928_000012": {
+    "audio_filepath": "/home/data/audio/raw/transcript/multilang/MultilingualLibriSpeech/mls_french/test/audio/5207/2928/5207_2928_000012.flac",
+    "id": "MLS_Facebook_french_5207_2928_000012",
+    "audio_duration": 20.0,
+    "audio_offset": 0.0,
+    "dataset": "MLS_Facebook_french",
+    "full_dataset": "MLS_Facebook_french",
+    "text": "fonder il n'y avait pas un sou mais nous avions une idée pour faire les fonds nous emmenons avec nous un garde national de haute taille à la physionomie d'une gravure de quatre-vingt-treize marchant devant la baïonnette au fusil nous avec de larges ceintures rouges tenant à la main des bourses",
+    "prediction_duration": 0.4642,
+    "rtf": 0.02321,
+    "prediction": "Il n'y avait pas un sou, mais nous avions une idée pour faire les fonds. Nous emmenons avec nous un garde national, de haute taille, à la physionomie d'une gravure de quatre - vingt - treize, marchant devant la baïonnette aux fusils nous, avec de larges ceintures rouges, tenant à la main des"
+  },
+  "MLS_Facebook_french_5207_2928_000014": {
+    "audio_filepath": "/home/data/audio/raw/transcript/multilang/MultilingualLibriSpeech/mls_french/test/audio/5207/2928/5207_2928_000014.flac",
+    "id": "MLS_Facebook_french_5207_2928_000014",
+    "audio_duration": 20.0,
+    "audio_offset": 0.0,
+    "dataset": "MLS_Facebook_french",
+    "full_dataset": "MLS_Facebook_french",
+    "text": "garçons et filles dont ma mère s'était chargée et qu'elle gâtait beaucoup les grandes de ma classe l'aidaient tantôt l'une tantôt l'autre les petits dont les parents étaient des gens de la campagne réfugiés à paris avaient été envoyés par clemenceau la mairie s'était chargée de leur nourriture",
+    "prediction_duration": 0.47743,
+    "rtf": 0.02387,
+    "prediction": "garçons et filles dont ma mère s'était chargée et qu'elle gâtait beaucoup. Les grandes de ma classe l'aidaient, tantôt l'une, tantôt l'autre. Les petits dont les parents étaient des gens de la campagne réfugiés à Paris, avaient été envoyés par Clémenceau la mairie s'était chargée de leur nourriture"
+  },
+  "MLS_Facebook_french_5207_2928_000018": {
+    "audio_filepath": "/home/data/audio/raw/transcript/multilang/MultilingualLibriSpeech/mls_french/test/audio/5207/2928/5207_2928_000018.flac",
+    "id": "MLS_Facebook_french_5207_2928_000018",
+    "audio_duration": 20.0,
+    "audio_offset": 0.0,
+    "dataset": "MLS_Facebook_french",
+    "full_dataset": "MLS_Facebook_french",
+    "text": "compliments sans hésitation elles me dirent simplement il faut que vous veniez avec nous et je leur répondis j'y vais il y avait en ce moment à ma classe presque deux cents élèves des fillettes de six à douze ans que nous instruisions ma sous-maîtresse et moi et de tout petits enfants de trois à six ans",
+    "prediction_duration": 0.45109,
+    "rtf": 0.02255,
+    "prediction": "sans hésitation, elles me dirent simplement. Il faut que vous veniez avec nous, et je leur répondis. J'y vais. Il y avait en ce moment, à ma classe, presque deux cents élèves, des fillettes de six à douze ans, que nous instruisions ma sous maîtresse et moi, et de tous petits enfants de trois à"
+  },
+  "MLS_Facebook_french_5207_2928_000020": {
+    "audio_filepath": "/home/data/audio/raw/transcript/multilang/MultilingualLibriSpeech/mls_french/test/audio/5207/2928/5207_2928_000020.flac",
+    "id": "MLS_Facebook_french_5207_2928_000020",
+    "audio_duration": 20.0,
+    "audio_offset": 0.0,
+    "dataset": "MLS_Facebook_french",
+    "full_dataset": "MLS_Facebook_french",
+    "text": "retrouvé l'an dernier l'une de ces braves ambulancières madame gaspard les ambulances les comités de vigilance les ateliers des mairies où surtout à montmartre mesdames poirier escoffons blin jarry trouvaient moyen que toutes eussent un salaire également rétribué la",
+    "prediction_duration": 0.48433,
+    "rtf": 0.02422,
+    "prediction": "retrouvé l'an dernier l'une de ses braves ambulancières, madame Gaspard. Les ambulances, les comités de vigilance, les ateliers des mairies, ou surtout à Montmartre, Mesdames Poirier, Escoffon, Blain, Jarry trouvaient moyen que toutes eussent un salaire également rétribué. La"
+  }
+}

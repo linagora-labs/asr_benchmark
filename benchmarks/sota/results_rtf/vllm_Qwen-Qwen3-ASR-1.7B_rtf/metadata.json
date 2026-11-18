@@ -55,5 +55,6 @@
   "plot_monitoring": true,
   "input_audios_paths": "",
   "device_name": "NVIDIA GB10",
-  "word_timestamps": false
+  "word_timestamps": false,
+  "model_info": {}
 }
