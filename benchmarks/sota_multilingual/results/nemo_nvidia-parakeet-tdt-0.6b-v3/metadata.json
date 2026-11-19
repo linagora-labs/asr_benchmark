@@ -1,0 +1,28 @@
+{
+  "backend": "nemo",
+  "model": "nvidia/parakeet-tdt-0.6b-v3",
+  "languages": [
+    "en",
+    "nl",
+    "it",
+    "de",
+    "es",
+    "pt"
+  ],
+  "compute_rtf": false,
+  "vad": "false",
+  "device": "cuda",
+  "num_threads": null,
+  "decoder": "ctc",
+  "input_manifest": "/tmp/manifest_qplpqcwu.jsonl",
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "language": "pt",
+  "word_timestamps": true,
+  "model_info": {
+    "params": 627008134
+  }
+}

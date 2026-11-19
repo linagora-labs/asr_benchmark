@@ -1,6 +1,7 @@
 """Build the manifests of the whole test sets of the sota benchmark, references normalized.
 
     python tools/build_manifests.py [--output_folder benchmarks/sota/manifests]
+    python tools/build_manifests.py --benchmark sota_multilingual  # FLEURS and mTEDx in other languages
 """
 import argparse
 import json
@@ -62,6 +63,51 @@ DATASETS = {
     "FLEURS": dict(nemo=f"{NEMO}/FLEURS/test.jsonl"),
 }
 
+# sota_multilingual: FLEURS and Multilingual TEDx of the other languages (those of AudioBench),
+# whole test sets, one config per language (benchmarks/sota_multilingual/config_<lang>.yaml).
+# mTEDx: the manifests point to .flac, only the wav conversions are on the DGX (as TEDX_fr).
+MULTILINGUAL_LANGUAGES = {"en": ["FLEURS"], "nl": ["FLEURS"]} | {lang: ["FLEURS", "TEDX"] for lang in ("it", "de", "es", "pt", "ar")}
+DATASETS_MULTILINGUAL = {
+    f"{name}_{lang}": dict(
+        nemo=f"{DATA}/nemo/asr/{lang}/nocontext/{'FLEURS' if name == 'FLEURS' else 'Multilingual_TEDx'}/test.jsonl",
+        **({"audio": f"{DATA}/converted_audios/transcript/{lang}/Multilingual_TEDx"} if name == "TEDX" else {}),
+    )
+    for lang, names in MULTILINGUAL_LANGUAGES.items() for name in names
+}
+# 3 test sets in English, 2 in Dutch. VoxPopuli: only the wav conversions are on the DGX.
+# CommonVoice_en (16k segments): a ratio in the config.
+for _lang in ("en", "nl"):
+    DATASETS_MULTILINGUAL[f"Voxpopuli_{_lang}"] = dict(
+        nemo=f"{DATA}/nemo/asr/{_lang}/nocontext/VoxPopuli/test.jsonl", audio=f"{DATA}/converted_audios/transcript/{_lang}/VoxPopuli")
+DATASETS_MULTILINGUAL["CommonVoice_en"] = dict(nemo=f"{DATA}/nemo/asr/en/nocontext/CommonVoice/test.jsonl")  # Common Voice 22.0
+BENCHMARKS = {"sota": DATASETS, "sota_multilingual": DATASETS_MULTILINGUAL}
+
+# mTEDx sound events, removed with their parentheses (clean() keeps the content of the other
+# parentheses: spoken asides, names in the Arabic talks). The segments left without any word
+# (applause...) are dropped, TEDX_fr (kaldi casepunc) has neither.
+TEDX_EVENTS = {
+    "it": ["Applausi", "Risate"],
+    "de": ["Lachen", "Applaus", "Gelächter", "Musik", "Beifall", "Klarinettenmusik"],
+    "es": ["Risas", "Silbido en el público", "Aplausos", "Suspiro", "Ovación", "Vídeo", "Música", "Ruido",
+           "Sonido de platillos", "Sonido de tambor", "Sonido de relincho de caballo", "Vítores",
+           "Fin de aplausos", "Exhalación", "El público pregunta"],
+    "pt": ["Aplausos", "Risos", "Vivas", "Música", "Fim da música", "ininteligível", "Som dos metrónomos dessincronizados",
+           "Som dos metrónomos sincronizados", "Inglês", "Gritos da plateia", "Gritos"],
+    "ar": ["تصفيق", "ضحك", "صوت أطفال", "فيديو", "غناء", "تصفيق وهتاف"],
+}
+
+
+def remove_tedx_events(lang):
+    events = re.compile(r"\((?:" + "|".join(map(re.escape, TEDX_EVENTS[lang])) + r")\)"
+                        # one Arabic talk writes its applause without parentheses, at the start
+                        + (r"|^تصفيق(?=\s|$)" if lang == "ar" else ""))
+    return lambda text: re.sub(r"\s+", " ", events.sub(" ", text)).strip()
+
+
+for _lang, _names in MULTILINGUAL_LANGUAGES.items():
+    if "TEDX" in _names:
+        DATASETS_MULTILINGUAL[f"TEDX_{_lang}"]["normalize"] = remove_tedx_events(_lang)
+
 
 def to_placeholder(path):
     path = path.replace(f"{DATA}/", "<AUDIO_FOLDER>/")
@@ -105,17 +151,24 @@ def load_nemo(path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--output_folder", type=Path, default=Path("benchmarks/sota/manifests"))
+    parser.add_argument("--benchmark", choices=BENCHMARKS, default="sota")
+    parser.add_argument("--output_folder", type=Path, default=None, help="Default: benchmarks/<benchmark>/manifests")
     args = parser.parse_args()
 
+    args.output_folder = args.output_folder or Path(f"benchmarks/{args.benchmark}/manifests")
     args.output_folder.mkdir(parents=True, exist_ok=True)
-    for name, conf in DATASETS.items():
+    for name, conf in BENCHMARKS[args.benchmark].items():
         rows = load_nemo(conf["nemo"]) if "nemo" in conf else load_kaldi(conf["kaldi"])
         normalize = conf.get("normalize", lambda t: t)
+        for row in rows:
+            if "audio" in conf:
+                row["audio_filepath"] = to_placeholder(f"{conf['audio']}/{Path(row['audio_filepath']).stem}.wav")
+            row.update(text=clean(normalize(row["text"])), split="test", name=name)
+        empty = [row for row in rows if not row["text"]]
+        if empty:
+            logger.info(f"{name}: {len(empty)} segments without reference removed")
+            rows = [row for row in rows if row["text"]]
         with open(args.output_folder / f"{name}.jsonl", "w", encoding="utf-8") as f:
             for row in rows:
-                if "audio" in conf:
-                    row["audio_filepath"] = to_placeholder(f"{conf['audio']}/{Path(row['audio_filepath']).stem}.wav")
-                row.update(text=clean(normalize(row["text"])), split="test", name=name)
                 f.write(json.dumps(row, ensure_ascii=False) + "\n")
         logger.info(f"{name}: {len(rows)} segments ({sum(r['duration'] for r in rows) / 3600:.2f}h)")

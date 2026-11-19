@@ -93,6 +93,31 @@ class Model():
     def add_defaults_to_config(self, config):
         # config["language"] = config.get("language", "fr")
         return config
+
+    def set_language(self, language):
+        """Switches to the language of the next dataset (datasets of several languages in one
+        run, e.g. sota_multilingual), without reloading the model: the backends read
+        config["language"] / config["prompt"] at transcription time. `prompts`
+        ({language: prompt}) gives the prompt of each language."""
+        if not language:
+            return
+        self.config["language"] = language
+        prompts = self.config.get("prompts")
+        if prompts:
+            if language not in prompts:
+                raise ValueError(f"No prompt for language {language!r} in `prompts` of {self.config['model']}")
+            self.config["prompt"] = self.format_prompt(prompts[language])
+        # {language: extra_body} (vLLM): models whose language goes through the request body,
+        # e.g. chat_template_kwargs of Rumble-2-Flash. Replaces the whole extra_body.
+        extra_bodies = self.config.get("extra_bodies")
+        if extra_bodies:
+            if language not in extra_bodies:
+                raise ValueError(f"No extra_body for language {language!r} in `extra_bodies` of {self.config['model']}")
+            self.config["extra_body"] = dict(extra_bodies[language])
+
+    def format_prompt(self, prompt):
+        """Prompt as the backend sends it (e.g. with the audio placeholder of vLLM chat models)."""
+        return prompt
     
 class HttpAPIModel(Model):
     def load(self) -> None:

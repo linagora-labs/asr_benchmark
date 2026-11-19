@@ -161,6 +161,8 @@ benchmarks/*/results*/
 !benchmarks/sota/results_rtf/
 benchmarks/sota/results/*/alignments/
 benchmarks/sota/results_rtf/*/alignments/
+!benchmarks/sota_multilingual/results/
+benchmarks/sota_multilingual/results/*/alignments/
 
 dev/
 out*/

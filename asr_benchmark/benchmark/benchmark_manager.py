@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 import re
 import time
+import unicodedata
 import json
 import matplotlib
 matplotlib.use("Agg")
@@ -54,11 +55,63 @@ def normalize_punctuation(text):
     return _UNICODE_PUNCTUATION_RE.sub(lambda m: UNICODE_PUNCTUATION[m.group()], text)
 
 
+# Languages normalized by ssak (numbers_and_symbols_to_letters, compute_wer's "<lang>+"
+# normalization). The others (sota_multilingual benchmark) use num2words and
+# normalize_generic(): ssak raises KeyError / NotImplementedError on them.
+SSAK_LANGUAGES = ("fr", "en")
+DECIMAL_WORDS = {"de": "komma", "es": "coma", "it": "virgola", "pt": "vírgula", "nl": "komma", "ar": "فاصلة"}
+_THOUSANDS_RE = re.compile(r"\b\d{1,3}(?:[ .  ]\d{3})+\b")
+_NUMBER_RE = re.compile(r"\d+(?:[.,]\d+)?")
+# Arabic: short vowels / shadda / sukun (written or not, FLEURS mixes both), tatweel,
+# hamza forms of alef (أ إ آ -> ا) that references and models write inconsistently.
+_ARABIC_DIACRITICS_RE = re.compile(r"[ؐ-ًؚ-ٰٟۖ-ۭـ]")
+_ARABIC_ALEF_RE = re.compile(r"[آأإٱ]")
+
+
+def spell_numbers_num2words(text, language):
+    """"23,5" -> "ventitré virgola cinque": digits in letters with num2words, thousands
+    groups ("10 000", "10.000") read as one number. Left unchanged when num2words fails."""
+    from num2words import num2words
+
+    def spell(m):
+        parts = re.split(r"[.,]", m.group(), maxsplit=1)
+        try:
+            words = num2words(int(parts[0]), lang=language)
+            if len(parts) == 2:
+                decimals = parts[1]
+                zeros = len(decimals) - len(decimals.lstrip("0"))
+                tail = [num2words(0, lang=language)] * zeros + ([num2words(int(decimals), lang=language)] if decimals.lstrip("0") else [])
+                words = " ".join([words, DECIMAL_WORDS.get(language, ",")] + tail)
+        except (ValueError, NotImplementedError, OverflowError):
+            return m.group()
+        return f" {words} "
+
+    text = _THOUSANDS_RE.sub(lambda m: re.sub(r"\D", "", m.group()), text)
+    return re.sub(r"\s+", " ", _NUMBER_RE.sub(spell, text)).strip()
+
+
 def spell_numbers(text, language="fr"):
     """"le 15 décembre" -> "le quinze décembre", as the nocasepunc normalization does."""
     if not re.search(r"\d", text):
         return text
+    if language not in SSAK_LANGUAGES:
+        return spell_numbers_num2words(text, language)
     return numbers_and_symbols_to_letters(text, lang=language)
+
+
+def normalize_generic(text, language):
+    """nocasepunc normalization of the languages ssak does not handle: numbers in letters,
+    lower case, punctuation and symbols (apostrophes and hyphens included) replaced by
+    spaces, accents kept. Arabic: diacritics and tatweel removed, alef forms merged.
+
+    Example (es): "¿Cuántos? 23, dijo." -> "cuántos veintitrés dijo"
+    """
+    text = unicodedata.normalize("NFKC", normalize_punctuation(text))
+    text = spell_numbers(text, language).lower()
+    if language == "ar":
+        text = _ARABIC_ALEF_RE.sub("ا", _ARABIC_DIACRITICS_RE.sub("", text))
+    text = "".join(" " if unicodedata.category(c)[0] in "PS" else c for c in text)
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def separate_punctuation(text):
@@ -66,7 +119,8 @@ def separate_punctuation(text):
     Example: "Hello,world!" -> "Hello , world !"
     """
     text = normalize_punctuation(text)
-    text = re.sub(r'([.,!?;:()\"\'\-])', r' \1 ', text)
+    # ¿ ¡ (Spanish), ، ؟ ؛ (Arabic): sota_multilingual
+    text = re.sub(r'([.,!?;:()\"\'\-¿¡،؟؛])', r' \1 ', text)
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
@@ -89,8 +143,17 @@ def check_if_benched(output_folder, input_file, config, debug):
         dataset = dataset_file.stem
         with open(dataset_file, "r") as f:
             benched[dataset] = json.load(f)
+    # `languages` (per entry): only the datasets of these languages, for the models that
+    # do not support every language of a multilingual benchmark
+    languages = config.get("languages")
+    if languages:
+        all_data = [row for row in all_data if row.get("language") in languages]
     if debug:
-        all_data = all_data[:1]
+        # One segment (one per dataset in a multilingual benchmark)
+        first = {}
+        for row in all_data:
+            first.setdefault(row["name"] if row.get("language") else None, row)
+        all_data = list(first.values())
     for row in all_data:
         dataset, id = row['name'], row['id']
         if dataset not in data:
@@ -120,6 +183,8 @@ def make_perf_file(row):
         "full_dataset": full_dataset,
         "text": row["text"],
     }
+    if row.get("language"):
+        perfs["language"] = row["language"]
 
     return perfs
 
@@ -306,11 +371,19 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
                      [separate_punctuation(spell_numbers(pred, language)) for pred in predictions]),
         }
 
-    word_alignments = {}  # normalization -> word-level alignment, reused by the cer mode
+    if language not in SSAK_LANGUAGES:
+        # compute_wer only knows the ssak languages: the nocasepunc texts are normalized here,
+        # from the raw texts (separate_punctuation would split "10.000" before spelling it)
+        texts["nocasepunc"] = ([normalize_generic(t, language) for t in references], [normalize_generic(t, language) for t in predictions])
+
+    word_alignments = {}  # "punc" / "nocasepunc" -> word-level alignment, reused by the cer mode
     for key in modes:
-        normalization = f"{language}+" if "nocasepunc" in key else ""
+        text_mode = "nocasepunc" if "nocasepunc" in key else "punc"
+        normalization = f"{language}+" if text_mode == "nocasepunc" and language in SSAK_LANGUAGES else ""
+        # French fillers ("euh", "hum"): not removed from the other languages
+        replacements = REPLACEMENTS_WER if language in SSAK_LANGUAGES else {}
         if "cer" in key:
-            measures = character_measures(word_alignments[normalization])
+            measures = character_measures(word_alignments[text_mode])
             sub, dele, ins, hits = map(sum, zip(*measures))
             count = sub + dele + hits
             pct = lambda x: 100 * x / max(count, 1)
@@ -323,19 +396,19 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
             if alignment_dir:
                 (Path(alignment_dir) / key).mkdir(parents=True, exist_ok=True)
                 alignment = str(Path(alignment_dir) / key / (dataset + ".txt"))
-            refs, preds = texts["nocasepunc" if "nocasepunc" in key else "punc"]
+            refs, preds = texts[text_mode]
             wer_score = compute_wer(
                 refs,
                 preds,
                 normalization=normalization,
                 use_percents=True,
                 alignment=alignment,
-                replacements_pred=REPLACEMENTS_WER,
-                replacements_ref=REPLACEMENTS_WER,
+                replacements_pred=replacements,
+                replacements_ref=replacements,
             )
-            word_alignments[normalization] = wer_score.pop("raw_alignement")
+            word_alignments[text_mode] = wer_score.pop("raw_alignement")
             del wer_score["alignment"]
-            counts = utterance_errors(word_alignments[normalization])
+            counts = utterance_errors(word_alignments[text_mode])
         # Each file's errors are capped at its reference length (100% WER), so that one
         # hallucination loop does not dominate the dataset score. Only insertions can
         # exceed the reference length, so the excess is removed from them.
@@ -363,7 +436,9 @@ def process_wer(output_folder, config):
             logger.info(f"No reference for {dataset}, skipping WER computation")
             continue
         alignment_dir = output_path / "alignments" if config.get("save_alignments", True) else None
-        results = score_dataset(data, config.get("language") or "fr", alignment_dir, dataset)
+        # The dataset's language (multilingual benchmarks), else the config's
+        language = next(iter(data.values())).get("language") or config.get("language") or "fr"
+        results = score_dataset(data, language, alignment_dir, dataset)
         with open(perf_file, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=4)
 
@@ -375,10 +450,13 @@ def bench_model(config, input_manifest, output_folder, debug=False):
         model = get_model(config)
         model.load()
         n_params = model.count_parameters()
+        # Some backends need a language for the warm-up (Canary without `language` in the config)
+        model.set_language(next(iter(data.values()))[0].get("language"))
         audio = model.load_audio(PATH_TO_WARMUP_FILE)
         _ = model.transcribe(audio)
         for dataset in data:
             dataset_data = data[dataset]
+            model.set_language(dataset_data[0].get("language"))
             bench_dataset_result = bench_results.get(dataset, dict())
             if config.get('compute_rtf', True):
                 if int(config.get('concurrency', 1) or 1) > 1:
@@ -407,6 +485,10 @@ def bench_model(config, input_manifest, output_folder, debug=False):
         logger.info(f"Skipping transcriptions, it has already been transcribed")
     process_wer(output_folder, config)
 
+# List values that are a setting, not a grid to expand
+NOT_EXPANDED = ("languages",)
+
+
 def make_configs(configs):
     main_config = {k: v for k, v in configs.items() if k != "benchmarks"}
     new_configs = []
@@ -414,7 +496,7 @@ def make_configs(configs):
         keys, values = zip(*config.items())
         all_combinations = [
             main_config | dict(zip(keys, prod))
-            for prod in product(*[v if isinstance(v, list) else [v] for v in values])
+            for prod in product(*[v if isinstance(v, list) and k not in NOT_EXPANDED else [v] for k, v in zip(keys, values)])
         ]
         new_configs.extend(all_combinations)
     return new_configs

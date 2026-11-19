@@ -22,7 +22,7 @@ def main(results, dry_run=False):
             perf_file = exp / "performances" / pred_file.name
             data = json.loads(pred_file.read_text(encoding="utf-8"))
             with contextlib.redirect_stderr(io.StringIO()):  # ssak's progress bars
-                new = score_dataset(data, language)
+                new = score_dataset(data, next(iter(data.values())).get("language") or language)
             old = json.loads(perf_file.read_text(encoding="utf-8")) if perf_file.exists() else {}
             for key, score in new.items():
                 if isinstance(score, dict):
