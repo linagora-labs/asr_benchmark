@@ -32,7 +32,13 @@ class Qwen3ASRModel(Model):
     Requires transformers >= 5.13.0 (older versions do not recognise 'qwen3_asr').
     Transcription uses the processor's apply_transcription_request() API, with
     optional forced language.
+
+    Contextual biasing: the terms are given as the `prompt` of
+    apply_transcription_request, which puts it in the system turn (the context
+    mechanism of Qwen3-ASR; its format is not documented, see
+    contextual_biasing_template).
     """
+    SUPPORTS_CONTEXTUAL_BIASING = True
 
     def load(self) -> None:
         from transformers import AutoProcessor
@@ -60,6 +66,9 @@ class Qwen3ASRModel(Model):
         language = self.config.get("language")
         if language:
             request_kwargs["language"] = _LANGUAGE_NAMES.get(language, language)
+        biasing = self.format_biasing(self.biasing_terms)
+        if biasing:
+            request_kwargs["prompt"] = biasing
         try:
             inputs = self.processor.apply_transcription_request(audio=audio, **request_kwargs)
             inputs = inputs.to(self.model.device, self.model.dtype)

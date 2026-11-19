@@ -1,0 +1,165 @@
+# Contextual Biasing ASR Benchmark, French: PxSLU (spoken drug prescriptions).
+#
+# Each model with a biasing mechanism is run once per value of `contextual_biasing`:
+#   null       no list given (baseline; scored on every list of the manifest)
+#   pxslu      global list of the PxSLU drug names (~400 terms, the targets)
+#   bdpm       targets + drug names of the French public drug database (BDPM,
+#              ANSM, Licence Ouverte) (~4,100 terms, ~18k tokens)
+#   vidal      targets + Vidal drug dictionary (~2,800 terms, ~12k tokens)
+#   theriaque  targets + Theriaque drug dictionary (~8,900 terms, ~38k tokens)
+#              (vidal and theriaque: not redistributable, not in git)
+#   oracle     per utterance: only the targets spoken in the utterance
+#   pxslu_upper, oracle_upper: the same lists in capitals (does the model write the
+#              drug names in capitals when given them so? see report.py --mode cased)
+# Lists and references in their usual case (brands capitalized, substances in lower
+# case); the "cased" measures check the case of the drug names only.
+# Results of a run with a list go to "<model folder>_cb-<list>". Table of the
+# measures without/with each list and the gain:
+#   python tools/contextual_biasing/report.py benchmarks/contextual_biasing/results_fr
+#
+# Data: python tools/contextual_biasing/prepare_pxslu.py (see the README).
+datasets:
+  PxSLU_test:   # official test split (doctors)
+    manifest: benchmarks/contextual_biasing/manifests/PxSLU_test.jsonl
+  PxSLU_dev:    # official dev split (experts and non-experts); also to tune NeMo's alpha
+    manifest: benchmarks/contextual_biasing/manifests/PxSLU_dev.jsonl
+min_duration: 0
+max_duration: 60
+output_folder: benchmarks/contextual_biasing/results_fr
+compute_rtf: False
+plot_monitoring: False
+skip_errors: False
+save_alignments: True
+save_predictions: False
+language: fr
+wer_language: fr
+
+benchmarks:
+  # --- faster-whisper: `hotwords`, at most 223 tokens (the rest is cut). Only the
+  # oracle lists fit: the PxSLU list is ~1,700 Whisper tokens. large-v3: greedy;
+  # large-v3-turbo: greedy and beam search (accurate: 5 beams, temperature fallback),
+  # with full folder names to keep both.
+  - backend: faster-whisper
+    model: large-v3
+    precision: float16
+    contextual_biasing: [null, oracle, oracle_upper]
+  - backend: faster-whisper
+    model: large-v3-turbo
+    precision: float16
+    accurate: [false, true]
+    full_name: true
+    contextual_biasing: [null, oracle, oracle_upper]
+
+  # --- Qwen3-ASR (vLLM): `prompt` field, put in the system turn. The format is not
+  # documented by Qwen; this one is linto-stt's (production).
+  - backend: vllm
+    model:
+    - Qwen/Qwen3-ASR-1.7B
+    # - Qwen/Qwen3-ASR-0.6B
+    port: 8106
+    extra_args: --max-model-len 65536
+    contextual_biasing: [null, pxslu, bdpm, vidal, theriaque, oracle, pxslu_upper, oracle_upper]
+    contextual_biasing_template: "Vocabulary: {terms}."
+
+  # --- Nemotron-3.5-Transcribe (vLLM chat, server started separately) ---
+  # Template of the "Domain vocabulary" row of the model card's prompt guide,
+  # appended to the prompt used in benchmarks/sota. The server needs a
+  # --max-model-len above the list sizes (theriaque: ~38k tokens).
+  - backend: vllm
+    model: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B
+    launch: false
+    server: http://172.17.0.1
+    port: 8118
+    endpoint: chat
+    prompt: "Audio transcription. Language: French. Wording: verbatim, including fillers and repetitions. Formatting: punctuation and capitalization. Output: transcript only."
+    extra_body: {chat_template_kwargs: {enable_thinking: false}}
+    concurrency: 32
+    contextual_biasing: [null, pxslu, bdpm, vidal, theriaque, oracle, pxslu_upper, oracle_upper]
+    contextual_biasing_template: "{prompt} Context terms: {terms}."
+
+  # --- Granite Speech 4.1 / 5.0 (vLLM chat): "Keywords: kw1, kw2" (model cards) ---
+  # Granite 5.0: "up to 2000" keywords (model card), 16k context: no bdpm/vidal/theriaque.
+  # - backend: vllm
+  #   model: ibm-granite/granite-speech-4.1-2b
+  #   port: 8114
+  #   endpoint: chat
+  #   prompt: <|audio|>transcris la parole française avec la ponctuation et les majuscules appropriées.
+  #   extra_args: --max-model-len 16384
+  #   contextual_biasing: [null, pxslu, vidal, oracle]
+  #   contextual_biasing_template: "{prompt} Keywords: {terms}"
+  # vLLM 0.28 loads every .safetensors of the repo and fails on out_llm.safetensors
+  # ('bias'): model = folder of symlinks to the HF snapshot without this file;
+  # served_model_name keeps the folder name of the results.
+  - backend: vllm
+    model: /home/jlouradour/models/granite-speech-5.0-2b-vllm
+    served_model_name: ibm-granite/granite-speech-5.0-2b
+    port: 8122
+    endpoint: chat
+    prompt: <|audio|>La parole est en français. Transcrivez-la exactement ; ne la traduisez pas. Transcrivez la parole avec une ponctuation et des majuscules appropriées.
+    extra_args: --max-model-len 16384
+    concurrency: 128
+    contextual_biasing: [null, pxslu, oracle, pxslu_upper, oracle_upper]
+    contextual_biasing_template: "{prompt} Keywords: {terms}"
+
+  # --- MOSS-Transcribe-Diarize (vLLM): hotwords appended to the default (Chinese)
+  # prompt, as documented: "<prompt>热词提示：热词1, 热词2". The baseline uses the
+  # same default prompt.
+  - backend: vllm
+    model: OpenMOSS-Team/MOSS-Transcribe-Diarize
+    trust_remote_code: true
+    port: 8102
+    language: null   # auto-detection, as in benchmarks/sota (texts scored in French: wer_language)
+    transcription_prompt: "请将音频转写为文本，每一段需以起始时间戳和说话人编号（[S01]、[S02]、[S03]…）开头，正文为对应的语音内容，并在段末标注结束时间戳，以清晰标明该段语音范围。"
+    contextual_biasing: [null, pxslu, bdpm, vidal, theriaque, oracle, pxslu_upper, oracle_upper]
+    contextual_biasing_template: "{prompt}热词提示：{terms}"
+
+  # --- VibeVoice-ASR (transformers): extra context of the request. Smaller batches
+  # for the long list (12k tokens per request); theriaque (~38k) left out.
+  - backend: vibevoice-asr
+    model: microsoft/VibeVoice-ASR-HF
+    dtype: bfloat16
+    batch_size: 64
+    contextual_biasing: [null, pxslu, oracle, pxslu_upper, oracle_upper]
+  - backend: vibevoice-asr
+    model: microsoft/VibeVoice-ASR-HF
+    dtype: bfloat16
+    batch_size: 8
+    contextual_biasing: [bdpm, vidal]
+
+  # --- NeMo phrase boosting (GPU-PB, decoding-time boosting tree; greedy_batch
+  # decoding). alpha (boosting weight) tuned on PxSLU_dev: config_fr_nemo_alpha.yaml
+  # One entry per condition: with NeMo 3.0, loading a model a second time in the same
+  # process fails (torch.load), and the DGX runner (one process per entry and model)
+  # would run all the conditions of an entry in one process.
+  - &parakeet
+    backend: nemo
+    model: nvidia/parakeet-tdt-0.6b-v3
+    batch_size: 64
+    language: fr   # not a prompt: parakeet detects the language itself; used by the boosting tree
+    contextual_biasing: null
+  - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 1.0}   # TO UPDATE after tuning
+  - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: vidal, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: theriaque, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: pxslu_upper, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: oracle_upper, contextual_biasing_alpha: 1.0}
+  # - backend: nemo
+  #   model: nvidia/canary-1b-v2
+  #   batch_size: 64
+  #   language: fr
+  #   contextual_biasing: [null, pxslu, bdpm, vidal, theriaque, oracle, pxslu_upper, oracle_upper]
+  #   contextual_biasing_alpha: 1.0
+  # - backend: nemo
+  #   model: linagora/linto_stt_fr_fastconformer_pc
+  #   batch_size: 64
+  #   decoder: [rnnt, ctc]
+  #   contextual_biasing: [null, pxslu, vidal, theriaque, oracle]
+  #   contextual_biasing_alpha: 1.0
+
+  # --- Baselines without mechanism (scores on the lists without giving them) ---
+  - backend: vllm
+    model: CohereLabs/cohere-transcribe-03-2026
+    trust_remote_code: true
+    port: 8115
+    language: fr

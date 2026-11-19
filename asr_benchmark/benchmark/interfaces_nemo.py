@@ -1,4 +1,6 @@
 
+import copy
+import itertools
 import logging
 import re
 from pathlib import Path
@@ -10,6 +12,7 @@ import nemo.collections.asr as nemo_asr
 logging.getLogger('nemo_logging').setLevel(logging.ERROR)
 from asr_benchmark.utils.benchmark import load_audio
 from asr_benchmark.benchmark.interfaces import Model
+from asr_benchmark.benchmark import contextual_biasing
 
 DEFAULT_NUM_THREADS = torch.get_num_threads()
 # Language tag (e.g. " <fr-FR>") that prompt-conditioned models append after the
@@ -17,6 +20,13 @@ DEFAULT_NUM_THREADS = torch.get_num_threads()
 LANG_TAG_PATTERN = re.compile(r"\s*<[a-z]{2}-[A-Z]{2}>")
 
 class NemoModel(Model):
+    # Contextual biasing through NeMo's GPU phrase boosting (GPU-PB, "TurboBias",
+    # nemo_toolkit >= 2.5): a boosting tree built from the terms, fused at decoding
+    # time (greedy_batch strategy for CTC and RNN-T/TDT, beam for Canary). Config:
+    # contextual_biasing_alpha (boosting_tree_alpha, required: NeMo says to tune it),
+    # contextual_biasing_context_score (default 1.0), contextual_biasing_depth_scaling
+    # (default 2.0, 1.0 for Canary, as recommended in NeMo's word boosting docs).
+    SUPPORTS_CONTEXTUAL_BIASING = True
 
     def __init__(self, config) -> None:
         model_type = nemo_asr.models.EncDecCTCModelBPE
@@ -65,6 +75,54 @@ class NemoModel(Model):
             decode_cfg.beam.beam_size = 1
             self.model.change_decoding_strategy(decode_cfg)
         self.set_chunk_size()
+        self._boosting_key = None
+        self._base_decoding_cfg = None
+        if contextual_biasing.config_variant(self.config) is not None:
+            if self.decoder is not None:
+                raise ValueError("contextual_biasing is not supported with ngram_model (pyctcdecode)")
+            self._base_decoding_cfg = copy.deepcopy(self._decoding_cfg())
+            # Boosting needs this strategy (beam for Canary, greedy_batch otherwise)
+            self._boosting_strategy = "beam" if self.model_type == nemo_asr.models.EncDecMultiTaskModel else "greedy_batch"
+            strategy = self._base_decoding_cfg.get("strategy")
+            if strategy != self._boosting_strategy:
+                # The run without list (baseline) decodes with the model's default
+                # strategy, so a part of the difference may come from it.
+                logging.warning(f"{self.config['model']}: decoding strategy {strategy} replaced by {self._boosting_strategy} for phrase boosting")
+
+    def _decoding_cfg(self):
+        if self.model_type == nemo_asr.models.EncDecHybridRNNTCTCBPEModel and self.config['decoder'] == 'ctc':
+            return self.model.cfg.aux_ctc.decoding
+        return self.model.cfg.decoding
+
+    def _set_boosting(self, terms):
+        """Decoding with a boosting tree of `terms` (or without boosting when None)."""
+        if self._base_decoding_cfg is None:
+            return
+        key = tuple(terms) if terms else None
+        if key == self._boosting_key:
+            return
+        from omegaconf import open_dict
+
+        cfg = copy.deepcopy(self._base_decoding_cfg)
+        with open_dict(cfg):
+            cfg.strategy = self._boosting_strategy
+            section = cfg.beam if self._boosting_strategy == "beam" else cfg.greedy
+            if terms:
+                section.boosting_tree = {
+                    "key_phrases_list": list(terms),
+                    "context_score": float(self.config["contextual_biasing_context_score"]),
+                    "depth_scaling": float(self.config["contextual_biasing_depth_scaling"]),
+                    "source_lang": self.config.get("language") or "en",
+                }
+                section.boosting_tree_alpha = float(self.config["contextual_biasing_alpha"])
+            else:
+                section.boosting_tree = None
+                section.boosting_tree_alpha = 0.0
+        if self.model_type == nemo_asr.models.EncDecHybridRNNTCTCBPEModel:
+            self.model.change_decoding_strategy(cfg, decoder_type=self.config['decoder'], verbose=False)
+        else:
+            self.model.change_decoding_strategy(cfg, verbose=False)
+        self._boosting_key = key
 
     def set_chunk_size(self):
         """Latency of cache-aware streaming models (att_context_style chunked_limited). Even when
@@ -97,6 +155,7 @@ class NemoModel(Model):
         if self.config['vad'] and self.config['vad'] in ['auditok','silero', 'pyannote']:
             audio, _ = ssak.utils.vad.remove_non_speech(audio, method=self.config['vad'])
         output = dict()
+        self._set_boosting(self.biasing_terms)
         if isinstance(self.model, nemo_asr.models.EncDecMultiTaskModel):
             result = self.model.transcribe(
                 audio,
@@ -122,6 +181,18 @@ class NemoModel(Model):
         return text
 
     def transcribe_batch(self, data: str) -> str:
+        if self._base_decoding_cfg is None:
+            return self._transcribe_batch(data)
+        # Contextual biasing: one boosting tree per list, so the rows are transcribed
+        # by groups of consecutive rows sharing the same list (a global list: one group;
+        # per-utterance lists: one row at a time).
+        outputs = []
+        for terms, group in itertools.groupby(data, key=lambda row: tuple(self.terms_for_row(row) or ())):
+            self._set_boosting(list(terms) or None)
+            outputs.extend(self._transcribe_batch(list(group)))
+        return outputs
+
+    def _transcribe_batch(self, data):
         # NeMo transcribes from a manifest file; a temp file per call so parallel runs
         # never share it, removed even if transcription fails.
         with tempfile.NamedTemporaryFile("w", suffix=".jsonl", encoding="utf-8", delete=False) as f:
@@ -133,6 +204,7 @@ class NemoModel(Model):
                     # swaps it for the auto prompt half of the time ("unified" default mode).
                     language = self.config["language"]
                     i = dict(i, lang=language, prompt_mode="auto" if language == "auto" else "langID")
+                i = {k: v for k, v in i.items() if not k.startswith("contextual_biasing")}
                 f.write(json.dumps(i, ensure_ascii=False)+"\n")
         try:
             result = self._transcribe_manifest(manifest)
@@ -186,7 +258,16 @@ class NemoModel(Model):
             config['decoder'] = 'rnnt'
         elif self.model_type!=nemo_asr.models.EncDecMultiTaskModel:
             config['decoder'] = config.get('decoder', 'ctc')
+        if contextual_biasing.config_variant(config) is not None:
+            if config.get('contextual_biasing_alpha') is None:
+                raise ValueError("NeMo contextual biasing needs contextual_biasing_alpha (boosting_tree_alpha, to tune on the data)")
+            config['contextual_biasing_context_score'] = config.get('contextual_biasing_context_score', 1.0)
+            default_depth = 1.0 if self.model_type == nemo_asr.models.EncDecMultiTaskModel else 2.0
+            config['contextual_biasing_depth_scaling'] = config.get('contextual_biasing_depth_scaling', default_depth)
         return super().add_defaults_to_config(config)
+
+    def biasing_folder_params(self):
+        return [f"alpha{self.config['contextual_biasing_alpha']}"]
 
     def get_metadata(self):
         metadata = super().get_metadata()

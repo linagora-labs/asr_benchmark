@@ -2,11 +2,15 @@ import logging
 import torch
 import ssak.utils.vad
 from asr_benchmark.benchmark.interfaces import Model
+from asr_benchmark.benchmark import contextual_biasing
 
 
 logger = logging.getLogger(__name__)
 
 class OpenAIModel(Model):
+    # Contextual biasing: the terms go into `initial_prompt` (previous text of the
+    # first 30 s window).
+    SUPPORTS_CONTEXTUAL_BIASING = True
 
     def load(self) -> None:
         import whisper
@@ -16,7 +20,7 @@ class OpenAIModel(Model):
         if self.config['vad'] and self.config['vad'] in ['auditok','silero', 'pyannote']:
             audio, _ = ssak.utils.vad.remove_non_speech(audio, method=self.config['vad'])
         output = dict()
-        result = self.model.transcribe(audio, word_timestamps=False, no_speech_threshold=None)
+        result = self.model.transcribe(audio, word_timestamps=False, no_speech_threshold=None, initial_prompt=self.format_biasing(self.biasing_terms))
         output['text'] = result['text']
         return output
 
@@ -39,6 +43,11 @@ class OpenAIModel(Model):
         return name
 
 class FasterWhisperModel(Model):
+    # Contextual biasing through faster-whisper's `hotwords` argument (prompt tokens put
+    # before the previous text, on every 30 s window, at most 223 tokens), or through
+    # `initial_prompt` with contextual_biasing_mode: initial_prompt.
+    SUPPORTS_CONTEXTUAL_BIASING = True
+
     def __init__(self, config) -> None:
         super().__init__(config)
         if self.config['accurate']:
@@ -70,10 +79,14 @@ class FasterWhisperModel(Model):
         output = dict()
         language = self.config.get("language", "fr")
         condition_on_previous_text = self.config.get("previous_text", False)
+        kwargs = dict(self.transcribe_kwargs)
+        biasing = self.format_biasing(self.biasing_terms)
+        if biasing:
+            kwargs[self.config["contextual_biasing_mode"]] = biasing
         if self.config['batch_size']>1:
-            segments, info = self.model.transcribe(audio, language=language, **self.transcribe_kwargs, batch_size=self.config['batch_size'], condition_on_previous_text=condition_on_previous_text)
+            segments, info = self.model.transcribe(audio, language=language, **kwargs, batch_size=self.config['batch_size'], condition_on_previous_text=condition_on_previous_text)
         else:
-            segments, info = self.model.transcribe(audio, language=language, **self.transcribe_kwargs, condition_on_previous_text=condition_on_previous_text)
+            segments, info = self.model.transcribe(audio, language=language, **kwargs, condition_on_previous_text=condition_on_previous_text)
         output['text'] = " ".join([seg.text for seg in segments])
         return output
 
@@ -87,7 +100,14 @@ class FasterWhisperModel(Model):
         config['accurate'] = config.get('accurate', False)
         config['previous_text'] = config.get('previous_text', False)
         config['batch_size'] = config.get('batch_size', 1)
+        if contextual_biasing.config_variant(config) is not None:
+            config['contextual_biasing_mode'] = config.get('contextual_biasing_mode', 'hotwords')
+            if config['contextual_biasing_mode'] not in ('hotwords', 'initial_prompt'):
+                raise ValueError(f"contextual_biasing_mode must be hotwords or initial_prompt, not {config['contextual_biasing_mode']}")
         return super().add_defaults_to_config(config)
+
+    def biasing_folder_params(self):
+        return ["initprompt"] if self.config["contextual_biasing_mode"] == "initial_prompt" else []
 
     def get_folder_name(self):
         tot_config = self.config.copy()

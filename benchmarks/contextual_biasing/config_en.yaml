@@ -1,0 +1,144 @@
+# Contextual Biasing ASR Benchmark, English.
+# - LibriSpeech test-clean / test-other, per-utterance lists of Le et al., Interspeech
+#   2021 (arXiv:2104.02194): rare words of the reference + N distractors; lists
+#   "100", "500", "1000", "2000" (named after N).
+# - Contextual Earnings-22 (Argmax): 15 s clips of earnings calls; lists "local"
+#   (keywords spoken in the clip) and "global" (keywords of the whole call).
+# A run with a list only transcribes the datasets that have this list; the run
+# without list (null) is scored on every list.
+#
+# The "cased" B-WER / U-WER of LibriSpeech (report.py --mode cased) are computed as
+# by the paper's score.py (checked on its published hypotheses).
+#
+# Data: tools/contextual_biasing/prepare_librispeech.py and
+# prepare_contextual_earnings22.py (see the README).
+datasets:
+  LibriSpeech_test-clean:
+    manifest: benchmarks/contextual_biasing/manifests/LibriSpeech_test-clean.jsonl
+  LibriSpeech_test-other:
+    manifest: benchmarks/contextual_biasing/manifests/LibriSpeech_test-other.jsonl
+  ContextualEarnings22_test:
+    manifest: benchmarks/contextual_biasing/manifests/ContextualEarnings22_test.jsonl
+min_duration: 0
+max_duration: 60
+output_folder: benchmarks/contextual_biasing/results_en
+compute_rtf: False
+plot_monitoring: False
+skip_errors: False
+save_alignments: True
+save_predictions: False
+language: en
+wer_language: en
+
+benchmarks:
+  # --- faster-whisper: `hotwords`, at most 223 tokens (the rest is cut): LibriSpeech
+  # lists (N=100: ~370 tokens) do not fit, Contextual Earnings-22 ones do (<= 161).
+  - backend: faster-whisper
+    model: large-v3
+    precision: float16
+    contextual_biasing: [null, local, global]
+  - backend: faster-whisper
+    model: large-v3-turbo
+    precision: float16
+    accurate: [false, true]
+    full_name: true
+    contextual_biasing: [null, local, global]
+
+  # --- Qwen3-ASR (vLLM): `prompt` field (system turn) ---
+  - backend: vllm
+    model:
+    - Qwen/Qwen3-ASR-1.7B
+    # - Qwen/Qwen3-ASR-0.6B
+    port: 8106
+    extra_args: --max-model-len 32768
+    contextual_biasing: [null, "100", "1000", "2000", local, global]
+    contextual_biasing_template: "Vocabulary: {terms}."
+
+  # --- Nemotron-3.5-Transcribe (vLLM chat, server started separately) ---
+  - backend: vllm
+    model: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B
+    launch: false
+    server: http://172.17.0.1
+    port: 8118
+    endpoint: chat
+    prompt: "Transcribe with punctuation and capitalization."
+    extra_body: {chat_template_kwargs: {enable_thinking: false}}
+    concurrency: 32
+    contextual_biasing: [null, "100", "1000", "2000", local, global]
+    contextual_biasing_template: "{prompt} Context terms: {terms}."
+
+  # --- Granite Speech 5.0 (vLLM chat): "Keywords: kw1, kw2" (model card) ---
+  # vLLM 0.28 loads every .safetensors of the repo and fails on out_llm.safetensors
+  # ('bias'): model = folder of symlinks to the HF snapshot without this file;
+  # served_model_name keeps the folder name of the results.
+  - backend: vllm
+    model: /home/jlouradour/models/granite-speech-5.0-2b-vllm
+    served_model_name: ibm-granite/granite-speech-5.0-2b
+    port: 8122
+    endpoint: chat
+    prompt: <|audio|>transcribe the speech to text.
+    extra_args: --max-model-len 16384
+    concurrency: 128
+    contextual_biasing: [null, "100", "1000", "2000", local, global]
+    contextual_biasing_template: "{prompt} Keywords: {terms}"
+  # - backend: vllm
+  #   model: ibm-granite/granite-speech-4.1-2b
+  #   port: 8114
+  #   endpoint: chat
+  #   prompt: <|audio|>transcribe the speech to text.
+  #   extra_args: --max-model-len 16384
+  #   contextual_biasing: [null, "100", "1000", local, global]
+  #   contextual_biasing_template: "{prompt} Keywords: {terms}"
+
+  # --- MOSS-Transcribe-Diarize (vLLM): English hotword prompt of the GitHub
+  # examples/prompts.md; the baseline uses the same prompt without hotwords.
+  - backend: vllm
+    model: OpenMOSS-Team/MOSS-Transcribe-Diarize
+    trust_remote_code: true
+    port: 8102
+    language: null
+    transcription_prompt: "Transcribe the audio. For each segment, start with the timestamp and speaker ID ([S01], [S02], [S03], ...), then the spoken text, and end with the segment timestamp."
+    contextual_biasing: [null, "100", "1000", "2000", local, global]
+    contextual_biasing_template: "{prompt} Hotwords: {terms}"
+
+  # --- VibeVoice-ASR (transformers): extra context of the request ---
+  - backend: vibevoice-asr
+    model: microsoft/VibeVoice-ASR-HF
+    dtype: bfloat16
+    batch_size: 64
+    contextual_biasing: [null, "100", local, global]
+  - backend: vibevoice-asr
+    model: microsoft/VibeVoice-ASR-HF
+    dtype: bfloat16
+    batch_size: 16
+    contextual_biasing: ["1000", "2000"]
+
+  # --- NeMo phrase boosting (GPU-PB, decoding-time boosting tree; greedy_batch
+  # decoding). alpha: value tuned on PxSLU_dev (config_fr_nemo_alpha.yaml) ---
+  # One entry per condition: with NeMo 3.0, loading a model a second time in the same
+  # process fails (torch.load), and the DGX runner (one process per entry and model)
+  # would run all the conditions of an entry in one process.
+  - &parakeet
+    backend: nemo
+    model: nvidia/parakeet-tdt-0.6b-v3
+    batch_size: 64
+    language: en   # not a prompt: parakeet detects the language itself; used by the boosting tree
+    contextual_biasing: null
+  - {<<: *parakeet, contextual_biasing: "100", contextual_biasing_alpha: 1.0}   # TO UPDATE after tuning
+  - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: local, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: global, contextual_biasing_alpha: 1.0}
+  # - backend: nemo
+  #   model: nvidia/canary-1b-v2
+  #   batch_size: 64
+  #   language: en
+  #   contextual_biasing: [null, "100", "1000", "2000", local, global]
+  #   contextual_biasing_alpha: 1.0
+
+  # --- Baseline without mechanism ---
+  - backend: vllm
+    model: CohereLabs/cohere-transcribe-03-2026
+    trust_remote_code: true
+    port: 8115
+    language: en

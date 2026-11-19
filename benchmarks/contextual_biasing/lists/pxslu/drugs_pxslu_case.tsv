@@ -1,0 +1,399 @@
+# Case of the PxSLU drug names (targets), to review: edit the first column only.
+# Convention: brand names capitalized, active substances (INN) in lower case, acronyms in capitals.
+# Sorted by review priority: 1-3 to check, 4-5 from the BDPM (ANSM). Reviewed; variants of one drug share one form.
+cased	term	group	evidence
+Adalate	adalate	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Alvityl	alvityl	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Athymil	athymil	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Avlocardyl	avlocardyl	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Azinc	azinc	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Berotec	berotec	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Bi-Profénid	bi-profénid	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Biogyl	biogyl	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Buspar	buspar	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Cytotec	cytotec	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Decernyl	decernyl	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Desernil	desernil	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Di-Antalvic	di-antalvic	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Diafusor	diafusor	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Didronel	didronel	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Elisor	elisor	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Enoxor	enoxor	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Epivinir	epivinir	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Euphylline	euphylline	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Femseptcombi	femseptcombi	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Halcion	halcion	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Idarac	idarac	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Ikaran	ikaran	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Lodales	lodales	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Mediator	mediator	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Moneva	moneva	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Nicopatch	nicopatch	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Optalidon	optalidon	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Orgasuline	orgasuline	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Panoxyl	panoxyl	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Pediazole	pediazole	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Proctolog	proctolog	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Profen	profen	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Protelos	protelos	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Rohypnol	rohypnol	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Rosiced	rosiced	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Sintron	sintron	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Stediril	stediril	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?); one spelling kept for all variants
+Stediril	stédiril	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?); one spelling kept for all variants
+Surgestone	surgestone	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Séglor	séglor	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Tagamet	tagamet	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Théostat	théostat	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Triquilar	triquilar	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Trédémine	trédémine	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Unicordium	unicordium	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Vibramycine	vibramycine	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Virlix	virlix	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+Zerit	zerit	1 CHECK: not in BDPM	guess: brand (old or withdrawn drug?)
+TOBI	tobi	2 CHECK: special case	brand written in capitals
+aspirine	aspirine	2 CHECK: special case	common noun in French (also part of brand names)
+Art	art	2 CHECK: special case	fragment of a brand name (e.g. Art 50)
+Gyno	gyno	2 CHECK: special case	fragment of brand names (Gyno-Pévaryl...)
+Lyoc	lyoc	2 CHECK: special case	fragment of brand names (Spasfon Lyoc...)
+GlucaGen	glucagen	2 CHECK: special case	official spelling with inner capital
+KwikPen	kwikpen	2 CHECK: special case	pen device name, inner capital
+Chibro-Proscar	chibro-proscar	3 CHECK: several words or hyphen	BDPM: CHIBRO-PROSCAR 5 mg
+Co-Renitec	co-renitec	3 CHECK: several words or hyphen	BDPM: CO-RENITEC 20 mg/12
+Di-Hydan	di-hydan	3 CHECK: several words or hyphen	BDPM: DI-HYDAN 100 mg
+Diffu-K	diffu-k	3 CHECK: several words or hyphen	BDPM: DIFFU-K 600 mg
+Gyno-Pévaryl	gyno-pévaryl	3 CHECK: several words or hyphen	BDPM: GYNO-PEVARYL 150 mg
+Néo-Mercazole	néo-mercazole	3 CHECK: several words or hyphen	BDPM: NEO-MERCAZOLE 20 mg
+Poly-Karaya	poly-karaya	3 CHECK: several words or hyphen	BDPM: POLY-KARAYA
+Un-alfa	un-alfa	3 CHECK: several words or hyphen	BDPM: UN-ALFA 0
+fosfomycine trométamol	fosfomycine trométamol	3 CHECK: several words or hyphen	active substance in BDPM
+aciclovir	aciclovir	4 substance (BDPM)	active substance in BDPM
+acénocoumarol	acénocoumarol	4 substance (BDPM)	active substance in BDPM
+adapalène	adapalène	4 substance (BDPM)	active substance in BDPM
+albendazole	albendazole	4 substance (BDPM)	active substance in BDPM
+amikacine	amikacine	4 substance (BDPM)	active substance in BDPM
+amoxicilline	amoxicilline	4 substance (BDPM)	active substance in BDPM
+atorvastatine	atorvastatine	4 substance (BDPM)	active substance in BDPM
+brinzolamide	brinzolamide	4 substance (BDPM)	active substance in BDPM
+bromazépam	bromazépam	4 substance (BDPM)	active substance in BDPM
+budésonide	budésonide	4 substance (BDPM)	active substance in BDPM
+calcium	calcium	4 substance (BDPM)	active substance in BDPM
+cefpodoxime	cefpodoxime	4 substance (BDPM)	active substance in BDPM
+colchicine	colchicine	4 substance (BDPM)	active substance in BDPM
+cétirizine	cétirizine	4 substance (BDPM)	active substance in BDPM
+dextrométhorphane	dextrométhorphane	4 substance (BDPM)	active substance in BDPM
+digoxine	digoxine	4 substance (BDPM)	active substance in BDPM
+doxycycline	doxycycline	4 substance (BDPM)	active substance in BDPM
+désogestrel	désogestrel	4 substance (BDPM)	active substance in BDPM
+désonide	désonide	4 substance (BDPM)	active substance in BDPM
+econazole	econazole	4 substance (BDPM)	active substance in BDPM
+entacapone	entacapone	4 substance (BDPM)	active substance in BDPM
+ergotamine	ergotamine	4 substance (BDPM)	active substance in BDPM
+étamsylate	etamsylate	4 substance (BDPM)	active substance in BDPM; one spelling kept for all variants
+ethinylestradiol	ethinylestradiol	4 substance (BDPM)	active substance in BDPM
+flécaïnide	flecaïnide	4 substance (BDPM)	active substance in BDPM; one spelling kept for all variants
+flécaïnide	flécaïnide	4 substance (BDPM)	active substance in BDPM; one spelling kept for all variants
+fénotérol	fénotérol	4 substance (BDPM)	active substance in BDPM
+glycerol	glycerol	4 substance (BDPM)	active substance in BDPM
+hydroquinidine	hydroquinidine	4 substance (BDPM)	active substance in BDPM
+ipratropium	ipratropium	4 substance (BDPM)	active substance in BDPM
+ivermectine	ivermectine	4 substance (BDPM)	active substance in BDPM
+josamycine	josamycine	4 substance (BDPM)	active substance in BDPM
+kétoprofène	kétoprofène	4 substance (BDPM)	active substance in BDPM
+lamotrigine	lamotrigine	4 substance (BDPM)	active substance in BDPM
+loxapine	loxapine	4 substance (BDPM)	active substance in BDPM
+montelukast	montelukast	4 substance (BDPM)	active substance in BDPM
+morphine	morphine	4 substance (BDPM)	active substance in BDPM
+méthyldopa	méthyldopa	4 substance (BDPM)	active substance in BDPM
+nicotine	nicotine	4 substance (BDPM)	active substance in BDPM
+norfloxacine	norfloxacine	4 substance (BDPM)	active substance in BDPM
+ondansétron	ondansétron	4 substance (BDPM)	active substance in BDPM
+oxytétracycline	oxytétracycline	4 substance (BDPM)	active substance in BDPM
+pantoprazole	pantoprazole	4 substance (BDPM)	active substance in BDPM
+pimozide	pimozide	4 substance (BDPM)	active substance in BDPM
+pindolol	pindolol	4 substance (BDPM)	active substance in BDPM
+pravastatine	pravastatine	4 substance (BDPM)	active substance in BDPM
+prednisolone	prednisolone	4 substance (BDPM)	active substance in BDPM
+quinapril	quinapril	4 substance (BDPM)	active substance in BDPM
+rabéprazole	rabéprazole	4 substance (BDPM)	active substance in BDPM
+rifampicine	rifampicine	4 substance (BDPM)	active substance in BDPM
+rosuvastatine	rosuvastatine	4 substance (BDPM)	active substance in BDPM
+salmétérol	salmétérol	4 substance (BDPM)	active substance in BDPM
+serenoa	serenoa	4 substance (BDPM)	active substance in BDPM
+sélégiline	sélégiline	4 substance (BDPM)	active substance in BDPM
+tacrolimus	tacrolimus	4 substance (BDPM)	active substance in BDPM
+tamsulosine	tamsulosine	4 substance (BDPM)	active substance in BDPM
+tilbroquinol	tilbroquinol	4 substance (BDPM)	active substance in BDPM
+urapidil	urapidil	4 substance (BDPM)	active substance in BDPM
+warfarine	warfarine	4 substance (BDPM)	active substance in BDPM
+étamsylate	étamsylate	4 substance (BDPM)	active substance in BDPM; one spelling kept for all variants
+Aclasta	aclasta	5 brand (BDPM)	BDPM: ACLASTA 5 mg
+Actonel	actonel	5 brand (BDPM)	BDPM: ACTONEL 30 mg
+Actrapid	actrapid	5 brand (BDPM)	BDPM: ACTRAPID 100 unités internationales/ml
+Acuitel	acuitel	5 brand (BDPM)	BDPM: ACUITEL 20 mg
+Aerius	aerius	5 brand (BDPM)	BDPM: AERIUS 0
+Akineton	akineton	5 brand (BDPM)	BDPM: AKINETON L.P. 4 mg
+Aldactone	aldactone	5 brand (BDPM)	BDPM: ALDACTONE 25 mg
+Alepsal	alepsal	5 brand (BDPM)	BDPM: ALEPSAL 100 mg
+Aloplastine	aloplastine	5 brand (BDPM)	BDPM: ALOPLASTINE
+Alpress	alpress	5 brand (BDPM)	BDPM: ALPRESS L.P. 2
+Amlor	amlor	5 brand (BDPM)	BDPM: AMLOR 10 mg
+Anafranil	anafranil	5 brand (BDPM)	BDPM: ANAFRANIL 10 mg
+Androcur	androcur	5 brand (BDPM)	BDPM: ANDROCUR 50 mg
+Apranax	apranax	5 brand (BDPM)	BDPM: APRANAX 275 mg
+Aprovel	aprovel	5 brand (BDPM)	BDPM: APROVEL 150 mg
+Aranesp	aranesp	5 brand (BDPM)	BDPM: ARANESP 10 microgrammes
+Aricept	aricept	5 brand (BDPM)	BDPM: ARICEPT 10 mg
+Arixtra	arixtra	5 brand (BDPM)	BDPM: ARIXTRA 10 mg/0
+Aspégic	aspégic	5 brand (BDPM)	BDPM: ASPEGIC 500 mg
+Augmentin	augmentin	5 brand (BDPM)	BDPM: AUGMENTIN 1 g/125 mg
+Avodart	avodart	5 brand (BDPM)	BDPM: AVODART 0
+Avonex	avonex	5 brand (BDPM)	BDPM: AVONEX 30 microgrammes/0
+Azyter	azyter	5 brand (BDPM)	BDPM: AZYTER 15 mg/g
+Bactrim	bactrim	5 brand (BDPM)	BDPM: BACTRIM 40 mg/mL + 8 mg/mL
+Bécilan	bécilan	5 brand (BDPM)	BDPM: BECILAN 250 mg
+Bécotide	bécotide	5 brand (BDPM)	BDPM: BECOTIDE 250 microgrammes/dose
+Bedelix	bedelix	5 brand (BDPM)	BDPM: BEDELIX
+Bipreterax	bipreterax	5 brand (BDPM)	BDPM: BIPRETERAX 10 mg/2
+Biseptine	biseptine	5 brand (BDPM)	BDPM: BISEPTINE
+Bricanyl	bricanyl	5 brand (BDPM)	BDPM: BRICANYL 0
+Brilique	brilique	5 brand (BDPM)	BDPM: BRILIQUE 90 mg
+Bronchodual	bronchodual	5 brand (BDPM)	BDPM: BRONCHODUAL 50 microgrammes/20 microgrammes/dose
+Calciprat	calciprat	5 brand (BDPM)	BDPM: CALCIPRAT 1000 mg
+Cardensiel	cardensiel	5 brand (BDPM)	BDPM: CARDENSIEL 1
+Casodex	casodex	5 brand (BDPM)	BDPM: CASODEX 50 mg
+Catapressan	catapressan	5 brand (BDPM)	BDPM: CATAPRESSAN 0
+Célebrex	célebrex	5 brand (BDPM)	BDPM: CELEBREX 100 mg
+Celluvisc	celluvisc	5 brand (BDPM)	BDPM: CELLUVISC 4 mg/0
+Chondrosulf	chondrosulf	5 brand (BDPM)	BDPM: CHONDROSULF 400 mg
+Ciflox	ciflox	5 brand (BDPM)	BDPM: CIFLOX 200 mg/100 mL
+Clamoxyl	clamoxyl	5 brand (BDPM)	BDPM: CLAMOXYL 1 g
+Codoliprane	codoliprane	5 brand (BDPM)	BDPM: CODOLIPRANE 500 mg/30 mg
+Colpotrophine	colpotrophine	5 brand (BDPM)	BDPM: COLPOTROPHINE 1 POUR CENT
+Combivir	combivir	5 brand (BDPM)	BDPM: COMBIVIR 150 mg/300 mg
+Cordarone	cordarone	5 brand (BDPM)	BDPM: CORDARONE 150 mg/3 ml
+Cortancyl	cortancyl	5 brand (BDPM)	BDPM: CORTANCYL 1 mg
+Corvasal	corvasal	5 brand (BDPM)	BDPM: CORVASAL 2 mg
+Coumadine	coumadine	5 brand (BDPM)	BDPM: COUMADINE 2 mg
+Coversyl	coversyl	5 brand (BDPM)	BDPM: COVERSYL 10 mg
+Cromabak	cromabak	5 brand (BDPM)	BDPM: CROMABAK 20 mg/ml
+Curacné	curacné	5 brand (BDPM)	BDPM: CURACNE 10 mg
+Cymbalta	cymbalta	5 brand (BDPM)	BDPM: CYMBALTA 30 mg
+Dacudoses	dacudoses	5 brand (BDPM)	BDPM: DACUDOSES
+Dafalgan	dafalgan	5 brand (BDPM)	BDPM: DAFALGAN 1000 mg
+Daflon	daflon	5 brand (BDPM)	BDPM: DAFLON 1000 mg
+Daivobet	daivobet	5 brand (BDPM)	BDPM: DAIVOBET 50 microgrammes/0
+Daktarin	daktarin	5 brand (BDPM)	BDPM: DAKTARIN 2 %
+Dantrium	dantrium	5 brand (BDPM)	BDPM: DANTRIUM 100 mg
+Daonil	daonil	5 brand (BDPM)	BDPM: DAONIL 5 mg
+Décapeptyl	decapeptyl	5 brand (BDPM)	BDPM: DECAPEPTYL 0; one spelling kept for all variants
+Décapeptyl	décapeptyl	5 brand (BDPM)	BDPM: DECAPEPTYL 0; one spelling kept for all variants
+Dédrogyl	dédrogyl	5 brand (BDPM)	BDPM: DEDROGYL 15 mg/100 ml
+Dépakine	dépakine	5 brand (BDPM)	BDPM: DEPAKINE 200 mg
+Deprenyl	deprenyl	5 brand (BDPM)	BDPM: DEPRENYL 5 mg
+Dermoval	dermoval	5 brand (BDPM)	BDPM: DERMOVAL 0
+Deroxat	deroxat	5 brand (BDPM)	BDPM: DEROXAT 20 mg
+Détensiel	détensiel	5 brand (BDPM)	BDPM: DETENSIEL 10 mg
+Dexambutol	dexambutol	5 brand (BDPM)	BDPM: DEXAMBUTOL 500 mg
+Diamicron	diamicron	5 brand (BDPM)	BDPM: DIAMICRON 60 mg
+Diaseptyl	diaseptyl	5 brand (BDPM)	BDPM: DIASEPTYL 0
+Dicynone	dicynone	5 brand (BDPM)	BDPM: DICYNONE 250 mg
+Discotrine	discotrine	5 brand (BDPM)	BDPM: DISCOTRINE 10 mg/24 heures
+Ditropan	ditropan	5 brand (BDPM)	BDPM: DITROPAN 5 mg
+Doliprane	doliprane	5 brand (BDPM)	BDPM: DOLIPRANE 100 mg
+Doxypalu	doxypalu	5 brand (BDPM)	BDPM: DOXYPALU 100 mg
+Dukoral	dukoral	5 brand (BDPM)	BDPM: DUKORAL
+Duphaston	duphaston	5 brand (BDPM)	BDPM: DUPHASTON 10 mg
+Duspatalin	duspatalin	5 brand (BDPM)	BDPM: DUSPATALIN 200 mg
+Ebixa	ebixa	5 brand (BDPM)	BDPM: EBIXA 10 mg
+Efferalgan	efferalgan	5 brand (BDPM)	BDPM: EFFERALGAN 1000 mg
+Effexor	effexor	5 brand (BDPM)	BDPM: EFFEXOR L.P. 37
+Engerix	engerix	5 brand (BDPM)	BDPM: ENGERIX B 10 microgrammes/0
+Entocort	entocort	5 brand (BDPM)	BDPM: ENTOCORT 3 mg
+Erythrocine	erythrocine	5 brand (BDPM)	BDPM: ERYTHROCINE 1 g
+Esidrex	esidrex	5 brand (BDPM)	BDPM: ESIDREX 25 mg
+Eurax	eurax	5 brand (BDPM)	BDPM: EURAX 10 POUR CENT
+Eurelix	eurelix	5 brand (BDPM)	BDPM: EURELIX 6 mg
+Eurobiol	eurobiol	5 brand (BDPM)	BDPM: EUROBIOL 12 500 U
+Exacyl	exacyl	5 brand (BDPM)	BDPM: EXACYL 0
+Feldene	feldene	5 brand (BDPM)	BDPM: FELDENE 20 mg
+Fixical	fixical	5 brand (BDPM)	BDPM: FIXICAL 500 mg
+Flagyl	flagyl	5 brand (BDPM)	BDPM: FLAGYL 0
+Flécaïne	flécaïne	5 brand (BDPM)	BDPM: FLECAINE 10 mg/ml
+Flixotide	flixotide	5 brand (BDPM)	BDPM: FLIXOTIDE 125 microgrammes/dose
+Floxyfral	floxyfral	5 brand (BDPM)	BDPM: FLOXYFRAL 100 mg
+Fludex	fludex	5 brand (BDPM)	BDPM: FLUDEX 1
+Fluvermal	fluvermal	5 brand (BDPM)	BDPM: FLUVERMAL 2 POUR CENT
+Forlax	forlax	5 brand (BDPM)	BDPM: FORLAX 10 g
+Forsteo	forsteo	5 brand (BDPM)	BDPM: FORSTEO 20 microgrammes/80 microlitres
+Fucithalmic	fucithalmic	5 brand (BDPM)	BDPM: FUCITHALMIC 1 POUR CENT
+Fungizone	fungizone	5 brand (BDPM)	BDPM: FUNGIZONE 10 %
+Glibénèse	glibénèse	5 brand (BDPM)	BDPM: GLIBENESE 5 mg
+Glucophage	glucophage	5 brand (BDPM)	BDPM: GLUCOPHAGE 1000 mg
+Glucor	glucor	5 brand (BDPM)	BDPM: GLUCOR 100 mg
+Goménol	goménol	5 brand (BDPM)	BDPM: GOMENOL SOLUBLE 82
+Gynergène	gynergene	5 brand (BDPM)	BDPM: GYNERGENE CAFEINE; one spelling kept for all variants
+Gynergène	gynergène	5 brand (BDPM)	BDPM: GYNERGENE CAFEINE; one spelling kept for all variants
+Haldol	haldol	5 brand (BDPM)	BDPM: HALDOL 1 mg
+Harmonet	harmonet	5 brand (BDPM)	BDPM: HARMONET
+Havrix	havrix	5 brand (BDPM)	BDPM: HAVRIX 1440 U/1 mL ADULTES
+Humalog	humalog	5 brand (BDPM)	BDPM: HUMALOG 100 UI/ml KWIKPEN
+Humira	humira	5 brand (BDPM)	BDPM: HUMIRA 20 mg
+Hytacand	hytacand	5 brand (BDPM)	BDPM: HYTACAND 16 mg/12
+Imigrane	imigrane	5 brand (BDPM)	BDPM: IMIGRANE 10 mg/0
+Imovane	imovane	5 brand (BDPM)	BDPM: IMOVANE 3
+Imurel	imurel	5 brand (BDPM)	BDPM: IMUREL 25 mg
+Indocid	indocid	5 brand (BDPM)	BDPM: INDOCID 100 mg
+Inexium	inexium	5 brand (BDPM)	BDPM: INEXIUM 10 mg
+Intétrix	intétrix	5 brand (BDPM)	BDPM: INTETRIX
+Isoptine	isoptine	5 brand (BDPM)	BDPM: ISOPTINE 120 mg
+Ixprim	ixprim	5 brand (BDPM)	BDPM: IXPRIM 37
+Josacine	josacine	5 brand (BDPM)	BDPM: JOSACINE 1000 mg
+Kaléorid	kaléorid	5 brand (BDPM)	BDPM: KALEORID LP 1000 mg
+Kaletra	kaletra	5 brand (BDPM)	BDPM: KALETRA (80 mg + 20 mg)/ml
+Kardégic	kardégic	5 brand (BDPM)	BDPM: KARDEGIC 160 mg
+Kayexalate	kayexalate	5 brand (BDPM)	BDPM: KAYEXALATE
+Lacrifluid	lacrifluid	5 brand (BDPM)	BDPM: LACRIFLUID 0
+Lamictal	lamictal	5 brand (BDPM)	BDPM: LAMICTAL 100 mg
+Lamisil	lamisil	5 brand (BDPM)	BDPM: LAMISIL 1 %
+Lantus	lantus	5 brand (BDPM)	BDPM: LANTUS 100 Unités/ml
+Lanzor	lanzor	5 brand (BDPM)	BDPM: LANZOR 15 mg
+Largactil	largactil	5 brand (BDPM)	BDPM: LARGACTIL 100 mg
+Lariam	lariam	5 brand (BDPM)	BDPM: LARIAM 250 mg
+Laroxyl	laroxyl	5 brand (BDPM)	BDPM: LAROXYL 25 mg
+Lasilix	lasilix	5 brand (BDPM)	BDPM: LASILIX 10 mg/ml
+Leeloo	leeloo	5 brand (BDPM)	BDPM: LEELOO 0
+Lepticur	lepticur	5 brand (BDPM)	BDPM: LEPTICUR 10 mg
+Lercapress	lercapress	5 brand (BDPM)	BDPM: LERCAPRESS 20 mg/10 mg
+Levemir	levemir	5 brand (BDPM)	BDPM: LEVEMIR FLEXPEN 100 Unités/mL
+Lévitra	lévitra	5 brand (BDPM)	BDPM: LEVITRA 20 mg
+Levothyrox	levothyrox	5 brand (BDPM)	BDPM: LEVOTHYROX 100 microgrammes
+Lexomil	lexomil	5 brand (BDPM)	BDPM: LEXOMIL 6 mg
+Lipanthyl	lipanthyl	5 brand (BDPM)	BDPM: LIPANTHYL 145 mg
+Lithioderm	lithioderm	5 brand (BDPM)	BDPM: LITHIODERM 8 %
+Logimax	logimax	5 brand (BDPM)	BDPM: LOGIMAX 5 mg/47
+Loxapac	loxapac	5 brand (BDPM)	BDPM: LOXAPAC 100 mg
+Maalox	maalox	5 brand (BDPM)	BDPM: MAALOX MAUX D'ESTOMAC HYDROXYDE D'ALUMINIUM/HYDROXYDE DE MAGNESIUM 400 mg/400 mg SANS SUCRE FRUITS ROUGES
+Malarone	malarone	5 brand (BDPM)	BDPM: MALARONE 250 mg/100 mg
+Mestinon	mestinon	5 brand (BDPM)	BDPM: MESTINON 60 mg
+Micropakine	micropakine	5 brand (BDPM)	BDPM: MICROPAKINE L.P. 1 000 mg
+Minidril	minidril	5 brand (BDPM)	BDPM: MINIDRIL
+Minulet	minulet	5 brand (BDPM)	BDPM: MINULET
+Mirena	mirena	5 brand (BDPM)	BDPM: MIRENA 52 mg (20 microgrammes/24 heures)
+Moclamine	moclamine	5 brand (BDPM)	BDPM: MOCLAMINE 150 mg
+Modopar	modopar	5 brand (BDPM)	BDPM: MODOPAR 125 (100 mg/25 mg)
+Moduretic	moduretic	5 brand (BDPM)	BDPM: MODURETIC
+Monosept	monosept	5 brand (BDPM)	BDPM: MONOSEPT 0
+Monuril	monuril	5 brand (BDPM)	BDPM: MONURIL 3 g
+Mopral	mopral	5 brand (BDPM)	BDPM: MOPRAL 10 mg
+Motilium	motilium	5 brand (BDPM)	BDPM: MOTILIUM 1 mg/ml
+Movicol	movicol	5 brand (BDPM)	BDPM: MOVICOL CHOCOLAT
+Mucomyst	mucomyst	5 brand (BDPM)	BDPM: MUCOMYST 200 mg
+Nasonex	nasonex	5 brand (BDPM)	BDPM: NASONEX 50 microgrammes/dose
+Natispray	natispray	5 brand (BDPM)	BDPM: NATISPRAY 0
+Nicopass	nicopass	5 brand (BDPM)	BDPM: NICOPASS 1
+Nifluril	nifluril	5 brand (BDPM)	BDPM: NIFLURIL 250 mg
+Nivaquine	nivaquine	5 brand (BDPM)	BDPM: NIVAQUINE 100 mg
+Norlevo	norlevo	5 brand (BDPM)	BDPM: NORLEVO 1
+Norvir	norvir	5 brand (BDPM)	BDPM: NORVIR 100 mg
+Novatrex	novatrex	5 brand (BDPM)	BDPM: NOVATREX 2
+Nozinan	nozinan	5 brand (BDPM)	BDPM: NOZINAN 100 mg
+Odrik	odrik	5 brand (BDPM)	BDPM: ODRIK 0
+Oflocet	oflocet	5 brand (BDPM)	BDPM: OFLOCET 1
+Omix	omix	5 brand (BDPM)	BDPM: OMIX L.P. 0
+Optruma	optruma	5 brand (BDPM)	BDPM: OPTRUMA 60 mg
+Oramorph	oramorph	5 brand (BDPM)	BDPM: ORAMORPH 10 mg/5 ml
+Orap	orap	5 brand (BDPM)	BDPM: ORAP 1 mg
+Oroken	oroken	5 brand (BDPM)	BDPM: OROKEN 200 mg
+Parlodel	parlodel	5 brand (BDPM)	BDPM: PARLODEL 10 mg
+Permixon	permixon	5 brand (BDPM)	BDPM: PERMIXON 160 mg
+Piascledine	piascledine	5 brand (BDPM)	BDPM: PIASCLEDINE 300 mg
+Pivalone	pivalone	5 brand (BDPM)	BDPM: PIVALONE 1 POUR CENT
+Polaramine	polaramine	5 brand (BDPM)	BDPM: POLARAMINE 2 mg
+Polery	polery	5 brand (BDPM)	BDPM: POLERY ADULTES SANS SUCRE
+Polygynax	polygynax	5 brand (BDPM)	BDPM: POLYGYNAX VIRGO
+Pradaxa	pradaxa	5 brand (BDPM)	BDPM: PRADAXA 110 mg
+Preterax	préterax	5 brand (BDPM)	BDPM: PRETERAX 2; one spelling kept for all variants
+Preterax	prétérax	5 brand (BDPM)	BDPM: PRETERAX 2; one spelling kept for all variants
+Préviscan	préviscan	5 brand (BDPM)	BDPM: PREVISCAN 20 mg
+Primalan	primalan	5 brand (BDPM)	BDPM: PRIMALAN 10 mg
+Primpéran	primpéran	5 brand (BDPM)	BDPM: PRIMPERAN 0
+Proglicem	proglicem	5 brand (BDPM)	BDPM: PROGLICEM 100 mg
+Prograf	prograf	5 brand (BDPM)	BDPM: PROGRAF 0
+Prozac	prozac	5 brand (BDPM)	BDPM: PROZAC 20 mg
+Pylera	pylera	5 brand (BDPM)	BDPM: PYLERA 140 mg/125 mg/125 mg
+Pyostacine	pyostacine	5 brand (BDPM)	BDPM: PYOSTACINE 250 mg
+Reminyl	reminyl	5 brand (BDPM)	BDPM: REMINYL 4 mg/mL
+Renitec	renitec	5 brand (BDPM)	BDPM: RENITEC 20 mg
+Requip	requip	5 brand (BDPM)	BDPM: REQUIP 0
+Reyataz	reyataz	5 brand (BDPM)	BDPM: REYATAZ 150 mg
+Rhinadvil	rhinadvil	5 brand (BDPM)	BDPM: RHINADVIL MAUX DE GORGE TIXOCORTOL/CHLORHEXIDINE
+Rifadine	rifadine	5 brand (BDPM)	BDPM: RIFADINE 2 POUR CENT
+Rimifon	rimifon	5 brand (BDPM)	BDPM: RIMIFON 150 mg
+Risperdal	risperdal	5 brand (BDPM)	BDPM: RISPERDAL 1 mg
+Rivotril	rivotril	5 brand (BDPM)	BDPM: RIVOTRIL 1 mg/1 ml
+Roaccutane	roaccutane	5 brand (BDPM)	BDPM: ROACCUTANE 0
+Rulid	rulid	5 brand (BDPM)	BDPM: RULID 150 mg
+Rythmodan	rythmodan	5 brand (BDPM)	BDPM: RYTHMODAN 100 mg
+Secnol	secnol	5 brand (BDPM)	BDPM: SECNOL 2 g
+Sectral	sectral	5 brand (BDPM)	BDPM: SECTRAL 200 mg
+Sérécor	sérécor	5 brand (BDPM)	BDPM: SERECOR 300 mg
+Serevent	serevent	5 brand (BDPM)	BDPM: SEREVENT 25 microgrammes/dose
+Seroplex	seroplex	5 brand (BDPM)	BDPM: SEROPLEX 10 mg
+Seropram	seropram	5 brand (BDPM)	BDPM: SEROPRAM 20 mg
+Sibelium	sibelium	5 brand (BDPM)	BDPM: SIBELIUM 10 mg
+Sinemet	sinemet	5 brand (BDPM)	BDPM: SINEMET 100 mg/10 mg
+Singulair	singulair	5 brand (BDPM)	BDPM: SINGULAIR 10 mg
+Sintrom	sintrom	5 brand (BDPM)	BDPM: SINTROM 4 mg
+Sotalex	sotalex	5 brand (BDPM)	BDPM: SOTALEX 160 mg
+Spagulax	spagulax	5 brand (BDPM)	BDPM: SPAGULAX MUCILAGE PUR
+Spasfon	spasfon	5 brand (BDPM)	BDPM: SPASFON LYOC 160 mg
+Speciafoldine	speciafoldine	5 brand (BDPM)	BDPM: SPECIAFOLDINE 0
+Sporanox	sporanox	5 brand (BDPM)	BDPM: SPORANOX 10 mg/mL
+Stagid	stagid	5 brand (BDPM)	BDPM: STAGID 700 mg
+Stilnox	stilnox	5 brand (BDPM)	BDPM: STILNOX 10 mg
+Stromectol	stromectol	5 brand (BDPM)	BDPM: STROMECTOL 3 mg
+Sulfarlem	sulfarlem	5 brand (BDPM)	BDPM: SULFARLEM 12
+Surgam	surgam	5 brand (BDPM)	BDPM: SURGAM 100 mg
+Tahor	tahor	5 brand (BDPM)	BDPM: TAHOR 10 mg
+Tamiflu	tamiflu	5 brand (BDPM)	BDPM: TAMIFLU 30 mg
+Tanganil	tanganil	5 brand (BDPM)	BDPM: TANGANIL 500 mg
+Tavanic	tavanic	5 brand (BDPM)	BDPM: TAVANIC 5 mg/ml
+Tenormine	tenormine	5 brand (BDPM)	BDPM: TENORMINE 100 mg
+Téralithe	téralithe	5 brand (BDPM)	BDPM: TERALITHE 250 mg
+Tercian	tercian	5 brand (BDPM)	BDPM: TERCIAN 100 mg
+Timoptol	timoptol	5 brand (BDPM)	BDPM: TIMOPTOL 0
+Tobradex	tobradex	5 brand (BDPM)	BDPM: TOBRADEX
+Tofranil	tofranil	5 brand (BDPM)	BDPM: TOFRANIL 10 mg
+Topalgic	topalgic	5 brand (BDPM)	BDPM: TOPALGIC 100 mg/2 ml
+Toviaz	toviaz	5 brand (BDPM)	BDPM: TOVIAZ 4 mg
+Transipeg	transipeg	5 brand (BDPM)	BDPM: TRANSIPEG 2
+Tranxène	tranxène	5 brand (BDPM)	BDPM: TRANXENE 10 mg
+Triatec	triatec	5 brand (BDPM)	BDPM: TRIATEC 1
+Trivastal	trivastal	5 brand (BDPM)	BDPM: TRIVASTAL 20 mg
+Trulicity	trulicity	5 brand (BDPM)	BDPM: TRULICITY 0
+Twinrix	twinrix	5 brand (BDPM)	BDPM: TWINRIX ADULTE
+Ulcar	ulcar	5 brand (BDPM)	BDPM: ULCAR 1 g
+Ultraproct	ultraproct	5 brand (BDPM)	BDPM: ULTRAPROCT
+Uvedose	uvedose	5 brand (BDPM)	BDPM: UVEDOSE 100 000 UI
+Vastarel	vastarel	5 brand (BDPM)	BDPM: VASTAREL 20 mg
+Ventoline	ventoline	5 brand (BDPM)	BDPM: VENTOLINE 0
+Victoza	victoza	5 brand (BDPM)	BDPM: VICTOZA 6 mg/ml
+Viread	viread	5 brand (BDPM)	BDPM: VIREAD 123 mg
+Visken	visken	5 brand (BDPM)	BDPM: VISKEN 5 mg
+Voltarène	voltarène	5 brand (BDPM)	BDPM: VOLTARENE 100 mg
+Xanax	xanax	5 brand (BDPM)	BDPM: XANAX 0
+Xarelto	xarelto	5 brand (BDPM)	BDPM: XARELTO 1 mg/mL
+Xeloda	xeloda	5 brand (BDPM)	BDPM: XELODA 150 mg
+Xenical	xenical	5 brand (BDPM)	BDPM: XENICAL 120 mg
+Zeclar	zeclar	5 brand (BDPM)	BDPM: ZECLAR 0
+Zelitrex	zelitrex	5 brand (BDPM)	BDPM: ZELITREX 500 mg
+Zentel	zentel	5 brand (BDPM)	BDPM: ZENTEL 0
+Zestril	zestril	5 brand (BDPM)	BDPM: ZESTRIL 20 mg
+Ziagen	ziagen	5 brand (BDPM)	BDPM: ZIAGEN 20 mg/ml
+Zocor	zocor	5 brand (BDPM)	BDPM: ZOCOR 20 mg
+Zoloft	zoloft	5 brand (BDPM)	BDPM: ZOLOFT 25 mg
+Zomigoro	zomigoro	5 brand (BDPM)	BDPM: ZOMIGORO 2
+Zovirax	zovirax	5 brand (BDPM)	BDPM: ZOVIRAX 200 mg
+Zyloric	zyloric	5 brand (BDPM)	BDPM: ZYLORIC 100 mg
+Zypréxa	zypréxa	5 brand (BDPM)	BDPM: ZYPREXA 10 mg

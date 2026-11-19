@@ -7,6 +7,7 @@ from pathlib import Path
 from asr_benchmark.utils import log_path
 from asr_benchmark.utils.benchmark import load_audio, linstt_streaming
 from asr_benchmark.benchmark.interfaces import Model
+from asr_benchmark.benchmark import contextual_biasing
 
 
 logger = logging.getLogger(__name__)
@@ -33,6 +34,10 @@ def healthcheck(model_url, streaming, check_transcribe=False):
     return False
 
 class LintoSttWhisperModel(Model):
+    # Contextual biasing: the terms are sent as the `hotwords` query parameter of the
+    # HTTP /transcribe request (comma-separated, as in production; the server builds
+    # the model's prompt from it). Not available in streaming mode.
+    SUPPORTS_CONTEXTUAL_BIASING = True
 
     def load(self) -> None:
         p = subprocess.Popen(
@@ -97,11 +102,13 @@ class LintoSttWhisperModel(Model):
             output["latency"] = latencies
         else:
             url = f"http://{self.model}/transcribe"
+            biasing = self.format_biasing(self.biasing_terms)
             with open(audio, "rb") as f:
                 res = requests.post(
                     url,
                     files={"file": (Path(audio).name, f, "audio/wav")},
                     headers={"accept": "application/json"},
+                    params={"hotwords": biasing} if biasing else None,
                 )
             if res.status_code != 200:
                 raise RuntimeError(
@@ -151,6 +158,8 @@ class LintoSttWhisperModel(Model):
             config["best_of"] = 1
             config["temperature"] = 0.0
         config["streaming"] = config.get("streaming", False)
+        if config["streaming"] and contextual_biasing.config_variant(config) is not None:
+            raise ValueError("contextual_biasing is not supported in streaming mode (linto-stt)")
         config["docker_image"] = config.get(
             "docker_image", "whisper/Dockerfile.ctranslate2"
         )
@@ -181,6 +190,8 @@ class LintoSttWhisperModel(Model):
 
 
 class LintoSttNemoModel(LintoSttWhisperModel):
+    # The nemo engine of linto-stt ignores hotwords
+    SUPPORTS_CONTEXTUAL_BIASING = False
 
     def load(self) -> None:
         p = subprocess.Popen(
