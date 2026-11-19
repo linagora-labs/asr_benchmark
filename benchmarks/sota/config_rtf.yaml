@@ -103,6 +103,14 @@ benchmarks:
     model: Qwen/Qwen3-ASR-0.6B
     port: 8119
     language: fr
+  # Qwen3-ASR format, card setup: chat endpoint, the chat template ignores the text
+  # prompt (control tokens <digits><nofiller><verbatim> by default, language forced)
+  - backend: vllm
+    model: Reson8/Rumble-2-Flash
+    port: 8121
+    endpoint: chat
+    extra_args: --max-model-len 4096
+    extra_body: {chat_template_kwargs: {language: French}}
   # No vLLM support
   - backend: vibevoice-asr
     model: microsoft/VibeVoice-ASR-HF

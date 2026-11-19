@@ -156,7 +156,8 @@ def model_entry(exp, rtf_results=None):
         "rtf_backend": rtf_backend if rtf_backend != backend else None,  # set when timed with another backend
         "rtf_note": rtf_note,  # caveat on the speed measure, shown with a warning sign
         "wer_note": "\n".join(n.rstrip(".") + "." for n in (info.get("wer_note"), empty_note(scores)) if n) or None,
-        "prompt": (meta.get("prompt") if backend != "vllm" or meta.get("endpoint") == "chat" else None) or info.get("prompt"),
+        # model_info's (by hand) first: e.g. a chat template that ignores the sent prompt
+        "prompt": info.get("prompt") or (meta.get("prompt") if backend != "vllm" or meta.get("endpoint") == "chat" else None),
         "prompt_source": info.get("prompt_source"),
         "scores": scores,
     }
