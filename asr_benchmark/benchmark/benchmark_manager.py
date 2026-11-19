@@ -167,6 +167,21 @@ def check_if_benched(output_folder, input_file, config, debug):
         data[dataset] = sorted(data[dataset], key=lambda x: x['id'])
     return data, benched
 
+HOME = os.path.expanduser("~")
+
+
+def hide_home(value):
+    """Paths under the home folder written as ~/...: results are versioned and published (the
+    user name must not appear in them). Recursive on lists and dicts."""
+    if isinstance(value, str):
+        return "~" + value[len(HOME):] if HOME not in ("", "/") and (value == HOME or value.startswith(HOME + "/")) else value
+    if isinstance(value, list):
+        return [hide_home(v) for v in value]
+    if isinstance(value, dict):
+        return {k: hide_home(v) for k, v in value.items()}
+    return value
+
+
 def make_perf_file(row):
     if "name" in row:
         full_dataset = row["name"]
@@ -175,7 +190,7 @@ def make_perf_file(row):
         dataset = row["dataset"]
         full_dataset = dataset
     perfs = {
-        "audio_filepath": row["audio_filepath"],
+        "audio_filepath": hide_home(row["audio_filepath"]),
         "id": row['id'],
         "audio_duration": round(row.get("duration") if row.get("duration") else utils.get_audio_duration(row["audio_filepath"]), 3),
         "audio_offset": round(row.get("offset", 0.0), 3),
@@ -214,7 +229,7 @@ def transcribe_with_rtf(model, data, output_folder, config):
         torch.set_num_threads(model.config.get("num_threads", 4))
     for i, row in enumerate(progress_bar):
         perfs = make_perf_file(row)
-        audio_file, dataset, audio_duration = perfs["audio_filepath"], perfs["dataset"], perfs["audio_duration"]
+        audio_file, dataset, audio_duration = row["audio_filepath"], perfs["dataset"], perfs["audio_duration"]
         basename = Path(audio_file).stem
         progress_bar.set_description(f"Transcribing {basename}".ljust(45))
         try:
@@ -480,7 +495,7 @@ def bench_model(config, input_manifest, output_folder, debug=False):
         if model_info:
             metadata["model_info"] = model_info
         with open(metadata_file, "w", encoding="utf-8") as f:
-            f.write(json.dumps(metadata, indent=2, ensure_ascii=False))
+            f.write(json.dumps(hide_home(metadata), indent=2, ensure_ascii=False))
     else:
         logger.info(f"Skipping transcriptions, it has already been transcribed")
     process_wer(output_folder, config)

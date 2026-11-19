@@ -91,24 +91,6 @@ benchmarks:
     audio_placeholder: "<|audio|>"
     prompts: *luciole_prompts
     concurrency: 32
-  # Luciole training checkpoint (benchmarks/luciole_dev), on the DGX. Its training prompt
-  # ("fused", chosen in luciole_dev), with the language as training adds it to French instructions
-  # for audio in another language (Luciole-Audio-Training data/contexts/compose_asr_prompts.py:
-  # clause "en {lang}" joined to the other clauses with ", et")
-  - backend: vllm
-    model: /home/abert/models/salm/Luciole-1B/luciole_v5_transcribe/hf_checkpoints/step_050000
-    served_model_name: Luciole-1B_v5_transcribe_step50k
-    port: 8111
-    endpoint: chat
-    audio_placeholder: "<|audio|>"
-    prompts:
-      en: "Transcris fidèlement tout ce qui est dit dans l'extrait, avec la ponctuation et les majuscules, et en anglais."
-      nl: "Transcris fidèlement tout ce qui est dit dans l'extrait, avec la ponctuation et les majuscules, et en néerlandais."
-      it: "Transcris fidèlement tout ce qui est dit dans l'extrait, avec la ponctuation et les majuscules, et en italien."
-      de: "Transcris fidèlement tout ce qui est dit dans l'extrait, avec la ponctuation et les majuscules, et en allemand."
-      es: "Transcris fidèlement tout ce qui est dit dans l'extrait, avec la ponctuation et les majuscules, et en espagnol."
-      pt: "Transcris fidèlement tout ce qui est dit dans l'extrait, avec la ponctuation et les majuscules, et en portugais."
-      ar: "Transcris fidèlement tout ce qui est dit dans l'extrait, avec la ponctuation et les majuscules, et en arabe."
   # Part vllm
   # Removed for now: crashed dgx2 (2026-11-18, concurrency 32, gpu_memory_utilization 0.6, during
   # CommonVoice_en; FLEURS_en and Voxpopuli_en done). To retry with concurrency 16 and

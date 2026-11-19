@@ -13,7 +13,7 @@ benchmarks:
     docker_image:
     - whisper/Dockerfile.ctranslate2.cpu
     - whisper/Dockerfile.torch.cpu
-    linto-stt_folder: /home/abert/abert/linto-stt
+    linto-stt_folder: ~/linto-stt
     vad: false
     audios_folder:
     - data/audios
@@ -31,7 +31,7 @@ benchmarks:
     device: cpu
     docker_image: 
     - whisper/Dockerfile.ctranslate2.cpu
-    linto-stt_folder: /home/abert/abert/linto-stt
+    linto-stt_folder: ~/linto-stt
     vad: false
     audios_folder:
     - data/audios

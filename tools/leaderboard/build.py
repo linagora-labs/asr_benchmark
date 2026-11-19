@@ -142,7 +142,7 @@ def model_entry(exp, rtf_results=None, info_from=None):
         variant = "_".join(filter(None, [variant, f"chunk{meta['chunk_ms']}ms"]))
     # License, size and languages: filled by tools/fill_model_info.py.
     hf = info.get("hf") or display
-    url = f"https://huggingface.co/{hf}" if "/" in hf and not hf.startswith(("/", ".")) else None
+    url = f"https://huggingface.co/{hf}" if "/" in hf and not hf.startswith(("/", ".", "~")) else None
     rtfx, hardware, rtf_backend, rtf_note = speed(exp, rtf_results, model)
     scores = {}
     for perf_file in sorted((exp / "performances").glob("*.json")):
@@ -186,7 +186,7 @@ def is_public(exp):
     """Local checkpoints (model given as a path) without a Hugging Face repo (model_info.hf)
     are internal: not on the page, which only shows models whose weights are public."""
     meta = json.loads((exp / "metadata.json").read_text(encoding="utf-8"))
-    return not meta["model"].startswith(("/", ".")) or bool((meta.get("model_info") or {}).get("hf"))
+    return not meta["model"].startswith(("/", ".", "~")) or bool((meta.get("model_info") or {}).get("hf"))
 
 
 def multilingual(results, french_results, rtf_results=None, include_private=False, french_extra=()):

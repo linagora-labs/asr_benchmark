@@ -38,7 +38,7 @@
     "TRITON_PTXAS_PATH",
     "-u",
     "TRITON_CUDART_PATH",
-    "/home/abert/.venvs/vllm/bin/vllm",
+    "~/.venvs/vllm/bin/vllm",
     "serve"
   ],
   "compute_rtf": true,
