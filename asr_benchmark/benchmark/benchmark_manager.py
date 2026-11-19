@@ -12,6 +12,7 @@ from tqdm import tqdm
 from itertools import product
 
 import asr_benchmark.utils.benchmark as utils
+from asr_benchmark.benchmark import contextual_biasing
 from asr_benchmark.benchmark.backend_to_model import get_model
 from asr_benchmark.utils import logger
 from ssak.utils.text_latin import numbers_and_symbols_to_letters
@@ -154,6 +155,7 @@ def transcribe_with_rtf(model, data, output_folder, config):
         progress_bar.set_description(f"Transcribing {basename}".ljust(45))
         try:
             audio = model.load_audio(audio_file, start=row.get("offset", 0.0), duration=audio_duration)
+            model.set_biasing_terms(model.terms_for_row(row))
             start = time.time()
             output = model.transcribe(audio)
         except Exception as e:
@@ -165,7 +167,7 @@ def transcribe_with_rtf(model, data, output_folder, config):
         output['rtf'] = round(output['prediction_duration'] / audio_duration, 5)
         yield i, output, row
         monitor.next()
-        progress_bar.set_description(f"Finished {model.get_folder_name()}".ljust(45))
+        progress_bar.set_description(f"Finished {model.get_full_folder_name()}".ljust(45))
     monitor.stop()
 
 def transcribe_with_rtf_concurrent(model, data, output_folder, config):
@@ -348,6 +350,12 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
     return results
 
 
+def text_language(config):
+    """Language of the texts (normalization): wer_language when the model's language
+    setting is not it (e.g. null for auto-detection), else language."""
+    return config.get("wer_language") or config.get("language") or "fr"
+
+
 def process_wer(output_folder, config):
     output_path = Path(output_folder)
     predictions_dir = output_path / "predictions"
@@ -362,8 +370,14 @@ def process_wer(output_folder, config):
         if not list(data.values())[0].get("text", False):
             logger.info(f"No reference for {dataset}, skipping WER computation")
             continue
+        language = text_language(config)
         alignment_dir = output_path / "alignments" if config.get("save_alignments", True) else None
-        results = score_dataset(data, config.get("language") or "fr", alignment_dir, dataset)
+        results = score_dataset(data, language, alignment_dir, dataset)
+        # Contextual biasing measures, when the manifest has biasing lists
+        rows = contextual_biasing.manifest_rows(config.get("input_manifest"), config.get("input_audios_paths", ""))
+        biasing = contextual_biasing.score_dataset(data, rows.get(dataset, {}), config, language)
+        if biasing:
+            results[contextual_biasing.MANIFEST_KEY] = biasing
         with open(perf_file, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=4)
 
@@ -371,6 +385,10 @@ def bench_model(config, input_manifest, output_folder, debug=False):
     data, bench_results = check_if_benched(
         output_folder, input_manifest, config,  debug
     )
+    # With a contextual biasing list, only the datasets that have this list
+    for dataset in [d for d, rows in data.items() if not contextual_biasing.applies_to(rows[0], config)]:
+        logger.info(f"Skipping {dataset}: no contextual biasing list '{config['contextual_biasing']}'")
+        del data[dataset]
     if len(data)>0:
         model = get_model(config)
         model.load()
@@ -446,7 +464,7 @@ def launch_benchmark(
         config['compute_latency'] = config.get('compute_latency', compute_latency)
         config['plot_monitoring'] = config.get('plot_monitoring', plot_monitoring)
         config['input_audios_paths'] = config.get('input_audios_paths', input_audios_paths)
-        bench_id = model.get_folder_name()
+        bench_id = model.get_full_folder_name()
         logger.info(
             f"Benching {bench_id} (progress {progress_bar.n}/{progress_bar.total})"
         )

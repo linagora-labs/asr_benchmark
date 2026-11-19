@@ -1,0 +1,40 @@
+# Contextual Biasing ASR Benchmark: weight of NeMo phrase boosting (GPU-PB,
+# `contextual_biasing_alpha`) tuned on PxSLU_dev, before config_fr.yaml.
+# Same output folder as config_fr.yaml: the PxSLU_dev results of the chosen value
+# are reused. Measures: python tools/contextual_biasing/report.py benchmarks/contextual_biasing/results_fr
+datasets:
+  PxSLU_dev:
+    manifest: benchmarks/contextual_biasing/manifests/PxSLU_dev.jsonl
+min_duration: 0
+max_duration: 60
+output_folder: benchmarks/contextual_biasing/results_fr
+compute_rtf: False
+plot_monitoring: False
+skip_errors: False
+save_alignments: True
+save_predictions: False
+language: fr
+wer_language: fr
+
+benchmarks:
+  # One entry per condition: with NeMo 3.0, loading a model a second time in the same
+  # process fails (torch.load), and the DGX runner (one process per entry and model)
+  # would run all the conditions of an entry in one process.
+  - &parakeet
+    backend: nemo
+    model: nvidia/parakeet-tdt-0.6b-v3
+    batch_size: 64
+    language: fr   # not a prompt: parakeet detects the language itself; used by the boosting tree
+    contextual_biasing: null
+  - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 0.5}
+  - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 2.0}
+  - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 4.0}
+  - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 0.5}
+  - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 2.0}
+  - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 4.0}
+  - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 0.5}
+  - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 2.0}
+  - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 4.0}
