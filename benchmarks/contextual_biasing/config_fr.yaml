@@ -127,7 +127,8 @@ benchmarks:
     contextual_biasing: [bdpm, vidal]
 
   # --- NeMo phrase boosting (GPU-PB, decoding-time boosting tree; greedy_batch
-  # decoding). alpha (boosting weight) tuned on PxSLU_dev: config_fr_nemo_alpha.yaml
+  # decoding). alpha (boosting weight) = 1.0, tuned on PxSLU_dev (config_fr_nemo_alpha.yaml):
+  # best F1 / false alarm trade-off with the global lists (2.0: +5 F1 but 5x false alarms)
   # One entry per condition: with NeMo 3.0, loading a model a second time in the same
   # process fails (torch.load), and the DGX runner (one process per entry and model)
   # would run all the conditions of an entry in one process.
@@ -137,7 +138,7 @@ benchmarks:
     batch_size: 64
     language: fr   # not a prompt: parakeet detects the language itself; used by the boosting tree
     contextual_biasing: null
-  - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 1.0}   # TO UPDATE after tuning
+  - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: vidal, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: theriaque, contextual_biasing_alpha: 1.0}

@@ -61,8 +61,10 @@ def collect(runs, mode):
         base = name.rpartition("_cb-")[0]
         row = rows.get((base, dataset, list_name))
         if row is None or "run_cb" in row:
-            # No baseline, or a second run with the same list (e.g. other settings)
-            row = {"dataset": dataset, "list": list_name, "model": base}
+            # No baseline, or a second run with the same list (e.g. other settings): own
+            # row, with the baseline measures repeated
+            row = {k: v for k, v in (row or {"dataset": dataset, "list": list_name, "model": base}).items()
+                   if k != "run_cb" and not k.endswith("_cb")}
             table.append(row)
         row["run_cb"] = name
         row.update({f"{key}_cb": value for key, value in values.items()})
