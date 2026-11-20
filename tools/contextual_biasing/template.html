@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contextual Biasing Benchmark</title>
+<meta name="description" content="Recognition of list terms by speech recognition models without and with a contextual biasing list.">
+<style>
+  /* Same look as tools/leaderboard/template.html (light theme only). */
+  :root { color-scheme: light; --bg: #fbfbfa; --surface: #fff; --text: #1d1d1b; --muted: #6b6a66; --line: #e6e4df;
+          --accent: #1f6f78; --base: #a3a19b; --good: #2e8b57; --bad: #c0392b; }
+  [hidden] { display: none !important; }
+  html { overflow-y: scroll; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, sans-serif; }
+  main { max-width: 1680px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { margin: 0 0 4px; font-size: 26px; }
+  h2 { margin: 40px 0 8px; font-size: 19px; }
+  .muted { color: var(--muted); }
+  .intro { margin: 16px 0 0; max-width: 1000px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px 32px; margin: 24px 0 12px; align-items: center; }
+  .group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .group-label { color: var(--muted); margin-right: 2px; }
+  select, button { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; margin: 8px 0 12px; }
+  .swatch { display: inline-block; width: 12px; height: 12px; margin-right: 5px; border-radius: 50%; vertical-align: -1px; }
+  .scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+  th, td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  th { font-size: 13px; vertical-align: bottom; }
+  th:first-child, td:first-child { text-align: left; }
+  td.none { color: var(--muted); }
+  .delta { font-size: 12px; margin-left: 4px; }
+  .good { color: var(--good); } .bad { color: var(--bad); }
+  th.group-start, td.group-start { border-left: 1px solid var(--line); }
+  .panels { display: grid; grid-template-columns: repeat(auto-fill, minmax(520px, 1fr)); gap: 16px; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px 4px; }
+  .panel h3 { margin: 0; font-size: 15px; }
+  .panel svg { display: block; width: 100%; height: auto; font-size: 14px; }
+  .panel .grid { stroke: var(--line); }
+  .panel .tick { fill: var(--muted); font-size: 12px; }
+  .panel .name { fill: var(--text); }
+  .notes { font-size: 14px; max-width: 1000px; }
+  .notes li { margin: 4px 0; }
+  /* Rank colors of each column (same as the ASR leaderboard). */
+  .first { background: #5dade2; } .second { background: #82e0aa; }
+  .second-last { background: #fdcb6e; } .last { background: #e74c3c; }
+  td.first, td.second, td.second-last, td.last { color: #1d1d1b; }
+  td.first .delta, td.second .delta, td.second-last .delta, td.last .delta { color: #1d1d1b; opacity: .75; }
+  .swatch.rank { border-radius: 2px; }
+  td.avg { font-weight: 700; }
+  @media (max-width: 520px) { .panels { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Contextual Biasing Benchmark</h1>
+  <p class="intro">How well speech recognition models write the terms of a list (drug names, rare words, company
+    names) without the list, and when the list is given to the model (prompt, hotwords or boosting).
+    Each run with a list is compared with the run of the same model without it, on the same terms.</p>
+
+  <div class="controls">
+    <div class="group"><span class="group-label">Language</span> <select id="language"></select></div>
+    <div class="group"><span class="group-label">Test set</span> <span class="group" id="dataset"></span></div>
+    <div class="group"><span class="group-label">Text</span> <span class="group" id="mode">
+      <button data-v="nocasepunc" aria-pressed="true" title="Lowercase, punctuation removed">Normalized</button>
+      <button data-v="cased" title="A list term counts as correct only if written with the case of the list">Case of the list terms</button></span></div>
+  </div>
+  <div class="controls">
+    <div class="group"><span class="group-label">Measure</span> <span class="group" id="metric"></span></div>
+    <div class="group"><label><input type="checkbox" id="tuning"> Boosting weight tuning runs</label></div>
+  </div>
+
+  <h2>Overview</h2>
+  <div class="legend">
+    <span><span class="swatch rank first"></span>1st</span> <span><span class="swatch rank second"></span>2nd</span>
+    <span><span class="swatch rank second-last"></span>Second to last</span> <span><span class="swatch rank last"></span>Last</span>
+  </div>
+  <div class="muted" id="overview-caption"></div>
+  <div class="scroll"><table id="overview"></table></div>
+
+  <h2>Without and with the list</h2>
+  <div class="legend">
+    <span><span class="swatch" style="background: var(--base)"></span>Without list</span>
+    <span><span class="swatch" style="background: var(--accent)"></span>With the list</span>
+    <span><span class="swatch" style="background: var(--good); border-radius: 2px"></span>Better</span>
+    <span><span class="swatch" style="background: var(--bad); border-radius: 2px"></span>Worse</span>
+  </div>
+  <div class="panels" id="panels"></div>
+
+  <h2>All measures <select id="list"></select></h2>
+  <div class="muted">Sorted by the selected measure (with the list, or without for models without run with it); colors: rank in each column.</div>
+  <div class="scroll"><table id="details"></table></div>
+
+  <h2>Measures</h2>
+  <ul class="notes">
+    <li><b>F1, P, R</b>: precision, recall and F1 of the list terms (each occurrence of a term of the targets, in the
+      reference and in the transcription).</li>
+    <li><b>B-WER</b>: word error rate on the words of the list terms of the reference; <b>U-WER</b>: on the other words.</li>
+    <li><b>FA/h</b>: false alarms per hour, list terms written although not spoken.</li>
+    <li><b>WER</b>: word error rate of the whole transcription (normalized text).</li>
+    <li><b>Case of the list terms</b>: a term is correct only if written as in the list given to the model (as in the
+      targets for runs without list); the case of the other words is not checked.</li>
+    <li>Lists: <i>local</i> lists only hold terms of the utterance; the others are global lists
+      (one list for the whole test set). <i>_upper</i>: the same list in capitals, given to check that the model
+      writes the terms as given (to read with "Case of the list terms").</li>
+  </ul>
+</main>
+
+<script>
+const DATA = /*__DATA__*/null;
+const LANGUAGES = { fr: "French", en: "English" };
+const METRICS = [
+  { key: "f1", label: "F1", higher: true }, { key: "recall", label: "R", higher: true },
+  { key: "precision", label: "P", higher: true },
+  { key: "false_alarms_per_hour", label: "FA/h", higher: false, unbounded: true },
+  { key: "wer", label: "WER", higher: false },
+  { key: "b_wer", label: "B-WER", higher: false }, { key: "u_wer", label: "U-WER", higher: false },
+];
+const state = { language: Object.keys(DATA)[0], dataset: null, mode: "nocasepunc", metric: "f1", list: null, tuning: false };
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = (v) => (v === null || v === undefined ? "" : v.toFixed(1));
+const metric = () => METRICS.find((m) => m.key === state.metric);
+
+function buttons(container, values, current, onClick, labels = {}) {
+  container.innerHTML = values.map((v) => `<button data-v="${esc(v)}" aria-pressed="${v === current}">${esc(labels[v] || v)}</button>`).join(" ");
+  container.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => onClick(b.dataset.v)));
+}
+
+// Runs of the boosting weight tuning: a weight other than the one kept (1.0)
+const isTuning = (row) => /alpha (?!1\.0\b)/.test(row.setting || "");
+const rowName = (row) => row.label + (row.setting ? ` (${row.setting})` : "");
+
+function rows() {
+  const lang = DATA[state.language];
+  return lang.rows[state.mode].filter((r) => r.dataset === state.dataset && (state.tuning || !isTuning(r)));
+}
+
+function deltaClass(d, m) {
+  if (d === null || Math.abs(d) < 0.05) return "";
+  return (d > 0) === m.higher ? "good" : "bad";
+}
+// Class of a score by its rank in its column: first, second, second-last, last (as in the
+// ASR leaderboard). Ranks are over the distinct displayed values: ties share a color.
+function rankClass(value, values, higher) {
+  if (value === null || value === undefined || values.length < 4) return "";
+  const shown = (v) => Math.round(v * 10) / 10;
+  const sorted = [...new Set(values.map(shown))].sort((a, b) => (higher ? b - a : a - b));
+  const i = sorted.indexOf(shown(value)), n = sorted.length;
+  return i === 0 ? "first" : i === 1 ? "second" : i === n - 1 ? "last" : i === n - 2 ? "second-last" : "";
+}
+const present = (v) => v !== null && v !== undefined;
+// Mean number of terms per utterance of a list on the selected test set
+function listSize(list) {
+  const row = rows().find((r) => r.list === list && present(r.list_size));
+  return row ? row.list_size : null;
+}
+const sizeText = (size) => (size === null ? "" : size < 10 ? size.toFixed(1) : Math.round(size).toLocaleString("en"));
+const listTitle = (list) => (present(listSize(list)) ? `${list} (${sizeText(listSize(list))})` : list);
+// Order of the models (best first), from the overview, used by the charts
+let ORDER = [];
+const byOrder = (a, b) => ORDER.indexOf(rowName(a)) - ORDER.indexOf(rowName(b)) || rowName(a).localeCompare(rowName(b));
+
+const delta = (row, key) => (row[key + "_cb"] === undefined || row[key + "_cb"] === null || row[key] === null ? null : row[key + "_cb"] - row[key]);
+
+function overview() {
+  const lang = DATA[state.language], m = metric(), all = rows();
+  const lists = lang.lists.filter((l) => all.some((r) => r.list === l));
+  // Cell of each model and list: the run with the list, or else the run without list
+  const models = [...new Set(all.map(rowName))].map((name) => {
+    const cells = lists.map((l) => {
+      const run = all.find((r) => r.list === l && rowName(r) === name && r.run_cb);
+      if (run) return { value: run[m.key + "_cb"], before: run[m.key], biased: true };
+      const base = all.find((r) => r.list === l && r.label === name.replace(/ \(alpha [^)]*\)$/, "") && !r.run_cb)
+        || all.find((r) => r.list === l && rowName(r) === name);
+      return base ? { value: base[m.key], biased: false } : null;
+    });
+    const values = cells.filter((c) => c && present(c.value)).map((c) => c.value);
+    return { name, cells, avg: values.length ? values.reduce((a, b) => a + b, 0) / values.length : null };
+  });
+  models.sort((a, b) => (present(a.avg) && present(b.avg) ? (m.higher ? b.avg - a.avg : a.avg - b.avg) : present(a.avg) ? -1 : 1)
+    || a.name.localeCompare(b.name));
+  ORDER = models.map((x) => x.name);
+  const columns = lists.map((_, i) => models.map((x) => x.cells[i]).filter((c) => c && present(c.value)).map((c) => c.value));
+  const avgs = models.map((x) => x.avg).filter(present);
+  let html = `<tr><th>Model</th><th class="group-start">Average</th>${lists.map((l) => `<th class="group-start">${esc(listTitle(l))}</th>`).join("")}</tr>`;
+  for (const x of models) {
+    html += `<tr><td>${esc(x.name)}</td><td class="group-start avg ${rankClass(x.avg, avgs, m.higher)}">${fmt(x.avg)}</td>`;
+    x.cells.forEach((c, i) => {
+      if (!c || !present(c.value)) { html += `<td class="group-start"></td>`; return; }
+      const rank = rankClass(c.value, columns[i], m.higher);
+      if (c.biased) {
+        const d = present(c.before) ? c.value - c.before : null;
+        html += `<td class="group-start ${rank}" title="Without list: ${fmt(c.before)}">${fmt(c.value)}<span class="delta ${deltaClass(d, m)}">${d === null ? "" : (d > 0 ? "+" : "") + d.toFixed(1)}</span></td>`;
+      } else {
+        html += `<td class="group-start none ${rank}" title="Without list (no run with this list)">${fmt(c.value)}</td>`;
+      }
+    });
+    html += "</tr>";
+  }
+  $("overview").innerHTML = html;
+  $("overview-caption").textContent = `${m.label} with each list (in parentheses: its number of terms, per utterance on average for the per utterance lists), and its change from the run without list; models sorted by the average over the lists. ` +
+    "Grey text: no run with this list (model without biasing mechanism, or list too long for it), measure without list.";
+}
+
+function panel(list, listRows, m) {
+  const width = 560, left = 250, right = 16, rowH = 24, top = 8, axisH = 26;
+  const sorted = [...listRows].sort(byOrder);
+  const values = sorted.flatMap((r) => [r[m.key], r[m.key + "_cb"]]).filter((v) => v !== null && v !== undefined);
+  const max = m.unbounded ? Math.max(1, ...values) * 1.05 : 100;
+  const x = (v) => left + (v / max) * (width - left - right);
+  const height = top + sorted.length * rowH + axisH;
+  const ticks = m.unbounded ? [0, max / 4, max / 2, (3 * max) / 4].map((t) => +t.toPrecision(2)) : [0, 25, 50, 75, 100];
+  let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(m.label)} without and with the list ${esc(list)}">`;
+  for (const t of ticks) {
+    svg += `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="${top}" y2="${top + sorted.length * rowH}"/>`;
+    svg += `<text class="tick" x="${x(t)}" y="${height - 8}" text-anchor="middle">${t}</text>`;
+  }
+  sorted.forEach((r, i) => {
+    const y = top + i * rowH + rowH / 2, a = r[m.key], b = r[m.key + "_cb"];
+    svg += `<text class="name" x="${left - 8}" y="${y + 4}" text-anchor="end">${esc(rowName(r))}</text>`;
+    if (b !== undefined && b !== null && a !== null) {
+      const cls = deltaClass(b - a, m);
+      svg += `<line x1="${x(a)}" x2="${x(b)}" y1="${y}" y2="${y}" stroke="var(--${cls || "base"})" stroke-width="3"/>`;
+    }
+    if (a !== null) svg += `<circle cx="${x(a)}" cy="${y}" r="4.5" fill="var(--base)"><title>${esc(rowName(r))}, without list: ${fmt(a)}</title></circle>`;
+    if (b !== undefined && b !== null) svg += `<circle cx="${x(b)}" cy="${y}" r="5.5" fill="var(--accent)"><title>${esc(rowName(r))}, with ${esc(list)}: ${fmt(b)} (without: ${fmt(a)})</title></circle>`;
+  });
+  svg += "</svg>";
+  const size = listSize(list);
+  return `<div class="panel"><h3>${esc(list)} <span class="muted" style="font-weight:400">(${present(size) ? `${sizeText(size)} terms, ` : ""}${esc(m.label)})</span></h3>${svg}</div>`;
+}
+
+function panels() {
+  const lang = DATA[state.language], m = metric(), all = rows();
+  $("panels").innerHTML = lang.lists.filter((l) => all.some((r) => r.list === l))
+    .map((l) => panel(l, all.filter((r) => r.list === l), m)).join("");
+}
+
+function details() {
+  const lang = DATA[state.language], all = rows();
+  const lists = lang.lists.filter((l) => all.some((r) => r.list === l));
+  if (!lists.includes(state.list)) state.list = lists[0];
+  $("list").innerHTML = lists.map((l) => `<option value="${esc(l)}" ${l === state.list ? "selected" : ""}>${esc(listTitle(l))}</option>`).join("");
+  // Sorted by the selected measure, with the list (or without, for models without run with it)
+  const m0 = metric(), key = (r) => (present(r[m0.key + "_cb"]) ? r[m0.key + "_cb"] : r[m0.key]);
+  const listRows = all.filter((r) => r.list === state.list)
+    .sort((a, b) => (m0.higher ? key(b) - key(a) : key(a) - key(b)) || rowName(a).localeCompare(rowName(b)));
+  const column = (k) => listRows.map((r) => r[k]).filter(present);
+  let html = `<tr><th>Model</th>${METRICS.map((m) => `<th class="group-start">${m.label}</th><th>with list</th>`).join("")}</tr>`;
+  for (const r of listRows) {
+    html += `<tr><td>${esc(rowName(r))}</td>`;
+    for (const m of METRICS) {
+      const d = delta(r, m.key);
+      html += `<td class="group-start ${rankClass(r[m.key], column(m.key), m.higher)}">${fmt(r[m.key])}</td><td class="${rankClass(r[m.key + "_cb"], column(m.key + "_cb"), m.higher)}">${fmt(r[m.key + "_cb"])}${d === null ? "" : `<span class="delta ${deltaClass(d, m)}">${(d > 0 ? "+" : "") + d.toFixed(1)}</span>`}</td>`;
+    }
+    html += "</tr>";
+  }
+  $("details").innerHTML = html;
+}
+
+function render() {
+  const lang = DATA[state.language];
+  if (!lang.datasets.includes(state.dataset)) state.dataset = lang.datasets[0];
+  buttons($("dataset"), lang.datasets, state.dataset, (v) => { state.dataset = v; render(); });
+  buttons($("metric"), METRICS.map((m) => m.key), state.metric, (v) => { state.metric = v; render(); },
+    Object.fromEntries(METRICS.map((m) => [m.key, m.label])));
+  document.querySelectorAll("#mode button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.v === state.mode));
+  overview();
+  panels();
+  details();
+}
+
+$("language").innerHTML = Object.keys(DATA).map((l) => `<option value="${l}">${LANGUAGES[l] || l}</option>`).join("");
+$("language").value = state.language;
+$("language").addEventListener("change", (e) => { state.language = e.target.value; render(); });
+document.querySelectorAll("#mode button").forEach((b) => b.addEventListener("click", () => { state.mode = b.dataset.v; render(); }));
+$("tuning").addEventListener("change", (e) => { state.tuning = e.target.checked; render(); });
+$("list").addEventListener("change", (e) => { state.list = e.target.value; details(); });
+render();
+</script>
+</body>
+</html>
