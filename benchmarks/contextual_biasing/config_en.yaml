@@ -107,14 +107,18 @@ benchmarks:
     dtype: bfloat16
     batch_size: 64
     contextual_biasing: [null, "100", local, global]
-  - backend: vibevoice-asr
-    model: microsoft/VibeVoice-ASR-HF
-    dtype: bfloat16
-    batch_size: 16
-    contextual_biasing: ["1000", "2000"]
+  # Long lists (~3.6k and ~7.2k tokens per request, ~13 h of GPU for LibriSpeech):
+  # left out for now
+  # - backend: vibevoice-asr
+  #   model: microsoft/VibeVoice-ASR-HF
+  #   dtype: bfloat16
+  #   batch_size: 16
+  #   contextual_biasing: ["1000", "2000"]
 
   # --- NeMo phrase boosting (GPU-PB, decoding-time boosting tree; greedy_batch
-  # decoding). alpha = 1.0, tuned on PxSLU_dev (config_fr_nemo_alpha.yaml) ---
+  # decoding, beam for Canary). alpha (boosting weight): 1.0 and 2.0 for every model.
+  # On PxSLU_dev with parakeet (config_fr_nemo_alpha.yaml), 1.0 was the best F1 / false
+  # alarm trade-off with the global lists, 2.0 gave +5 F1 with 5x false alarms.
   # One entry per condition: with NeMo 3.0, loading a model a second time in the same
   # process fails (torch.load), and the DGX runner (one process per entry and model)
   # would run all the conditions of an entry in one process.
@@ -125,16 +129,31 @@ benchmarks:
     language: en   # not a prompt: parakeet detects the language itself; used by the boosting tree
     contextual_biasing: null
   - {<<: *parakeet, contextual_biasing: "100", contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: "100", contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: local, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: local, contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: global, contextual_biasing_alpha: 1.0}
-  # - backend: nemo
-  #   model: nvidia/canary-1b-v2
-  #   batch_size: 64
-  #   language: en
-  #   contextual_biasing: [null, "100", "1000", "2000", local, global]
-  #   contextual_biasing_alpha: 1.0
+  - {<<: *parakeet, contextual_biasing: global, contextual_biasing_alpha: 2.0}
+  - &canary
+    backend: nemo
+    model: nvidia/canary-1b-v2
+    batch_size: 64
+    language: en   # source and target language of Canary, and language of the boosting tree
+    contextual_biasing: null
+  - {<<: *canary, contextual_biasing: "100", contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: "100", contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: "1000", contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: "2000", contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: local, contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: local, contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: global, contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: global, contextual_biasing_alpha: 2.0}
 
   # --- Baseline without mechanism ---
   - backend: vllm

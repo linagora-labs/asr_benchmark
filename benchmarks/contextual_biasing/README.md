@@ -83,7 +83,7 @@ Models without a mechanism are run as baselines (scored on the same lists).
 | Granite Speech 5.0 2B (`vllm`, chat endpoint) | `{prompt} Keywords: {terms}` (model card) | "up to 2000" keywords |
 | MOSS-Transcribe-Diarize (`vllm`) | `{prompt}热词提示：{terms}` (French runs, default Chinese prompt) or `{prompt} Hotwords: {terms}` (English), as documented in the model's GitHub examples | |
 | VibeVoice-ASR (`vibevoice-asr`) | extra context of the request | |
-| Parakeet TDT 0.6B v3 (`nemo`) | GPU phrase boosting of NeMo (boosting tree fused at decoding time, `greedy_batch`; Andrusenko et al. 2025, arXiv:2508.07014); weight `contextual_biasing_alpha` tuned on PxSLU dev (`config_fr_nemo_alpha.yaml`) | |
+| Parakeet TDT 0.6B v3, Canary 1B v2, linto-stt-fr-fastconformer (RNN-T decoder; French only) (`nemo`) | GPU phrase boosting of NeMo (boosting tree fused at decoding time, `greedy_batch`, beam search for Canary; Andrusenko et al. 2025, arXiv:2508.07014); weight `contextual_biasing_alpha` 1.0 and 2.0 (PxSLU dev with Parakeet, `config_fr_nemo_alpha.yaml`: 1.0 best F1 / false alarm trade-off, 2.0 +5 F1 with 5x false alarms) | |
 | linto-stt, whisper engine (`linto-stt`) | HTTP `hotwords` parameter | |
 | Cohere Transcribe (`vllm`) | none: baseline | |
 
@@ -139,7 +139,7 @@ uv run python tools/contextual_biasing/build_page.py --output benchmarks/context
 with the list, and the difference (optionally as CSV). `build_page.py` writes the same
 measures as an HTML page (`page/index.html`, a single file): overview table of a measure
 for each model and list, charts of each list without and with it, and all the measures
-of one list; both text normalizations, and the boosting weight tuning runs on demand.
+of one list; both text normalizations, and a selection of the models shown (boosting weight tuning runs hidden by default).
 
 Notes for the configs: Nemotron runs on a vLLM server started separately (with a
 `--max-model-len` above the longest list); Granite 5.0 is served from a folder of

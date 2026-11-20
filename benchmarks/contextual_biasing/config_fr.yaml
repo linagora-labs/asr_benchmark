@@ -133,8 +133,9 @@ benchmarks:
     contextual_biasing: [bdpm, vidal]
 
   # --- NeMo phrase boosting (GPU-PB, decoding-time boosting tree; greedy_batch
-  # decoding). alpha (boosting weight) = 1.0, tuned on PxSLU_dev (config_fr_nemo_alpha.yaml):
-  # best F1 / false alarm trade-off with the global lists (2.0: +5 F1 but 5x false alarms)
+  # decoding, beam for Canary). alpha (boosting weight): 1.0 and 2.0 for every model.
+  # On PxSLU_dev with parakeet (config_fr_nemo_alpha.yaml), 1.0 was the best F1 / false
+  # alarm trade-off with the global lists, 2.0 gave +5 F1 with 5x false alarms.
   # One entry per condition: with NeMo 3.0, loading a model a second time in the same
   # process fails (torch.load), and the DGX runner (one process per entry and model)
   # would run all the conditions of an entry in one process.
@@ -145,26 +146,60 @@ benchmarks:
     language: fr   # not a prompt: parakeet detects the language itself; used by the boosting tree
     contextual_biasing: null
   - {<<: *parakeet, contextual_biasing: pxslu25, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: pxslu25, contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: vidal, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: vidal, contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: theriaque, contextual_biasing_alpha: 1.0}
-  # - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: theriaque, contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: pxslu25_upper, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: pxslu25_upper, contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: pxslu_upper, contextual_biasing_alpha: 1.0}
-  # - {<<: *parakeet, contextual_biasing: oracle_upper, contextual_biasing_alpha: 1.0}
-  # - backend: nemo
-  #   model: nvidia/canary-1b-v2
-  #   batch_size: 64
-  #   language: fr
-  #   contextual_biasing: [null, pxslu25, pxslu, bdpm, vidal, theriaque, pxslu25_upper, pxslu_upper]
-  #   contextual_biasing_alpha: 1.0
-  # - backend: nemo
-  #   model: linagora/linto_stt_fr_fastconformer_pc
-  #   batch_size: 64
-  #   decoder: [rnnt, ctc]
-  #   contextual_biasing: [null, pxslu, vidal, theriaque]
-  #   contextual_biasing_alpha: 1.0
+  - {<<: *parakeet, contextual_biasing: pxslu_upper, contextual_biasing_alpha: 2.0}
+  - &canary
+    backend: nemo
+    model: nvidia/canary-1b-v2
+    batch_size: 64
+    language: fr   # source and target language of Canary, and language of the boosting tree
+    contextual_biasing: null
+  - {<<: *canary, contextual_biasing: pxslu25, contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: pxslu25, contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: pxslu, contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: pxslu, contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: bdpm, contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: bdpm, contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: vidal, contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: vidal, contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: theriaque, contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: theriaque, contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: pxslu25_upper, contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: pxslu25_upper, contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: pxslu_upper, contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: pxslu_upper, contextual_biasing_alpha: 2.0}
+  - &linto
+    backend: nemo
+    model: linagora/linto_stt_fr_fastconformer_pc
+    batch_size: 64
+    decoder: rnnt
+    language: fr
+    contextual_biasing: null
+  - {<<: *linto, contextual_biasing: pxslu25, contextual_biasing_alpha: 1.0}
+  - {<<: *linto, contextual_biasing: pxslu25, contextual_biasing_alpha: 2.0}
+  - {<<: *linto, contextual_biasing: pxslu, contextual_biasing_alpha: 1.0}
+  - {<<: *linto, contextual_biasing: pxslu, contextual_biasing_alpha: 2.0}
+  - {<<: *linto, contextual_biasing: bdpm, contextual_biasing_alpha: 1.0}
+  - {<<: *linto, contextual_biasing: bdpm, contextual_biasing_alpha: 2.0}
+  - {<<: *linto, contextual_biasing: vidal, contextual_biasing_alpha: 1.0}
+  - {<<: *linto, contextual_biasing: vidal, contextual_biasing_alpha: 2.0}
+  - {<<: *linto, contextual_biasing: theriaque, contextual_biasing_alpha: 1.0}
+  - {<<: *linto, contextual_biasing: theriaque, contextual_biasing_alpha: 2.0}
+  - {<<: *linto, contextual_biasing: pxslu25_upper, contextual_biasing_alpha: 1.0}
+  - {<<: *linto, contextual_biasing: pxslu25_upper, contextual_biasing_alpha: 2.0}
+  - {<<: *linto, contextual_biasing: pxslu_upper, contextual_biasing_alpha: 1.0}
+  - {<<: *linto, contextual_biasing: pxslu_upper, contextual_biasing_alpha: 2.0}
 
   # --- Baselines without mechanism (scores on the lists without giving them) ---
   - backend: vllm
