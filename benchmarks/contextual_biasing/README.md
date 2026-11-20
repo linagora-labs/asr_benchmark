@@ -33,7 +33,7 @@ Models without a mechanism are run as baselines (scored on the same lists).
 
 | Dataset | Lang. | Lists | Source |
 |---|---|---|---|
-| PxSLU test / dev (1.38 h / 0.57 h) | fr | global: `pxslu` (the 389 drug names of the corpus: the targets), `bdpm`, `vidal`, `theriaque` (targets + drug dictionaries); per utterance: `oracle` (targets spoken in the utterance); `pxslu_upper`, `oracle_upper`: the same in capitals | Kocabiyikoglu et al., LREC 2022 (arXiv:2207.08292), CC BY 4.0: spoken drug prescriptions |
+| PxSLU test / dev (1.38 h / 0.57 h) | fr | global: `pxslu` (the 389 drug names of the corpus: the targets), `bdpm`, `vidal`, `theriaque` (targets + drug dictionaries); `pxslu_upper`: the `pxslu` list in capitals. The manifests also hold per utterance `oracle` lists (only the targets spoken in the utterance) and `oracle_upper`, not run: not a realistic setting (the list would have to know what is said) | Kocabiyikoglu et al., LREC 2022 (arXiv:2207.08292), CC BY 4.0: spoken drug prescriptions |
 | LibriSpeech test-clean / test-other | en | per utterance: rare words of the reference + N distractors, N in {100, 500, 1000, 2000} | Le et al., Interspeech 2021 (arXiv:2104.02194), `facebookresearch/fbai-speech` (`is21_deep_bias`, MIT) |
 | Contextual Earnings-22 test / dev (test: 771 clips, 3.2 h) | en | per clip: `local` (keywords spoken in the clip: the targets), `global` (keywords of the whole call) | Durmus et al. 2026 (arXiv:2604.07354), `argmaxinc/contextual-earnings22` (licence of Earnings-22) |
 
@@ -131,10 +131,15 @@ They write `manifests/*.jsonl` and `lists/` in this folder. The LibriSpeech list
 AUDIO_FOLDER=/home/data/audio uv run python benchmarker.py benchmarks/contextual_biasing/config_fr.yaml
 uv run python tools/contextual_biasing/report.py benchmarks/contextual_biasing/results_fr
 uv run python tools/contextual_biasing/report.py benchmarks/contextual_biasing/results_fr --mode cased
+uv run python tools/contextual_biasing/build_page.py --output benchmarks/contextual_biasing/page \
+    --results fr=benchmarks/contextual_biasing/results_fr en=benchmarks/contextual_biasing/results_en
 ```
 
 `report.py` prints, per dataset and list, the measures of each model without list,
-with the list, and the difference (optionally as CSV).
+with the list, and the difference (optionally as CSV). `build_page.py` writes the same
+measures as an HTML page (`page/index.html`, a single file): overview table of a measure
+for each model and list, charts of each list without and with it, and all the measures
+of one list; both text normalizations, and the boosting weight tuning runs on demand.
 
 Notes for the configs: Nemotron runs on a vLLM server started separately (with a
 `--max-model-len` above the longest list); Granite 5.0 is served from a folder of

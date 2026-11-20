@@ -34,7 +34,7 @@ benchmarks:
   - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 4.0}
-  - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 0.5}
-  - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 1.0}
-  - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 2.0}
-  - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 4.0}
+  # - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 0.5}
+  # - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 1.0}
+  # - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 2.0}
+  # - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 4.0}
