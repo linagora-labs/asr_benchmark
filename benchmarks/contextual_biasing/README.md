@@ -33,7 +33,7 @@ Models without a mechanism are run as baselines (scored on the same lists).
 
 | Dataset | Lang. | Lists | Source |
 |---|---|---|---|
-| PxSLU test / dev (1.38 h / 0.57 h) | fr | global: `pxslu` (the 389 drug names of the corpus: the targets), `bdpm`, `vidal`, `theriaque` (targets + drug dictionaries); `pxslu_upper`: the `pxslu` list in capitals. The manifests also hold per utterance `oracle` lists (only the targets spoken in the utterance) and `oracle_upper`, not run: not a realistic setting (the list would have to know what is said) | Kocabiyikoglu et al., LREC 2022 (arXiv:2207.08292), CC BY 4.0: spoken drug prescriptions |
+| PxSLU test / dev (1.38 h / 0.57 h) | fr | global: `pxslu` (the 389 drug names of the corpus: the targets), `bdpm`, `vidal`, `theriaque` (targets + drug dictionaries); per utterance: `pxslu25` (25 drug names of `pxslu`: the ones spoken in the utterance plus others drawn at random; the size of the per call `global` lists of Contextual Earnings-22, 25 terms on average, and short enough for Whisper's 223-token hotwords); `pxslu_upper`, `pxslu25_upper`: the same lists in capitals. The manifests also hold per utterance `oracle` lists (only the targets spoken in the utterance) and `oracle_upper`, not run: not a realistic setting (the list would have to know what is said) | Kocabiyikoglu et al., LREC 2022 (arXiv:2207.08292), CC BY 4.0: spoken drug prescriptions |
 | LibriSpeech test-clean / test-other | en | per utterance: rare words of the reference + N distractors, N in {100, 500, 1000, 2000} | Le et al., Interspeech 2021 (arXiv:2104.02194), `facebookresearch/fbai-speech` (`is21_deep_bias`, MIT) |
 | Contextual Earnings-22 test / dev (test: 771 clips, 3.2 h) | en | per clip: `local` (keywords spoken in the clip: the targets), `global` (keywords of the whole call) | Durmus et al. 2026 (arXiv:2604.07354), `argmaxinc/contextual-earnings22` (licence of Earnings-22) |
 
@@ -92,10 +92,10 @@ in Mistral's hosted API). Through vLLM's `/v1/audio/transcriptions` endpoint, th
 `prompt` field reaches Qwen3-ASR, Whisper and MOSS, but Nemotron and Granite ignore
 it: they are run through the chat endpoint.
 
-List sizes (tokens): PxSLU `pxslu` ~1,700 (Whisper tokenizer), `bdpm` ~17.8k,
+List sizes (tokens): PxSLU `pxslu25` at most ~130 (~160 in capitals), `pxslu` ~1,700 (Whisper tokenizer), `bdpm` ~17.8k,
 `vidal` ~12k, `theriaque` ~38k; LibriSpeech N=100 ~370, N=2000 ~7.2k; Contextual
 Earnings-22 at most 161. The configs leave out the lists a model cannot take
-(Whisper: only the PxSLU per-utterance lists and the Contextual Earnings-22 lists;
+(Whisper: only `pxslu25` and the Contextual Earnings-22 lists;
 Granite: no list above 16k tokens).
 
 ## Preparation

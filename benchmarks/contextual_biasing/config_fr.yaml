@@ -8,8 +8,11 @@
 #   vidal      targets + Vidal drug dictionary (~2,800 terms, ~12k tokens)
 #   theriaque  targets + Theriaque drug dictionary (~8,900 terms, ~38k tokens)
 #              (vidal and theriaque: not redistributable, not in git)
-#   pxslu_upper  the pxslu list in capitals (does the model write the drug names in
-#              capitals when given them so? see report.py --mode cased)
+#   pxslu25    per utterance: 25 PxSLU drug names, the ones spoken in the utterance
+#              plus others drawn at random (size of the per call lists of Contextual
+#              Earnings-22, short enough for Whisper's hotwords)
+#   pxslu_upper, pxslu25_upper: the same lists in capitals (does the model write the
+#              drug names in capitals when given them so? see report.py --mode cased)
 # Not run: oracle / oracle_upper (in the manifests), per utterance lists of only the
 # targets spoken in the utterance: not a realistic setting (the list would have to
 # know what is said).
@@ -38,20 +41,20 @@ wer_language: fr
 
 benchmarks:
   # --- faster-whisper: `hotwords`, at most 223 tokens (the rest is cut). No global
-  # list fits (the PxSLU list is ~1,700 Whisper tokens): baseline only (only the oracle
-  # lists, not run, would fit). large-v3: greedy;
+  # list fits (the PxSLU list is ~1,700 Whisper tokens): only pxslu25 (at most ~130
+  # tokens, ~160 in capitals). large-v3: greedy;
   # large-v3-turbo: greedy and beam search (accurate: 5 beams, temperature fallback),
   # with full folder names to keep both.
   - backend: faster-whisper
     model: large-v3
     precision: float16
-    contextual_biasing: null   # [null, oracle, oracle_upper]
+    contextual_biasing: [null, pxslu25, pxslu25_upper]
   - backend: faster-whisper
     model: large-v3-turbo
     precision: float16
     accurate: [false, true]
     full_name: true
-    contextual_biasing: null   # [null, oracle, oracle_upper]
+    contextual_biasing: [null, pxslu25, pxslu25_upper]
 
   # --- Qwen3-ASR (vLLM): `prompt` field, put in the system turn. The format is not
   # documented by Qwen; this one is linto-stt's (production).
@@ -61,7 +64,7 @@ benchmarks:
     # - Qwen/Qwen3-ASR-0.6B
     port: 8106
     extra_args: --max-model-len 65536
-    contextual_biasing: [null, pxslu, bdpm, vidal, theriaque, pxslu_upper]
+    contextual_biasing: [null, pxslu25, pxslu, bdpm, vidal, theriaque, pxslu25_upper, pxslu_upper]
     contextual_biasing_template: "Vocabulary: {terms}."
 
   # --- Nemotron-3.5-Transcribe (vLLM chat, server started separately) ---
@@ -77,7 +80,7 @@ benchmarks:
     prompt: "Audio transcription. Language: French. Wording: verbatim, including fillers and repetitions. Formatting: punctuation and capitalization. Output: transcript only."
     extra_body: {chat_template_kwargs: {enable_thinking: false}}
     concurrency: 32
-    contextual_biasing: [null, pxslu, bdpm, vidal, theriaque, pxslu_upper]
+    contextual_biasing: [null, pxslu25, pxslu, bdpm, vidal, theriaque, pxslu25_upper, pxslu_upper]
     contextual_biasing_template: "{prompt} Context terms: {terms}."
 
   # --- Granite Speech 4.1 / 5.0 (vLLM chat): "Keywords: kw1, kw2" (model cards) ---
@@ -101,7 +104,7 @@ benchmarks:
     prompt: <|audio|>La parole est en français. Transcrivez-la exactement ; ne la traduisez pas. Transcrivez la parole avec une ponctuation et des majuscules appropriées.
     extra_args: --max-model-len 16384
     concurrency: 128
-    contextual_biasing: [null, pxslu, pxslu_upper]
+    contextual_biasing: [null, pxslu25, pxslu, pxslu25_upper, pxslu_upper]
     contextual_biasing_template: "{prompt} Keywords: {terms}"
 
   # --- MOSS-Transcribe-Diarize (vLLM): hotwords appended to the default (Chinese)
@@ -113,7 +116,7 @@ benchmarks:
     port: 8102
     language: null   # auto-detection, as in benchmarks/sota (texts scored in French: wer_language)
     transcription_prompt: "请将音频转写为文本，每一段需以起始时间戳和说话人编号（[S01]、[S02]、[S03]…）开头，正文为对应的语音内容，并在段末标注结束时间戳，以清晰标明该段语音范围。"
-    contextual_biasing: [null, pxslu, bdpm, vidal, theriaque, pxslu_upper]
+    contextual_biasing: [null, pxslu25, pxslu, bdpm, vidal, theriaque, pxslu25_upper, pxslu_upper]
     contextual_biasing_template: "{prompt}热词提示：{terms}"
 
   # --- VibeVoice-ASR (transformers): extra context of the request. Smaller batches
@@ -122,7 +125,7 @@ benchmarks:
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
     batch_size: 64
-    contextual_biasing: [null, pxslu, pxslu_upper]
+    contextual_biasing: [null, pxslu25, pxslu, pxslu25_upper, pxslu_upper]
   - backend: vibevoice-asr
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
@@ -141,18 +144,20 @@ benchmarks:
     batch_size: 64
     language: fr   # not a prompt: parakeet detects the language itself; used by the boosting tree
     contextual_biasing: null
+  - {<<: *parakeet, contextual_biasing: pxslu25, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: vidal, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: theriaque, contextual_biasing_alpha: 1.0}
   # - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: pxslu25_upper, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: pxslu_upper, contextual_biasing_alpha: 1.0}
   # - {<<: *parakeet, contextual_biasing: oracle_upper, contextual_biasing_alpha: 1.0}
   # - backend: nemo
   #   model: nvidia/canary-1b-v2
   #   batch_size: 64
   #   language: fr
-  #   contextual_biasing: [null, pxslu, bdpm, vidal, theriaque, pxslu_upper]
+  #   contextual_biasing: [null, pxslu25, pxslu, bdpm, vidal, theriaque, pxslu25_upper, pxslu_upper]
   #   contextual_biasing_alpha: 1.0
   # - backend: nemo
   #   model: linagora/linto_stt_fr_fastconformer_pc

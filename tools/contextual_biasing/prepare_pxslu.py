@@ -35,8 +35,15 @@ This script:
    when all their words are substance words of the BDPM, else capitalized);
 6. writes one manifest per split: the transcript (with one spelling per drug,
    drug names in their case, first letter in capitals), the global lists (file
-   paths) and per-utterance "oracle" and "oracle_upper" lists (the targets
-   spoken in the utterance).
+   paths) and per-utterance lists:
+   - "pxslu25": 25 PxSLU drug names, the ones spoken in the utterance (if any)
+     plus others drawn at random (seeded by the utterance id), sorted; the size
+     of the per call lists of Contextual Earnings-22 ("global": 25 terms on
+     average), and short enough for every model (Whisper hotwords: at most 223
+     tokens; this list: at most ~130 tokens, ~160 in capitals); "pxslu25_upper"
+     in capitals;
+   - "oracle", "oracle_upper": only the targets spoken in the utterance (not a
+     realistic setting, not run in the configs).
 
 Usage:
     # BDPM files (https://base-donnees-publique.medicaments.gouv.fr/telechargement)
@@ -52,11 +59,14 @@ Usage:
 
 import argparse
 import json
+import random
 import re
 import unicodedata
 from pathlib import Path
 
 import soundfile
+
+LOCAL_LIST_SIZE = 25  # terms of the per utterance list "pxslu25"
 
 LISTS = {
     # variant name: file of the drug lists directory
@@ -230,6 +240,13 @@ def recase(text, forms):
     return text[:1].upper() + text[1:]
 
 
+def local_list(spoken, targets, size, seed):
+    """Per utterance list of `size` targets: the ones spoken in the utterance plus
+    others drawn at random (reproducible with `seed`), sorted."""
+    others = [t for t in targets if t not in spoken]
+    return sorted(spoken + random.Random(seed).sample(others, size - len(spoken)), key=sort_key)
+
+
 def write_list(path, terms):
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
@@ -306,16 +323,19 @@ def main():
             oracle = find_terms(text, targets_tokens)
             text = recase(text, forms)
             info = soundfile.info(str(pxslu / "recordings" / path))
+            utterance_id = f"PxSLU_{path.replace('/', '_').removesuffix('.wav')}"
+            local = local_list(oracle, targets, LOCAL_LIST_SIZE, utterance_id)
             rows.append({
                 "audio_filepath": f"{args.audio_prefix}/{path}",
                 "duration": round(info.frames / info.samplerate, 3),
                 "offset": 0.0,
                 "text": text,
-                "id": f"PxSLU_{path.replace('/', '_').removesuffix('.wav')}",
+                "id": utterance_id,
                 "split": split,
                 "line": number,
                 "contextual_biasing": {name: str(lists_ref / path_.name) for name, path_ in lists.items()}
-                | {"oracle": oracle, "oracle_upper": [t.upper() for t in oracle]},
+                | {f"pxslu{LOCAL_LIST_SIZE}": local, f"pxslu{LOCAL_LIST_SIZE}_upper": [t.upper() for t in local],
+                   "oracle": oracle, "oracle_upper": [t.upper() for t in oracle]},
                 "contextual_biasing_targets": str(lists_ref / "drugs_pxslu.txt"),
             })
         manifest = output / "manifests" / f"PxSLU_{split}.jsonl"
