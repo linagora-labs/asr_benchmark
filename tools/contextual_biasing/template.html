@@ -3,12 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Contextual Biasing Benchmark</title>
+<title>Contextual Biasing ASR Benchmark</title>
 <meta name="description" content="Recognition of list terms by speech recognition models without and with a contextual biasing list.">
 <style>
   /* Same look as tools/leaderboard/template.html (light theme only). */
   :root { color-scheme: light; --bg: #fbfbfa; --surface: #fff; --text: #1d1d1b; --muted: #6b6a66; --line: #e6e4df;
-          --accent: #1f6f78; --base: #a3a19b; --good: #2e8b57; --bad: #c0392b; }
+          --accent: #1f6f78; --base: #a3a19b; --good: #2e8b57; --bad: #c0392b;
+          --series-1: #2a78d6; --series-2: #eb6834; --series-3: #1baf7a; --series-4: #eda100;
+          --series-5: #e87ba4; --series-6: #008300; --series-7: #6250d6; --series-8: #e34948; }
   [hidden] { display: none !important; }
   html { overflow-y: scroll; }
   body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, sans-serif; }
@@ -20,6 +22,8 @@
   .controls { display: flex; flex-wrap: wrap; gap: 10px 32px; margin: 24px 0 12px; align-items: center; }
   .group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .group-label { color: var(--muted); margin-right: 2px; }
+  .group-label.all { cursor: pointer; user-select: none; text-decoration: underline dotted; text-underline-offset: 3px; }
+  .group-label.all:hover { color: var(--accent); }
   select, button { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
   button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
   .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; margin: 8px 0 12px; }
@@ -49,16 +53,45 @@
   td.first .delta, td.second .delta, td.second-last .delta, td.last .delta { color: #1d1d1b; opacity: .75; }
   .swatch.rank { border-radius: 2px; }
   td.avg { font-weight: 700; }
-  @media (max-width: 520px) { .panels { grid-template-columns: 1fr; } }
+  /* Charts. Series colors: categorical palette, fixed order (validated: CVD and
+     normal-vision separation of adjacent slots; three slots below 3:1 contrast, hence the
+     value labels and the tables). */
+  .panels.small { grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); }
+  svg .grid { stroke: var(--line); }
+  svg .tick { fill: var(--muted); font-size: 12px; } svg .name { fill: var(--text); }
+  svg [data-tip] { cursor: default; }
+  .swatch.line { width: 24px; height: 0; border-radius: 0; border-top: 4px solid var(--accent); vertical-align: 3px; }
+  .tip { position: fixed; pointer-events: none; background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+         padding: 6px 10px; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,.08); white-space: nowrap; z-index: 10; }
+  /* Overview table: list columns of the same, smallest width; the change below the value */
+  .scroll.fit { width: fit-content; max-width: 100%; }
+  table.compact { width: auto; table-layout: fixed; }
+  table.compact th, table.compact td { padding: 5px 6px; text-align: center; white-space: normal; line-height: 1.25; }
+  table.compact td { vertical-align: top; }  /* values on one line, with or without a change below */
+  table.compact th:first-child, table.compact td:first-child { text-align: left; white-space: nowrap; }
+  table.compact col.model { width: 230px; } table.compact col.value { width: 74px; }
+  table.compact th { font-size: 12px; overflow-wrap: anywhere; }
+  table.compact .delta { display: block; margin: 0; }
+  table.compact th small { font-weight: 400; color: var(--muted); }
+  .caption { font-size: 13px; margin-top: 8px; }
+  .board > div { min-width: 0; }
+  @media (min-width: 1250px) {
+    .board { display: grid; grid-template-columns: min-content minmax(420px, 1fr); gap: 0 28px; align-items: start; }
+    .board .panels.small { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
+  }
+  @media (max-width: 520px) { .panels, .panels.small { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 <main>
-  <h1>Contextual Biasing Benchmark</h1>
+  <h1>Contextual Biasing ASR Benchmark</h1>
   <p class="intro">How well speech recognition models write the terms of a list (drug names, rare words, company
     names) without the list, and when the list is given to the model (prompt, hotwords or boosting).
     Each run with a list is compared with the run of the same model without it, on the same terms.</p>
 
+  <div class="controls">
+    <div class="group"><span class="group-label all" id="models-all" title="Select all / none">Models</span> <span class="group" id="models"></span></div>
+  </div>
   <div class="controls">
     <div class="group"><span class="group-label">Language</span> <select id="language"></select></div>
     <div class="group"><span class="group-label">Test set</span> <span class="group" id="dataset"></span></div>
@@ -68,16 +101,30 @@
   </div>
   <div class="controls">
     <div class="group"><span class="group-label">Measure</span> <span class="group" id="metric"></span></div>
-    <div class="group"><label><input type="checkbox" id="tuning"> Boosting weight tuning runs</label></div>
   </div>
 
-  <h2>Overview</h2>
+  <!-- Table and figures side by side on wide screens, one below the other otherwise -->
+  <div class="board">
+  <div>
+  <h2>Leaderboard</h2>
   <div class="legend">
     <span><span class="swatch rank first"></span>1st</span> <span><span class="swatch rank second"></span>2nd</span>
     <span><span class="swatch rank second-last"></span>Second to last</span> <span><span class="swatch rank last"></span>Last</span>
   </div>
-  <div class="muted" id="overview-caption"></div>
-  <div class="scroll"><table id="overview"></table></div>
+  <div class="scroll fit"><table id="overview" class="compact"></table></div>
+  <div class="muted caption" id="overview-caption"></div>
+  </div>
+
+  <div>
+  <h2>Main plots</h2>
+  <div class="legend" id="lines-legend"></div>
+  <div class="panels small" id="lines"></div>
+  <div class="muted caption">Each model without list, then with each list given to it, from the smallest list to the
+    largest. Hollow points: the same list given in capitals (to read with "Case of the list terms": does the model write
+    the terms as given?). "No list": measured on the terms of the smallest list. A line stops where the model has no run
+    with the list (no biasing mechanism, or list too long for it). Variants of a model share its color.</div>
+  </div>
+  </div>
 
   <h2>Without and with the list</h2>
   <div class="legend">
@@ -94,11 +141,14 @@
 
   <h2>Measures</h2>
   <ul class="notes">
-    <li><b>F1, P, R</b>: precision, recall and F1 of the list terms (each occurrence of a term of the targets, in the
+    <li><b>F1, P, R</b>: F1, precision and recall of the list terms (each occurrence of a term of the targets, in the
       reference and in the transcription).</li>
-    <li><b>B-WER</b>: word error rate on the words of the list terms of the reference; <b>U-WER</b>: on the other words.</li>
     <li><b>FA/h</b>: false alarms per hour, list terms written although not spoken.</li>
     <li><b>WER</b>: word error rate of the whole transcription (normalized text).</li>
+    <li><b>B-WER</b>: word error rate on the words of the list terms of the reference; <b>U-WER</b>: on the other words.</li>
+    <li><b>Runaway</b>: percentage of the utterances whose transcription runs away (more than twice as many words as
+      the reference, plus 10): loops, invented sentences, prompt recited. A few of them weigh a lot on B-WER, WER and
+      FA/h.</li>
     <li><b>Case of the list terms</b>: a term is correct only if written as in the list given to the model (as in the
       targets for runs without list); the case of the other words is not checked.</li>
     <li>Lists: <i>local</i> lists only hold terms of the utterance; the others are global lists
@@ -106,6 +156,7 @@
       writes the terms as given (to read with "Case of the list terms").</li>
   </ul>
 </main>
+<div class="tip" id="tip" hidden></div>
 
 <script>
 const DATA = /*__DATA__*/null;
@@ -116,8 +167,9 @@ const METRICS = [
   { key: "false_alarms_per_hour", label: "FA/h", higher: false, unbounded: true },
   { key: "wer", label: "WER", higher: false },
   { key: "b_wer", label: "B-WER", higher: false }, { key: "u_wer", label: "U-WER", higher: false },
+  { key: "runaway", label: "Runaway", higher: false, unbounded: true },
 ];
-const state = { language: Object.keys(DATA)[0], dataset: null, mode: "nocasepunc", metric: "f1", list: null, tuning: false };
+const state = { language: Object.keys(DATA)[0], dataset: null, mode: "nocasepunc", metric: "f1", list: null, hidden: {} };
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const fmt = (v) => (v === null || v === undefined ? "" : v.toFixed(1));
@@ -128,13 +180,34 @@ function buttons(container, values, current, onClick, labels = {}) {
   container.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => onClick(b.dataset.v)));
 }
 
-// Runs of the boosting weight tuning: a weight other than the one kept (1.0)
-const isTuning = (row) => /alpha (?!1\.0\b)/.test(row.setting || "");
+// Runs of the boosting weight tuning: a weight other than the one kept (1.0), hidden by default
+const isTuning = (name) => /\(alpha (?!1\.0\b)/.test(name);
 const rowName = (row) => row.label + (row.setting ? ` (${row.setting})` : "");
+
+// Models that can be selected: each model and setting with a run with a list (e.g. a
+// boosting weight), and the models without run with a list. The rows without list of a
+// model with settings follow its settings (shown when one of them is).
+function modelKeys() {
+  const lang = DATA[state.language], keys = new Set();
+  for (const r of Object.values(lang.rows).flat()) keys.add(r.run_cb || r.setting ? rowName(r) : r.label);
+  const withSettings = [...keys].filter((k) => k.includes(" (alpha"));
+  return [...keys].filter((k) => !withSettings.some((s) => s.startsWith(`${k} (alpha`)))
+    .sort((a, b) => a.localeCompare(b));
+}
+function hiddenSet() {
+  if (!state.hidden[state.language]) state.hidden[state.language] = new Set(modelKeys().filter(isTuning));
+  return state.hidden[state.language];
+}
+function visible(r) {
+  const hidden = hiddenSet(), name = rowName(r);
+  if (r.run_cb || r.setting) return !hidden.has(name);
+  const variants = modelKeys().filter((k) => k === r.label || k.startsWith(`${r.label} (alpha`));
+  return variants.some((k) => !hidden.has(k));
+}
 
 function rows() {
   const lang = DATA[state.language];
-  return lang.rows[state.mode].filter((r) => r.dataset === state.dataset && (state.tuning || !isTuning(r)));
+  return lang.rows[state.mode].filter((r) => r.dataset === state.dataset && visible(r));
 }
 
 function deltaClass(d, m) {
@@ -164,44 +237,62 @@ const byOrder = (a, b) => ORDER.indexOf(rowName(a)) - ORDER.indexOf(rowName(b)) 
 
 const delta = (row, key) => (row[key + "_cb"] === undefined || row[key + "_cb"] === null || row[key] === null ? null : row[key + "_cb"] - row[key]);
 
+// Lists with at least one run with the list (on the selected test set and models)
+function runLists(all) {
+  return DATA[state.language].lists.filter((l) => all.some((r) => r.list === l && r.run_cb));
+}
+// Models of the table: each model and setting with a run with a list, and the models
+// without any (their rows without list); a model with settings only appears with them
+function tableModels(all) {
+  const names = new Set(all.map((r) => (r.run_cb ? rowName(r) : r.label)));
+  return [...names].filter((n) => ![...names].some((s) => s.startsWith(`${n} (alpha`)));
+}
+
 function overview() {
-  const lang = DATA[state.language], m = metric(), all = rows();
-  const lists = lang.lists.filter((l) => all.some((r) => r.list === l));
-  // Cell of each model and list: the run with the list, or else the run without list
-  const models = [...new Set(all.map(rowName))].map((name) => {
+  const m = metric(), all = rows(), styles = modelStyles();
+  const lists = runLists(all);
+  const better = (a, b) => (m.higher ? a > b : a < b);
+  const models = tableModels(all).map((name) => {
+    // Without list: measured on the terms of the smallest list with a measure
+    const firstList = lists.find((l) => present(baselineOf(all, name, l, m.key)));
+    const none = firstList ? baselineOf(all, name, firstList, m.key) : null;
+    // With each list: only the runs with the list (empty cell otherwise)
     const cells = lists.map((l) => {
-      const run = all.find((r) => r.list === l && rowName(r) === name && r.run_cb);
-      if (run) return { value: run[m.key + "_cb"], before: run[m.key], biased: true };
-      const base = all.find((r) => r.list === l && r.label === name.replace(/ \(alpha [^)]*\)$/, "") && !r.run_cb)
-        || all.find((r) => r.list === l && rowName(r) === name);
-      return base ? { value: base[m.key], biased: false } : null;
+      const run = runOf(all, name, l);
+      return run && present(run[m.key + "_cb"]) ? { value: run[m.key + "_cb"], before: run[m.key] } : null;
     });
-    const values = cells.filter((c) => c && present(c.value)).map((c) => c.value);
-    return { name, cells, avg: values.length ? values.reduce((a, b) => a + b, 0) / values.length : null };
+    const values = [none, ...cells.map((c) => c && c.value)].filter(present);
+    const best = values.length ? values.reduce((a, b) => (better(b, a) ? b : a)) : null;
+    return { name, none, cells, best };
   });
-  models.sort((a, b) => (present(a.avg) && present(b.avg) ? (m.higher ? b.avg - a.avg : a.avg - b.avg) : present(a.avg) ? -1 : 1)
+  models.sort((a, b) => (present(a.best) && present(b.best) ? (m.higher ? b.best - a.best : a.best - b.best) : present(a.best) ? -1 : 1)
     || a.name.localeCompare(b.name));
   ORDER = models.map((x) => x.name);
-  const columns = lists.map((_, i) => models.map((x) => x.cells[i]).filter((c) => c && present(c.value)).map((c) => c.value));
-  const avgs = models.map((x) => x.avg).filter(present);
-  let html = `<tr><th>Model</th><th class="group-start">Average</th>${lists.map((l) => `<th class="group-start">${esc(listTitle(l))}</th>`).join("")}</tr>`;
+  const columns = lists.map((_, i) => models.map((x) => x.cells[i]).filter(Boolean).map((c) => c.value));
+  const bests = models.map((x) => x.best).filter(present);
+  const nones = models.map((x) => x.none).filter(present);
+  // List name (broken after "_" if needed) and size below it
+  const name = (l) => esc(l).replace(/_/g, "_<wbr>");
+  const head = (l) => (present(listSize(l)) ? `${name(l)}<br><small>(${sizeText(listSize(l))})</small>` : name(l));
+  let html = `<colgroup><col class="model">${'<col class="value">'.repeat(lists.length + 2)}</colgroup>`;
+  // Fixed layout: the columns take the widths of the colgroup only with an explicit table width
+  $("overview").style.width = `${230 + 74 * (lists.length + 2)}px`;
+  html += `<tr><th>Model</th><th class="group-start">Best</th><th class="group-start">No list</th>${lists.map((l) => `<th class="group-start">${head(l)}</th>`).join("")}</tr>`;
   for (const x of models) {
-    html += `<tr><td>${esc(x.name)}</td><td class="group-start avg ${rankClass(x.avg, avgs, m.higher)}">${fmt(x.avg)}</td>`;
+    html += `<tr>${nameCell(x.name, styles)}<td class="group-start avg ${rankClass(x.best, bests, m.higher)}">${fmt(x.best)}</td>`;
+    html += `<td class="group-start ${rankClass(x.none, nones, m.higher)}">${fmt(x.none)}</td>`;
     x.cells.forEach((c, i) => {
-      if (!c || !present(c.value)) { html += `<td class="group-start"></td>`; return; }
-      const rank = rankClass(c.value, columns[i], m.higher);
-      if (c.biased) {
-        const d = present(c.before) ? c.value - c.before : null;
-        html += `<td class="group-start ${rank}" title="Without list: ${fmt(c.before)}">${fmt(c.value)}<span class="delta ${deltaClass(d, m)}">${d === null ? "" : (d > 0 ? "+" : "") + d.toFixed(1)}</span></td>`;
-      } else {
-        html += `<td class="group-start none ${rank}" title="Without list (no run with this list)">${fmt(c.value)}</td>`;
-      }
+      if (!c) { html += `<td class="group-start"></td>`; return; }
+      const d = present(c.before) ? c.value - c.before : null;
+      html += `<td class="group-start ${rankClass(c.value, columns[i], m.higher)}" title="Without list: ${fmt(c.before)}">${fmt(c.value)}<span class="delta ${deltaClass(d, m)}">${d === null ? "" : (d > 0 ? "+" : "") + d.toFixed(1)}</span></td>`;
     });
     html += "</tr>";
   }
   $("overview").innerHTML = html;
-  $("overview-caption").textContent = `${m.label} with each list (in parentheses: its number of terms, per utterance on average for the per utterance lists), and its change from the run without list; models sorted by the average over the lists. ` +
-    "Grey text: no run with this list (model without biasing mechanism, or list too long for it), measure without list.";
+  $("overview-caption").textContent = `${m.label} without list and with each list given to the model (in parentheses: its number of terms, ` +
+    `per utterance on average for the per utterance lists), with its change from the run without list (measured on the terms of the same list). ` +
+    `"No list": measured on the terms of the smallest list. Empty cell: no run with this list (model without biasing mechanism, or list too long for it). ` +
+    `"Best": the best of the row (${m.higher ? "highest" : "lowest"} ${m.label}), the models are sorted by it.`;
 }
 
 function panel(list, listRows, m) {
@@ -233,14 +324,14 @@ function panel(list, listRows, m) {
 }
 
 function panels() {
-  const lang = DATA[state.language], m = metric(), all = rows();
-  $("panels").innerHTML = lang.lists.filter((l) => all.some((r) => r.list === l))
+  const m = metric(), all = rows();
+  $("panels").innerHTML = runLists(all)
     .map((l) => panel(l, all.filter((r) => r.list === l), m)).join("");
 }
 
 function details() {
-  const lang = DATA[state.language], all = rows();
-  const lists = lang.lists.filter((l) => all.some((r) => r.list === l));
+  const all = rows(), styles = modelStyles();
+  const lists = runLists(all);
   if (!lists.includes(state.list)) state.list = lists[0];
   $("list").innerHTML = lists.map((l) => `<option value="${esc(l)}" ${l === state.list ? "selected" : ""}>${esc(listTitle(l))}</option>`).join("");
   // Sorted by the selected measure, with the list (or without, for models without run with it)
@@ -250,7 +341,7 @@ function details() {
   const column = (k) => listRows.map((r) => r[k]).filter(present);
   let html = `<tr><th>Model</th>${METRICS.map((m) => `<th class="group-start">${m.label}</th><th>with list</th>`).join("")}</tr>`;
   for (const r of listRows) {
-    html += `<tr><td>${esc(rowName(r))}</td>`;
+    html += `<tr>${nameCell(rowName(r), styles)}`;
     for (const m of METRICS) {
       const d = delta(r, m.key);
       html += `<td class="group-start ${rankClass(r[m.key], column(m.key), m.higher)}">${fmt(r[m.key])}</td><td class="${rankClass(r[m.key + "_cb"], column(m.key + "_cb"), m.higher)}">${fmt(r[m.key + "_cb"])}${d === null ? "" : `<span class="delta ${deltaClass(d, m)}">${(d > 0 ? "+" : "") + d.toFixed(1)}</span>`}</td>`;
@@ -260,6 +351,123 @@ function details() {
   $("details").innerHTML = html;
 }
 
+// ---- Charts
+const isUpper = (list) => list.endsWith("_upper");
+const baseLabel = (name) => name.replace(/ \(alpha [^)]*\)$/, "");
+// Lists of the figure (the ones in capitals are drawn next to their list)
+function chartLists() {
+  const all = rows();
+  return runLists(all).filter((l) => !isUpper(l));
+}
+function runOf(all, name, list) { return all.find((r) => r.list === list && rowName(r) === name && r.run_cb); }
+function baselineOf(all, name, list, key) {
+  const row = all.find((r) => r.list === list && r.label === baseLabel(name));
+  return row ? row[key] : null;
+}
+// Round step of an axis (1, 2, 2.5 or 5 times a power of ten)
+function niceStep(raw) {
+  const p = 10 ** Math.floor(Math.log10(raw)), f = raw / p;
+  return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+}
+const tip = (text) => `data-tip="${esc(text)}"`;
+
+// Model families: variants of a model (Whisper sizes and decodings, boosting weights)
+// share a color, with a lighter shade per variant. Colors follow the family, in a fixed
+// order (alphabetical over the language), never the rank.
+const familyOf = (row) => (row.backend === "faster-whisper" ? "Whisper" : row.label);
+// Series colors (the --series-N tokens), and a color mixed with white by a share t
+const SERIES_HEX = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"];
+function mixWhite(hex, t) {
+  const c = [1, 3, 5].map((i) => Math.round(t * parseInt(hex.slice(i, i + 2), 16) + (1 - t) * 255));
+  return "#" + c.map((v) => v.toString(16).padStart(2, "0")).join("");
+}
+// Text on a color: dark or white, whichever contrasts more (WCAG relative luminance)
+function textOn(hex) {
+  const lin = [1, 3, 5].map((i) => { const v = parseInt(hex.slice(i, i + 2), 16) / 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+  const lum = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
+  return (lum + 0.05) / 0.05 > 1.05 / (lum + 0.05) ? "#1d1d1b" : "#ffffff";
+}
+function modelStyles() {
+  const lang = DATA[state.language], rowsAll = Object.values(lang.rows).flat();
+  const names = {};
+  for (const r of rowsAll) {
+    (names[familyOf(r)] ||= new Set()).add(rowName(r));
+    if (!r.run_cb) names[familyOf(r)].add(r.label);
+  }
+  const families = Object.keys(names).sort((a, b) => a.localeCompare(b));
+  const styles = {};
+  families.forEach((family, i) => {
+    const variants = [...names[family]].sort((a, b) => a.localeCompare(b));
+    variants.forEach((name, j) => {
+      const shade = variants.length === 1 ? 1 : 1 - (0.6 * j) / (variants.length - 1);
+      // Lines and buttons: the shade of the variant; text: not lighter than 60 %, to stay readable
+      styles[name] = { color: mixWhite(SERIES_HEX[i % 8], shade), text: mixWhite(SERIES_HEX[i % 8], Math.max(0.6, shade)), family };
+    });
+  });
+  return styles;
+}
+const nameCell = (name, styles) => `<td style="color: ${(styles[name] || {}).text || "inherit"}">${esc(name)}</td>`;
+
+// One panel per measure (F1, B-WER, WER), one line per model
+const LINE_METRICS = ["f1", "b_wer", "wer"];
+function lines() {
+  const all = rows(), lists = chartLists(), styles = modelStyles();
+  const models = [...new Set(all.map(rowName))].sort((a, b) => ORDER.indexOf(a) - ORDER.indexOf(b));
+  const xs = ["No list", ...lists];
+  const series = (name, key) => [
+    lists.length ? baselineOf(all, name, lists[0], key) : null,
+    ...lists.map((l) => (runOf(all, name, l) || {})[key + "_cb"]),
+  ];
+  const width = 420, height = 280, left = 38, right = 14, top = 12, bottom = 46, inset = 22;
+  const x = (i) => left + inset + (i * (width - left - right - 2 * inset)) / Math.max(1, xs.length - 1);
+  const path = (pts) => pts.map((p, i) => (p === null ? "" : `${pts[i - 1] == null ? "M" : "L"}${p[0].toFixed(1)},${p[1].toFixed(1)}`)).join("");
+  $("lines").innerHTML = LINE_METRICS.map((key) => {
+    const m = METRICS.find((mm) => mm.key === key);
+    const values = models.flatMap((n) => [...series(n, key), ...lists.map((l) => (runOf(all, n, `${l}_upper`) || {})[key + "_cb"])]).filter(present);
+    const max = Math.max(10, ...values) * 1.05;
+    const step = niceStep(max / 4);
+    const y = (v) => top + (1 - v / max) * (height - top - bottom);
+    let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(m.label)} of each model by list">`;
+    for (let v = 0; v <= max; v += step) svg += `<line class="grid" x1="${left}" x2="${width - right}" y1="${y(v)}" y2="${y(v)}"/><text class="tick" x="${left - 5}" y="${y(v) + 4}" text-anchor="end">${+v.toPrecision(6)}</text>`;
+    xs.forEach((l, i) => {
+      svg += `<text class="tick" x="${x(i)}" y="${height - bottom + 16}" text-anchor="middle">${esc(l)}</text>`;
+      if (i) svg += `<text class="tick" x="${x(i)}" y="${height - bottom + 30}" text-anchor="middle">(${sizeText(listSize(l))})</text>`;
+    });
+    for (const name of models) {
+      const s = styles[name], vals = series(name, key);
+      // Same list in capitals: hollow point next to the list, joined to it by a dotted line
+      lists.forEach((l, i) => {
+        const up = (runOf(all, name, `${l}_upper`) || {})[key + "_cb"];
+        if (!present(up)) return;
+        const xu = x(i + 1) + 9;
+        if (present(vals[i + 1])) svg += `<line x1="${x(i + 1)}" x2="${xu}" y1="${y(vals[i + 1])}" y2="${y(up)}" stroke="${s.color}" stroke-width="1.5" stroke-dasharray="2 2"/>`;
+        svg += `<circle cx="${xu}" cy="${y(up)}" r="4" fill="var(--surface)" stroke="${s.color}" stroke-width="2" ${tip(`${name}, with ${l} in capitals: ${m.label} ${fmt(up)}`)}/>`;
+      });
+      svg += `<g><path d="${path(vals.map((v, i) => (present(v) ? [x(i), y(v)] : null)))}" fill="none" stroke="${s.color}" stroke-width="2"/>`;
+      vals.forEach((v, i) => {
+        if (present(v)) svg += `<circle cx="${x(i)}" cy="${y(v)}" r="4.5" fill="${s.color}" stroke="var(--surface)" stroke-width="2" ${tip(`${name}, ${xs[i] === "No list" ? "no list" : `with ${xs[i]}`}: ${m.label} ${fmt(v)}`)}/>`;
+      });
+      svg += "</g>";
+    }
+    return `<div class="panel"><h3>${esc(m.label)} <span class="muted" style="font-weight:400">(${m.higher ? "higher" : "lower"} is better)</span></h3>${svg}</svg></div>`;
+  }).join("");
+  $("lines-legend").innerHTML = `<span><svg width="30" height="12" style="vertical-align:-1px"><circle cx="6" cy="6" r="4" fill="var(--muted)"/><circle cx="22" cy="6" r="3.5" fill="none" stroke="var(--muted)" stroke-width="2"/></svg>List in its usual case / in capitals</span>` + models.map((name) => `<span><span class="swatch line" style="border-top-color: ${styles[name].color}"></span>${esc(name)}</span>`).join("");
+}
+
+// Tooltip of the marks with data-tip
+document.addEventListener("mouseover", (e) => {
+  const mark = e.target.closest && e.target.closest("[data-tip]");
+  if (!mark) { $("tip").hidden = true; return; }
+  $("tip").textContent = mark.getAttribute("data-tip");
+  $("tip").hidden = false;
+});
+document.addEventListener("mousemove", (e) => {
+  if ($("tip").hidden) return;
+  const box = $("tip").getBoundingClientRect();
+  $("tip").style.left = `${Math.min(e.clientX + 14, window.innerWidth - box.width - 8)}px`;
+  $("tip").style.top = `${e.clientY + 14}px`;
+});
+
 function render() {
   const lang = DATA[state.language];
   if (!lang.datasets.includes(state.dataset)) state.dataset = lang.datasets[0];
@@ -267,7 +475,20 @@ function render() {
   buttons($("metric"), METRICS.map((m) => m.key), state.metric, (v) => { state.metric = v; render(); },
     Object.fromEntries(METRICS.map((m) => [m.key, m.label])));
   document.querySelectorAll("#mode button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.v === state.mode));
-  overview();
+  const hidden = hiddenSet();
+  const styles = modelStyles();
+  $("models").innerHTML = modelKeys().map((k) => {
+    const s = styles[k], on = !hidden.has(k);
+    const style = !s ? "" : on ? `background: ${s.color}; border-color: ${s.color}; color: ${textOn(s.color)}`
+      : `color: ${s.text}; border-color: ${s.color}`;
+    return `<button data-v="${esc(k)}" aria-pressed="${on}" style="${style}">${esc(k)}</button>`;
+  }).join(" ");
+  $("models").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
+    hidden.has(b.dataset.v) ? hidden.delete(b.dataset.v) : hidden.add(b.dataset.v);
+    render();
+  }));
+  overview();  // first: sets the order of the models used by the charts
+  lines();
   panels();
   details();
 }
@@ -276,7 +497,12 @@ $("language").innerHTML = Object.keys(DATA).map((l) => `<option value="${l}">${L
 $("language").value = state.language;
 $("language").addEventListener("change", (e) => { state.language = e.target.value; render(); });
 document.querySelectorAll("#mode button").forEach((b) => b.addEventListener("click", () => { state.mode = b.dataset.v; render(); }));
-$("tuning").addEventListener("change", (e) => { state.tuning = e.target.checked; render(); });
+$("models-all").addEventListener("click", () => {
+  const keys = modelKeys(), hidden = hiddenSet();
+  const anyShown = keys.some((k) => !hidden.has(k));
+  state.hidden[state.language] = new Set(anyShown ? keys : []);
+  render();
+});
 $("list").addEventListener("change", (e) => { state.list = e.target.value; details(); });
 render();
 </script>

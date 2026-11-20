@@ -12,6 +12,7 @@ without a biasing mechanism only have the baseline row (their scores on the list
 import argparse
 import csv
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -21,22 +22,40 @@ from asr_benchmark.benchmark import contextual_biasing  # noqa: E402
 MEASURES = ["f1", "precision", "recall", "b_wer", "u_wer", "false_alarms_per_hour"]
 
 
+_WORD = re.compile(r"\w+")
+
+
+def runaway_rate(predictions):
+    """Percentage of the utterances whose transcription runs away: more than twice as
+    many words as the reference, plus 10 (loops, invented sentences, recited prompt...).
+    `predictions`: {id: {"text": reference, "prediction": transcription}}."""
+    rows = [p for p in predictions.values() if p.get("text")]
+    if not rows:
+        return None
+    runaway = sum(len(_WORD.findall(p.get("prediction") or "")) > 2 * len(_WORD.findall(p["text"])) + 10 for p in rows)
+    return 100 * runaway / len(rows)
+
+
 def load_runs(results):
-    """{folder name: (metadata, {dataset: performances})}"""
+    """{folder name: (metadata, {dataset: performances})}, with the runaway rate of each
+    dataset ("runaway", from its predictions)"""
     runs = {}
     for exp in sorted(p for p in Path(results).iterdir() if (p / "metadata.json").exists()):
         metadata = json.loads((exp / "metadata.json").read_text(encoding="utf-8"))
-        perfs = {
-            f.stem: json.loads(f.read_text(encoding="utf-8"))
-            for f in sorted((exp / "performances").glob("*.json"))
-        }
+        perfs = {}
+        for f in sorted((exp / "performances").glob("*.json")):
+            perfs[f.stem] = json.loads(f.read_text(encoding="utf-8"))
+            pred_file = exp / "predictions" / f.name
+            if pred_file.exists():
+                perfs[f.stem]["runaway"] = runaway_rate(json.loads(pred_file.read_text(encoding="utf-8")))
         runs[exp.name] = (metadata, perfs)
     return runs
 
 
 def measures(perf, scores):
-    """WER of the run and biasing measures of one list."""
-    return {"wer": perf.get("wer_nocasepunc", {}).get("wer"), **{m: scores[m] for m in MEASURES}}
+    """WER and runaway rate of the run, and biasing measures of one list."""
+    return {"wer": perf.get("wer_nocasepunc", {}).get("wer"), "runaway": perf.get("runaway"),
+            **{m: scores[m] for m in MEASURES}}
 
 
 def collect(runs, mode):
@@ -82,7 +101,7 @@ def delta(row, key):
 
 # Columns of the markdown table: (label, key), each shown without and with the list
 COLUMNS = [("F1", "f1"), ("P", "precision"), ("R", "recall"), ("B-WER", "b_wer"),
-           ("U-WER", "u_wer"), ("FA/h", "false_alarms_per_hour"), ("WER", "wer")]
+           ("U-WER", "u_wer"), ("FA/h", "false_alarms_per_hour"), ("WER", "wer"), ("Runaway", "runaway")]
 
 
 def print_markdown(table, mode):
@@ -118,7 +137,7 @@ def main():
         return
     print_markdown(table, args.mode)
     if args.csv:
-        keys = ["dataset", "list", "model", "run_cb", "list_size", "wer", "wer_cb"]
+        keys = ["dataset", "list", "model", "run_cb", "list_size", "wer", "wer_cb", "runaway", "runaway_cb"]
         keys += [k for m in MEASURES for k in (m, f"{m}_cb")]
         with open(args.csv, "w", encoding="utf-8", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=keys, extrasaction="ignore")

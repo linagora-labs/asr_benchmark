@@ -3,6 +3,8 @@ import copy
 import itertools
 import logging
 import re
+import statistics
+import time
 from pathlib import Path
 import torch
 import json
@@ -77,6 +79,8 @@ class NemoModel(Model):
         self.set_chunk_size()
         self._boosting_key = None
         self._base_decoding_cfg = None
+        self._boosting_times = []  # seconds to set each boosting tree (see _set_boosting)
+        self._many_trees = False  # per-utterance lists: a new boosting tree for each group of rows
         if contextual_biasing.config_variant(self.config) is not None:
             if self.decoder is not None:
                 raise ValueError("contextual_biasing is not supported with ngram_model (pyctcdecode)")
@@ -117,11 +121,27 @@ class NemoModel(Model):
                 section.boosting_tree_alpha = float(self.config["contextual_biasing_alpha"])
             else:
                 section.boosting_tree = None
+            if self._many_trees and self._boosting_strategy == "greedy_batch" and self.model_type != nemo_asr.models.EncDecCTCModelBPE \
+                    and not (self.model_type == nemo_asr.models.EncDecHybridRNNTCTCBPEModel and self.config['decoder'] == 'ctc'):
+                # RNN-T / TDT greedy decoding: CUDA graphs are captured again for each new
+                # tree, and after a few thousand captures (LibriSpeech per-utterance lists)
+                # NeMo 3.0 fails with "Capture must end on the same stream it began on".
+                # Same decoding without CUDA graphs (same output, slower).
+                section.use_cuda_graph_decoder = False
                 section.boosting_tree_alpha = 0.0
+        # Time to build the boosting tree and set it in the decoding (what a server
+        # pays each time the hotwords change), reported in the metadata
+        start = time.perf_counter()
         if self.model_type == nemo_asr.models.EncDecHybridRNNTCTCBPEModel:
             self.model.change_decoding_strategy(cfg, decoder_type=self.config['decoder'], verbose=False)
+        elif self.model_type == nemo_asr.models.EncDecMultiTaskModel:
+            self.model.change_decoding_strategy(cfg)  # Canary: no verbose argument
         else:
             self.model.change_decoding_strategy(cfg, verbose=False)
+        if terms:
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            self._boosting_times.append(time.perf_counter() - start)
         self._boosting_key = key
 
     def set_chunk_size(self):
@@ -187,9 +207,11 @@ class NemoModel(Model):
         # by groups of consecutive rows sharing the same list (a global list: one group;
         # per-utterance lists: one row at a time).
         outputs = []
-        for terms, group in itertools.groupby(data, key=lambda row: tuple(self.terms_for_row(row) or ())):
+        groups = [(terms, list(group)) for terms, group in itertools.groupby(data, key=lambda row: tuple(self.terms_for_row(row) or ()))]
+        self._many_trees = len(groups) > 1
+        for terms, group in groups:
             self._set_boosting(list(terms) or None)
-            outputs.extend(self._transcribe_batch(list(group)))
+            outputs.extend(self._transcribe_batch(group))
         return outputs
 
     def _transcribe_batch(self, data):
@@ -279,6 +301,17 @@ class NemoModel(Model):
             metadata["decoder"] = Path(self.config['ngram_model']).name
             del metadata['ngram_model']
         metadata.update(getattr(self, "streaming_context", {}))
+        times = getattr(self, "_boosting_times", None)
+        if times:
+            # Setting the boosting tree: once for a global list, once per utterance
+            # for per-utterance lists (the first one may include one-time setup)
+            metadata["contextual_biasing_tree_time_ms"] = {
+                "count": len(times),
+                "first": round(1000 * times[0], 1),
+                "median": round(1000 * statistics.median(times), 1),
+                "max": round(1000 * max(times), 1),
+                "total": round(1000 * sum(times), 1),
+            }
         return metadata
     
     def get_folder_name(self):

@@ -37,13 +37,13 @@ def setting_label(row):
     return " ".join(re.sub(r"^([a-z]+)(\d)", r"\1 \2", part) for part in suffix.split("-") if part)
 
 
-def language_data(results, excluded=()):
+def language_data(results, excluded=(), excluded_datasets=()):
     runs = report.load_runs(results)
     rows = {}
     for mode in MODES:
         rows[mode] = []
         for row in report.collect(runs, mode):
-            if row["list"] in excluded:
+            if row["list"] in excluded or row["dataset"] in excluded_datasets:
                 continue
             metadata = runs[row["model"]][0] if row["model"] in runs else runs[row["run_cb"]][0]
             rows[mode].append(dict(row, label=model_label(metadata), backend=metadata.get("backend"),
@@ -66,12 +66,15 @@ def main():
     parser.add_argument("--exclude_lists", nargs="*", default=["oracle", "oracle_upper"],
                         help="Lists left out of the page (default: the PxSLU per utterance oracle lists, "
                              "not a realistic setting)")
+    parser.add_argument("--exclude_datasets", nargs="*", default=["LibriSpeech_test-clean"],
+                        help="Test sets left out of the page (default: LibriSpeech test-clean, left out of "
+                             "the benchmark: few errors on the rare words to correct)")
     args = parser.parse_args()
 
     data = {}
     for item in args.results:
         language, _, folder = item.partition("=")
-        data[language] = language_data(folder, set(args.exclude_lists))
+        data[language] = language_data(folder, set(args.exclude_lists), set(args.exclude_datasets))
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=True)
     template = (HERE / "template.html").read_text(encoding="utf-8")

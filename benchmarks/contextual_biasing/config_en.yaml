@@ -1,5 +1,5 @@
 # Contextual Biasing ASR Benchmark, English.
-# - LibriSpeech test-clean / test-other, per-utterance lists of Le et al., Interspeech
+# - LibriSpeech test-other (test-clean left out, see below), per-utterance lists of Le et al., Interspeech
 #   2021 (arXiv:2104.02194): rare words of the reference + N distractors; lists
 #   "100", "500", "1000", "2000" (named after N).
 # - Contextual Earnings-22 (Argmax): 15 s clips of earnings calls; lists "local"
@@ -13,8 +13,11 @@
 # Data: tools/contextual_biasing/prepare_librispeech.py and
 # prepare_contextual_earnings22.py (see the README).
 datasets:
-  LibriSpeech_test-clean:
-    manifest: benchmarks/contextual_biasing/manifests/LibriSpeech_test-clean.jsonl
+  # test-clean left out: the "clean" speakers (easier for a baseline recognizer, as
+  # the LibriSpeech split was made) leave few errors on the rare words to correct;
+  # test-other, with more errors, separates the models better.
+  # LibriSpeech_test-clean:
+  #   manifest: benchmarks/contextual_biasing/manifests/LibriSpeech_test-clean.jsonl
   LibriSpeech_test-other:
     manifest: benchmarks/contextual_biasing/manifests/LibriSpeech_test-other.jsonl
   ContextualEarnings22_test:
@@ -122,6 +125,8 @@ benchmarks:
   # One entry per condition: with NeMo 3.0, loading a model a second time in the same
   # process fails (torch.load), and the DGX runner (one process per entry and model)
   # would run all the conditions of an entry in one process.
+  # LibriSpeech lists 1000 and 2000 left out for now (as for VibeVoice): the tree is
+  # rebuilt for each of the 5,559 utterances, ~4.5 h per run with the 1000 list.
   - &parakeet
     backend: nemo
     model: nvidia/parakeet-tdt-0.6b-v3
@@ -130,10 +135,10 @@ benchmarks:
     contextual_biasing: null
   - {<<: *parakeet, contextual_biasing: "100", contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: "100", contextual_biasing_alpha: 2.0}
-  - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
-  - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 2.0}
-  - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
-  - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 2.0}
+  # - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
+  # - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 2.0}
+  # - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
+  # - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: local, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: local, contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: global, contextual_biasing_alpha: 1.0}
@@ -146,10 +151,10 @@ benchmarks:
     contextual_biasing: null
   - {<<: *canary, contextual_biasing: "100", contextual_biasing_alpha: 1.0}
   - {<<: *canary, contextual_biasing: "100", contextual_biasing_alpha: 2.0}
-  - {<<: *canary, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
-  - {<<: *canary, contextual_biasing: "1000", contextual_biasing_alpha: 2.0}
-  - {<<: *canary, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
-  - {<<: *canary, contextual_biasing: "2000", contextual_biasing_alpha: 2.0}
+  # - {<<: *canary, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
+  # - {<<: *canary, contextual_biasing: "1000", contextual_biasing_alpha: 2.0}
+  # - {<<: *canary, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
+  # - {<<: *canary, contextual_biasing: "2000", contextual_biasing_alpha: 2.0}
   - {<<: *canary, contextual_biasing: local, contextual_biasing_alpha: 1.0}
   - {<<: *canary, contextual_biasing: local, contextual_biasing_alpha: 2.0}
   - {<<: *canary, contextual_biasing: global, contextual_biasing_alpha: 1.0}

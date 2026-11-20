@@ -34,7 +34,7 @@ Models without a mechanism are run as baselines (scored on the same lists).
 | Dataset | Lang. | Lists | Source |
 |---|---|---|---|
 | PxSLU test / dev (1.38 h / 0.57 h) | fr | global: `pxslu` (the 389 drug names of the corpus: the targets), `bdpm`, `vidal`, `theriaque` (targets + drug dictionaries); per utterance: `pxslu25` (25 drug names of `pxslu`: the ones spoken in the utterance plus others drawn at random; the size of the per call `global` lists of Contextual Earnings-22, 25 terms on average, and short enough for Whisper's 223-token hotwords); `pxslu_upper`, `pxslu25_upper`: the same lists in capitals. The manifests also hold per utterance `oracle` lists (only the targets spoken in the utterance) and `oracle_upper`, not run: not a realistic setting (the list would have to know what is said) | Kocabiyikoglu et al., LREC 2022 (arXiv:2207.08292), CC BY 4.0: spoken drug prescriptions |
-| LibriSpeech test-clean / test-other | en | per utterance: rare words of the reference + N distractors, N in {100, 500, 1000, 2000} | Le et al., Interspeech 2021 (arXiv:2104.02194), `facebookresearch/fbai-speech` (`is21_deep_bias`, MIT) |
+| LibriSpeech test-other (test-clean left out: its "clean" speakers leave few errors on the rare words to correct) | en | per utterance: rare words of the reference + N distractors, N in {100, 500, 1000, 2000} | Le et al., Interspeech 2021 (arXiv:2104.02194), `facebookresearch/fbai-speech` (`is21_deep_bias`, MIT) |
 | Contextual Earnings-22 test / dev (test: 771 clips, 3.2 h) | en | per clip: `local` (keywords spoken in the clip: the targets), `global` (keywords of the whole call) | Durmus et al. 2026 (arXiv:2604.07354), `argmaxinc/contextual-earnings22` (licence of Earnings-22) |
 
 ### PxSLU
@@ -185,6 +185,19 @@ terms only):
 - `false_alarms` (and per hour): occurrences of list terms in the prediction
   beyond their count in the reference (e.g. distractors written although not
   spoken).
+
+`report.py` and the page also give the runaway rate of each run (from its
+predictions, not stored in `performances/`): the percentage of utterances whose
+transcription has more than twice as many words as the reference, plus 10 (loops,
+invented sentences, prompt recited). A few such outputs weigh a lot on B-WER
+(inserted list terms count in it), FA/h and WER: e.g. on PxSLU test, Qwen3-ASR
+recites the start of the `bdpm` list in 6 of 556 utterances (B-WER above 100 %),
+and MOSS keeps generating after the transcription in 23 utterances with `pxslu`.
+
+NeMo runs also record, in `metadata.json` (`contextual_biasing_tree_time_ms`), the
+time to build the boosting tree and set it in the decoding (count, first, median,
+max, total, in ms): once for a global list, once per utterance for per-utterance
+lists. It is what a server pays each time the hotwords of a request change.
 
 Case (`cased`): terms are found without case; an occurrence in the prediction is
 correct only when written as in the list given to the model (else as in the
