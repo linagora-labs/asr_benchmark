@@ -53,9 +53,11 @@ def load_runs(results):
 
 
 def measures(perf, scores):
-    """WER and runaway rate of the run, and biasing measures of one list."""
-    return {"wer": perf.get("wer_nocasepunc", {}).get("wer"), "runaway": perf.get("runaway"),
-            **{m: scores[m] for m in MEASURES}}
+    """WER (and the upper bound of its 95 % confidence interval) and runaway rate of
+    the run, and biasing measures of one list."""
+    wer = perf.get("wer_nocasepunc", {})
+    return {"wer": wer.get("wer"), "wer_ci95_high": (wer.get("ci95") or [None, None])[1],
+            "runaway": perf.get("runaway"), **{m: scores[m] for m in MEASURES}}
 
 
 def collect(runs, mode):

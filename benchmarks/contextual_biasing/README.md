@@ -95,8 +95,9 @@ it: they are run through the chat endpoint.
 List sizes (tokens): PxSLU `pxslu25` at most ~130 (~160 in capitals), `pxslu` ~1,700 (Whisper tokenizer), `bdpm` ~17.8k,
 `vidal` ~12k, `theriaque` ~38k; LibriSpeech N=100 ~370, N=2000 ~7.2k; Contextual
 Earnings-22 at most 161. The configs leave out the lists a model cannot take
-(Whisper: only `pxslu25` and the Contextual Earnings-22 lists;
-Granite: no list above 16k tokens).
+(Whisper: `pxslu25`, the Contextual Earnings-22 lists, and the LibriSpeech N=100
+lists given anyway and cut to 223 tokens, ~60 % of each list, unrelated to the targets
+as the lists are sorted alphabetically; Granite: no list above 16k tokens).
 
 ## Preparation
 
@@ -137,9 +138,19 @@ uv run python tools/contextual_biasing/build_page.py --output benchmarks/context
 
 `report.py` prints, per dataset and list, the measures of each model without list,
 with the list, and the difference (optionally as CSV). `build_page.py` writes the same
-measures as an HTML page (`page/index.html`, a single file): overview table of a measure
-for each model and list, charts of each list without and with it, and all the measures
-of one list; both text normalizations, and a selection of the models shown (NeMo runs at alpha 1.0 and 2.0; the other weights of the tuning on PxSLU dev are left out, `--exclude_settings`).
+measures as an HTML page (`page/index.html`, a single file): leaderboard of a measure
+for each model and list, plots of F1, B-WER and WER by list size and of WER by B-WER,
+charts of each list without and with it, and all the measures of one list; both text
+normalizations, and a selection of the models shown (NeMo runs at alpha 1.0 and 2.0;
+the other weights of the tuning on PxSLU dev are left out, `--exclude_settings`).
+
+Ranking of the leaderboard, on one list ("Rank on"; by default `pxslu`, Contextual
+Earnings-22 `global`, LibriSpeech `100`): each model with this list, or without list
+when it has no run with it (no biasing mechanism, or list too long). First by WER, with
+a tolerance: the models whose WER is within the 95 % confidence interval of the best
+WER form a level, and the next level starts from the best of the others; within a
+level, by B-WER (the measure of the literature, in the unit of the WER, which counts
+both the missed terms and the inserted list words).
 
 Notes for the configs: Nemotron runs on a vLLM server started separately (with a
 `--max-model-len` above the longest list); Granite 5.0 is served from a folder of

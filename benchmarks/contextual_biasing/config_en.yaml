@@ -35,18 +35,21 @@ language: en
 wer_language: en
 
 benchmarks:
-  # --- faster-whisper: `hotwords`, at most 223 tokens (the rest is cut): LibriSpeech
-  # lists (N=100: ~370 tokens) do not fit, Contextual Earnings-22 ones do (<= 161).
+  # --- faster-whisper: `hotwords`, at most 223 tokens (the rest is cut). LibriSpeech
+  # N=100 lists (~370 tokens) are given anyway: they are sorted alphabetically, so the
+  # cut keeps ~60 % of the list, unrelated to the targets (the setting of a real
+  # deployment); N >= 1000 lists would keep too little. Contextual Earnings-22 lists
+  # fit (<= 161 tokens).
   - backend: faster-whisper
     model: large-v3
     precision: float16
-    contextual_biasing: [null, global]  # local: not run (oracle)
+    contextual_biasing: [null, "100", global]  # local: not run (oracle)
   - backend: faster-whisper
     model: large-v3-turbo
     precision: float16
     accurate: [false, true]
     full_name: true
-    contextual_biasing: [null, global]  # local: not run (oracle)
+    contextual_biasing: [null, "100", global]  # local: not run (oracle)
 
   # --- Qwen3-ASR (vLLM): `prompt` field (system turn) ---
   - backend: vllm

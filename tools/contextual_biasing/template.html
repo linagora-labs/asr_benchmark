@@ -67,7 +67,11 @@
   .scroll.fit { width: fit-content; max-width: 100%; }
   table.compact { width: auto; table-layout: fixed; }
   table.compact th, table.compact td { padding: 5px 6px; text-align: center; white-space: normal; line-height: 1.25; }
-  table.compact td { vertical-align: top; }  /* values on one line, with or without a change below */
+  table.compact td { vertical-align: top; }
+  table.compact tr.level-start td { border-top: 2px solid var(--muted); }
+  table.compact th.ranked { box-shadow: inset 0 -3px 0 var(--accent); }
+  td.fallback { color: var(--muted); font-style: italic; }
+  .controls.rank { margin: 4px 0 8px; }  /* values on one line, with or without a change below */
   table.compact th:first-child, table.compact td:first-child { text-align: left; overflow-wrap: anywhere; }
   table.compact col.model { width: 230px; } table.compact col.value { width: 74px; }
   table.compact th { font-size: 12px; overflow-wrap: anywhere; }
@@ -113,6 +117,7 @@
   <div class="board">
   <div>
   <h2>Leaderboard</h2>
+  <div class="controls rank"><div class="group"><span class="group-label">Rank on</span> <span class="group" id="rank-list"></span></div></div>
   <div class="legend">
     <span><span class="swatch rank first"></span>1st</span> <span><span class="swatch rank second"></span>2nd</span>
     <span><span class="swatch rank second-last"></span>Second to last</span> <span><span class="swatch rank last"></span>Last</span>
@@ -258,10 +263,52 @@ function tableModels(all) {
   return [...names].filter((n) => ![...names].some((s) => s.startsWith(`${n} (alpha`)));
 }
 
+// Lists of the faster-whisper hotwords that are cut (at most 223 tokens)
+const CUT_LISTS = { "faster-whisper": { "100": "hotwords cut to 223 tokens (about 60 % of the list reach the model)" } };
+const cutNote = (row, list) => (row && CUT_LISTS[row.backend] || {})[list];
+
+// List the leaderboard is ranked on (per test set), by default the main setting
+const DEFAULT_RANK_LISTS = ["pxslu", "global", "100"];
+let RANKING = { list: null, entries: [] };
+function rankList(lists) {
+  const key = `${state.language}|${state.dataset}`;
+  state.rankList ||= {};
+  if (!lists.includes(state.rankList[key])) state.rankList[key] = lists.find((l) => DEFAULT_RANK_LISTS.includes(l)) || lists[0];
+  return state.rankList[key];
+}
+// Ranking on one list: the run with the list, or else the run without list (models
+// without mechanism, or list too long for them). First by WER, with a tolerance: the
+// models whose WER is within the 95 % confidence interval of the best one form a
+// level; the next level starts from the best of the others. Within a level, by B-WER.
+function ranking(all, list) {
+  const entries = tableModels(all).map((name) => {
+    const run = runOf(all, name, list);
+    if (run && present(run.wer_cb)) {
+      return { name, wer: run.wer_cb, high: run.wer_ci95_high_cb, bwer: run.b_wer_cb, fallback: false, row: run };
+    }
+    const base = all.find((r) => r.list === list && r.label === baseLabel(name));
+    return base && present(base.wer) ? { name, wer: base.wer, high: base.wer_ci95_high, bwer: base.b_wer, fallback: true, row: base } : null;
+  }).filter(Boolean);
+  let rest = [...entries].sort((a, b) => a.wer - b.wer), level = 0;
+  const ranked = [];
+  while (rest.length) {
+    const leader = rest[0], bound = present(leader.high) ? leader.high : leader.wer;
+    const tier = rest.filter((e) => e.wer <= bound);
+    rest = rest.filter((e) => e.wer > bound);
+    level += 1;
+    tier.sort((a, b) => (present(a.bwer) ? a.bwer : Infinity) - (present(b.bwer) ? b.bwer : Infinity) || a.wer - b.wer);
+    tier.forEach((e) => ranked.push({ ...e, level }));
+  }
+  return ranked;
+}
+
 function overview() {
   const m = metric(), all = rows(), styles = modelStyles();
   const lists = runLists(all);
-  const better = (a, b) => (m.higher ? a > b : a < b);
+  const ranked = lists.length ? rankList(lists) : null;
+  RANKING = { list: ranked, entries: ranked ? ranking(all, ranked) : [] };
+  buttons($("rank-list"), lists, ranked, (v) => { state.rankList[`${state.language}|${state.dataset}`] = v; render(); },
+    Object.fromEntries(lists.map((l) => [l, listTitle(l)])));
   const models = tableModels(all).map((name) => {
     // Without list: measured on the terms of the smallest list with a measure
     const firstList = lists.find((l) => present(baselineOf(all, name, l, m.key)));
@@ -271,30 +318,40 @@ function overview() {
       const run = runOf(all, name, l);
       return run && present(run[m.key + "_cb"]) ? { value: run[m.key + "_cb"], before: run[m.key] } : null;
     });
-    const values = [none, ...cells.map((c) => c && c.value)].filter(present);
-    const best = values.length ? values.reduce((a, b) => (better(b, a) ? b : a)) : null;
-    return { name, none, cells, best };
+    return { name, none, cells };
   });
-  models.sort((a, b) => (present(a.best) && present(b.best) ? (m.higher ? b.best - a.best : a.best - b.best) : present(a.best) ? -1 : 1)
-    || a.name.localeCompare(b.name));
+  // Order of the ranking (models without any measure on the ranked list at the end)
+  const position = Object.fromEntries(RANKING.entries.map((e, i) => [e.name, i]));
+  const levelOf = Object.fromEntries(RANKING.entries.map((e) => [e.name, e.level]));
+  models.sort((a, b) => (position[a.name] ?? 1e9) - (position[b.name] ?? 1e9) || a.name.localeCompare(b.name));
   ORDER = models.map((x) => x.name);
   const columns = lists.map((_, i) => models.map((x) => x.cells[i]).filter(Boolean).map((c) => c.value));
-  const bests = models.map((x) => x.best).filter(present);
   const nones = models.map((x) => x.none).filter(present);
+  const rankedIndex = lists.indexOf(ranked);
   // List name (broken after "_" if needed) and size below it
   const name = (l) => esc(l).replace(/_/g, "_<wbr>");
   const head = (l) => (present(listSize(l)) ? `${name(l)}<br><small>(${sizeText(listSize(l))})</small>` : name(l));
-  let html = `<colgroup><col class="model">${'<col class="value">'.repeat(lists.length + 2)}</colgroup>`;
+  let html = `<colgroup><col class="model">${'<col class="value">'.repeat(lists.length + 1)}</colgroup>`;
   // Fixed layout: the columns take the widths of the colgroup only with an explicit table width
-  $("overview").style.width = `${230 + 74 * (lists.length + 2)}px`;
-  html += `<tr><th>Model</th><th class="group-start">Best</th><th class="group-start">No list</th>${lists.map((l) => `<th class="group-start">${head(l)}</th>`).join("")}</tr>`;
+  $("overview").style.width = `${230 + 74 * (lists.length + 1)}px`;
+  html += `<tr><th>Model</th><th class="group-start">No list</th>${lists.map((l, i) => `<th class="group-start${i === rankedIndex ? " ranked" : ""}" title="${i === rankedIndex ? "The models are ranked on this list" : ""}">${head(l)}</th>`).join("")}</tr>`;
+  let previousLevel = null;
   for (const x of models) {
-    html += `<tr>${nameCell(x.name, styles)}<td class="group-start avg ${rankClass(x.best, bests, m.higher)}">${fmt(x.best)}</td>`;
+    const level = levelOf[x.name];
+    html += `<tr class="${previousLevel !== null && level !== previousLevel ? "level-start" : ""}">${nameCell(x.name, styles)}`;
+    previousLevel = level;
     html += `<td class="group-start ${rankClass(x.none, nones, m.higher)}">${fmt(x.none)}</td>`;
     x.cells.forEach((c, i) => {
-      if (!c) { html += `<td class="group-start"></td>`; return; }
+      if (!c) {
+        // Ranked list without run with it: the measure without list, used for the ranking
+        const base = i === rankedIndex ? all.find((r) => r.list === ranked && r.label === baseLabel(x.name)) : null;
+        html += base && present(base[m.key]) ? `<td class="group-start fallback" title="No run with this list: measure without list (used for the ranking)">${fmt(base[m.key])}</td>`
+          : `<td class="group-start"></td>`;
+        return;
+      }
       const d = present(c.before) ? c.value - c.before : null;
-      html += `<td class="group-start ${rankClass(c.value, columns[i], m.higher)}" title="Without list: ${fmt(c.before)}">${fmt(c.value)}<span class="delta ${deltaClass(d, m)}">${d === null ? "" : (d > 0 ? "+" : "") + d.toFixed(1)}</span></td>`;
+      const run = runOf(all, x.name, lists[i]), cut = cutNote(run, lists[i]);
+      html += `<td class="group-start ${rankClass(c.value, columns[i], m.higher)}" title="Without list: ${fmt(c.before)}${cut ? `; ${cut}` : ""}">${fmt(c.value)}${cut ? "*" : ""}<span class="delta ${deltaClass(d, m)}">${d === null ? "" : (d > 0 ? "+" : "") + d.toFixed(1)}</span></td>`;
     });
     html += "</tr>";
   }
@@ -302,7 +359,36 @@ function overview() {
   $("overview-caption").textContent = `${m.label} without list and with each list given to the model (in parentheses: its number of terms, ` +
     `per utterance on average for the per utterance lists), with its change from the run without list (measured on the terms of the same list). ` +
     `"No list": measured on the terms of the smallest list. Empty cell: no run with this list (model without biasing mechanism, or list too long for it). ` +
-    `"Best": the best of the row (${m.higher ? "highest" : "lowest"} ${m.label}), the models are sorted by it.`;
+    `Ranking on the list "${ranked}" (underlined; italic: no run with this list, measure without list): first by WER, the models whose WER is within ` +
+    `the 95 % confidence interval of the best one form a level (separated by a line), the next level starts from the best of the others; ` +
+    `within a level, by B-WER. * Whisper: hotwords cut to 223 tokens.`;
+}
+
+// WER (x) by B-WER (y) on the ranked list; highlighted: the models that no other one
+// beats on both (Pareto front)
+function scatterPanel(styles) {
+  const entries = RANKING.entries.filter((e) => present(e.bwer));
+  if (!entries.length) return "";
+  const width = 420, height = 280, left = 42, right = 14, top = 12, bottom = 40;
+  const maxX = Math.max(...entries.map((e) => e.wer)) * 1.08, minX = Math.min(...entries.map((e) => e.wer)) * 0.92;
+  const maxY = Math.max(...entries.map((e) => e.bwer)) * 1.08;
+  const x = (v) => left + ((v - minX) / (maxX - minX)) * (width - left - right);
+  const y = (v) => top + (1 - v / maxY) * (height - top - bottom);
+  const front = entries.filter((e) => !entries.some((o) => o !== e && o.wer <= e.wer && o.bwer <= e.bwer && (o.wer < e.wer || o.bwer < e.bwer)))
+    .sort((a, b) => a.wer - b.wer);
+  let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="WER by B-WER of each model">`;
+  const stepX = niceStep((maxX - minX) / 4), stepY = niceStep(maxY / 4);
+  for (let v = Math.ceil(minX / stepX) * stepX; v <= maxX; v += stepX) svg += `<line class="grid" x1="${x(v)}" x2="${x(v)}" y1="${top}" y2="${height - bottom}"/><text class="tick" x="${x(v)}" y="${height - bottom + 16}" text-anchor="middle">${+v.toPrecision(4)}</text>`;
+  for (let v = 0; v <= maxY; v += stepY) svg += `<line class="grid" x1="${left}" x2="${width - right}" y1="${y(v)}" y2="${y(v)}"/><text class="tick" x="${left - 5}" y="${y(v) + 4}" text-anchor="end">${+v.toPrecision(4)}</text>`;
+  svg += `<text class="tick" x="${(left + width - right) / 2}" y="${height - 6}" text-anchor="middle">WER</text>`;
+  svg += `<text class="tick" x="12" y="${(top + height - bottom) / 2}" text-anchor="middle" transform="rotate(-90 12 ${(top + height - bottom) / 2})">B-WER</text>`;
+  svg += `<path d="${front.map((e, i) => `${i ? "L" : "M"}${x(e.wer).toFixed(1)},${y(e.bwer).toFixed(1)}`).join("")}" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  for (const e of entries) {
+    const s = styles[e.name] || { color: "var(--muted)" }, onFront = front.includes(e);
+    svg += `<circle cx="${x(e.wer)}" cy="${y(e.bwer)}" r="${onFront ? 6.5 : 5}" fill="${s.color}" stroke="${e.fallback ? "var(--muted)" : "var(--surface)"}" stroke-width="2" ${tip(`${e.name}${e.fallback ? " (no list)" : ""}: WER ${fmt(e.wer)}, B-WER ${fmt(e.bwer)}, level ${e.level}`)}/>`;
+  }
+  svg += "</svg>";
+  return `<div class="panel"><h3>WER and B-WER <span class="muted" style="font-weight:400">(list ${esc(RANKING.list)}; dashed: models that no other beats on both)</span></h3>${svg}</div>`;
 }
 
 function panel(list, listRows, m) {
@@ -467,7 +553,7 @@ function lines() {
       svg += "</g>";
     }
     return `<div class="panel"><h3>${esc(m.label)} <span class="muted" style="font-weight:400">(${m.higher ? "higher" : "lower"} is better)</span></h3>${svg}</svg></div>`;
-  }).join("");
+  }).join("") + scatterPanel(styles);
   $("lines-legend").innerHTML = `<span><svg width="30" height="12" style="vertical-align:-1px"><circle cx="6" cy="6" r="4" fill="var(--muted)"/><circle cx="22" cy="6" r="3.5" fill="none" stroke="var(--muted)" stroke-width="2"/></svg>List in its usual case / in capitals</span>` + models.map((name) => `<span style="color: ${styles[name].text}"><span class="swatch line" style="border-top-color: ${styles[name].color}"></span>${esc(name)}</span>`).join("");
 }
 
