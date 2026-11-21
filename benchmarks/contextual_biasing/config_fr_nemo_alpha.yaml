@@ -17,6 +17,8 @@ language: fr
 wer_language: fr
 
 benchmarks:
+  # alpha 0.5 and 4.0 left out (0.5: little gain; 4.0: false alarms and WER up),
+  # 1.0 and 2.0 kept and run on every test set (config_fr.yaml, config_en.yaml).
   # One entry per condition: with NeMo 3.0, loading a model a second time in the same
   # process fails (torch.load), and the DGX runner (one process per entry and model)
   # would run all the conditions of an entry in one process.
@@ -26,14 +28,14 @@ benchmarks:
     batch_size: 64
     language: fr   # not a prompt: parakeet detects the language itself; used by the boosting tree
     contextual_biasing: null
-  - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 0.5}
+  # - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 0.5}
   - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 2.0}
-  - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 4.0}
-  - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 0.5}
+  # - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 4.0}
+  # - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 0.5}
   - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 2.0}
-  - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 4.0}
+  # - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 4.0}
   # - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 0.5}
   # - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 1.0}
   # - {<<: *parakeet, contextual_biasing: oracle, contextual_biasing_alpha: 2.0}

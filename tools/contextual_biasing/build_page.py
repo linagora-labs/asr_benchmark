@@ -37,7 +37,7 @@ def setting_label(row):
     return " ".join(re.sub(r"^([a-z]+)(\d)", r"\1 \2", part) for part in suffix.split("-") if part)
 
 
-def language_data(results, excluded=(), excluded_datasets=()):
+def language_data(results, excluded=(), excluded_datasets=(), excluded_settings=()):
     runs = report.load_runs(results)
     rows = {}
     for mode in MODES:
@@ -46,6 +46,8 @@ def language_data(results, excluded=(), excluded_datasets=()):
             if row["list"] in excluded or row["dataset"] in excluded_datasets:
                 continue
             metadata = runs[row["model"]][0] if row["model"] in runs else runs[row["run_cb"]][0]
+            if setting_label(row) in excluded_settings:
+                continue
             rows[mode].append(dict(row, label=model_label(metadata), backend=metadata.get("backend"),
                                    setting=setting_label(row)))
     # Lists from the smallest to the largest (mean number of terms per utterance)
@@ -69,12 +71,16 @@ def main():
     parser.add_argument("--exclude_datasets", nargs="*", default=["LibriSpeech_test-clean"],
                         help="Test sets left out of the page (default: LibriSpeech test-clean, left out of "
                              "the benchmark: few errors on the rare words to correct)")
+    parser.add_argument("--exclude_settings", nargs="*", default=["alpha 0.5", "alpha 4.0"],
+                        help="Backend settings left out of the page (default: the NeMo boosting weights "
+                             "of the tuning on PxSLU dev other than 1.0 and 2.0)")
     args = parser.parse_args()
 
     data = {}
     for item in args.results:
         language, _, folder = item.partition("=")
-        data[language] = language_data(folder, set(args.exclude_lists), set(args.exclude_datasets))
+        data[language] = language_data(folder, set(args.exclude_lists), set(args.exclude_datasets),
+                                       set(args.exclude_settings))
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=True)
     template = (HERE / "template.html").read_text(encoding="utf-8")

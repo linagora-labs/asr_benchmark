@@ -10,7 +10,8 @@
   :root { color-scheme: light; --bg: #fbfbfa; --surface: #fff; --text: #1d1d1b; --muted: #6b6a66; --line: #e6e4df;
           --accent: #1f6f78; --base: #a3a19b; --good: #2e8b57; --bad: #c0392b;
           --series-1: #2a78d6; --series-2: #eb6834; --series-3: #1baf7a; --series-4: #eda100;
-          --series-5: #e87ba4; --series-6: #008300; --series-7: #6250d6; --series-8: #e34948; }
+          --series-5: #e87ba4; --series-6: #008300; --series-7: #6250d6; --series-8: #e34948;
+          --series-9: #9c6b30; --series-10: #0f6f7c; }
   [hidden] { display: none !important; }
   html { overflow-y: scroll; }
   body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, sans-serif; }
@@ -62,13 +63,13 @@
   svg [data-tip] { cursor: default; }
   .swatch.line { width: 24px; height: 0; border-radius: 0; border-top: 4px solid var(--accent); vertical-align: 3px; }
   .tip { position: fixed; pointer-events: none; background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
-         padding: 6px 10px; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,.08); white-space: nowrap; z-index: 10; }
+         padding: 6px 10px; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,.08); white-space: nowrap; z-index: 30; }  /* above the enlarged chart */
   /* Overview table: list columns of the same, smallest width; the change below the value */
   .scroll.fit { width: fit-content; max-width: 100%; }
   table.compact { width: auto; table-layout: fixed; }
   table.compact th, table.compact td { padding: 5px 6px; text-align: center; white-space: normal; line-height: 1.25; }
   table.compact td { vertical-align: top; }  /* values on one line, with or without a change below */
-  table.compact th:first-child, table.compact td:first-child { text-align: left; white-space: nowrap; }
+  table.compact th:first-child, table.compact td:first-child { text-align: left; overflow-wrap: anywhere; }
   table.compact col.model { width: 230px; } table.compact col.value { width: 74px; }
   table.compact th { font-size: 12px; overflow-wrap: anywhere; }
   table.compact .delta { display: block; margin: 0; }
@@ -79,6 +80,12 @@
     .board { display: grid; grid-template-columns: min-content minmax(420px, 1fr); gap: 0 28px; align-items: start; }
     .board .panels.small { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
   }
+  #lines .panel, #panels .panel { cursor: zoom-in; }
+  .zoom { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: flex; align-items: center; justify-content: center; z-index: 20; }
+  .zoom-box { position: relative; background: var(--surface); border-radius: 8px; padding: 16px 20px; width: min(1200px, 96vw); max-height: 96vh; overflow: auto; }
+  .zoom-box h3 { margin: 0 0 4px; font-size: 17px; }
+  #zoom-chart svg { display: block; width: 100%; height: auto; max-height: 78vh; font-size: 11px; }
+  #zoom-close { position: absolute; top: 8px; right: 10px; font-size: 20px; line-height: 1; padding: 2px 10px; }
   @media (max-width: 520px) { .panels, .panels.small { grid-template-columns: 1fr; } }
 </style>
 </head>
@@ -127,7 +134,7 @@
   </div>
 
   <h2>Without and with the list</h2>
-  <div class="legend">
+  <div class="legend" id="panels-legend">
     <span><span class="swatch" style="background: var(--base)"></span>Without list</span>
     <span><span class="swatch" style="background: var(--accent)"></span>With the list</span>
     <span><span class="swatch" style="background: var(--good); border-radius: 2px"></span>Better</span>
@@ -157,6 +164,11 @@
   </ul>
 </main>
 <div class="tip" id="tip" hidden></div>
+<!-- A chart enlarged to the page, with its legend (click on a chart; close: click outside, button or Escape) -->
+<div class="zoom" id="zoom" hidden><div class="zoom-box" role="dialog" aria-modal="true">
+  <button id="zoom-close" title="Close (Escape)">&times;</button>
+  <div class="legend" id="zoom-legend"></div><div id="zoom-chart"></div>
+</div></div>
 
 <script>
 const DATA = /*__DATA__*/null;
@@ -180,8 +192,6 @@ function buttons(container, values, current, onClick, labels = {}) {
   container.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => onClick(b.dataset.v)));
 }
 
-// Runs of the boosting weight tuning: a weight other than the one kept (1.0), hidden by default
-const isTuning = (name) => /\(alpha (?!1\.0\b)/.test(name);
 const rowName = (row) => row.label + (row.setting ? ` (${row.setting})` : "");
 
 // Models that can be selected: each model and setting with a run with a list (e.g. a
@@ -195,7 +205,7 @@ function modelKeys() {
     .sort((a, b) => a.localeCompare(b));
 }
 function hiddenSet() {
-  if (!state.hidden[state.language]) state.hidden[state.language] = new Set(modelKeys().filter(isTuning));
+  if (!state.hidden[state.language]) state.hidden[state.language] = new Set();
   return state.hidden[state.language];
 }
 function visible(r) {
@@ -376,7 +386,10 @@ const tip = (text) => `data-tip="${esc(text)}"`;
 // order (alphabetical over the language), never the rank.
 const familyOf = (row) => (row.backend === "faster-whisper" ? "Whisper" : row.label);
 // Series colors (the --series-N tokens), and a color mixed with white by a share t
-const SERIES_HEX = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"];
+// The 8 hues of the validated palette, then 2 more (brown, dark teal) for the 9th and
+// 10th families; the models without biasing mechanism are in grey.
+const SERIES_HEX = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948", "#9c6b30", "#0f6f7c"];
+const NO_BIASING_HEX = "#7a7975";
 function mixWhite(hex, t) {
   const c = [1, 3, 5].map((i) => Math.round(t * parseInt(hex.slice(i, i + 2), 16) + (1 - t) * 255));
   return "#" + c.map((v) => v.toString(16).padStart(2, "0")).join("");
@@ -394,16 +407,20 @@ function modelStyles() {
     (names[familyOf(r)] ||= new Set()).add(rowName(r));
     if (!r.run_cb) names[familyOf(r)].add(r.label);
   }
-  const families = Object.keys(names).sort((a, b) => a.localeCompare(b));
+  // Families with a biasing mechanism (a run with a list) get the series colors
+  const biased = new Set(rowsAll.filter((r) => r.run_cb).map(familyOf));
+  const families = Object.keys(names).filter((f) => biased.has(f)).sort((a, b) => a.localeCompare(b));
   const styles = {};
-  families.forEach((family, i) => {
+  const assign = (family, hex) => {
     const variants = [...names[family]].sort((a, b) => a.localeCompare(b));
     variants.forEach((name, j) => {
       const shade = variants.length === 1 ? 1 : 1 - (0.6 * j) / (variants.length - 1);
       // Lines and buttons: the shade of the variant; text: not lighter than 60 %, to stay readable
-      styles[name] = { color: mixWhite(SERIES_HEX[i % 8], shade), text: mixWhite(SERIES_HEX[i % 8], Math.max(0.6, shade)), family };
+      styles[name] = { color: mixWhite(hex, shade), text: mixWhite(hex, Math.max(0.6, shade)), family };
     });
-  });
+  };
+  families.forEach((family, i) => assign(family, SERIES_HEX[i % SERIES_HEX.length]));
+  Object.keys(names).filter((f) => !biased.has(f)).forEach((family) => assign(family, NO_BIASING_HEX));
   return styles;
 }
 const nameCell = (name, styles) => `<td style="color: ${(styles[name] || {}).text || "inherit"}">${esc(name)}</td>`;
@@ -451,8 +468,25 @@ function lines() {
     }
     return `<div class="panel"><h3>${esc(m.label)} <span class="muted" style="font-weight:400">(${m.higher ? "higher" : "lower"} is better)</span></h3>${svg}</svg></div>`;
   }).join("");
-  $("lines-legend").innerHTML = `<span><svg width="30" height="12" style="vertical-align:-1px"><circle cx="6" cy="6" r="4" fill="var(--muted)"/><circle cx="22" cy="6" r="3.5" fill="none" stroke="var(--muted)" stroke-width="2"/></svg>List in its usual case / in capitals</span>` + models.map((name) => `<span><span class="swatch line" style="border-top-color: ${styles[name].color}"></span>${esc(name)}</span>`).join("");
+  $("lines-legend").innerHTML = `<span><svg width="30" height="12" style="vertical-align:-1px"><circle cx="6" cy="6" r="4" fill="var(--muted)"/><circle cx="22" cy="6" r="3.5" fill="none" stroke="var(--muted)" stroke-width="2"/></svg>List in its usual case / in capitals</span>` + models.map((name) => `<span style="color: ${styles[name].text}"><span class="swatch line" style="border-top-color: ${styles[name].color}"></span>${esc(name)}</span>`).join("");
 }
+
+// Click on a chart: enlarged copy, with the legend of its section
+function openZoom(panel, legend) {
+  $("zoom-chart").innerHTML = panel.innerHTML;
+  $("zoom-legend").innerHTML = legend ? legend.innerHTML : "";
+  $("zoom").hidden = false;
+}
+const closeZoom = () => { $("zoom").hidden = true; $("zoom-chart").innerHTML = ""; };
+[["lines", "lines-legend"], ["panels", "panels-legend"]].forEach(([charts, legend]) => {
+  $(charts).addEventListener("click", (e) => {
+    const panel = e.target.closest(".panel");
+    if (panel) openZoom(panel, $(legend));
+  });
+});
+$("zoom").addEventListener("click", (e) => { if (e.target === $("zoom")) closeZoom(); });
+$("zoom-close").addEventListener("click", closeZoom);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("zoom").hidden) closeZoom(); });
 
 // Tooltip of the marks with data-tip
 document.addEventListener("mouseover", (e) => {

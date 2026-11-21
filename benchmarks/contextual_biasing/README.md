@@ -139,7 +139,7 @@ uv run python tools/contextual_biasing/build_page.py --output benchmarks/context
 with the list, and the difference (optionally as CSV). `build_page.py` writes the same
 measures as an HTML page (`page/index.html`, a single file): overview table of a measure
 for each model and list, charts of each list without and with it, and all the measures
-of one list; both text normalizations, and a selection of the models shown (boosting weight tuning runs hidden by default).
+of one list; both text normalizations, and a selection of the models shown (NeMo runs at alpha 1.0 and 2.0; the other weights of the tuning on PxSLU dev are left out, `--exclude_settings`).
 
 Notes for the configs: Nemotron runs on a vLLM server started separately (with a
 `--max-model-len` above the longest list); Granite 5.0 is served from a folder of
