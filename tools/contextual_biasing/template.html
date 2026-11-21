@@ -23,8 +23,7 @@
   .controls { display: flex; flex-wrap: wrap; gap: 10px 32px; margin: 24px 0 12px; align-items: center; }
   .group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .group-label { color: var(--muted); margin-right: 2px; }
-  .group-label.all { cursor: pointer; user-select: none; text-decoration: underline dotted; text-underline-offset: 3px; }
-  .group-label.all:hover { color: var(--accent); }
+  button.small { font-size: 13px; padding: 2px 8px; color: var(--muted); }
   select, button { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
   button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
   .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; margin: 8px 0 12px; }
@@ -97,17 +96,17 @@
     Each run with a list is compared with the run of the same model without it, on the same terms.</p>
 
   <div class="controls">
-    <div class="group"><span class="group-label all" id="models-all" title="Select all / none">Models</span> <span class="group" id="models"></span></div>
+    <div class="group"><span class="group-label">Models</span> <span class="group" id="models"></span>
+      <button class="small" id="models-all" title="Show all the models">All</button> <button class="small" id="models-none" title="Hide all the models">None</button></div>
   </div>
   <div class="controls">
-    <div class="group"><span class="group-label">Language</span> <select id="language"></select></div>
     <div class="group"><span class="group-label">Test set</span> <span class="group" id="dataset"></span></div>
-    <div class="group"><span class="group-label">Text</span> <span class="group" id="mode">
-      <button data-v="nocasepunc" aria-pressed="true" title="Lowercase, punctuation removed">Normalized</button>
-      <button data-v="cased" title="A list term counts as correct only if written with the case of the list">Case of the list terms</button></span></div>
   </div>
   <div class="controls">
     <div class="group"><span class="group-label">Measure</span> <span class="group" id="metric"></span></div>
+    <div class="group"><span class="group-label">Case sensitive</span> <span class="group" id="mode">
+      <button data-v="nocasepunc" aria-pressed="true" title="Text normalized: lowercase, punctuation removed">No</button>
+      <button data-v="cased" title="A list term counts as correct only if written with the case of the list (the case of the other words is not checked)">Yes</button></span></div>
   </div>
 
   <!-- Table and figures side by side on wide screens, one below the other otherwise -->
@@ -127,7 +126,7 @@
   <div class="legend" id="lines-legend"></div>
   <div class="panels small" id="lines"></div>
   <div class="muted caption">Each model without list, then with each list given to it, from the smallest list to the
-    largest. Hollow points: the same list given in capitals (to read with "Case of the list terms": does the model write
+    largest. Hollow points: the same list given in capitals (to read with "Case sensitive": does the model write
     the terms as given?). "No list": measured on the terms of the smallest list. A line stops where the model has no run
     with the list (no biasing mechanism, or list too long for it). Variants of a model share its color.</div>
   </div>
@@ -156,11 +155,11 @@
     <li><b>Runaway</b>: percentage of the utterances whose transcription runs away (more than twice as many words as
       the reference, plus 10): loops, invented sentences, prompt recited. A few of them weigh a lot on B-WER, WER and
       FA/h.</li>
-    <li><b>Case of the list terms</b>: a term is correct only if written as in the list given to the model (as in the
+    <li><b>Case sensitive</b>: a term is correct only if written as in the list given to the model (as in the
       targets for runs without list); the case of the other words is not checked.</li>
     <li>Lists: <i>local</i> lists only hold terms of the utterance; the others are global lists
       (one list for the whole test set). <i>_upper</i>: the same list in capitals, given to check that the model
-      writes the terms as given (to read with "Case of the list terms").</li>
+      writes the terms as given (to read with "Case sensitive").</li>
   </ul>
 </main>
 <div class="tip" id="tip" hidden></div>
@@ -181,7 +180,7 @@ const METRICS = [
   { key: "b_wer", label: "B-WER", higher: false }, { key: "u_wer", label: "U-WER", higher: false },
   { key: "runaway", label: "Runaway", higher: false, unbounded: true },
 ];
-const state = { language: Object.keys(DATA)[0], dataset: null, mode: "nocasepunc", metric: "f1", list: null, hidden: {} };
+const state = { language: Object.keys(DATA)[0], dataset: null, mode: "nocasepunc", metric: "f1", list: null, hidden: new Set() };
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const fmt = (v) => (v === null || v === undefined ? "" : v.toFixed(1));
@@ -197,16 +196,17 @@ const rowName = (row) => row.label + (row.setting ? ` (${row.setting})` : "");
 // Models that can be selected: each model and setting with a run with a list (e.g. a
 // boosting weight), and the models without run with a list. The rows without list of a
 // model with settings follow its settings (shown when one of them is).
+// All the rows of all the test sets (the model list and colors are the same everywhere)
+const allRows = () => Object.values(DATA).flatMap((lang) => Object.values(lang.rows).flat());
 function modelKeys() {
-  const lang = DATA[state.language], keys = new Set();
-  for (const r of Object.values(lang.rows).flat()) keys.add(r.run_cb || r.setting ? rowName(r) : r.label);
+  const keys = new Set();
+  for (const r of allRows()) keys.add(r.run_cb || r.setting ? rowName(r) : r.label);
   const withSettings = [...keys].filter((k) => k.includes(" (alpha"));
   return [...keys].filter((k) => !withSettings.some((s) => s.startsWith(`${k} (alpha`)))
     .sort((a, b) => a.localeCompare(b));
 }
 function hiddenSet() {
-  if (!state.hidden[state.language]) state.hidden[state.language] = new Set();
-  return state.hidden[state.language];
+  return state.hidden;
 }
 function visible(r) {
   const hidden = hiddenSet(), name = rowName(r);
@@ -401,7 +401,7 @@ function textOn(hex) {
   return (lum + 0.05) / 0.05 > 1.05 / (lum + 0.05) ? "#1d1d1b" : "#ffffff";
 }
 function modelStyles() {
-  const lang = DATA[state.language], rowsAll = Object.values(lang.rows).flat();
+  const rowsAll = allRows();
   const names = {};
   for (const r of rowsAll) {
     (names[familyOf(r)] ||= new Set()).add(rowName(r));
@@ -502,10 +502,26 @@ document.addEventListener("mousemove", (e) => {
   $("tip").style.top = `${e.clientY + 14}px`;
 });
 
+// Test sets of all the languages: "<name> (<language>)", the split left out when the
+// language has a single test set of this corpus (e.g. "LibriSpeech", "PxSLU test")
+function datasetChoices() {
+  return Object.entries(DATA).flatMap(([language, lang]) => lang.datasets.map((d) => {
+    const corpus = d.replace(/_[^_]*$/, "");
+    const alone = lang.datasets.filter((o) => o.replace(/_[^_]*$/, "") === corpus).length === 1;
+    const name = alone ? corpus : d.replace(/_/g, " ");
+    return { key: `${language}|${d}`, language, dataset: d, label: `${name} (${LANGUAGES[language] || language})` };
+  }));
+}
+
 function render() {
-  const lang = DATA[state.language];
-  if (!lang.datasets.includes(state.dataset)) state.dataset = lang.datasets[0];
-  buttons($("dataset"), lang.datasets, state.dataset, (v) => { state.dataset = v; render(); });
+  const choices = datasetChoices();
+  if (!choices.some((c) => c.language === state.language && c.dataset === state.dataset)) {
+    state.language = choices[0].language; state.dataset = choices[0].dataset;
+  }
+  buttons($("dataset"), choices.map((c) => c.key), `${state.language}|${state.dataset}`, (v) => {
+    const c = choices.find((x) => x.key === v);
+    state.language = c.language; state.dataset = c.dataset; render();
+  }, Object.fromEntries(choices.map((c) => [c.key, c.label])));
   buttons($("metric"), METRICS.map((m) => m.key), state.metric, (v) => { state.metric = v; render(); },
     Object.fromEntries(METRICS.map((m) => [m.key, m.label])));
   document.querySelectorAll("#mode button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.v === state.mode));
@@ -527,16 +543,9 @@ function render() {
   details();
 }
 
-$("language").innerHTML = Object.keys(DATA).map((l) => `<option value="${l}">${LANGUAGES[l] || l}</option>`).join("");
-$("language").value = state.language;
-$("language").addEventListener("change", (e) => { state.language = e.target.value; render(); });
 document.querySelectorAll("#mode button").forEach((b) => b.addEventListener("click", () => { state.mode = b.dataset.v; render(); }));
-$("models-all").addEventListener("click", () => {
-  const keys = modelKeys(), hidden = hiddenSet();
-  const anyShown = keys.some((k) => !hidden.has(k));
-  state.hidden[state.language] = new Set(anyShown ? keys : []);
-  render();
-});
+$("models-all").addEventListener("click", () => { state.hidden = new Set(); render(); });
+$("models-none").addEventListener("click", () => { state.hidden = new Set(modelKeys()); render(); });
 $("list").addEventListener("change", (e) => { state.list = e.target.value; details(); });
 render();
 </script>

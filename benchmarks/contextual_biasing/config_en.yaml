@@ -2,8 +2,9 @@
 # - LibriSpeech test-other (test-clean left out, see below), per-utterance lists of Le et al., Interspeech
 #   2021 (arXiv:2104.02194): rare words of the reference + N distractors; lists
 #   "100", "500", "1000", "2000" (named after N).
-# - Contextual Earnings-22 (Argmax): 15 s clips of earnings calls; lists "local"
-#   (keywords spoken in the clip) and "global" (keywords of the whole call).
+# - Contextual Earnings-22 (Argmax): 15 s clips of earnings calls; list "global"
+#   (keywords of the whole call). Its "local" lists (only the keywords spoken in the
+#   clip) are not run: an oracle setting, as the PxSLU "oracle" lists.
 # A run with a list only transcribes the datasets that have this list; the run
 # without list (null) is scored on every list.
 #
@@ -39,13 +40,13 @@ benchmarks:
   - backend: faster-whisper
     model: large-v3
     precision: float16
-    contextual_biasing: [null, local, global]
+    contextual_biasing: [null, global]  # local: not run (oracle)
   - backend: faster-whisper
     model: large-v3-turbo
     precision: float16
     accurate: [false, true]
     full_name: true
-    contextual_biasing: [null, local, global]
+    contextual_biasing: [null, global]  # local: not run (oracle)
 
   # --- Qwen3-ASR (vLLM): `prompt` field (system turn) ---
   - backend: vllm
@@ -54,7 +55,7 @@ benchmarks:
     # - Qwen/Qwen3-ASR-0.6B
     port: 8106
     extra_args: --max-model-len 32768
-    contextual_biasing: [null, "100", "1000", "2000", local, global]
+    contextual_biasing: [null, "100", "1000", "2000", global]  # local: not run (oracle)
     contextual_biasing_template: "Vocabulary: {terms}."
 
   # --- Nemotron-3.5-Transcribe (vLLM chat, server started separately) ---
@@ -67,7 +68,7 @@ benchmarks:
     prompt: "Transcribe with punctuation and capitalization."
     extra_body: {chat_template_kwargs: {enable_thinking: false}}
     concurrency: 32
-    contextual_biasing: [null, "100", "1000", "2000", local, global]
+    contextual_biasing: [null, "100", "1000", "2000", global]  # local: not run (oracle)
     contextual_biasing_template: "{prompt} Context terms: {terms}."
 
   # --- Granite Speech 5.0 (vLLM chat): "Keywords: kw1, kw2" (model card) ---
@@ -82,7 +83,7 @@ benchmarks:
     prompt: <|audio|>transcribe the speech to text.
     extra_args: --max-model-len 16384
     concurrency: 128
-    contextual_biasing: [null, "100", "1000", "2000", local, global]
+    contextual_biasing: [null, "100", "1000", "2000", global]  # local: not run (oracle)
     contextual_biasing_template: "{prompt} Keywords: {terms}"
   # - backend: vllm
   #   model: ibm-granite/granite-speech-4.1-2b
@@ -90,7 +91,7 @@ benchmarks:
   #   endpoint: chat
   #   prompt: <|audio|>transcribe the speech to text.
   #   extra_args: --max-model-len 16384
-  #   contextual_biasing: [null, "100", "1000", local, global]
+  #   contextual_biasing: [null, "100", "1000", global]  # local: not run (oracle)
   #   contextual_biasing_template: "{prompt} Keywords: {terms}"
 
   # --- MOSS-Transcribe-Diarize (vLLM): English hotword prompt of the GitHub
@@ -101,7 +102,7 @@ benchmarks:
     port: 8102
     language: null
     transcription_prompt: "Transcribe the audio. For each segment, start with the timestamp and speaker ID ([S01], [S02], [S03], ...), then the spoken text, and end with the segment timestamp."
-    contextual_biasing: [null, "100", "1000", "2000", local, global]
+    contextual_biasing: [null, "100", "1000", "2000", global]  # local: not run (oracle)
     contextual_biasing_template: "{prompt} Hotwords: {terms}"
 
   # --- VibeVoice-ASR (transformers): extra context of the request ---
@@ -109,7 +110,7 @@ benchmarks:
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
     batch_size: 64
-    contextual_biasing: [null, "100", local, global]
+    contextual_biasing: [null, "100", global]  # local: not run (oracle)
   # Long lists (~3.6k and ~7.2k tokens per request, ~13 h of GPU for LibriSpeech):
   # left out for now
   # - backend: vibevoice-asr
@@ -139,8 +140,8 @@ benchmarks:
   # - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 2.0}
   # - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
   # - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 2.0}
-  - {<<: *parakeet, contextual_biasing: local, contextual_biasing_alpha: 1.0}
-  - {<<: *parakeet, contextual_biasing: local, contextual_biasing_alpha: 2.0}
+  # - {<<: *parakeet, contextual_biasing: local, contextual_biasing_alpha: 1.0}
+  # - {<<: *parakeet, contextual_biasing: local, contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: global, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: global, contextual_biasing_alpha: 2.0}
   - &canary
@@ -155,8 +156,8 @@ benchmarks:
   # - {<<: *canary, contextual_biasing: "1000", contextual_biasing_alpha: 2.0}
   # - {<<: *canary, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
   # - {<<: *canary, contextual_biasing: "2000", contextual_biasing_alpha: 2.0}
-  - {<<: *canary, contextual_biasing: local, contextual_biasing_alpha: 1.0}
-  - {<<: *canary, contextual_biasing: local, contextual_biasing_alpha: 2.0}
+  # - {<<: *canary, contextual_biasing: local, contextual_biasing_alpha: 1.0}
+  # - {<<: *canary, contextual_biasing: local, contextual_biasing_alpha: 2.0}
   - {<<: *canary, contextual_biasing: global, contextual_biasing_alpha: 1.0}
   - {<<: *canary, contextual_biasing: global, contextual_biasing_alpha: 2.0}
 

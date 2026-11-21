@@ -65,9 +65,9 @@ def main():
     parser.add_argument("--results", nargs="+", required=True, metavar="LANG=FOLDER",
                         help="Results folder (output_folder of the config) of each language")
     parser.add_argument("--output", required=True, help="Folder of the page")
-    parser.add_argument("--exclude_lists", nargs="*", default=["oracle", "oracle_upper"],
-                        help="Lists left out of the page (default: the PxSLU per utterance oracle lists, "
-                             "not a realistic setting)")
+    parser.add_argument("--exclude_lists", nargs="*", default=["oracle", "oracle_upper", "local"],
+                        help="Lists left out of the page (default: the oracle lists, only the terms spoken in the "
+                             "utterance, not a realistic setting: PxSLU oracle, Contextual Earnings-22 local)")
     parser.add_argument("--exclude_datasets", nargs="*", default=["LibriSpeech_test-clean"],
                         help="Test sets left out of the page (default: LibriSpeech test-clean, left out of "
                              "the benchmark: few errors on the rare words to correct)")
