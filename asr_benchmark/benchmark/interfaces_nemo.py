@@ -80,7 +80,6 @@ class NemoModel(Model):
         self._boosting_key = None
         self._base_decoding_cfg = None
         self._boosting_times = []  # seconds to set each boosting tree (see _set_boosting)
-        self._many_trees = False  # per-utterance lists: a new boosting tree for each group of rows
         if contextual_biasing.config_variant(self.config) is not None:
             if self.decoder is not None:
                 raise ValueError("contextual_biasing is not supported with ngram_model (pyctcdecode)")
@@ -121,13 +120,6 @@ class NemoModel(Model):
                 section.boosting_tree_alpha = float(self.config["contextual_biasing_alpha"])
             else:
                 section.boosting_tree = None
-            if self._many_trees and self._boosting_strategy == "greedy_batch" and self.model_type != nemo_asr.models.EncDecCTCModelBPE \
-                    and not (self.model_type == nemo_asr.models.EncDecHybridRNNTCTCBPEModel and self.config['decoder'] == 'ctc'):
-                # RNN-T / TDT greedy decoding: CUDA graphs are captured again for each new
-                # tree, and after a few thousand captures (LibriSpeech per-utterance lists)
-                # NeMo 3.0 fails with "Capture must end on the same stream it began on".
-                # Same decoding without CUDA graphs (same output, slower).
-                section.use_cuda_graph_decoder = False
                 section.boosting_tree_alpha = 0.0
         # Time to build the boosting tree and set it in the decoding (what a server
         # pays each time the hotwords change), reported in the metadata
@@ -207,11 +199,23 @@ class NemoModel(Model):
         # by groups of consecutive rows sharing the same list (a global list: one group;
         # per-utterance lists: one row at a time).
         outputs = []
-        groups = [(terms, list(group)) for terms, group in itertools.groupby(data, key=lambda row: tuple(self.terms_for_row(row) or ()))]
-        self._many_trees = len(groups) > 1
-        for terms, group in groups:
+        for terms, group in itertools.groupby(data, key=lambda row: tuple(self.terms_for_row(row) or ())):
+            group = list(group)
             self._set_boosting(list(terms) or None)
-            outputs.extend(self._transcribe_batch(group))
+            try:
+                outputs.extend(self._transcribe_batch(group))
+            except RuntimeError as err:
+                # RNN-T / TDT greedy decoding captures CUDA graphs again for each new tree;
+                # with per-utterance lists (thousands of trees), NeMo 3.0 sometimes fails with
+                # "Capture must end on the same stream it began on". Rebuild the decoding
+                # and retry once. (Disabling the CUDA graphs is not an option: the boosting
+                # then has no effect on the output.)
+                if "Capture must end" not in str(err):
+                    raise
+                logging.warning(f"{self.config['model']}: CUDA graph capture failed, decoding rebuilt and batch retried")
+                self._boosting_key = object()  # force a new decoding (new CUDA graphs)
+                self._set_boosting(list(terms) or None)
+                outputs.extend(self._transcribe_batch(group))
         return outputs
 
     def _transcribe_batch(self, data):
