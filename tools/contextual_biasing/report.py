@@ -36,28 +36,52 @@ def runaway_rate(predictions):
     return 100 * runaway / len(rows)
 
 
+def rtfx(name, metadata, dataset, predictions, log_timings):
+    """(RTFx, approximate) of a run on a dataset: audio duration / processing time, from
+    (1) the transcription time recorded by the benchmark (metadata.json), (2) the
+    throughput measured by the vllm backend (predictions), or (3) the benchmark logs
+    (timings_from_logs.json, see timings_from_logs.py: time of the whole run, model
+    loading and scoring included, hence approximate). (None, None) if unknown."""
+    timing = (metadata.get("transcription_time") or {}).get(dataset)
+    if timing and timing.get("seconds"):
+        return timing["audio_seconds"] / timing["seconds"], False
+    first = next(iter(predictions.get(dataset, {}).values()), {})
+    if first.get("throughput_rtfx"):
+        return float(first["throughput_rtfx"]), False
+    entry = log_timings.get(name)
+    if entry and dataset in entry["datasets"] and all(d in predictions for d in entry["datasets"]):
+        audio = sum(float(p["audio_duration"]) for d in entry["datasets"] for p in predictions[d].values())
+        return audio / entry["seconds"], True
+    return None, None
+
+
 def load_runs(results):
     """{folder name: (metadata, {dataset: performances})}, with the runaway rate of each
-    dataset ("runaway", from its predictions)"""
+    dataset ("runaway", from its predictions) and its throughput ("rtfx", "rtfx_approx")"""
     runs = {}
+    log_file = Path(results) / "timings_from_logs.json"
+    log_timings = json.loads(log_file.read_text(encoding="utf-8")) if log_file.exists() else {}
     for exp in sorted(p for p in Path(results).iterdir() if (p / "metadata.json").exists()):
         metadata = json.loads((exp / "metadata.json").read_text(encoding="utf-8"))
+        predictions = {f.stem: json.loads(f.read_text(encoding="utf-8"))
+                       for f in sorted((exp / "predictions").glob("*.json"))}
         perfs = {}
         for f in sorted((exp / "performances").glob("*.json")):
             perfs[f.stem] = json.loads(f.read_text(encoding="utf-8"))
-            pred_file = exp / "predictions" / f.name
-            if pred_file.exists():
-                perfs[f.stem]["runaway"] = runaway_rate(json.loads(pred_file.read_text(encoding="utf-8")))
+            if f.stem in predictions:
+                perfs[f.stem]["runaway"] = runaway_rate(predictions[f.stem])
+            perfs[f.stem]["rtfx"], perfs[f.stem]["rtfx_approx"] = rtfx(exp.name, metadata, f.stem, predictions, log_timings)
         runs[exp.name] = (metadata, perfs)
     return runs
 
 
 def measures(perf, scores):
-    """WER (and the upper bound of its 95 % confidence interval) and runaway rate of
-    the run, and biasing measures of one list."""
+    """WER (and the upper bound of its 95 % confidence interval), runaway rate and
+    throughput of the run, and biasing measures of one list."""
     wer = perf.get("wer_nocasepunc", {})
     return {"wer": wer.get("wer"), "wer_ci95_high": (wer.get("ci95") or [None, None])[1],
-            "runaway": perf.get("runaway"), **{m: scores[m] for m in MEASURES}}
+            "runaway": perf.get("runaway"), "rtfx": perf.get("rtfx"), "rtfx_approx": perf.get("rtfx_approx"),
+            **{m: scores[m] for m in MEASURES}}
 
 
 def collect(runs, mode):
@@ -103,7 +127,8 @@ def delta(row, key):
 
 # Columns of the markdown table: (label, key), each shown without and with the list
 COLUMNS = [("F1", "f1"), ("P", "precision"), ("R", "recall"), ("B-WER", "b_wer"),
-           ("U-WER", "u_wer"), ("FA/h", "false_alarms_per_hour"), ("WER", "wer"), ("Runaway", "runaway")]
+           ("U-WER", "u_wer"), ("FA/h", "false_alarms_per_hour"), ("WER", "wer"), ("Runaway", "runaway"),
+           ("RTFx", "rtfx")]
 
 
 def print_markdown(table, mode):
@@ -139,7 +164,8 @@ def main():
         return
     print_markdown(table, args.mode)
     if args.csv:
-        keys = ["dataset", "list", "model", "run_cb", "list_size", "wer", "wer_cb", "runaway", "runaway_cb"]
+        keys = ["dataset", "list", "model", "run_cb", "list_size", "wer", "wer_cb", "runaway", "runaway_cb",
+                "rtfx", "rtfx_cb", "rtfx_approx", "rtfx_approx_cb"]
         keys += [k for m in MEASURES for k in (m, f"{m}_cb")]
         with open(args.csv, "w", encoding="utf-8", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=keys, extrasaction="ignore")

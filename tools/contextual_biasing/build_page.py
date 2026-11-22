@@ -37,7 +37,7 @@ def setting_label(row):
     return " ".join(re.sub(r"^([a-z]+)(\d)", r"\1 \2", part) for part in suffix.split("-") if part)
 
 
-def language_data(results, excluded=(), excluded_datasets=(), excluded_settings=()):
+def language_data(results, excluded=(), excluded_datasets=(), excluded_settings=(), excluded_runs=()):
     runs = report.load_runs(results)
     rows = {}
     for mode in MODES:
@@ -45,6 +45,9 @@ def language_data(results, excluded=(), excluded_datasets=(), excluded_settings=
         for row in report.collect(runs, mode):
             if row["list"] in excluded or row["dataset"] in excluded_datasets:
                 continue
+            if row.get("run_cb") in excluded_runs:
+                # Only the measures without list are kept
+                row = {k: v for k, v in row.items() if k != "run_cb" and not k.endswith("_cb")}
             metadata = runs[row["model"]][0] if row["model"] in runs else runs[row["run_cb"]][0]
             if setting_label(row) in excluded_settings:
                 continue
@@ -74,13 +77,16 @@ def main():
     parser.add_argument("--exclude_settings", nargs="*", default=["alpha 0.5", "alpha 4.0"],
                         help="Backend settings left out of the page (default: the NeMo boosting weights "
                              "of the tuning on PxSLU dev other than 1.0 and 2.0)")
+    parser.add_argument("--exclude_runs", nargs="*", default=["nemo_nvidia-parakeet-tdt-0.6b-v3_cb-1000-alpha1.0"],
+                        help="Runs with a list left out of the page (default: parakeet with the LibriSpeech "
+                             "1000 lists, the only NeMo run with them, done before they were left out)")
     args = parser.parse_args()
 
     data = {}
     for item in args.results:
         language, _, folder = item.partition("=")
         data[language] = language_data(folder, set(args.exclude_lists), set(args.exclude_datasets),
-                                       set(args.exclude_settings))
+                                       set(args.exclude_settings), set(args.exclude_runs))
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=True)
     template = (HERE / "template.html").read_text(encoding="utf-8")

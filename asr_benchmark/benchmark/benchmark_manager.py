@@ -395,9 +395,11 @@ def bench_model(config, input_manifest, output_folder, debug=False):
         n_params = model.count_parameters()
         audio = model.load_audio(PATH_TO_WARMUP_FILE)
         _ = model.transcribe(audio)
+        transcription_time = {}
         for dataset in data:
             dataset_data = data[dataset]
             bench_dataset_result = bench_results.get(dataset, dict())
+            start = time.time()
             if config.get('compute_rtf', True):
                 if int(config.get('concurrency', 1) or 1) > 1:
                     iterator = transcribe_with_rtf_concurrent(model, dataset_data, output_folder, config)
@@ -406,19 +408,27 @@ def bench_model(config, input_manifest, output_folder, debug=False):
             else:
                 iterator = transcribe_fast(model, dataset_data, output_folder, config)
             process_result(iterator, bench_dataset_result, output_folder, config, save_interval=1 if config.get('compute_rtf', True) else None)
+            # Wall-clock time of the transcriptions of this run (model loading and scoring
+            # excluded): throughput (RTFx) = audio_seconds / seconds, even without compute_rtf
+            transcription_time[dataset] = {
+                "seconds": round(time.time() - start, 2),
+                "audio_seconds": round(sum(bench_dataset_result.get(row["id"], {}).get("audio_duration", 0) for row in dataset_data), 2),
+                "files": len(dataset_data),
+            }
         model.cleanup()
         metadata = model.get_metadata()
         # model_info (license, size, languages: tools/fill_model_info.py, or edited by hand)
         # is not part of the config: keep it across reruns. The size is counted on the
         # loaded model when the API cannot give it (e.g. .nemo checkpoints, no safetensors).
+        # transcription_time: kept for the datasets not transcribed again.
         metadata_file = Path(output_folder) / "metadata.json"
-        model_info = {}
-        if metadata_file.exists():
-            model_info = json.loads(metadata_file.read_text(encoding="utf-8")).get("model_info") or {}
+        previous = json.loads(metadata_file.read_text(encoding="utf-8")) if metadata_file.exists() else {}
+        model_info = previous.get("model_info") or {}
         if n_params and not model_info.get("params"):
             model_info["params"] = n_params
         if model_info:
             metadata["model_info"] = model_info
+        metadata["transcription_time"] = (previous.get("transcription_time") or {}) | transcription_time
         with open(metadata_file, "w", encoding="utf-8") as f:
             f.write(json.dumps(metadata, indent=2, ensure_ascii=False))
     else:

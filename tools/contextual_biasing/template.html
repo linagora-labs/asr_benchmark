@@ -107,7 +107,7 @@
     <div class="group"><span class="group-label">Test set</span> <span class="group" id="dataset"></span></div>
   </div>
   <div class="controls">
-    <div class="group"><span class="group-label">Measure</span> <span class="group" id="metric"></span></div>
+    <div class="group"><span class="group-label">Metric</span> <span class="group" id="metric"></span></div>
     <div class="group"><span class="group-label">Case sensitive</span> <span class="group" id="mode">
       <button data-v="nocasepunc" aria-pressed="true" title="Text normalized: lowercase, punctuation removed">No</button>
       <button data-v="cased" title="A list term counts as correct only if written with the case of the list (the case of the other words is not checked)">Yes</button></span></div>
@@ -133,7 +133,8 @@
   <div class="muted caption">Each model without list, then with each list given to it, from the smallest list to the
     largest. Hollow points: the same list given in capitals (to read with "Case sensitive": does the model write
     the terms as given?). "No list": measured on the terms of the smallest list. A line stops where the model has no run
-    with the list (no biasing mechanism, or list too long for it). Variants of a model share its color.</div>
+    with the list (no biasing mechanism, or list too long for it). Variants of a model share its color. RTFx: speed
+    as run in this benchmark (see Metrics), on a log scale.</div>
   </div>
   </div>
 
@@ -146,20 +147,26 @@
   </div>
   <div class="panels" id="panels"></div>
 
-  <h2>All measures <select id="list"></select></h2>
-  <div class="muted">Sorted by the selected measure (with the list, or without for models without run with it); colors: rank in each column.</div>
+  <h2>All metrics <select id="list"></select></h2>
+  <div class="muted">Sorted by the selected metric (with the list, or without for models without run with it); colors: rank in each column.</div>
   <div class="scroll"><table id="details"></table></div>
 
-  <h2>Measures</h2>
+  <h2>Metrics</h2>
   <ul class="notes">
-    <li><b>F1, P, R</b>: F1, precision and recall of the list terms (each occurrence of a term of the targets, in the
-      reference and in the transcription).</li>
-    <li><b>FA/h</b>: false alarms per hour, list terms written although not spoken.</li>
     <li><b>WER</b>: word error rate of the whole transcription (normalized text).</li>
     <li><b>B-WER</b>: word error rate on the words of the list terms of the reference; <b>U-WER</b>: on the other words.</li>
+    <li><b>F1, R, P</b>: F1, recall and precision of the list terms (each occurrence of a term of the targets, in the
+      reference and in the transcription).</li>
+    <li><b>FA/h</b>: false alarms per hour, list terms written although not spoken.</li>
     <li><b>Runaway</b>: percentage of the utterances whose transcription runs away (more than twice as many words as
       the reference, plus 10): loops, invented sentences, prompt recited. A few of them weigh a lot on B-WER, WER and
       FA/h.</li>
+    <li><b>RTFx</b>: seconds of audio transcribed per second (higher is faster), on one NVIDIA DGX Spark (GB10), as
+      the benchmark runs each model: vLLM servers with 32 to 128 concurrent requests, NeMo and VibeVoice-ASR in batches
+      (64; 4 to 16 with the long lists), faster-whisper one file at a time. It compares the cost of the lists for a
+      model more than the models with each other. "~": approximate, taken from the logs (time of the whole run, model
+      loading and scoring included, hence underestimated for short runs). A list given in the prompt is processed
+      with every request: the longer the list, the slower.</li>
     <li><b>Case sensitive</b>: a term is correct only if written as in the list given to the model (as in the
       targets for runs without list); the case of the other words is not checked.</li>
     <li>Lists: <i>local</i> lists only hold terms of the utterance; the others are global lists
@@ -178,14 +185,20 @@
 const DATA = /*__DATA__*/null;
 const LANGUAGES = { fr: "French", en: "English" };
 const METRICS = [
+  { key: "wer", label: "WER", higher: false },
+  { key: "b_wer", label: "B-WER", higher: false }, { key: "u_wer", label: "U-WER", higher: false },
   { key: "f1", label: "F1", higher: true }, { key: "recall", label: "R", higher: true },
   { key: "precision", label: "P", higher: true },
   { key: "false_alarms_per_hour", label: "FA/h", higher: false, unbounded: true },
-  { key: "wer", label: "WER", higher: false },
-  { key: "b_wer", label: "B-WER", higher: false }, { key: "u_wer", label: "U-WER", higher: false },
   { key: "runaway", label: "Runaway", higher: false, unbounded: true },
+  { key: "rtfx", label: "RTFx", higher: true, unbounded: true, log: true },
 ];
-const state = { language: Object.keys(DATA)[0], dataset: null, mode: "nocasepunc", metric: "f1", list: null, hidden: new Set() };
+// RTFx taken from the benchmark logs (time of the whole run, model loading included):
+// approximate, shown with "~"
+const APPROX_NOTE = "approximate: time of the whole run (model loading and scoring included), from the logs";
+const isApprox = (row, key) => !!(row && row[key.replace(/(_cb)?$/, "_approx$1")]);
+const approxMark = (row, key) => (isApprox(row, key) ? "~" : "");
+const state = { language: Object.keys(DATA)[0], dataset: null, mode: "nocasepunc", metric: "wer", list: null, hidden: new Set() };
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const fmt = (v) => (v === null || v === undefined ? "" : v.toFixed(1));
@@ -225,9 +238,19 @@ function rows() {
   return lang.rows[state.mode].filter((r) => r.dataset === state.dataset && visible(r));
 }
 
-function deltaClass(d, m) {
-  if (d === null || Math.abs(d) < 0.05) return "";
+// Change from the run without list: a difference, or a ratio for the measures on a log
+// scale (RTFx)
+function changeClass(m, before, after) {
+  if (!present(before) || !present(after) || (m.log && !(before > 0 && after > 0))) return "";
+  const d = m.log ? Math.log(after / before) : after - before;
+  if (Math.abs(d) < 0.05) return "";
   return (d > 0) === m.higher ? "good" : "bad";
+}
+function changeText(m, before, after) {
+  if (!present(before) || !present(after)) return "";
+  if (m.log) return before > 0 ? `×${(after / before).toPrecision(2)}` : "";
+  const d = after - before;
+  return (d > 0 ? "+" : "") + d.toFixed(1);
 }
 // Class of a score by its rank in its column: first, second, second-last, last (as in the
 // ASR leaderboard). Ranks are over the distinct displayed values: ties share a color.
@@ -250,7 +273,6 @@ const listTitle = (list) => (present(listSize(list)) ? `${list} (${sizeText(list
 let ORDER = [];
 const byOrder = (a, b) => ORDER.indexOf(rowName(a)) - ORDER.indexOf(rowName(b)) || rowName(a).localeCompare(rowName(b));
 
-const delta = (row, key) => (row[key + "_cb"] === undefined || row[key + "_cb"] === null || row[key] === null ? null : row[key + "_cb"] - row[key]);
 
 // Lists with at least one run with the list (on the selected test set and models)
 function runLists(all) {
@@ -264,8 +286,25 @@ function tableModels(all) {
 }
 
 // Lists of the faster-whisper hotwords that are cut (at most 223 tokens)
-const CUT_LISTS = { "faster-whisper": { "100": "hotwords cut to 223 tokens (about 60 % of the list reach the model)" } };
+const CUT_LISTS = { "faster-whisper": {
+  "100": "hotwords cut to 223 tokens (about 60 % of the list reach the model)",
+  "pxslu": "hotwords cut to 223 tokens (the first 51 of the 389 names, in alphabetical order, reach the model)",
+} };
 const cutNote = (row, list) => (row && CUT_LISTS[row.backend] || {})[list];
+
+// Runs not done (yet) because the model is too slow with the list, not because the
+// model cannot take it: marked in the empty cells, by backend and list, with the reason
+const TOO_SLOW = {
+  "vibevoice-asr": { lists: ["theriaque"], why: "VibeVoice-ASR: about 0.5 times real time with bdpm (hours per list)" },
+  "nemo": { lists: ["500", "1000", "2000"], why: "NeMo: the boosting tree is rebuilt for each utterance with " +
+    "the per-utterance lists (Parakeet with 500: 30 min on test-other); 500 at alpha 1.0 only" },
+};
+const SLOW_NOTE = "not run (yet) for time, too slow with this list; not a limit of the model";
+function tooSlow(all, name, list) {
+  const row = all.find((r) => rowName(r) === name || r.label === baseLabel(name));
+  const rule = row && TOO_SLOW[row.backend];
+  return rule && rule.lists.includes(list) ? rule.why : null;
+}
 
 // List the leaderboard is ranked on (per test set), by default the main setting
 const DEFAULT_RANK_LISTS = ["pxslu", "global", "100"];
@@ -313,13 +352,15 @@ function overview() {
     // Without list: measured on the terms of the smallest list with a measure
     const firstList = lists.find((l) => present(baselineOf(all, name, l, m.key)));
     const none = firstList ? baselineOf(all, name, firstList, m.key) : null;
+    const noneRow = firstList ? all.find((r) => r.list === firstList && r.label === baseLabel(name)) : null;
     // With each list: only the runs with the list (empty cell otherwise)
     const cells = lists.map((l) => {
       const run = runOf(all, name, l);
       return run && present(run[m.key + "_cb"]) ? { value: run[m.key + "_cb"], before: run[m.key] } : null;
     });
-    return { name, none, cells };
+    return { name, none, noneRow, cells };
   });
+  const slowShown = new Set();
   // Order of the ranking (models without any measure on the ranked list at the end)
   const position = Object.fromEntries(RANKING.entries.map((e, i) => [e.name, i]));
   const levelOf = Object.fromEntries(RANKING.entries.map((e) => [e.name, e.level]));
@@ -340,28 +381,36 @@ function overview() {
     const level = levelOf[x.name];
     html += `<tr class="${previousLevel !== null && level !== previousLevel ? "level-start" : ""}">${nameCell(x.name, styles)}`;
     previousLevel = level;
-    html += `<td class="group-start ${rankClass(x.none, nones, m.higher)}">${fmt(x.none)}</td>`;
+    const noneApprox = isApprox(x.noneRow, m.key);
+    html += `<td class="group-start ${rankClass(x.none, nones, m.higher)}"${noneApprox ? ` title="${APPROX_NOTE}"` : ""}>${noneApprox ? "~" : ""}${fmt(x.none)}</td>`;
     x.cells.forEach((c, i) => {
       if (!c) {
         // Ranked list without run with it: the measure without list, used for the ranking
         const base = i === rankedIndex ? all.find((r) => r.list === ranked && r.label === baseLabel(x.name)) : null;
-        html += base && present(base[m.key]) ? `<td class="group-start fallback" title="No run with this list: measure without list (used for the ranking)">${fmt(base[m.key])}</td>`
-          : `<td class="group-start"></td>`;
+        const slow = tooSlow(all, x.name, lists[i]);
+        if (slow) slowShown.add(slow);
+        const mark = slow ? "<sup>\u2020</sup>" : "";
+        if (base && present(base[m.key])) {
+          html += `<td class="group-start fallback" title="No run with this list${slow ? ` (${esc(`${SLOW_NOTE}. ${slow}`)})` : ""}: value without list (used for the ranking)">${approxMark(base, m.key)}${fmt(base[m.key])}${mark}</td>`;
+        } else {
+          html += slow ? `<td class="group-start none" title="${esc(`${SLOW_NOTE}. ${slow}`)}">${mark}</td>` : `<td class="group-start"></td>`;
+        }
         return;
       }
-      const d = present(c.before) ? c.value - c.before : null;
-      const run = runOf(all, x.name, lists[i]), cut = cutNote(run, lists[i]);
-      html += `<td class="group-start ${rankClass(c.value, columns[i], m.higher)}" title="Without list: ${fmt(c.before)}${cut ? `; ${cut}` : ""}">${fmt(c.value)}${cut ? "*" : ""}<span class="delta ${deltaClass(d, m)}">${d === null ? "" : (d > 0 ? "+" : "") + d.toFixed(1)}</span></td>`;
+      const run = runOf(all, x.name, lists[i]), cut = cutNote(run, lists[i]), approx = isApprox(run, m.key + "_cb");
+      html += `<td class="group-start ${rankClass(c.value, columns[i], m.higher)}" title="Without list: ${approxMark(run, m.key)}${fmt(c.before)}${cut ? `; ${cut}` : ""}${approx ? `; ${APPROX_NOTE}` : ""}">${approx ? "~" : ""}${fmt(c.value)}${cut ? "*" : ""}<span class="delta ${changeClass(m, c.before, c.value)}">${changeText(m, c.before, c.value)}</span></td>`;
     });
     html += "</tr>";
   }
   $("overview").innerHTML = html;
-  $("overview-caption").textContent = `${m.label} without list and with each list given to the model (in parentheses: its number of terms, ` +
-    `per utterance on average for the per utterance lists), with its change from the run without list (measured on the terms of the same list). ` +
-    `"No list": measured on the terms of the smallest list. Empty cell: no run with this list (model without biasing mechanism, or list too long for it). ` +
-    `Ranking on the list "${ranked}" (underlined; italic: no run with this list, measure without list): first by WER, the models whose WER is within ` +
+  $("overview-caption").innerHTML = esc(`${m.label} without list and with each list given to the model (in parentheses: its number of terms, ` +
+    `per utterance on average for the per utterance lists), with its change from the run without list (measured on the terms of the same list` +
+    `${m.log ? "; ratio for RTFx" : ""}). "No list": measured on the terms of the smallest list. Empty cell: no run with this list. ` +
+    `Ranking on the list "${ranked}" (underlined; italic: no run with this list, value without list): first by WER, the models whose WER is within ` +
     `the 95 % confidence interval of the best one form a level (separated by a line), the next level starts from the best of the others; ` +
-    `within a level, by B-WER. * Whisper: hotwords cut to 223 tokens.`;
+    `within a level, by B-WER. * Whisper: hotwords cut to 223 tokens.` +
+    (m.log ? ` ~ RTFx ${APPROX_NOTE}.` : "")) +
+    (slowShown.size ? ` <sup>\u2020</sup> ${esc(`${SLOW_NOTE[0].toUpperCase()}${SLOW_NOTE.slice(1)}. ${[...slowShown].join(". ")}.`)}` : "");
 }
 
 // WER (x) by B-WER (y) on the ranked list; highlighted: the models that no other one
@@ -370,10 +419,12 @@ function scatterPanel(styles) {
   const entries = RANKING.entries.filter((e) => present(e.bwer));
   if (!entries.length) return "";
   const width = 420, height = 280, left = 42, right = 14, top = 12, bottom = 40;
-  const maxX = Math.max(...entries.map((e) => e.wer)) * 1.08, minX = Math.min(...entries.map((e) => e.wer)) * 0.92;
-  const maxY = Math.max(...entries.map((e) => e.bwer)) * 1.08;
-  const x = (v) => left + ((v - minX) / (maxX - minX)) * (width - left - right);
-  const y = (v) => top + (1 - v / maxY) * (height - top - bottom);
+  const lower = { higher: false };
+  const maxX = axisMax(entries.map((e) => e.wer), lower) * 1.08, minX = Math.min(...entries.map((e) => e.wer)) * 0.92;
+  const maxY = axisMax(entries.map((e) => e.bwer), lower) * 1.08;
+  // Outliers at the edge of the plot (arrows)
+  const x = (v) => left + ((Math.min(v, maxX) - minX) / (maxX - minX)) * (width - left - right);
+  const y = (v) => top + (1 - Math.min(v, maxY) / maxY) * (height - top - bottom);
   const front = entries.filter((e) => !entries.some((o) => o !== e && o.wer <= e.wer && o.bwer <= e.bwer && (o.wer < e.wer || o.bwer < e.bwer)))
     .sort((a, b) => a.wer - b.wer);
   let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="WER by B-WER of each model">`;
@@ -383,8 +434,12 @@ function scatterPanel(styles) {
   svg += `<text class="tick" x="${(left + width - right) / 2}" y="${height - 6}" text-anchor="middle">WER</text>`;
   svg += `<text class="tick" x="12" y="${(top + height - bottom) / 2}" text-anchor="middle" transform="rotate(-90 12 ${(top + height - bottom) / 2})">B-WER</text>`;
   svg += `<path d="${front.map((e, i) => `${i ? "L" : "M"}${x(e.wer).toFixed(1)},${y(e.bwer).toFixed(1)}`).join("")}" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  const outs = { up: 0, right: 0 };
   for (const e of entries) {
     const s = styles[e.name] || { color: "var(--muted)" }, onFront = front.includes(e);
+    const text = `${e.name}${e.fallback ? " (no list)" : ""}: WER ${fmt(e.wer)}, B-WER ${fmt(e.bwer)}, level ${e.level}`;
+    if (e.bwer > maxY) { svg += outArrow(x(e.wer), top, "up", e.bwer, s.color, text, outs.up++); continue; }
+    if (e.wer > maxX) { svg += outArrow(width - right, y(e.bwer), "right", e.wer, s.color, text, outs.right++); continue; }
     svg += `<circle cx="${x(e.wer)}" cy="${y(e.bwer)}" r="${onFront ? 6.5 : 5}" fill="${s.color}" stroke="${e.fallback ? "var(--muted)" : "var(--surface)"}" stroke-width="2" ${tip(`${e.name}${e.fallback ? " (no list)" : ""}: WER ${fmt(e.wer)}, B-WER ${fmt(e.bwer)}, level ${e.level}`)}/>`;
   }
   svg += "</svg>";
@@ -395,10 +450,18 @@ function panel(list, listRows, m) {
   const width = 560, left = 250, right = 16, rowH = 24, top = 8, axisH = 26;
   const sorted = [...listRows].sort(byOrder);
   const values = sorted.flatMap((r) => [r[m.key], r[m.key + "_cb"]]).filter((v) => v !== null && v !== undefined);
-  const max = m.unbounded ? Math.max(1, ...values) * 1.05 : 100;
-  const x = (v) => left + (v / max) * (width - left - right);
   const height = top + sorted.length * rowH + axisH;
-  const ticks = m.unbounded ? [0, max / 4, max / 2, (3 * max) / 4].map((t) => +t.toPrecision(2)) : [0, 25, 50, 75, 100];
+  let x, ticks, max = Infinity;
+  if (m.log) {
+    const { lo, hi, ticks: logTicks } = logRange(values);
+    x = (v) => left + ((Math.log10(v) - lo) / (hi - lo)) * (width - left - right);
+    ticks = logTicks;
+  } else {
+    // Bounded measures: 0 to 100 (beyond: arrow); else without the outliers (axisMax)
+    max = m.unbounded ? Math.max(1, axisMax(values, m)) * 1.05 : 100;
+    x = (v) => left + (Math.min(v, max) / max) * (width - left - right);
+    ticks = m.unbounded ? [0, max / 4, max / 2, (3 * max) / 4].map((t) => +t.toPrecision(2)) : [0, 25, 50, 75, 100];
+  }
   let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(m.label)} without and with the list ${esc(list)}">`;
   for (const t of ticks) {
     svg += `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="${top}" y2="${top + sorted.length * rowH}"/>`;
@@ -408,11 +471,20 @@ function panel(list, listRows, m) {
     const y = top + i * rowH + rowH / 2, a = r[m.key], b = r[m.key + "_cb"];
     svg += `<text class="name" x="${left - 8}" y="${y + 4}" text-anchor="end">${esc(rowName(r))}</text>`;
     if (b !== undefined && b !== null && a !== null) {
-      const cls = deltaClass(b - a, m);
+      const cls = changeClass(m, a, b);
       svg += `<line x1="${x(a)}" x2="${x(b)}" y1="${y}" y2="${y}" stroke="var(--${cls || "base"})" stroke-width="3"/>`;
     }
-    if (a !== null) svg += `<circle cx="${x(a)}" cy="${y}" r="4.5" fill="var(--base)"><title>${esc(rowName(r))}, without list: ${fmt(a)}</title></circle>`;
-    if (b !== undefined && b !== null) svg += `<circle cx="${x(b)}" cy="${y}" r="5.5" fill="var(--accent)"><title>${esc(rowName(r))}, with ${esc(list)}: ${fmt(b)} (without: ${fmt(a)})</title></circle>`;
+    const edge = width - right;
+    const bothOut = a !== null && a > max && present(b) && b > max;
+    if (a !== null && !bothOut) {
+      const text = `${rowName(r)}, without list: ${fmt(a)}`;
+      svg += a > max ? outArrow(edge, y, "right", a, "var(--base)", text) : `<circle cx="${x(a)}" cy="${y}" r="4.5" fill="var(--base)"><title>${esc(text)}</title></circle>`;
+    }
+    if (b !== undefined && b !== null) {
+      const text = `${rowName(r)}, with ${list}: ${fmt(b)} (without: ${fmt(a)})`;
+      // Both out of the scale: one arrow, "without \u2192 with"
+      svg += b > max ? outArrow(edge, y, "right", bothOut ? `${fmt(a)} \u2192 ${fmt(b)}` : b, "var(--accent)", text) : `<circle cx="${x(b)}" cy="${y}" r="5.5" fill="var(--accent)"><title>${esc(text)}</title></circle>`;
+    }
   });
   svg += "</svg>";
   const size = listSize(list);
@@ -439,8 +511,8 @@ function details() {
   for (const r of listRows) {
     html += `<tr>${nameCell(rowName(r), styles)}`;
     for (const m of METRICS) {
-      const d = delta(r, m.key);
-      html += `<td class="group-start ${rankClass(r[m.key], column(m.key), m.higher)}">${fmt(r[m.key])}</td><td class="${rankClass(r[m.key + "_cb"], column(m.key + "_cb"), m.higher)}">${fmt(r[m.key + "_cb"])}${d === null ? "" : `<span class="delta ${deltaClass(d, m)}">${(d > 0 ? "+" : "") + d.toFixed(1)}</span>`}</td>`;
+      const a = r[m.key], b = r[m.key + "_cb"], change = changeText(m, a, b);
+      html += `<td class="group-start ${rankClass(a, column(m.key), m.higher)}">${approxMark(r, m.key)}${fmt(a)}</td><td class="${rankClass(b, column(m.key + "_cb"), m.higher)}">${present(b) ? approxMark(r, m.key + "_cb") : ""}${fmt(b)}${change ? `<span class="delta ${changeClass(m, a, b)}">${change}</span>` : ""}</td>`;
     }
     html += "</tr>";
   }
@@ -460,12 +532,43 @@ function baselineOf(all, name, list, key) {
   const row = all.find((r) => r.list === list && r.label === baseLabel(name));
   return row ? row[key] : null;
 }
+// Log axis: powers of ten around the (positive) values, and their ticks
+function logRange(values) {
+  const positive = values.filter((v) => v > 0);
+  const lo = positive.length ? Math.floor(Math.log10(Math.min(...positive))) : 0;
+  const hi = Math.max(lo + 1, positive.length ? Math.ceil(Math.log10(Math.max(...positive))) : 1);
+  return { lo, hi, ticks: Array.from({ length: hi - lo + 1 }, (_, i) => +(10 ** (lo + i)).toPrecision(1)) };
+}
 // Round step of an axis (1, 2, 2.5 or 5 times a power of ten)
 function niceStep(raw) {
   const p = 10 ** Math.floor(Math.log10(raw)), f = raw / p;
   return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
 }
 const tip = (text) => `data-tip="${esc(text)}"`;
+// Upper bound of a linear axis without the outliers: for the measures where lower is
+// better, the values above Q3 + 3 IQR and far from the others (more than 1.5 times the
+// next value kept; e.g. B-WER of 1000 % when a model recites the list) are left out of
+// the scale and drawn as arrows at the edge (outArrow)
+function axisMax(values, m) {
+  const v = values.filter(present).sort((a, b) => a - b);
+  if (!v.length) return 0;
+  if (m.higher || v.length < 4) return v[v.length - 1];
+  const q = (p) => { const i = (v.length - 1) * p, lo = Math.floor(i); return v[lo] + (v[Math.ceil(i)] - v[lo]) * (i - lo); };
+  const fence = q(0.75) + 3 * (q(0.75) - q(0.25));
+  let max = Math.max(...v.filter((x) => x <= fence));
+  for (const x of v) if (x > max && x <= 1.5 * max) max = x;
+  return max;
+}
+// Value beyond the axis: arrow at the edge (tip at px, py), pointing "up" or "right",
+// with the value (or a text) written next to it; k: rank among the arrows at the same place
+function outArrow(px, py, dir, value, color, text, k = 0) {
+  const up = dir === "up";
+  const pts = up ? [[px - 5, py + 9], [px + 5, py + 9], [px, py]] : [[px - 9, py - 5], [px - 9, py + 5], [px, py]];
+  const atEnd = !up || px > 60;
+  const tx = up ? (atEnd ? px - 8 : px + 8) : px - 12, ty = up ? py + 9 + 11 * k : py - 7 - 11 * k;
+  return `<polygon points="${pts.map((pt) => pt.map((c) => c.toFixed(1)).join(",")).join(" ")}" fill="${color}" ${tip(text)}/>` +
+    `<text class="tick" x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="${atEnd ? "end" : "start"}">${typeof value === "number" ? fmt(value) : esc(value)}</text>`;
+}
 
 // Model families: variants of a model (Whisper sizes and decodings, boosting weights)
 // share a color, with a lighter shade per variant. Colors follow the family, in a fixed
@@ -511,8 +614,8 @@ function modelStyles() {
 }
 const nameCell = (name, styles) => `<td style="color: ${(styles[name] || {}).text || "inherit"}">${esc(name)}</td>`;
 
-// One panel per measure (F1, B-WER, WER), one line per model
-const LINE_METRICS = ["f1", "b_wer", "wer"];
+// WER by B-WER, then one panel per measure (WER, B-WER, F1, RTFx), one line per model
+const LINE_METRICS = ["wer", "b_wer", "f1", "rtfx"];
 function lines() {
   const all = rows(), lists = chartLists(), styles = modelStyles();
   const models = [...new Set(all.map(rowName))].sort((a, b) => ORDER.indexOf(a) - ORDER.indexOf(b));
@@ -524,14 +627,25 @@ function lines() {
   const width = 420, height = 280, left = 38, right = 14, top = 12, bottom = 46, inset = 22;
   const x = (i) => left + inset + (i * (width - left - right - 2 * inset)) / Math.max(1, xs.length - 1);
   const path = (pts) => pts.map((p, i) => (p === null ? "" : `${pts[i - 1] == null ? "M" : "L"}${p[0].toFixed(1)},${p[1].toFixed(1)}`)).join("");
-  $("lines").innerHTML = LINE_METRICS.map((key) => {
+  $("lines").innerHTML = scatterPanel(styles) + LINE_METRICS.map((key) => {
     const m = METRICS.find((mm) => mm.key === key);
     const values = models.flatMap((n) => [...series(n, key), ...lists.map((l) => (runOf(all, n, `${l}_upper`) || {})[key + "_cb"])]).filter(present);
-    const max = Math.max(10, ...values) * 1.05;
-    const step = niceStep(max / 4);
-    const y = (v) => top + (1 - v / max) * (height - top - bottom);
+    let y, ticks, max = Infinity;
+    if (m.log) {
+      const range = logRange(values);
+      y = (v) => top + (1 - (Math.log10(v) - range.lo) / (range.hi - range.lo)) * (height - top - bottom);
+      ticks = range.ticks;
+    } else {
+      max = Math.max(10, axisMax(values, m)) * 1.05;
+      const step = niceStep(max / 4);
+      y = (v) => top + (1 - Math.min(v, max) / max) * (height - top - bottom);
+      ticks = Array.from({ length: Math.floor(max / step) + 1 }, (_, i) => i * step);
+    }
+    // Values out of the scale: arrows at the top, stacked per list
+    const outs = {};
+    const point = (cx, v, i, color, text, circle) => (v > max ? outArrow(cx, top, "up", v, color, text, (outs[i] = (outs[i] || 0) + 1) - 1) : circle);
     let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(m.label)} of each model by list">`;
-    for (let v = 0; v <= max; v += step) svg += `<line class="grid" x1="${left}" x2="${width - right}" y1="${y(v)}" y2="${y(v)}"/><text class="tick" x="${left - 5}" y="${y(v) + 4}" text-anchor="end">${+v.toPrecision(6)}</text>`;
+    for (const v of ticks) svg += `<line class="grid" x1="${left}" x2="${width - right}" y1="${y(v)}" y2="${y(v)}"/><text class="tick" x="${left - 5}" y="${y(v) + 4}" text-anchor="end">${+v.toPrecision(6)}</text>`;
     xs.forEach((l, i) => {
       svg += `<text class="tick" x="${x(i)}" y="${height - bottom + 16}" text-anchor="middle">${esc(l)}</text>`;
       if (i) svg += `<text class="tick" x="${x(i)}" y="${height - bottom + 30}" text-anchor="middle">(${sizeText(listSize(l))})</text>`;
@@ -544,16 +658,19 @@ function lines() {
         if (!present(up)) return;
         const xu = x(i + 1) + 9;
         if (present(vals[i + 1])) svg += `<line x1="${x(i + 1)}" x2="${xu}" y1="${y(vals[i + 1])}" y2="${y(up)}" stroke="${s.color}" stroke-width="1.5" stroke-dasharray="2 2"/>`;
-        svg += `<circle cx="${xu}" cy="${y(up)}" r="4" fill="var(--surface)" stroke="${s.color}" stroke-width="2" ${tip(`${name}, with ${l} in capitals: ${m.label} ${fmt(up)}`)}/>`;
+        const text = `${name}, with ${l} in capitals: ${m.label} ${fmt(up)}`;
+        svg += point(xu, up, i + 1, s.color, text, `<circle cx="${xu}" cy="${y(up)}" r="4" fill="var(--surface)" stroke="${s.color}" stroke-width="2" ${tip(text)}/>`);
       });
       svg += `<g><path d="${path(vals.map((v, i) => (present(v) ? [x(i), y(v)] : null)))}" fill="none" stroke="${s.color}" stroke-width="2"/>`;
       vals.forEach((v, i) => {
-        if (present(v)) svg += `<circle cx="${x(i)}" cy="${y(v)}" r="4.5" fill="${s.color}" stroke="var(--surface)" stroke-width="2" ${tip(`${name}, ${xs[i] === "No list" ? "no list" : `with ${xs[i]}`}: ${m.label} ${fmt(v)}`)}/>`;
+        if (!present(v)) return;
+        const text = `${name}, ${xs[i] === "No list" ? "no list" : `with ${xs[i]}`}: ${m.label} ${fmt(v)}`;
+        svg += point(x(i), v, i, s.color, text, `<circle cx="${x(i)}" cy="${y(v)}" r="4.5" fill="${s.color}" stroke="var(--surface)" stroke-width="2" ${tip(text)}/>`);
       });
       svg += "</g>";
     }
-    return `<div class="panel"><h3>${esc(m.label)} <span class="muted" style="font-weight:400">(${m.higher ? "higher" : "lower"} is better)</span></h3>${svg}</svg></div>`;
-  }).join("") + scatterPanel(styles);
+    return `<div class="panel"><h3>${esc(m.label)} <span class="muted" style="font-weight:400">(${m.higher ? "higher" : "lower"} is better${m.log ? ", log scale" : ""})</span></h3>${svg}</svg></div>`;
+  }).join("");
   $("lines-legend").innerHTML = `<span><svg width="30" height="12" style="vertical-align:-1px"><circle cx="6" cy="6" r="4" fill="var(--muted)"/><circle cx="22" cy="6" r="3.5" fill="none" stroke="var(--muted)" stroke-width="2"/></svg>List in its usual case / in capitals</span>` + models.map((name) => `<span style="color: ${styles[name].text}"><span class="swatch line" style="border-top-color: ${styles[name].color}"></span>${esc(name)}</span>`).join("");
 }
 

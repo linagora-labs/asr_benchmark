@@ -31,47 +31,193 @@ Models without a mechanism are run as baselines (scored on the same lists).
 
 ## Datasets
 
-| Dataset | Lang. | Lists | Source |
+Three test sets, chosen to cover different settings: a French domain dictionary
+(PxSLU), the standard English protocol with lists of controlled size (LibriSpeech),
+and real names in conversational English with realistic per-call lists (Contextual
+Earnings-22). Figures of the test splits as run (after the cleaning described below).
+
+| | PxSLU test | LibriSpeech test-other | Contextual Earnings-22 test |
 |---|---|---|---|
-| PxSLU test / dev (1.38 h / 0.57 h) | fr | global: `pxslu` (the 389 drug names of the corpus: the targets), `bdpm`, `vidal`, `theriaque` (targets + drug dictionaries); per utterance: `pxslu25` (25 drug names of `pxslu`: the ones spoken in the utterance plus others drawn at random; the size of the per call `global` lists of Contextual Earnings-22, 25 terms on average, and short enough for Whisper's 223-token hotwords); `pxslu_upper`, `pxslu25_upper`: the same lists in capitals. The manifests also hold per utterance `oracle` lists (only the targets spoken in the utterance) and `oracle_upper`, not run: not a realistic setting (the list would have to know what is said) | Kocabiyikoglu et al., LREC 2022 (arXiv:2207.08292), CC BY 4.0: spoken drug prescriptions |
-| LibriSpeech test-other (test-clean left out: its "clean" speakers leave few errors on the rare words to correct) | en | per utterance: rare words of the reference + N distractors, N in {100, 500, 1000, 2000} | Le et al., Interspeech 2021 (arXiv:2104.02194), `facebookresearch/fbai-speech` (`is21_deep_bias`, MIT) |
-| Contextual Earnings-22 test / dev (test: 771 clips, 3.2 h) | en | per clip: `global` (keywords of the whole call, ~25 per clip, ~7 % of them spoken in the clip); the dataset also has `local` lists (only the keywords spoken in the clip: the targets), not run: an oracle setting, as the PxSLU `oracle` lists | Durmus et al. 2026 (arXiv:2604.07354), `argmaxinc/contextual-earnings22` (licence of Earnings-22) |
+| Language | French | English | English |
+| Speech | dictated drug prescriptions, spontaneous | read audiobooks | earnings calls: conversational, many accents |
+| Size | 556 utterances, 1.38 h (mean 9 s, max 30 s) | 2,939 utterances, 5.34 h (mean 6.5 s, max 35 s) | 771 clips of 15 s from 54 calls, 3.21 h |
+| Terms to recognize (targets) | drug names: 329 occurrences in 323 utterances, 188 distinct | rare words: 5,350 occurrences in 2,141 utterances, 3,838 distinct | names of persons, companies, products: 1,324 occurrences in 729 clips, 651 distinct |
+| Lists run | global: `pxslu` (389 terms), `vidal` (2,753), `bdpm` (4,050), `theriaque` (8,851); per utterance: `pxslu25` (25) | per utterance: `100`, `500`, `1000`, `2000` (rare words of the utterance + N distractors) | per clip: `global` (keywords of the whole call, 25 on average, 1 to 46) |
+| Distractors (list terms not spoken) | other drug names (real dictionaries) | rare words drawn at random | other names of the same call |
+| Licence | CC BY 4.0 | audio and text CC BY 4.0; lists MIT | transcripts and lists CC BY-SA 4.0 (licence of Earnings-22); audio licence not stated |
+| Reference | Kocabiyikoglu et al., LREC 2022 (arXiv:2207.08292) | Panayotov et al., ICASSP 2015; lists: Le et al., Interspeech 2021 (arXiv:2104.02194) | Durmus et al. 2026 (arXiv:2604.07354) |
 
-### PxSLU
+The dev splits (PxSLU dev: 279 utterances, 0.57 h; Contextual Earnings-22 dev: 100
+clips, 0.42 h) serve for tuning (e.g. the NeMo boosting weight). LibriSpeech
+test-clean is prepared but left out of the runs: its speakers leave few errors on the
+rare words to correct.
 
-- 1,981 recordings of drug prescriptions (doctors, experts, non-experts). The
-  official split files hold line numbers of the raw corpus (`raw/`); test =
-  doctors only.
-- The dataset's cleaning script (`scripts/clean_PxSLU.py`) replaces substrings in
-  sequence, which creates wrong words ("alepsal" becomes "alalepsal", "amikacine"
-  becomes "amikacinee"). `prepare_pxslu.py` applies the same spelling corrections
-  as whole words in one pass, removes the same utterances (unidentifiable drug
-  names) and the truncated words ("qu/").
-- Drug lists: `pxslu` comes from the curated list of the 2024 LINAGORA internship
-  on drug name recognition, made consistent with the corrected transcripts. `bdpm`
-  is built from the French public drug database (Base de données publique des
-  médicaments, ANSM): brand names and active substances, homeopathic and herbal
-  registrations left out. `vidal` and `theriaque` are larger dictionaries of the
-  internship.
-- Case: the PxSLU transcripts are in lower case, while the models write case.
-  Drug names are given their usual case (brands capitalized, each part of a
-  hyphenated name except Un-alfa; active substances in lower case; acronyms in
-  capitals) and one spelling per drug, from a reviewed table
-  (`lists/pxslu/drugs_pxslu_case.tsv`); the transcripts are written in sentence
-  case with these forms. Names of the larger lists that are not targets are cased
-  automatically (lower case for active substances of the BDPM, else capitalized).
-- Licences: `drugs_bdpm.txt` is derived from the BDPM (source: ANSM, files of
-  2026-11-18), under the Licence Ouverte / Open Licence 2.0. The Vidal and
-  Thériaque lists are not in git: the terms of use of these databases forbid
-  extracting and redistributing their content.
+In every dataset, all the targets are in the lists (the lists are "targets +
+distractors"): the benchmark measures how well a model uses a list that contains the
+right terms, not what happens when a spoken term is missing from the list.
+
+### PxSLU (French, drug names)
+
+**What it is.** A corpus of spoken drug prescriptions in French: 1,981 recordings
+(4.4 h) of 55 participants (doctors, other medical experts such as pharmacists or
+biologists, and non-experts) saying drug prescriptions: drug, dosage, frequency,
+duration ("Bactrim forte hum 1 comprimé le matin et 2 comprimés le soir pendant euh
+14 jours"), sometimes only a part of it ("Nicopatch", "3 mois"). Recorded "in wild
+conditions" according to the corpus documentation (16 kHz mono WAV), with
+hesitations. Manual transcripts (lower case, no punctuation) and
+entity labels (drug, dose, frequency, ...). The official test split is the doctors
+only (570 recordings); dev is a part of the experts and non-experts.
+
+**Preparation** (`prepare_pxslu.py`): the drug name spellings are corrected with the
+corrections shipped with the corpus, the utterances with unidentifiable drug names
+are removed (as in the cleaned version of the corpus: 556 test utterances left), and
+so are the truncated words ("qu/"). The transcripts are written in sentence case,
+with the drug names in their usual case and one spelling per drug (brands
+capitalized, active substances in lower case, acronyms in capitals; reviewed table
+`lists/pxslu/drugs_pxslu_case.tsv`).
+
+**Hotwords.** Drug names (brands and active substances), in global lists of growing
+size, all containing the 389 drug names of the corpus:
+- `pxslu`: the 389 drug names of the corpus (all splits), curated and made
+  consistent with the corrected transcripts. About half of them are spoken in the
+  test split. It plays the role of a small domain list given to every request.
+- `bdpm` (4,050 terms): brand names and active substances of the French public drug
+  database (Base de données publique des médicaments, ANSM; homeopathic and herbal
+  products left out), plus the targets missing from it. Licence Ouverte 2.0.
+- `vidal` (2,753) and `theriaque` (8,851): drug names of the Vidal and Thériaque
+  drug databases, plus the targets. Not in git: the terms of use of these databases
+  forbid redistributing their content, so runs with them can only be reproduced
+  by someone who has these lists.
+- `pxslu25` (per utterance): 25 names of `pxslu`, the ones spoken in the utterance
+  plus others drawn at random. It has the size of the per-call lists of Contextual
+  Earnings-22, and fits in Whisper's 223-token hotwords.
+- `pxslu_upper`, `pxslu25_upper`: the same lists in capitals (does a model follow
+  the case of the list?).
+- The manifests also hold per-utterance `oracle` lists (only the targets spoken in
+  the utterance), not run: not a realistic setting (the list would have to know
+  what is said).
+
+**Advantages.** The only public French benchmark of this kind that we know of.
+Real domain vocabulary that ASR models get wrong (F1 of the drug names without list:
+32 to 55 depending on the model). Real dictionaries as lists, from a few hundred to
+almost 9,000 terms: the "domain dictionary" use case. Short utterances, so every
+model can process them.
+
+**Drawbacks.** Small: 329 target occurrences in the test split, so differences of a
+few F1 points are within the noise (see the confidence intervals of the page).
+One kind of term only (drug names) and one speaking style (dictation). The
+transcripts were made in lower case: the case of the references is reconstructed
+(drug names only), so the `cased` measures concern the drug names, not the rest of
+the sentence. Two of the four global lists are not redistributable.
+
+### LibriSpeech test-other (English, rare words)
+
+**What it is.** Read English speech from public domain audiobooks (LibriVox), 16 kHz
+FLAC. "test-other" holds the speakers that were harder for the recognizer used to
+build the corpus (higher WER than "test-clean"). Reference transcripts in upper
+case without punctuation.
+
+**Hotwords.** The biasing lists of Le et al. (2021), released by Meta
+(`facebookresearch/fbai-speech`, folder `is21_deep_bias`), the de facto standard of
+the literature: one list per utterance, made of the rare words of its reference
+(words outside the 5,000 most frequent words of the LibriSpeech training data,
+audio transcripts and text-only corpus) plus N distractors drawn at random from the
+other rare words, N in {100, 500, 1000, 2000}. Rare words are single words, in lower
+case: names ("darcy", "cain") but also uncommon words ("balsam", "squalid") and
+inflections of common ones ("sings", "grinned", "ambitions").
+
+**Advantages.** Results comparable with the published ones (B-WER, U-WER, with the
+scorer of the paper). The largest test set here (5,350 target occurrences: narrow
+confidence intervals). The list size is the only thing that changes between 100 and
+2,000 terms, which isolates its effect. Clean read speech: the errors come from the
+words, not from the acoustics.
+
+**Drawbacks.** Read speech of old books, far from production audio. Many rare words
+are easy for modern models (F1 86 to 94 without list), so there is little to gain.
+The distractors are random rare words, unrelated to the topic, easier to reject than
+real ones. The lists are built from the reference (each list contains exactly the
+rare words spoken, which no real system knows) and change with every utterance:
+this costs the systems that compile the list (NeMo rebuilds its boosting tree for
+each utterance, see "List sizes"). Too long for Whisper's hotwords.
+
+### Contextual Earnings-22 (English, names in conversational speech)
+
+**What it is.** Built by Argmax from Earnings-22 (Rev): 125 English earnings calls
+(119 h) of companies from all over the world, released as a benchmark of accented
+speech. Argmax selected 55 calls, found the names of persons, companies and products
+in their transcripts (named entity extraction with an LLM, then manual review of
+each candidate, of the transcript and of the alignment), and cut 15-second clips
+centered on mentions of these names. The released audio is 16 kHz WAV (in parquet
+files). Test: 772 clips (771 used: one flagged by the dataset is left out), dev:
+100.
+
+**Hotwords.** Two lists per clip:
+- `global` (run): the keywords of the whole call (25 on average, 1 to 46), of which
+  about 7 % are spoken in the clip. It is what a system could get from the context
+  of a meeting (participants, companies, products), and its distractors are
+  realistic: other names of the same call.
+- `local`: only the keywords spoken in the clip (the targets). Not run: an oracle
+  setting, as the PxSLU `oracle` lists.
+
+**Advantages.** The closest to production use: spontaneous conversational speech,
+many accents, real names (the main use of hotwords, F1 65 to 81 without list),
+realistic distractors, per-call lists. Short clips and short lists: every model can take them, Whisper
+included.
+
+**Drawbacks.** Short lists only (at most 46 terms): it does not test long lists.
+Almost every clip contains a keyword (729 of 771), so the false alarms are measured
+on keyword-dense audio and the gain is larger than on a whole call. The clips are
+fixed 15-second windows that start and end in the middle of sentences. The
+references are verbatim (hesitations "uh", word fragments "th-"), which weighs on the
+WER of the models that leave them out. The keyword
+inventories come from the transcripts (not from documents available before the
+call). The figures of the paper (760 clips, 630 test) and of the released dataset
+(872 clips, 772 test) differ, and the dataset card says the annotation is still in
+progress. The licence of the audio is not stated by Rev (only the transcripts are
+under CC BY-SA 4.0).
+
+### Earnings-21 (English, not run yet)
+
+**What it is.** A Rev corpus of 44 full earnings calls of 2020 (39.3 h; 18 to 96
+minutes each), 5 calls in each of nine sectors (4 for conglomerates), MP3 files at
+11 to 44 kHz. The transcripts (`.nlp` files) have speakers, punctuation, case and
+entity tags (24 classes: persons, organizations, products, money, dates, ...), but no
+word timestamps; speaker turns are given with times (RTTM files). Rev also defines
+Eval-10, a representative 10-hour subset. Transcripts under CC BY-SA 4.0; the
+licence of the audio is not stated.
+
+**Hotwords.** Two sources:
+- Rev's bias lists (Fox and Delworth, Interspeech 2022, arXiv:2209.01250), global for
+  the whole corpus, in capitals: `oracle_list.txt` (1,013 words and phrases of the
+  reference transcripts: names of persons and companies, acronyms, products) and
+  `distractor_list.txt` (1,782: the same plus Fortune 500 companies and famous CEOs
+  not in the calls).
+- ConEC (Huang et al., LREC-COLING 2024, `github.com/huangruizhe/ConEC`): for each
+  call, the words of its presentation slides and press release and the names of the
+  participants, i.e. context available before the call; spoken terms are not
+  guaranteed to be in these lists. ConEC also corrects the transcripts and adds word
+  timestamps from an automatic alignment. No licence stated.
+
+**Advantages.** Whole calls, as in production (long-form transcription). With ConEC,
+the most realistic lists: built from real documents, with terms that are not spoken
+and spoken names that are missing, the only setting here where the list is not
+"targets + distractors". Rev's lists give long global lists (1,000 to 1,800 terms)
+of real names, between the PxSLU dictionaries and the random LibriSpeech
+distractors.
+
+**Drawbacks.** Long recordings: most of the models here (LLM-based, limited to a few
+minutes of audio) need the calls cut into segments, which needs word timestamps
+(those of ConEC or a new alignment) and segmented references. Costly: 39 h per run
+(Eval-10 or a few calls would be needed), and the long lists slow down the
+prompt-based models a lot (see the RTFx in the page). Rev's lists are global to the
+corpus (not per call) and contain only terms found in the references. Same domain as
+Contextual Earnings-22 (earnings calls).
 
 ### Other datasets considered
 
-- Earnings-21 ships two global lists (`oracle_list.txt`: entities of the
-  references; `distractor_list.txt`: the same plus Fortune 500 companies and CEOs);
-  Contextual Earnings-22 covers the same setting with per-clip lists.
-- Plain Earnings-22 and Common Voice have no released lists (the Common Voice NER
-  lists of Thorbecke et al. 2024 were not released).
+- Plain Earnings-22 and Common Voice have no released lists (the Common Voice named
+  entity lists of Thorbecke et al. 2024 were not released).
+- More public benchmarks are listed in "State of the art" below.
 
 ## Models and mechanisms
 
@@ -95,13 +241,23 @@ it: they are run through the chat endpoint.
 List sizes (tokens): PxSLU `pxslu25` at most ~130 (~160 in capitals), `pxslu` ~1,700 (Whisper tokenizer), `bdpm` ~17.8k,
 `vidal` ~12k, `theriaque` ~38k; LibriSpeech N=100 ~370, N=2000 ~7.2k; Contextual
 Earnings-22 at most 161. The configs leave out the lists a model cannot take
-(Whisper: `pxslu25`, the Contextual Earnings-22 lists, and the LibriSpeech N=100
-lists given anyway and cut to 223 tokens, ~60 % of each list, unrelated to the targets
-as the lists are sorted alphabetically; Granite: no list above 16k tokens).
+(Whisper: `pxslu25`, the Contextual Earnings-22 lists, and two lists given anyway and
+cut to their first 223 tokens, unrelated to the targets as the lists are sorted
+alphabetically: the LibriSpeech N=100 lists, ~60 % of each, and `pxslu`, its first 51
+names of 389; Granite: no list above 16k tokens). Left out for time: NeMo with the
+LibriSpeech N=1000 and 2000 lists (the boosting tree is rebuilt for each utterance:
+2.8 h for Parakeet with N=1000 on test-clean and test-other), and N=500 at alpha 2.0.
+VibeVoice-ASR with the longest lists (`theriaque`, LibriSpeech N >= 500) runs last:
+it processes them at about real time or slower.
 
 ## Preparation
 
-Where the audio is (e.g. on the DGX machines, under `/home/data/audio`):
+The manifests (`manifests/*.jsonl`) and the redistributable PxSLU lists
+(`lists/pxslu/`) are in git: to run the benchmark, only the audio is needed (paths
+relative to `AUDIO_FOLDER`), plus the LibriSpeech lists (230 MB, not in git: run
+`prepare_librispeech.py`). The runs with the `vidal` and `theriaque` lists need these
+private lists. To rebuild everything, where the audio is (e.g. on the DGX machines,
+under `/home/data/audio`):
 
 ```bash
 # PxSLU (BDPM files: https://base-donnees-publique.medicaments.gouv.fr/telechargement)
@@ -109,7 +265,7 @@ mkdir bdpm && for f in CIS_bdpm.txt CIS_COMPO_bdpm.txt; do
     curl -L -o bdpm/$f https://base-donnees-publique.medicaments.gouv.fr/download/file/$f; done
 uv run python tools/contextual_biasing/prepare_pxslu.py \
     --pxslu_dir /home/data/audio/raw/transcript/fr/PxSLU \
-    --drug_lists_dir <Medical-ASR-adaptation-techniques>/phonetisation_transcription/dictionary/drug_list \
+    --drug_lists_dir <folder of drug_PxSLU.txt, drug_vidal.txt, drug_theriaque.txt> \
     --bdpm_dir bdpm
 # LibriSpeech
 git clone --depth 1 https://github.com/facebookresearch/fbai-speech /tmp/fbai-speech
@@ -123,8 +279,7 @@ uv run python tools/contextual_biasing/prepare_contextual_earnings22.py \
     --dataset_dir /home/data/audio/raw/transcript/en/ContextualEarnings22
 ```
 
-They write `manifests/*.jsonl` and `lists/` in this folder. The LibriSpeech lists
-(`lists/librispeech/*.json`, 230 MB) are not in git: run the script to get them.
+They write `manifests/*.jsonl` and `lists/` in this folder.
 
 ## Running
 
@@ -132,17 +287,25 @@ They write `manifests/*.jsonl` and `lists/` in this folder. The LibriSpeech list
 AUDIO_FOLDER=/home/data/audio uv run python benchmarker.py benchmarks/contextual_biasing/config_fr.yaml
 uv run python tools/contextual_biasing/report.py benchmarks/contextual_biasing/results_fr
 uv run python tools/contextual_biasing/report.py benchmarks/contextual_biasing/results_fr --mode cased
+uv run python tools/contextual_biasing/timings_from_logs.py logs/*.log \
+    --results benchmarks/contextual_biasing/results_fr benchmarks/contextual_biasing/results_en
 uv run python tools/contextual_biasing/build_page.py --output benchmarks/contextual_biasing/page \
     --results fr=benchmarks/contextual_biasing/results_fr en=benchmarks/contextual_biasing/results_en
 ```
 
+Conclusions (which model for which language and list length): [REPORT.md](REPORT.md).
+
 `report.py` prints, per dataset and list, the measures of each model without list,
 with the list, and the difference (optionally as CSV). `build_page.py` writes the same
 measures as an HTML page (`page/index.html`, a single file): leaderboard of a measure
-for each model and list, plots of F1, B-WER and WER by list size and of WER by B-WER,
-charts of each list without and with it, and all the measures of one list; both text
-normalizations, and a selection of the models shown (NeMo runs at alpha 1.0 and 2.0;
-the other weights of the tuning on PxSLU dev are left out, `--exclude_settings`).
+for each model and list, plots of WER by B-WER and of WER, B-WER, F1 and RTFx by list
+size, charts of each list without and with it, and all the measures of one list; both
+text normalizations, and a selection of the models shown (NeMo runs at alpha 1.0 and
+2.0; the other weights of the tuning on PxSLU dev are left out, `--exclude_settings`;
+the Parakeet run with the LibriSpeech N=1000 lists, the only NeMo run with them, is
+left out too, `--exclude_runs`). An empty cell of the leaderboard means no run with this
+list; it is marked with a dagger when the run was left out only because the model is
+too slow with the list (`TOO_SLOW` in `template.html`).
 
 Ranking of the leaderboard, on one list ("Rank on"; by default `pxslu`, Contextual
 Earnings-22 `global`, LibriSpeech `100`): each model with this list, or without list
@@ -188,7 +351,7 @@ terms only):
 - `precision`, `recall`, `f1` of the target terms: for each term and utterance,
   tp = min(#ref, #hyp), fp = max(0, #hyp - #ref), fn = max(0, #ref - #hyp), where #
   counts the occurrences of the term (one or more words). Same definition as
-  ssak's `compute_wer(words_list=...)`, used in the PxSLU internship.
+  ssak's `compute_wer(words_list=...)`.
 - `b_wer`, `u_wer` (Le et al. 2021): WER on the reference words that belong to a
   list term, and on the other words; an inserted word counts in B-WER if it
   belongs to a list term. With multi-word terms, a word is biased only when it is
@@ -204,6 +367,18 @@ invented sentences, prompt recited). A few such outputs weigh a lot on B-WER
 (inserted list terms count in it), FA/h and WER: e.g. on PxSLU test, Qwen3-ASR
 recites the start of the `bdpm` list in 6 of 556 utterances (B-WER above 100 %),
 and MOSS keeps generating after the transcription in 23 utterances with `pxslu`.
+
+RTFx (seconds of audio per second of processing; `report.py` and the page), for each
+run and dataset, from: the transcription time that the benchmark records in
+`metadata.json` (`transcription_time`: seconds, audio seconds and files of each
+dataset, model loading and scoring excluded); else, for the runs made before, the
+throughput measured by the `vllm` backend (`throughput_rtfx` of the predictions); else
+the benchmark logs (`timings_from_logs.py` writes `timings_from_logs.json` in the
+results folder: time of the whole run, model loading and scoring included, so an
+approximate value, shown with "~"). The speeds are those of the benchmark runs on one
+DGX Spark (vLLM servers with 32 to 128 concurrent requests, NeMo and VibeVoice-ASR in
+batches, faster-whisper one file at a time): they compare a model with and without a
+list more than the models with each other.
 
 NeMo runs also record, in `metadata.json` (`contextual_biasing_tree_time_ms`), the
 time to build the boosting tree and set it in the decoding (count, first, median,

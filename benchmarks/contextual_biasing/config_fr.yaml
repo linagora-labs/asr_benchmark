@@ -41,20 +41,21 @@ wer_language: fr
 
 benchmarks:
   # --- faster-whisper: `hotwords`, at most 223 tokens (the rest is cut). No global
-  # list fits (the PxSLU list is ~1,700 Whisper tokens): only pxslu25 (at most ~130
-  # tokens, ~160 in capitals). large-v3: greedy;
+  # list fits: pxslu25 (at most ~130 tokens, ~160 in capitals) fits; pxslu (~1,700
+  # tokens) is given anyway, as a real deployment would: faster-whisper keeps its
+  # first 223 tokens, about 50 of the 389 names in alphabetical order. large-v3: greedy;
   # large-v3-turbo: greedy and beam search (accurate: 5 beams, temperature fallback),
   # with full folder names to keep both.
   - backend: faster-whisper
     model: large-v3
     precision: float16
-    contextual_biasing: [null, pxslu25, pxslu25_upper]
+    contextual_biasing: [null, pxslu25, pxslu, pxslu25_upper]
   - backend: faster-whisper
     model: large-v3-turbo
     precision: float16
     accurate: [false, true]
     full_name: true
-    contextual_biasing: [null, pxslu25, pxslu25_upper]
+    contextual_biasing: [null, pxslu25, pxslu, pxslu25_upper]
 
   # --- Qwen3-ASR (vLLM): `prompt` field, put in the system turn. The format is not
   # documented by Qwen; this one is linto-stt's (production).
@@ -120,7 +121,8 @@ benchmarks:
     contextual_biasing_template: "{prompt}热词提示：{terms}"
 
   # --- VibeVoice-ASR (transformers): extra context of the request. Smaller batches
-  # for the long list (12k tokens per request); theriaque (~38k) left out.
+  # for the long lists (12k to 38k tokens per request); theriaque is slow (several
+  # hours), run last, after the other models.
   - backend: vibevoice-asr
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
@@ -131,6 +133,11 @@ benchmarks:
     dtype: bfloat16
     batch_size: 8
     contextual_biasing: [bdpm, vidal]
+  - backend: vibevoice-asr
+    model: microsoft/VibeVoice-ASR-HF
+    dtype: bfloat16
+    batch_size: 4
+    contextual_biasing: theriaque
 
   # --- NeMo phrase boosting (GPU-PB, decoding-time boosting tree; greedy_batch
   # decoding, beam for Canary). alpha (boosting weight): 1.0 and 2.0 for every model.

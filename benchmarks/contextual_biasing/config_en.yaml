@@ -58,7 +58,7 @@ benchmarks:
     # - Qwen/Qwen3-ASR-0.6B
     port: 8106
     extra_args: --max-model-len 32768
-    contextual_biasing: [null, "100", "1000", "2000", global]  # local: not run (oracle)
+    contextual_biasing: [null, "100", "500", "1000", "2000", global]  # local: not run (oracle)
     contextual_biasing_template: "Vocabulary: {terms}."
 
   # --- Nemotron-3.5-Transcribe (vLLM chat, server started separately) ---
@@ -71,7 +71,7 @@ benchmarks:
     prompt: "Transcribe with punctuation and capitalization."
     extra_body: {chat_template_kwargs: {enable_thinking: false}}
     concurrency: 32
-    contextual_biasing: [null, "100", "1000", "2000", global]  # local: not run (oracle)
+    contextual_biasing: [null, "100", "500", "1000", "2000", global]  # local: not run (oracle)
     contextual_biasing_template: "{prompt} Context terms: {terms}."
 
   # --- Granite Speech 5.0 (vLLM chat): "Keywords: kw1, kw2" (model card) ---
@@ -86,7 +86,7 @@ benchmarks:
     prompt: <|audio|>transcribe the speech to text.
     extra_args: --max-model-len 16384
     concurrency: 128
-    contextual_biasing: [null, "100", "1000", "2000", global]  # local: not run (oracle)
+    contextual_biasing: [null, "100", "500", "1000", "2000", global]  # local: not run (oracle)
     contextual_biasing_template: "{prompt} Keywords: {terms}"
   # - backend: vllm
   #   model: ibm-granite/granite-speech-4.1-2b
@@ -105,7 +105,7 @@ benchmarks:
     port: 8102
     language: null
     transcription_prompt: "Transcribe the audio. For each segment, start with the timestamp and speaker ID ([S01], [S02], [S03], ...), then the spoken text, and end with the segment timestamp."
-    contextual_biasing: [null, "100", "1000", "2000", global]  # local: not run (oracle)
+    contextual_biasing: [null, "100", "500", "1000", "2000", global]  # local: not run (oracle)
     contextual_biasing_template: "{prompt} Hotwords: {terms}"
 
   # --- VibeVoice-ASR (transformers): extra context of the request ---
@@ -114,13 +114,13 @@ benchmarks:
     dtype: bfloat16
     batch_size: 64
     contextual_biasing: [null, "100", global]  # local: not run (oracle)
-  # Long lists (~3.6k and ~7.2k tokens per request, ~13 h of GPU for LibriSpeech):
-  # left out for now
-  # - backend: vibevoice-asr
-  #   model: microsoft/VibeVoice-ASR-HF
-  #   dtype: bfloat16
-  #   batch_size: 16
-  #   contextual_biasing: ["1000", "2000"]
+  # Longer lists (~1.8k, ~3.6k and ~7.2k tokens per request): slow (~13 h of GPU for
+  # 1000 and 2000 on test-clean and test-other), run last, after the other models.
+  - backend: vibevoice-asr
+    model: microsoft/VibeVoice-ASR-HF
+    dtype: bfloat16
+    batch_size: 16
+    contextual_biasing: ["500", "1000", "2000"]
 
   # --- NeMo phrase boosting (GPU-PB, decoding-time boosting tree; greedy_batch
   # decoding, beam for Canary). alpha (boosting weight): 1.0 and 2.0 for every model.
@@ -129,8 +129,9 @@ benchmarks:
   # One entry per condition: with NeMo 3.0, loading a model a second time in the same
   # process fails (torch.load), and the DGX runner (one process per entry and model)
   # would run all the conditions of an entry in one process.
-  # LibriSpeech lists 1000 and 2000 left out for now (as for VibeVoice): the tree is
-  # rebuilt for each of the 5,559 utterances, ~4.5 h per run with the 1000 list.
+  # LibriSpeech lists 1000 and 2000 left out: the tree is rebuilt for each utterance
+  # (parakeet: 25 min with the 100 lists on test-other, 2.8 h with 1000 on test-clean and
+  # test-other). List 500 at alpha 1.0 only.
   - &parakeet
     backend: nemo
     model: nvidia/parakeet-tdt-0.6b-v3
@@ -139,6 +140,7 @@ benchmarks:
     contextual_biasing: null
   - {<<: *parakeet, contextual_biasing: "100", contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: "100", contextual_biasing_alpha: 2.0}
+  - {<<: *parakeet, contextual_biasing: "500", contextual_biasing_alpha: 1.0}
   # - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
   # - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 2.0}
   # - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
@@ -155,6 +157,7 @@ benchmarks:
     contextual_biasing: null
   - {<<: *canary, contextual_biasing: "100", contextual_biasing_alpha: 1.0}
   - {<<: *canary, contextual_biasing: "100", contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: "500", contextual_biasing_alpha: 1.0}
   # - {<<: *canary, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
   # - {<<: *canary, contextual_biasing: "1000", contextual_biasing_alpha: 2.0}
   # - {<<: *canary, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
