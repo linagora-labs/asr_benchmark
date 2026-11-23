@@ -169,6 +169,9 @@
       with every request: the longer the list, the slower.</li>
     <li><b>Case sensitive</b>: a term is correct only if written as in the list given to the model (as in the
       targets for runs without list); the case of the other words is not checked.</li>
+    <li>Test sets <i>English</i> and <i>French and English</i>: the mean over the test sets (each weighs the same),
+      by size class of the lists: <i>short</i> (pxslu25, global, 100), <i>medium</i> (pxslu, 500), <i>long</i> (vidal,
+      bdpm, theriaque, 1000, 2000).</li>
     <li>Lists: <i>local</i> lists only hold terms of the utterance; the others are global lists
       (one list for the whole test set). <i>_upper</i>: the same list in capitals, given to check that the model
       writes the terms as given (to read with "Case sensitive").</li>
@@ -268,7 +271,13 @@ function listSize(list) {
   return row ? row.list_size : null;
 }
 const sizeText = (size) => (size === null ? "" : size < 10 ? size.toFixed(1) : Math.round(size).toLocaleString("en"));
-const listTitle = (list) => (present(listSize(list)) ? `${list} (${sizeText(listSize(list))})` : list);
+// Size of a list as shown: its mean number of terms, or the range of a size class
+// (aggregated test sets)
+function sizeLabel(list) {
+  const row = rows().find((r) => r.list === list && r.size_text);
+  return row ? row.size_text : sizeText(listSize(list));
+}
+const listTitle = (list) => (sizeLabel(list) ? `${list} (${sizeLabel(list)})` : list);
 // Order of the models (best first), from the overview, used by the charts
 let ORDER = [];
 const byOrder = (a, b) => ORDER.indexOf(rowName(a)) - ORDER.indexOf(rowName(b)) || rowName(a).localeCompare(rowName(b));
@@ -290,12 +299,16 @@ const CUT_LISTS = { "faster-whisper": {
   "100": "hotwords cut to 223 tokens (about 60 % of the list reach the model)",
   "pxslu": "hotwords cut to 223 tokens (the first 51 of the 389 names, in alphabetical order, reach the model)",
 } };
-const cutNote = (row, list) => (row && CUT_LISTS[row.backend] || {})[list];
+function cutNote(row, list) {
+  const notes = (row && CUT_LISTS[row.backend]) || {};
+  if (!SIZE_CLASSES[list]) return notes[list];
+  return SIZE_CLASSES[list].filter((l) => notes[l]).map((l) => `${l}: ${notes[l]}`).join("; ") || undefined;
+}
 
 // Runs not done (yet) because the model is too slow with the list, not because the
 // model cannot take it: marked in the empty cells, by backend and list, with the reason
 const TOO_SLOW = {
-  "vibevoice-asr": { lists: ["theriaque"], why: "VibeVoice-ASR: about 0.5 times real time with bdpm (hours per list)" },
+  "vibevoice-asr": { lists: ["theriaque"], why: "VibeVoice-ASR: 0.14 times real time with theriaque (10 h for PxSLU test)" },
   "nemo": { lists: ["500", "1000", "2000"], why: "NeMo: the boosting tree is rebuilt for each utterance with " +
     "the per-utterance lists (Parakeet with 500: 30 min on test-other); 500 at alpha 1.0 only" },
 };
@@ -303,11 +316,11 @@ const SLOW_NOTE = "not run (yet) for time, too slow with this list; not a limit 
 function tooSlow(all, name, list) {
   const row = all.find((r) => rowName(r) === name || r.label === baseLabel(name));
   const rule = row && TOO_SLOW[row.backend];
-  return rule && rule.lists.includes(list) ? rule.why : null;
+  return rule && (SIZE_CLASSES[list] || [list]).some((l) => rule.lists.includes(l)) ? rule.why : null;
 }
 
 // List the leaderboard is ranked on (per test set), by default the main setting
-const DEFAULT_RANK_LISTS = ["pxslu", "global", "100"];
+const DEFAULT_RANK_LISTS = ["pxslu", "global", "100", "short"];
 let RANKING = { list: null, entries: [] };
 function rankList(lists) {
   const key = `${state.language}|${state.dataset}`;
@@ -371,7 +384,7 @@ function overview() {
   const rankedIndex = lists.indexOf(ranked);
   // List name (broken after "_" if needed) and size below it
   const name = (l) => esc(l).replace(/_/g, "_<wbr>");
-  const head = (l) => (present(listSize(l)) ? `${name(l)}<br><small>(${sizeText(listSize(l))})</small>` : name(l));
+  const head = (l) => (sizeLabel(l) ? `${name(l)}<br><small>(${sizeLabel(l)})</small>` : name(l));
   let html = `<colgroup><col class="model">${'<col class="value">'.repeat(lists.length + 1)}</colgroup>`;
   // Fixed layout: the columns take the widths of the colgroup only with an explicit table width
   $("overview").style.width = `${230 + 74 * (lists.length + 1)}px`;
@@ -410,7 +423,8 @@ function overview() {
     `the 95 % confidence interval of the best one form a level (separated by a line), the next level starts from the best of the others; ` +
     `within a level, by B-WER. * Whisper: hotwords cut to 223 tokens.` +
     (m.log ? ` ~ RTFx ${APPROX_NOTE}.` : "")) +
-    (slowShown.size ? ` <sup>\u2020</sup> ${esc(`${SLOW_NOTE[0].toUpperCase()}${SLOW_NOTE.slice(1)}. ${[...slowShown].join(". ")}.`)}` : "");
+    (slowShown.size ? ` <sup>\u2020</sup> ${esc(`${SLOW_NOTE[0].toUpperCase()}${SLOW_NOTE.slice(1)}. ${[...slowShown].join(". ")}.`)}` : "") +
+    (state.language === AGG ? ` ${esc(aggregateNote(all, lists))}` : "");
 }
 
 // WER (x) by B-WER (y) on the ranked list; highlighted: the models that no other one
@@ -487,8 +501,8 @@ function panel(list, listRows, m) {
     }
   });
   svg += "</svg>";
-  const size = listSize(list);
-  return `<div class="panel"><h3>${esc(list)} <span class="muted" style="font-weight:400">(${present(size) ? `${sizeText(size)} terms, ` : ""}${esc(m.label)})</span></h3>${svg}</div>`;
+  const size = sizeLabel(list);
+  return `<div class="panel"><h3>${esc(list)} <span class="muted" style="font-weight:400">(${size ? `${size} terms, ` : ""}${esc(m.label)})</span></h3>${svg}</div>`;
 }
 
 function panels() {
@@ -648,7 +662,7 @@ function lines() {
     for (const v of ticks) svg += `<line class="grid" x1="${left}" x2="${width - right}" y1="${y(v)}" y2="${y(v)}"/><text class="tick" x="${left - 5}" y="${y(v) + 4}" text-anchor="end">${+v.toPrecision(6)}</text>`;
     xs.forEach((l, i) => {
       svg += `<text class="tick" x="${x(i)}" y="${height - bottom + 16}" text-anchor="middle">${esc(l)}</text>`;
-      if (i) svg += `<text class="tick" x="${x(i)}" y="${height - bottom + 30}" text-anchor="middle">(${sizeText(listSize(l))})</text>`;
+      if (i) svg += `<text class="tick" x="${x(i)}" y="${height - bottom + 30}" text-anchor="middle">(${sizeLabel(l)})</text>`;
     });
     for (const name of models) {
       const s = styles[name], vals = series(name, key);
@@ -705,6 +719,92 @@ document.addEventListener("mousemove", (e) => {
   $("tip").style.top = `${e.clientY + 14}px`;
 });
 
+// ---- Aggregated test sets: mean over several test sets, by size class of the lists
+// (the test sets have different lists). Each test set weighs the same; the lists of a
+// class on one test set are averaged first. A model has a value only if it has one on
+// every test set of the class (and with the list, a run with each of its lists); a
+// class is kept when at least two test sets have lists of it.
+const AGG = "aggregated";
+const SIZE_CLASSES = {
+  short: ["pxslu25", "global", "100"],
+  medium: ["pxslu", "500"],
+  long: ["vidal", "bdpm", "theriaque", "1000", "2000"],
+};
+const AGGREGATES = [
+  { name: "English", sets: [["en", "ContextualEarnings22_test"], ["en", "LibriSpeech_test-other"]] },
+  { name: "French and English", sets: [["fr", "PxSLU_test"], ["en", "ContextualEarnings22_test"], ["en", "LibriSpeech_test-other"]] },
+];
+// Mean, geometric for the measures on a log scale (RTFx)
+const mean = (v, log) => (log ? Math.exp(v.reduce((s, x) => s + Math.log(x), 0) / v.length) : v.reduce((s, x) => s + x, 0) / v.length);
+const setName = (d) => d.replace(/_/g, " ");
+function aggregateRows(agg, mode) {
+  const sets = agg.sets.filter(([lang, d]) => DATA[lang] && DATA[lang].datasets.includes(d))
+    .map(([lang, d]) => ({ d, rows: DATA[lang].rows[mode].filter((r) => r.dataset === d) }));
+  const out = [];
+  for (const [cls, members] of Object.entries(SIZE_CLASSES)) {
+    const parts = sets.map((s) => ({ ...s, lists: members.filter((l) => s.rows.some((r) => r.list === l)) }))
+      .filter((s) => s.lists.length);
+    if (parts.length < 2) continue;
+    const sizes = parts.flatMap((p) => p.lists.map((l) => (p.rows.find((r) => r.list === l && present(r.list_size)) || {}).list_size)).filter(present);
+    const info = {
+      dataset: agg.name, list: cls, list_size: null,
+      size_text: `${sizeText(Math.min(...sizes))}-${sizeText(Math.max(...sizes))}`,
+      members_text: parts.map((p) => `${p.lists.join(", ")} (${setName(p.d)})`).join("; "),
+    };
+    // Value of a key: mean over the lists of each test set, then over the test sets
+    const values = (pick) => parts.map((p) => p.lists.map((l) => pick(p.rows, l)));
+    const combine = (v, log) => (v.every((s) => s.every((x) => present(x) && (!log || x > 0))) ? mean(v.map((s) => mean(s, log)), log) : null);
+    const runRow = (name) => (rs, l) => rs.find((r) => r.list === l && r.run_cb && rowName(r) === name);
+    const baseRow = (label) => (rs, l) => rs.find((r) => r.list === l && r.label === label);
+    const labels = new Set(parts.flatMap((p) => p.rows.map((r) => r.label)));
+    for (const label of labels) {
+      const bases = values(baseRow(label));
+      if (!bases.every((s) => s.every(Boolean))) continue;
+      const first = bases[0][0];
+      const variants = [...new Set(parts.flatMap((p) => p.rows.filter((r) => r.run_cb && r.label === label).map(rowName)))];
+      const complete = variants.filter((name) => values(runRow(name)).every((s) => s.every(Boolean)));
+      const emit = (name, runs) => {
+        const row = { ...info, label, backend: first.backend, model: first.model, setting: runs ? runs[0][0].setting : "", run_cb: runs ? `${AGG}:${name}` : undefined };
+        for (const m of METRICS) {
+          row[m.key] = combine(values((rs, l) => (baseRow(label)(rs, l) || {})[m.key]), m.log);
+          if (runs) row[m.key + "_cb"] = combine(runs.map((s) => s.map((r) => r[m.key + "_cb"])), m.log);
+        }
+        // 95 % confidence interval of the mean WER: half-widths of the test sets combined
+        // as independent errors
+        const high = (rowsOf, suffix) => {
+          const half = rowsOf.map((s) => mean(s.map((r) => (present(r["wer_ci95_high" + suffix]) ? r["wer_ci95_high" + suffix] - r["wer" + suffix] : 0))));
+          return row["wer" + suffix] + Math.sqrt(half.reduce((a, h) => a + h * h, 0)) / half.length;
+        };
+        if (present(row.wer)) row.wer_ci95_high = high(bases, "");
+        if (runs && present(row.wer_cb)) row.wer_ci95_high_cb = high(runs, "_cb");
+        row.rtfx_approx = bases.some((s) => s.some((r) => r.rtfx_approx));
+        if (runs) row.rtfx_approx_cb = runs.some((s) => s.some((r) => r.rtfx_approx_cb));
+        out.push(row);
+      };
+      complete.forEach((name) => emit(name, values(runRow(name))));
+      if (!complete.length) emit(label, null);
+    }
+  }
+  return out;
+}
+function addAggregates() {
+  const modes = Object.keys(Object.values(DATA)[0].rows);
+  const lang = { lists: Object.keys(SIZE_CLASSES), datasets: [], rows: Object.fromEntries(modes.map((m) => [m, []])) };
+  for (const agg of AGGREGATES) {
+    const byMode = Object.fromEntries(modes.map((mode) => [mode, aggregateRows(agg, mode)]));
+    if (!byMode[modes[0]].length) continue;
+    lang.datasets.push(agg.name);
+    modes.forEach((mode) => lang.rows[mode].push(...byMode[mode]));
+  }
+  if (lang.datasets.length) DATA[AGG] = lang;
+}
+function aggregateNote(all, lists) {
+  const parts = lists.map((l) => { const r = all.find((x) => x.list === l); return r ? `${l} = ${r.members_text}` : null; }).filter(Boolean);
+  return `Mean over test sets (each test set weighs the same; geometric mean for RTFx), by size class of the lists: ${parts.join(". ")}. ` +
+    "A model has a value only on every test set of the class; with the list, only with a run with each of its lists. " +
+    "\"No list\": on the terms of the short lists.";
+}
+
 // Test sets of all the languages: "<name> (<language>)", the split left out when the
 // language has a single test set of this corpus (e.g. "LibriSpeech", "PxSLU test")
 function datasetChoices() {
@@ -712,7 +812,7 @@ function datasetChoices() {
     const corpus = d.replace(/_[^_]*$/, "");
     const alone = lang.datasets.filter((o) => o.replace(/_[^_]*$/, "") === corpus).length === 1;
     const name = alone ? corpus : d.replace(/_/g, " ");
-    return { key: `${language}|${d}`, language, dataset: d, label: `${name} (${LANGUAGES[language] || language})` };
+    return { key: `${language}|${d}`, language, dataset: d, label: language === AGG ? d : `${name} (${LANGUAGES[language] || language})` };
   }));
 }
 
@@ -750,6 +850,7 @@ document.querySelectorAll("#mode button").forEach((b) => b.addEventListener("cli
 $("models-all").addEventListener("click", () => { state.hidden = new Set(); render(); });
 $("models-none").addEventListener("click", () => { state.hidden = new Set(modelKeys()); render(); });
 $("list").addEventListener("change", (e) => { state.list = e.target.value; details(); });
+addAggregates();
 render();
 </script>
 </body>

@@ -304,8 +304,20 @@ left out too, `--exclude_runs`). An empty cell of the leaderboard means no run w
 list; it is marked with a dagger when the run was left out only because the model is
 too slow with the list (`TOO_SLOW` in `template.html`).
 
+After the test sets, two aggregated test sets, "English" (Contextual Earnings-22 and
+LibriSpeech test-other) and "French and English" (the same plus PxSLU test), give the
+mean over the test sets, each weighing the same (geometric mean for RTFx). As the test
+sets have different lists, the columns are size classes of the lists: `short`
+(`pxslu25`, `global`, `100`), `medium` (`pxslu`, `500`), `long` (`vidal`, `bdpm`,
+`theriaque`, `1000`, `2000`). The lists of a class on one test set are averaged first;
+a class is kept when at least two test sets have lists of it (English: `short` only).
+A model has a value only if it has one on every test set of the class, and with the
+list only with a run with each of its lists (`SIZE_CLASSES` and `AGGREGATES` in
+`template.html`). The confidence interval of the mean WER, used by the ranking,
+combines those of the test sets as independent errors.
+
 Ranking of the leaderboard, on one list ("Rank on"; by default `pxslu`, Contextual
-Earnings-22 `global`, LibriSpeech `100`): each model with this list, or without list
+Earnings-22 `global`, LibriSpeech `100`, `short` for the aggregated test sets): each model with this list, or without list
 when it has no run with it (no biasing mechanism, or list too long). First by WER, with
 a tolerance: the models whose WER is within the 95 % confidence interval of the best
 WER form a level, and the next level starts from the best of the others; within a
