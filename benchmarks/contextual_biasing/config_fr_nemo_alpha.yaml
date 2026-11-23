@@ -1,7 +1,7 @@
 # Contextual Biasing ASR Benchmark: weight of NeMo phrase boosting (GPU-PB,
 # `contextual_biasing_alpha`) tuned on PxSLU_dev, before config_fr.yaml.
-# Same output folder as config_fr.yaml: the PxSLU_dev results of the chosen value
-# are reused. Measures: python tools/contextual_biasing/report.py benchmarks/contextual_biasing/results_fr
+# Same output folder as config_fr.yaml (PxSLU_dev is left out of the page by
+# default: build_page.py --exclude_datasets). Measures: python tools/contextual_biasing/report.py benchmarks/contextual_biasing/results_fr
 datasets:
   PxSLU_dev:
     manifest: benchmarks/contextual_biasing/manifests/PxSLU_dev.jsonl

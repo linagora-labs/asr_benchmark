@@ -23,11 +23,10 @@
 #   python tools/contextual_biasing/report.py benchmarks/contextual_biasing/results_fr
 #
 # Data: python tools/contextual_biasing/prepare_pxslu.py (see the README).
+# PxSLU dev (experts and non-experts) only serves for tuning: config_fr_nemo_alpha.yaml.
 datasets:
   PxSLU_test:   # official test split (doctors)
     manifest: benchmarks/contextual_biasing/manifests/PxSLU_test.jsonl
-  PxSLU_dev:    # official dev split (experts and non-experts); also to tune NeMo's alpha
-    manifest: benchmarks/contextual_biasing/manifests/PxSLU_dev.jsonl
 min_duration: 0
 max_duration: 60
 output_folder: benchmarks/contextual_biasing/results_fr

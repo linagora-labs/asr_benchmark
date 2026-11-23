@@ -48,7 +48,10 @@ Earnings-22). Figures of the test splits as run (after the cleaning described be
 | Reference | Kocabiyikoglu et al., LREC 2022 ([arXiv:2207.08292](https://arxiv.org/abs/2207.08292)) | Panayotov et al., ICASSP 2015; lists: Le et al., Interspeech 2021 ([arXiv:2104.02194](https://arxiv.org/abs/2104.02194)) | Durmus et al. 2026 ([arXiv:2604.07354](https://arxiv.org/abs/2604.07354)) |
 
 The dev splits (PxSLU dev: 279 utterances, 0.57 h; Contextual Earnings-22 dev: 100
-clips, 0.42 h) serve for tuning (e.g. the NeMo boosting weight). LibriSpeech
+clips, 0.42 h) only serve for tuning (e.g. the NeMo boosting weight,
+`config_fr_nemo_alpha.yaml`): they are not in the runs of `config_fr.yaml` and
+`config_en.yaml`, and are left out of the page (`build_page.py --exclude_datasets`;
+the PxSLU dev results of the earlier runs are kept in the results folder). LibriSpeech
 test-clean is prepared but left out of the runs: its speakers leave few errors on the
 rare words to correct.
 

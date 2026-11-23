@@ -308,7 +308,6 @@ function cutNote(row, list) {
 // Runs not done (yet) because the model is too slow with the list, not because the
 // model cannot take it: marked in the empty cells, by backend and list, with the reason
 const TOO_SLOW = {
-  "vibevoice-asr": { lists: ["theriaque"], why: "VibeVoice-ASR: 0.14 times real time with theriaque (10 h for PxSLU test)" },
   "nemo": { lists: ["500", "1000", "2000"], why: "NeMo: the boosting tree is rebuilt for each utterance with " +
     "the per-utterance lists (Parakeet with 500: 30 min on test-other); 500 at alpha 1.0 only" },
 };

@@ -71,9 +71,10 @@ def main():
     parser.add_argument("--exclude_lists", nargs="*", default=["oracle", "oracle_upper", "local"],
                         help="Lists left out of the page (default: the oracle lists, only the terms spoken in the "
                              "utterance, not a realistic setting: PxSLU oracle, Contextual Earnings-22 local)")
-    parser.add_argument("--exclude_datasets", nargs="*", default=["LibriSpeech_test-clean"],
+    parser.add_argument("--exclude_datasets", nargs="*", default=["LibriSpeech_test-clean", "PxSLU_dev"],
                         help="Test sets left out of the page (default: LibriSpeech test-clean, left out of "
-                             "the benchmark: few errors on the rare words to correct)")
+                             "the benchmark: few errors on the rare words to correct; PxSLU dev, only for "
+                             "tuning, e.g. the NeMo boosting weight)")
     parser.add_argument("--exclude_settings", nargs="*", default=["alpha 0.5", "alpha 4.0"],
                         help="Backend settings left out of the page (default: the NeMo boosting weights "
                              "of the tuning on PxSLU dev other than 1.0 and 2.0)")
