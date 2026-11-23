@@ -45,7 +45,7 @@ Earnings-22). Figures of the test splits as run (after the cleaning described be
 | Lists run | global: `pxslu` (389 terms), `vidal` (2,753), `bdpm` (4,050), `theriaque` (8,851); per utterance: `pxslu25` (25) | per utterance: `100`, `500`, `1000`, `2000` (rare words of the utterance + N distractors) | per clip: `global` (keywords of the whole call, 25 on average, 1 to 46) |
 | Distractors (list terms not spoken) | other drug names (real dictionaries) | rare words drawn at random | other names of the same call |
 | Licence | CC BY 4.0 | audio and text CC BY 4.0; lists MIT | transcripts and lists CC BY-SA 4.0 (licence of Earnings-22); audio licence not stated |
-| Reference | Kocabiyikoglu et al., LREC 2022 (arXiv:2207.08292) | Panayotov et al., ICASSP 2015; lists: Le et al., Interspeech 2021 (arXiv:2104.02194) | Durmus et al. 2026 (arXiv:2604.07354) |
+| Reference | Kocabiyikoglu et al., LREC 2022 ([arXiv:2207.08292](https://arxiv.org/abs/2207.08292)) | Panayotov et al., ICASSP 2015; lists: Le et al., Interspeech 2021 ([arXiv:2104.02194](https://arxiv.org/abs/2104.02194)) | Durmus et al. 2026 ([arXiv:2604.07354](https://arxiv.org/abs/2604.07354)) |
 
 The dev splits (PxSLU dev: 279 utterances, 0.57 h; Contextual Earnings-22 dev: 100
 clips, 0.42 h) serve for tuning (e.g. the NeMo boosting weight). LibriSpeech
@@ -142,7 +142,7 @@ each utterance, see "List sizes"). Too long for Whisper's hotwords.
 
 ### Contextual Earnings-22 (English, names in conversational speech)
 
-**What it is.** Built by Argmax from Earnings-22 (Rev): 125 English earnings calls
+**What it is.** Built by Argmax from Earnings-22 (Rev, [arXiv:2203.15591](https://arxiv.org/abs/2203.15591)): 125 English earnings calls
 (119 h) of companies from all over the world, released as a benchmark of accented
 speech. Argmax selected 55 calls, found the names of persons, companies and products
 in their transcripts (named entity extraction with an LLM, then manual review of
@@ -178,7 +178,7 @@ under CC BY-SA 4.0).
 
 ### Earnings-21 (English, not run yet)
 
-**What it is.** A Rev corpus of 44 full earnings calls of 2020 (39.3 h; 18 to 96
+**What it is.** A Rev corpus ([arXiv:2104.11348](https://arxiv.org/abs/2104.11348)) of 44 full earnings calls of 2020 (39.3 h; 18 to 96
 minutes each), 5 calls in each of nine sectors (4 for conglomerates), MP3 files at
 11 to 44 kHz. The transcripts (`.nlp` files) have speakers, punctuation, case and
 entity tags (24 classes: persons, organizations, products, money, dates, ...), but no
@@ -187,7 +187,7 @@ Eval-10, a representative 10-hour subset. Transcripts under CC BY-SA 4.0; the
 licence of the audio is not stated.
 
 **Hotwords.** Two sources:
-- Rev's bias lists (Fox and Delworth, Interspeech 2022, arXiv:2209.01250), global for
+- Rev's bias lists (Fox and Delworth, Interspeech 2022, [arXiv:2209.01250](https://arxiv.org/abs/2209.01250)), global for
   the whole corpus, in capitals: `oracle_list.txt` (1,013 words and phrases of the
   reference transcripts: names of persons and companies, acronyms, products) and
   `distractor_list.txt` (1,782: the same plus Fortune 500 companies and famous CEOs
@@ -228,9 +228,8 @@ Contextual Earnings-22 (earnings calls).
 | Nemotron-3.5-Transcribe (`vllm`, chat endpoint) | `{prompt} Context terms: {terms}.` (model card) | |
 | Granite Speech 5.0 2B (`vllm`, chat endpoint) | `{prompt} Keywords: {terms}` (model card) | "up to 2000" keywords |
 | MOSS-Transcribe-Diarize (`vllm`) | `{prompt}热词提示：{terms}` (French runs, default Chinese prompt) or `{prompt} Hotwords: {terms}` (English), as documented in the model's GitHub examples | |
-| VibeVoice-ASR (`vibevoice-asr`) | extra context of the request | |
-| Parakeet TDT 0.6B v3, Canary 1B v2, linto-stt-fr-fastconformer (RNN-T decoder; French only) (`nemo`) | GPU phrase boosting of NeMo (boosting tree fused at decoding time, `greedy_batch`, beam search for Canary; Andrusenko et al. 2025, arXiv:2508.07014); weight `contextual_biasing_alpha` 1.0 and 2.0 (PxSLU dev with Parakeet, `config_fr_nemo_alpha.yaml`: 1.0 best F1 / false alarm trade-off, 2.0 +5 F1 with 5x false alarms) | |
-| linto-stt, whisper engine (`linto-stt`) | HTTP `hotwords` parameter | |
+| VibeVoice-ASR (`vibevoice-asr`) | extra context of the request | slow with long lists: an 8.3B model run with Hugging Face transformers (not vLLM), so the list is processed again with every batch, every generated token attends to it, and the batches must be made smaller to fit in memory (4 with `theriaque`). RTFx on LibriSpeech test-other: 21 without list, 5.9 with 500 terms, 1.7 with 2,000; below real time with the PxSLU dictionaries |
+| Parakeet TDT 0.6B v3, Canary 1B v2, linto-stt-fr-fastconformer (RNN-T decoder; French only) (`nemo`) | GPU phrase boosting of NeMo (boosting tree fused at decoding time, `greedy_batch`, beam search for Canary; Andrusenko et al. 2025, [arXiv:2508.07014](https://arxiv.org/abs/2508.07014)); weight `contextual_biasing_alpha` 1.0 and 2.0 (PxSLU dev with Parakeet, `config_fr_nemo_alpha.yaml`: 1.0 best F1 / false alarm trade-off, 2.0 +5 F1 with 5x false alarms) | each new list costs a rebuild of the decoding: the boosting tree is built (about 60 ms for 389 terms, 140 ms for 1,000, 0.8 s for 8,851, on a DGX Spark) and the decoding strategy is set again, and the RNN-T / TDT greedy decoding captures its CUDA graphs again at the next batch. Free with a fixed list; with a list per utterance, no batching across utterances and this cost for each one (LibriSpeech, Parakeet: RTFx about 150 without list, 11 with the 500 lists) |
 | Cohere Transcribe (`vllm`) | none: baseline | |
 
 Not included: Voxtral (open weights have no mechanism; `context_bias` exists only
@@ -292,8 +291,6 @@ uv run python tools/contextual_biasing/timings_from_logs.py logs/*.log \
 uv run python tools/contextual_biasing/build_page.py --output benchmarks/contextual_biasing/page \
     --results fr=benchmarks/contextual_biasing/results_fr en=benchmarks/contextual_biasing/results_en
 ```
-
-Conclusions (which model for which language and list length): [REPORT.md](REPORT.md).
 
 `report.py` prints, per dataset and list, the measures of each model without list,
 with the list, and the difference (optionally as CSV). `build_page.py` writes the same
@@ -402,19 +399,19 @@ Public benchmarks with released lists (checked in the primary sources in Novembe
 
 | Benchmark | Lang. | Lists | Measures |
 |---|---|---|---|
-| LibriSpeech biasing lists (Le et al. 2021, arXiv:2104.02194) | en | per utterance: rare words + N distractors (the de facto standard) | WER, B-WER, U-WER |
-| Earnings-21 bias lists (Fox and Delworth 2022, arXiv:2209.01250) | en | global oracle and distractor lists | rare-word recall, WER |
+| LibriSpeech biasing lists (Le et al. 2021, [arXiv:2104.02194](https://arxiv.org/abs/2104.02194)) | en | per utterance: rare words + N distractors (the de facto standard) | WER, B-WER, U-WER |
+| Earnings-21 bias lists (Fox and Delworth 2022, [arXiv:2209.01250](https://arxiv.org/abs/2209.01250)) | en | global oracle and distractor lists | rare-word recall, WER |
 | ConEC (Huang et al. 2024) | en | per call, real context (slides, press releases, names) | WER on rare words and entities |
-| Contextual Earnings-22 (Durmus et al. 2026, arXiv:2604.07354) | en | per clip, local and global | WER, keyword P/R/F |
-| SlideSpeech (Wang et al. 2024, arXiv:2309.05396) | en | per segment, keywords from slides | WER, B-WER, U-WER |
-| ContextASR-Bench (Wang et al. 2025, arXiv:2507.05727) | en, zh | per utterance, synthetic speech | WER, NE-WER, NE-FNR |
-| Test/Dev-Aishell1-NE (SeACo-Paraformer, arXiv:2308.03266) | zh | global named entities; "R1" subset of terms the baseline misses | CER, hotword R/P/F1 |
-| IndicContextEval (Joshi et al. 2026, arXiv:2606.19157) | 8 Indic languages | context levels, in-domain and adversarial entities | WER, NEER |
+| Contextual Earnings-22 (Durmus et al. 2026, [arXiv:2604.07354](https://arxiv.org/abs/2604.07354)) | en | per clip, local and global | WER, keyword P/R/F |
+| SlideSpeech (Wang et al. 2024, [arXiv:2309.05396](https://arxiv.org/abs/2309.05396)) | en | per segment, keywords from slides | WER, B-WER, U-WER |
+| ContextASR-Bench (Wang et al. 2025, [arXiv:2507.05727](https://arxiv.org/abs/2507.05727)) | en, zh | per utterance, synthetic speech | WER, NE-WER, NE-FNR |
+| Test/Dev-Aishell1-NE (SeACo-Paraformer, [arXiv:2308.03266](https://arxiv.org/abs/2308.03266)) | zh | global named entities; "R1" subset of terms the baseline misses | CER, hotword R/P/F1 |
+| IndicContextEval (Joshi et al. 2026, [arXiv:2606.19157](https://arxiv.org/abs/2606.19157)) | 8 Indic languages | context levels, in-domain and adversarial entities | WER, NEER |
 
 Other Mandarin sets: ATPC hotword-161, WenetSpeech biased words, AISHELL-NER and
 derived sets, ST-cmds-NE. Protocols without released lists: Common Voice NER lists
-(Thorbecke et al. 2024, arXiv:2409.13499; en, ca, fr, de, es, it), NVIDIA's
-evaluations of phrase boosting (arXiv:2406.07096, arXiv:2508.07014), Microsoft
+(Thorbecke et al. 2024, [arXiv:2409.13499](https://arxiv.org/abs/2409.13499); en, ca, fr, de, es, it), NVIDIA's
+evaluations of phrase boosting ([arXiv:2406.07096](https://arxiv.org/abs/2406.07096), [arXiv:2508.07014](https://arxiv.org/abs/2508.07014)), Microsoft
 LOGIC (internal data, 11 locales including fr-FR).
 
 No public French contextual biasing benchmark was found: the PxSLU part of this
