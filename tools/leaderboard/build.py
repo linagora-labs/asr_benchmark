@@ -178,8 +178,32 @@ def model_entry(exp, rtf_results=None, info_from=None):
         # model_info's (by hand) first: e.g. a chat template that ignores the sent prompt
         "prompt": info.get("prompt") or (meta.get("prompt") if backend != "vllm" or meta.get("endpoint") == "chat" else None),
         "prompt_source": info.get("prompt_source"),
+        "merge_as": info.get("merge_as"),  # one row for several models (e.g. one model per language)
         "scores": scores,
     }
+
+
+def merge_rows(models):
+    """Models with the same model_info.merge_as in one row named after it: the scores of each on
+    its test sets (e.g. one fine-tune per language), languages joined, linked to the Hugging Face
+    organization, with a note."""
+    merged, groups = [], {}
+    for m in models:
+        name = m.pop("merge_as", None)
+        if not name:
+            merged.append(m)
+        elif name not in groups:
+            groups[name] = m | {"id": name, "model": name, "variant": "", "languages": list(m["languages"] or []),
+                                "url": m["url"] and m["url"].rsplit("/", 1)[0]}
+            merged.append(groups[name])
+        else:
+            group = groups[name]
+            group["scores"] |= m["scores"]
+            group["languages"] += [l for l in m["languages"] or [] if l not in group["languages"]]
+    for name, group in groups.items():
+        note = "One model per language, each scored on the test sets of its language"
+        group["wer_note"] = "\n".join(filter(None, [note + ".", group["wer_note"]]))
+    return merged
 
 
 def is_public(exp):
@@ -216,6 +240,16 @@ def multilingual(results, french_results, rtf_results=None, include_private=Fals
                 if stem in MULTILINGUAL_FRENCH:
                     entry["scores"][MULTILINGUAL_FRENCH[stem]] = score
         models.append(entry)
+    # Models of a merged row (model_info.merge_as) run on French only (e.g. BuzzASR/french): their
+    # French scores, from --results
+    groups = {m["merge_as"] for m in models if m.get("merge_as")}
+    for exp in sorted(p for p in french_results.iterdir() if (p / "metadata.json").exists()):
+        if not (results / exp.name).exists():
+            entry = model_entry(exp)
+            if entry["merge_as"] in groups:
+                entry["scores"] = {MULTILINGUAL_FRENCH[k]: v for k, v in entry["scores"].items() if k in MULTILINGUAL_FRENCH}
+                models.append(entry)
+    models = merge_rows(models)
     ids = {stem for m in models for stem in m["scores"]}
     order = lambda i: (MULTILINGUAL_LANGUAGES.index(i.rsplit("_", 1)[1]) if i.rsplit("_", 1)[1] in MULTILINGUAL_LANGUAGES
                        else len(MULTILINGUAL_LANGUAGES), list(MULTILINGUAL_DATASETS).index(i.rsplit("_", 1)[0])
@@ -300,6 +334,8 @@ def build(results, manifest, output, rtf_results=None, rtf_manifest=None, cards=
           include_private=False, french_extra=()):
     experiments = sorted(p for p in results.iterdir() if (p / "metadata.json").exists())
     models = [model_entry(exp, rtf_results) for exp in experiments]
+    for m in models:
+        m.pop("merge_as", None)  # rows merged in the Multilingual tab only
     durations = manifest_durations(manifest)
     order = list(DATASETS)
     stems = sorted({stem for m in models for stem in m["scores"]},

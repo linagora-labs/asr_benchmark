@@ -32,6 +32,7 @@
         ],
         "architecture": "Encoder-decoder",
         "task": "ASR",
-        "streaming": false
+        "streaming": false,
+        "merge_as": "BuzzASR"
     }
 }

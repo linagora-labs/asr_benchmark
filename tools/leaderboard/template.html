@@ -382,6 +382,9 @@ function render() {
       (m.prompt || m.prompt_source ? ` <span class="prompt-info" title="${esc(promptText(m))}">💬</span>` : "");
     const cells = datasets.map(d => {
       const r = result(m, d);
+      // Multilingual tab: language not in the model card (model_info.languages)
+      if (!r && multi() && m.languages && !m.languages.includes(d.language))
+        return `<td class="muted${startClass(d)}" title="Language not supported by the model (model card)">n/s</td>`;
       if (!r) return cell(null, null, startClass(d));
       const title = [
         `${datasetLabel(d)} · ${m.model} (${[m.variant, m.backend].filter(Boolean).join(" · ")})`,

@@ -1,0 +1,23 @@
+{
+  "backend": "hojo-asr",
+  "model": "HojoAI/Hojo-ASR-Multi-V1",
+  "languages": [
+    "it",
+    "de",
+    "es",
+    "pt"
+  ],
+  "compute_rtf": false,
+  "device": "cuda",
+  "input_manifest": "/tmp/manifest_85axndq5.jsonl",
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "language": "pt",
+  "word_timestamps": false,
+  "model_info": {
+    "params": 5181417344
+  }
+}

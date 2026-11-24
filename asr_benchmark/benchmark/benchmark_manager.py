@@ -167,14 +167,20 @@ def check_if_benched(output_folder, input_file, config, debug):
         data[dataset] = sorted(data[dataset], key=lambda x: x['id'])
     return data, benched
 
-HOME = os.path.expanduser("~")
+# The host user's home too: in a docker container (tools/run_sota_dgx.sh), HOME is not the
+# host user's, who passes it as HOST_HOME
+HOMES = sorted({h.rstrip("/") for h in (os.path.expanduser("~"), os.environ.get("HOST_HOME", "")) if h.rstrip("/")},
+               key=len, reverse=True)
 
 
 def hide_home(value):
     """Paths under the home folder written as ~/...: results are versioned and published (the
     user name must not appear in them). Recursive on lists and dicts."""
     if isinstance(value, str):
-        return "~" + value[len(HOME):] if HOME not in ("", "/") and (value == HOME or value.startswith(HOME + "/")) else value
+        for home in HOMES:
+            if value == home or value.startswith(home + "/"):
+                return "~" + value[len(home):]
+        return value
     if isinstance(value, list):
         return [hide_home(v) for v in value]
     if isinstance(value, dict):

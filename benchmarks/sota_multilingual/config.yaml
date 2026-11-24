@@ -92,13 +92,6 @@ benchmarks:
     prompts: *luciole_prompts
     concurrency: 32
   # Part vllm
-  # Removed for now: crashed dgx2 (2026-11-18, concurrency 32, gpu_memory_utilization 0.6, during
-  # CommonVoice_en; FLEURS_en and Voxpopuli_en done). To retry with concurrency 16 and
-  # gpu_memory_utilization 0.5. Concurrency 64 crashes the DGX Spark.
-  # - backend: vllm
-  #   model: mistralai/Voxtral-Small-24B-2507
-  #   port: 8101
-  #   concurrency: 32
   - backend: vllm
     model: mistralai/Voxtral-Mini-3B-2507
     port: 8116
@@ -124,6 +117,112 @@ benchmarks:
       es: {chat_template_kwargs: {language: Spanish}}
       pt: {chat_template_kwargs: {language: Portuguese}}
       ar: {chat_template_kwargs: {language: Arabic}}
+  # The card's language-ID and punctuated-ASR prompts (benchmarks/sota: same in French). ASR in
+  # en, fr, de, es, pt, ja only
+  - backend: vllm
+    model: ibm-granite/granite-speech-5.0-2b
+    served_model_name: ibm-granite/granite-speech-5.0-2b
+    port: 8122
+    endpoint: chat
+    extra_args: --max-model-len 2048
+    concurrency: 128
+    languages: [en, de, es, pt]
+    prompts:
+      en: "<|audio|>The speech is in English. Transcribe it exactly; do not translate. transcribe the speech with proper punctuation and capitalization."
+      de: "<|audio|>The speech is in German. Transcribe it exactly; do not translate. transcribe the speech with proper punctuation and capitalization."
+      es: "<|audio|>The speech is in Spanish. Transcribe it exactly; do not translate. transcribe the speech with proper punctuation and capitalization."
+      pt: "<|audio|>The speech is in Portuguese. Transcribe it exactly; do not translate. transcribe the speech with proper punctuation and capitalization."
+  - backend: vllm
+    model: CohereLabs/cohere-transcribe-03-2026
+    trust_remote_code: true
+    port: 8115
+  # Needs vLLM >= 0.31, server started apart: tools/serve_salm_nvcr_dgx.sh MODEL 8118 EXTRA_ARGS
+  # --trust-remote-code, then the benchmark with --force
+  - backend: vllm
+    model: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B
+    launch: false
+    server: http://172.17.0.1
+    port: 8118
+    endpoint: chat
+    # benchmarks/sota prompt (card format), with the language of the test set
+    prompts:
+      en: "Audio transcription. Language: English. Wording: verbatim, including fillers and repetitions. Formatting: punctuation and capitalization. Output: transcript only."
+      nl: "Audio transcription. Language: Dutch. Wording: verbatim, including fillers and repetitions. Formatting: punctuation and capitalization. Output: transcript only."
+      it: "Audio transcription. Language: Italian. Wording: verbatim, including fillers and repetitions. Formatting: punctuation and capitalization. Output: transcript only."
+      de: "Audio transcription. Language: German. Wording: verbatim, including fillers and repetitions. Formatting: punctuation and capitalization. Output: transcript only."
+      es: "Audio transcription. Language: Spanish. Wording: verbatim, including fillers and repetitions. Formatting: punctuation and capitalization. Output: transcript only."
+      pt: "Audio transcription. Language: Portuguese. Wording: verbatim, including fillers and repetitions. Formatting: punctuation and capitalization. Output: transcript only."
+      ar: "Audio transcription. Language: Arabic. Wording: verbatim, including fillers and repetitions. Formatting: punctuation and capitalization. Output: transcript only."
+    extra_body: {chat_template_kwargs: {enable_thinking: false}}
+    concurrency: 32
+    trust_remote_code: true
+    extra_args: --max-model-len 8192 --enable-chunked-prefill --no-enable-prefix-caching --mamba-cache-mode none --mm-processor-cache-gb 0 --speculative-config {"method":"mtp","num_speculative_tokens":2} --gpu-memory-utilization 0.6
+  - backend: vllm
+    model: Qwen/Qwen3-Omni-30B-A3B-Instruct
+    port: 8105
+    startup_timeout: 7200
+    env:
+      MAX_JOBS: 4
+  - backend: vllm
+    model: Qwen/Qwen3-ASR-0.6B
+    port: 8119
+    concurrency: 128
+  # Crashed dgx2 (2026-11-18, concurrency 32, gpu_memory_utilization 0.6, during CommonVoice_en),
+  # passed (2026-11-23) with concurrency 16, 0.5. Concurrency 64 crashes the DGX Spark.
+  - backend: vllm
+    model: mistralai/Voxtral-Small-24B-2507
+    port: 8101
+    concurrency: 16
+    gpu_memory_utilization: 0.5
+    languages: *european
+  # Part transformers4. Detects the language
+  - backend: hojo-asr
+    model: HojoAI/Hojo-ASR-Multi-V1
+    batch_size: 16
+    languages: [en, it, de, es, pt]  # en: not on the card, run on request
+  # Part transformers. Detect the language. Batches of 64: conv2d over 2^31 elements on Voxpopuli_en
+  - backend: transformers-parakeet
+    model:
+    - moondream/parakeet-ultra
+    - moondream/parakeet-redux
+    batch_size: 16
+    languages: *european
+  # One fine-tune per language (language baked in its tokenizer), not through vLLM (garbage)
+  - backend: transformers-whisper
+    model: BuzzASR/english
+    batch_size: 64
+    generate_kwargs: &buzz_generate {no_repeat_ngram_size: 3, repetition_penalty: 1.2}
+    languages: [en]
+  - backend: transformers-whisper
+    model: BuzzASR/dutch
+    batch_size: 64
+    generate_kwargs: *buzz_generate
+    languages: [nl]
+  - backend: transformers-whisper
+    model: BuzzASR/italian
+    batch_size: 64
+    generate_kwargs: *buzz_generate
+    languages: [it]
+  - backend: transformers-whisper
+    model: BuzzASR/german
+    batch_size: 64
+    generate_kwargs: *buzz_generate
+    languages: [de]
+  - backend: transformers-whisper
+    model: BuzzASR/spanish
+    batch_size: 64
+    generate_kwargs: *buzz_generate
+    languages: [es]
+  - backend: transformers-whisper
+    model: BuzzASR/portuguese
+    batch_size: 64
+    generate_kwargs: *buzz_generate
+    languages: [pt]
+  - backend: transformers-whisper
+    model: BuzzASR/arabic
+    batch_size: 64
+    generate_kwargs: *buzz_generate
+    languages: [ar]
   # Part nemo
   - backend: nemo
     model:
