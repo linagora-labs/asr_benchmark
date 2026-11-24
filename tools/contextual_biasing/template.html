@@ -299,8 +299,13 @@ const CUT_LISTS = { "faster-whisper": {
   "100": "hotwords cut to 223 tokens (about 60 % of the list reach the model)",
   "pxslu": "hotwords cut to 223 tokens (the first 51 of the 389 names, in alphabetical order, reach the model)",
 } };
+// The same for the runs with the terms separated by spaces (setting "spaces")
+const CUT_LISTS_SPACES = { "faster-whisper": {
+  "100": "hotwords cut to 223 tokens (about 84 % of the list reach the model)",
+  "pxslu": "hotwords cut to 223 tokens (the first 63 of the 389 names, in alphabetical order, reach the model)",
+} };
 function cutNote(row, list) {
-  const notes = (row && CUT_LISTS[row.backend]) || {};
+  const notes = (row && (row.setting === "spaces" ? CUT_LISTS_SPACES : CUT_LISTS)[row.backend]) || {};
   if (!SIZE_CLASSES[list]) return notes[list];
   return SIZE_CLASSES[list].filter((l) => notes[l]).map((l) => `${l}: ${notes[l]}`).join("; ") || undefined;
 }
@@ -339,7 +344,7 @@ function ranking(all, list) {
     }
     const base = all.find((r) => r.list === list && r.label === baseLabel(name));
     return base && present(base.wer) ? { name, wer: base.wer, high: base.wer_ci95_high, bwer: base.b_wer, fallback: true, row: base } : null;
-  }).filter(Boolean);
+  }).filter((e) => e && !trainedOn(state.dataset, e.name));
   let rest = [...entries].sort((a, b) => a.wer - b.wer), level = 0;
   const ranked = [];
   while (rest.length) {
@@ -423,7 +428,9 @@ function overview() {
     `within a level, by B-WER. * Whisper: hotwords cut to 223 tokens.` +
     (m.log ? ` ~ RTFx ${APPROX_NOTE}.` : "")) +
     (slowShown.size ? ` <sup>\u2020</sup> ${esc(`${SLOW_NOTE[0].toUpperCase()}${SLOW_NOTE.slice(1)}. ${[...slowShown].join(". ")}.`)}` : "") +
-    (state.language === AGG ? ` ${esc(aggregateNote(all, lists))}` : "");
+    (state.language === AGG ? ` ${esc(aggregateNote(all, lists))}` : "") +
+    [...new Set(models.map((x) => trainedOn(state.dataset, x.name)).filter(Boolean))]
+      .map((t) => ` <sup>\u2021</sup> ${esc(`${t.why}: not ranked (listed last).`)}`).join("");
 }
 
 // WER (x) by B-WER (y) on the ranked list; highlighted: the models that no other one
@@ -534,7 +541,19 @@ function details() {
 
 // ---- Charts
 const isUpper = (list) => list.endsWith("_upper");
-const baseLabel = (name) => name.replace(/ \(alpha [^)]*\)$/, "");
+// Model of a name with its setting (e.g. "large-v3 (spaces)", "canary-1b-v2 (alpha 1.0)")
+let LABELS = null;
+function baseLabel(name) {
+  LABELS ||= Object.fromEntries(allRows().map((r) => [rowName(r), r.label]));
+  return LABELS[name] ?? name.replace(/ \(alpha [^)]*\)$/, "");
+}
+// Models trained on a test set: marked, left out of its ranking and of the aggregates
+const TRAINED_ON = [
+  { dataset: "PxSLU_test", label: /Luciole/i,
+    why: "PxSLU (test and dev) is in the published training data of Luciole-Audio (Luciole-Audio-Training-Dataset, PxSLU_fr); " +
+      "presumably also in the one of the v5_transcribe checkpoint (not checked)" },
+];
+const trainedOn = (dataset, name) => TRAINED_ON.find((t) => t.dataset === dataset && t.label.test(baseLabel(name)));
 // Lists of the figure (the ones in capitals are drawn next to their list)
 function chartLists() {
   const all = rows();
@@ -625,7 +644,11 @@ function modelStyles() {
   Object.keys(names).filter((f) => !biased.has(f)).forEach((family) => assign(family, NO_BIASING_HEX));
   return styles;
 }
-const nameCell = (name, styles) => `<td style="color: ${(styles[name] || {}).text || "inherit"}">${esc(name)}</td>`;
+function nameCell(name, styles) {
+  const trained = trainedOn(state.dataset, name);
+  return `<td style="color: ${(styles[name] || {}).text || "inherit"}">${esc(name)}` +
+    `${trained ? ` <sup title="${esc(`${trained.why}: not ranked`)}">\u2021</sup>` : ""}</td>`;
+}
 
 // WER by B-WER, then one panel per measure (WER, B-WER, F1, RTFx), one line per model
 const LINE_METRICS = ["wer", "b_wer", "f1", "rtfx"];
@@ -757,6 +780,7 @@ function aggregateRows(agg, mode) {
     const baseRow = (label) => (rs, l) => rs.find((r) => r.list === l && r.label === label);
     const labels = new Set(parts.flatMap((p) => p.rows.map((r) => r.label)));
     for (const label of labels) {
+      if (parts.some((p) => trainedOn(p.d, label))) continue;
       const bases = values(baseRow(label));
       if (!bases.every((s) => s.every(Boolean))) continue;
       const first = bases[0][0];

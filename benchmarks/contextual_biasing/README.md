@@ -301,11 +301,17 @@ measures as an HTML page (`page/index.html`, a single file): leaderboard of a me
 for each model and list, plots of WER by B-WER and of WER, B-WER, F1 and RTFx by list
 size, charts of each list without and with it, and all the measures of one list; both
 text normalizations, and a selection of the models shown (NeMo runs at alpha 1.0 and
-2.0; the other weights of the tuning on PxSLU dev are left out, `--exclude_settings`;
+2.0; the other weights of the tuning on PxSLU dev, and the Whisper runs with the
+hotwords separated by spaces instead of commas, are left out, `--exclude_settings`;
 the Parakeet run with the LibriSpeech N=1000 lists, the only NeMo run with them, is
 left out too, `--exclude_runs`). An empty cell of the leaderboard means no run with this
 list; it is marked with a dagger when the run was left out only because the model is
-too slow with the list (`TOO_SLOW` in `template.html`).
+too slow with the list (`TOO_SLOW` in `template.html`). A model trained on a test set is marked with
+a double dagger on it, listed last and left out of its ranking and of the aggregated
+test sets (`TRAINED_ON` in `template.html`): the Luciole models on PxSLU. The training
+data published for Luciole-Audio (`OpenLLM-France/Luciole-Audio-Training-Dataset`,
+`PxSLU_fr`) holds all the PxSLU test and dev recordings; this is presumed, not
+checked, for the `v5_transcribe_v2` checkpoint.
 
 After the test sets, two aggregated test sets, "English" (Contextual Earnings-22 and
 LibriSpeech test-other) and "French and English" (the same plus PxSLU test), give the
@@ -344,7 +350,9 @@ NeMo 3.0 fails to load a model twice in one process).
   and only on the datasets that have this list. Backends without a biasing
   mechanism refuse the key.
 - Other config keys: `contextual_biasing_template` (text given to the model:
-  `{terms}`, the terms joined with `", "`, and, for some backends, `{prompt}`);
+  `{terms}`, the terms joined with `contextual_biasing_separator`, `", "` by
+  default, and, for some backends, `{prompt}`; another separator adds `-spaces`,
+  or `-sep<...>`, to the result folder);
   per backend: `contextual_biasing_mode` (faster-whisper: `hotwords` or
   `initial_prompt`), `contextual_biasing_field` (vLLM transcriptions: `prompt` or
   `hotwords`), `contextual_biasing_alpha`, `contextual_biasing_context_score`,

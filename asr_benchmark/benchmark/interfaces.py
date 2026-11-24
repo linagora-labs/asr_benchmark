@@ -1,9 +1,13 @@
 import logging
+import re
 import requests
 import subprocess
 from tqdm import tqdm
 from asr_benchmark.utils.benchmark import load_audio
 from asr_benchmark.benchmark import contextual_biasing
+
+# Separator of the terms given to the model (config contextual_biasing_separator)
+DEFAULT_BIASING_SEPARATOR = ", "
 
 logger = logging.getLogger(__name__)
 
@@ -45,14 +49,21 @@ class Model():
         """Terms to give to the model for a manifest row (None if the config gives none)."""
         return contextual_biasing.terms_for_row(row, self.config)
 
+    def biasing_separator(self):
+        """Separator of the terms in the text given to the model (config
+        contextual_biasing_separator, default ", ")."""
+        separator = self.config.get("contextual_biasing_separator")
+        return DEFAULT_BIASING_SEPARATOR if separator is None else str(separator)
+
     def format_biasing(self, terms, **kwargs):
         """Text built from the terms with the template of the config
         (contextual_biasing_template) or of the backend: {terms} is replaced by the terms
-        joined with ", ", other placeholders (e.g. {prompt}) by kwargs. None without terms."""
+        joined with the separator (biasing_separator), other placeholders (e.g. {prompt})
+        by kwargs. None without terms."""
         if not terms:
             return None
         template = self.config.get("contextual_biasing_template") or self.DEFAULT_BIASING_TEMPLATE
-        return template.format(terms=", ".join(terms), **kwargs)
+        return template.format(terms=self.biasing_separator().join(terms), **kwargs)
 
     def transcribe_batch(self, data: list) -> list[str]:
         predictions = []
@@ -112,6 +123,10 @@ class Model():
         tag = contextual_biasing.folder_tag(self.config)
         if tag:
             tag += "".join(f"-{param}" for param in self.biasing_folder_params())
+            # Separator of the terms other than the default one: "-spaces", or "-sep<...>"
+            separator = self.biasing_separator()
+            if separator != DEFAULT_BIASING_SEPARATOR:
+                tag += "-spaces" if separator == " " else "-sep" + re.sub(r"[^\w.]", "_", separator.strip() or "blank")
         return self.get_folder_name() + tag
     
     def count_parameters(self):

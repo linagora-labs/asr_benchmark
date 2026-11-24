@@ -42,7 +42,9 @@ class VllmTranscriptionModel(Model):
       the transcription_prompt of the config), default "{terms}".
     - endpoint "chat": the user message becomes contextual_biasing_template, which
       must be given (each model documents its own form), with {prompt} for the
-      prompt of the config and {terms} for the terms.
+      prompt of the config and {terms} for the terms. When the template holds the
+      audio_placeholder (e.g. "{prompt}\n\nVocabulaire: {terms} <|audio|>": audio
+      after the terms), {prompt} is the prompt without it.
     """
     SUPPORTS_CONTEXTUAL_BIASING = True
 
@@ -158,6 +160,14 @@ class VllmTranscriptionModel(Model):
             text = self._strip_annotations(text)
         return text.strip()
 
+    def _prompt_for_template(self) -> str:
+        """{prompt} of contextual_biasing_template: the prompt of the config, without its
+        audio placeholder when the template places the audio itself."""
+        placeholder = self.config["audio_placeholder"]
+        if placeholder and placeholder in (self.config.get("contextual_biasing_template") or ""):
+            return self.config["prompt"].replace(placeholder, "").strip()
+        return self.config["prompt"]
+
     def _post_chat(self, audio_path: str, terms=None) -> str:
         """POST one audio file with `prompt` to /v1/chat/completions, for audio LLMs that
         vLLM does not serve as transcription models (NeMo SALM / Luciole-Audio, ...)."""
@@ -165,7 +175,7 @@ class VllmTranscriptionModel(Model):
 
         with open(audio_path, "rb") as f:
             audio_b64 = base64.b64encode(f.read()).decode()
-        prompt = self.format_biasing(terms, prompt=self.config["prompt"]) or self.config["prompt"]
+        prompt = self.format_biasing(terms, prompt=self._prompt_for_template()) or self.config["prompt"]
         data = {
             "model": self.config["request_model"],
             "messages": [{"role": "user", "content": [
