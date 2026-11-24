@@ -19,7 +19,6 @@ from ssak.utils.text_latin import numbers_and_symbols_to_letters
 from ssak.utils.wer import compute_wer
 from ssak.utils.monitoring import Monitoring
 
-REPLACEMENTS_WER = {"euh": "", "hum": ""}
 PATH_TO_WARMUP_FILE = "examples/bonjour.wav"
 
 # Typographic punctuation that models emit but references usually write in ASCII
@@ -55,21 +54,10 @@ def normalize_punctuation(text):
     return _UNICODE_PUNCTUATION_RE.sub(lambda m: UNICODE_PUNCTUATION[m.group()], text)
 
 
-def normalize_numbers(text, language="fr"):
-    """One way to write the numbers that the conversion to letters reads differently, in
-    French: "1.5" -> "1,5" ("un virgule cinq", not "un point cinq"; "1.500" is left, it
-    may be a thousand), "2 pourcent" and "2 %" -> "2 pour cent"."""
-    if language.split("-")[0] != "fr":
-        return text
-    text = re.sub(r"(?<![\d.,])(\d+)\.(\d{1,2}|\d{4,})(?![\d.,]*\d)", r"\1,\2", text)
-    return re.sub(r"\bpourcents?\b|\s*%", " pour cent", text, flags=re.IGNORECASE)
-
-
 def spell_numbers(text, language="fr"):
     """"le 15 décembre" -> "le quinze décembre", as the nocasepunc normalization does."""
     if not re.search(r"\d", text):
         return text
-    text = normalize_numbers(text, language)
     return numbers_and_symbols_to_letters(text, lang=language)
 
 
@@ -312,8 +300,6 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
     if any(re.search( r"[^\w\s'-]", ref) for ref in references):
         modes = ["wer", "cer", "wer_nocasepunc", "cer_nocasepunc"]
 
-    references = [normalize_numbers(ref, language) for ref in references]
-    predictions = [normalize_numbers(pred, language) for pred in predictions]
     texts = {"nocasepunc": (references, predictions)}
     if "wer" in modes:
         texts = {
@@ -346,8 +332,6 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
                 normalization=normalization,
                 use_percents=True,
                 alignment=alignment,
-                replacements_pred=REPLACEMENTS_WER,
-                replacements_ref=REPLACEMENTS_WER,
             )
             word_alignments[normalization] = wer_score.pop("raw_alignement")
             del wer_score["alignment"]

@@ -188,42 +188,27 @@ def _make_normalizers(language):
     """{mode: function text -> list of tokens}."""
     from ssak.utils.text import format_text
 
+    from ssak.utils.text_numbers import normalize_spoken_numbers
+
     # Same typographic punctuation folding as the WER (imported here: benchmark_manager
     # imports this module)
-    from ssak.utils.text_utils import (
-        cardinal_numbers_to_letters,
-        currencies_after_numbers,
-        normalize_english_numbers,
-        ordinal_numbers_to_letters,
-        symbols_to_letters,
-    )
+    from asr_benchmark.benchmark.benchmark_manager import normalize_punctuation
 
-    from asr_benchmark.benchmark.benchmark_manager import normalize_numbers, normalize_punctuation
-
-    english = language.split("-")[0] == "en"
-
-    def words(text):
-        # English: "two hundred and fifty", "twenty twenty-one", as in the WER
-        tokens = _tokenize(normalize_english_numbers(text) if english else text, language)
-        # French: "1 goutte" is read "un goutte" ("une" and "un" are the same, as in the WER)
-        return [_UN.get(t, t) for t in tokens] if language.split("-")[0] == "fr" else tokens
+    def words(text, **kwargs):
+        # Same normalization as the WER, disfluencies removed ("euh", "uh"...)
+        text = format_text(normalize_punctuation(text), language=language, remove_disfluencies=True, **kwargs)
+        return _tokenize(normalize_spoken_numbers(text, language), language)
 
     def nocasepunc(text):
-        return words(format_text(normalize_numbers(normalize_punctuation(text), language), language=language))
+        return words(text)
 
     def cased(text):
-        # As nocasepunc, with the case kept: numbers (not the Roman ones, "X-Prep") and
-        # symbols in letters first, then the punctuation is removed (words)
-        text = currencies_after_numbers(normalize_numbers(normalize_punctuation(text), language), language)
-        if _DIGIT.search(text):
-            text = cardinal_numbers_to_letters(ordinal_numbers_to_letters(text, lang=language), lang=language)
-        return words(symbols_to_letters(text, language))
+        return words(text, lower_case=False)
 
     return {"nocasepunc": nocasepunc, "cased": cased}
 
 
 _DIGIT = re.compile(r"\d")
-_UN = {"une": "un", "Une": "Un"}
 _LIGATURES = str.maketrans({"œ": "oe", "Œ": "oe", "æ": "ae", "Æ": "ae"})
 
 
