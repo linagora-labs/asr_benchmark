@@ -82,6 +82,10 @@
   .sticky-scrollbar .thumb { position: absolute; top: 2px; bottom: 2px; min-width: 40px; background: #8a8883; border-radius: 5px; cursor: grab; touch-action: none; }
   .sticky-scrollbar .thumb:hover, .sticky-scrollbar .thumb.dragging { background: var(--accent); }
   .sticky-scrollbar .thumb.dragging { cursor: grabbing; }
+  /* Header row stuck to the top of the window while its table is on screen (stickyHeader()): moved
+     by a transform, the tables' horizontal scroll container stopping position: sticky */
+  thead.stuck th { background: var(--surface); box-shadow: 0 1px 0 var(--line), 0 2px 6px rgba(0,0,0,.06); }
+  thead { position: relative; z-index: 1; }
   th.language-start, td.language-start { border-left: 2px solid #a3a19b; }
   .language-row button[data-language] { min-width: 120px; font-weight: 600; }
 </style>
@@ -535,6 +539,24 @@ function stickyScrollbar(box) {
   observer.observe(box.querySelector("table"));
 }
 document.querySelectorAll(".scroll").forEach(box => box.querySelector("table") && stickyScrollbar(box));
+
+// The header row of each table follows the window's scroll while the table is on screen (its
+// .scroll box scrolls horizontally, so position: sticky would stick within the box, not the window):
+// moved down by the distance scrolled past the table's top, until the table's last row.
+function stickyHeaders() {
+  document.querySelectorAll(".scroll table").forEach(table => {
+    const head = table.tHead;
+    if (!head) return;
+    const top = table.getBoundingClientRect().top, max = table.offsetHeight - head.offsetHeight;
+    const shift = Math.max(0, Math.min(-top, max));
+    head.style.transform = shift ? `translateY(${shift}px)` : "";
+    head.classList.toggle("stuck", shift > 0);
+  });
+}
+window.addEventListener("scroll", stickyHeaders, { passive: true });
+window.addEventListener("resize", stickyHeaders);
+// Tables re-rendered (sort, filters, tab): their new header goes back in place
+document.querySelectorAll(".scroll table").forEach(table => new MutationObserver(stickyHeaders).observe(table, { childList: true }));
 
 // Controls
 const languages = [...new Set(DATA.datasets.map(d => d.language))];
