@@ -85,7 +85,10 @@
   /* Header row stuck to the top of the window while its table is on screen (stickyHeader()): moved
      by a transform, the tables' horizontal scroll container stopping position: sticky */
   thead.stuck th { background: var(--surface); box-shadow: 0 1px 0 var(--line), 0 2px 6px rgba(0,0,0,.06); }
-  thead { position: relative; z-index: 1; }
+  thead { position: relative; z-index: 2; }  /* above the sticky rank column */
+  /* Rank column (#) of the leaderboard kept on screen when the table scrolls horizontally */
+  #board th:first-child, #board td:first-child { position: sticky; left: 0; z-index: 1; background: var(--surface);
+    box-shadow: inset -1px 0 0 var(--line); }
   th.language-start, td.language-start { border-left: 2px solid #a3a19b; }
   .language-row button[data-language] { min-width: 120px; font-weight: 600; }
 </style>
