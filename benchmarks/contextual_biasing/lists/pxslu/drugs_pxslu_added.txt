@@ -1,0 +1,43 @@
+# Drug names spoken in the PxSLU test split that are missing
+# from drugs_pxslu.txt (tags "inn" and "drug" of the corpus).
+# Reviewed by hand: no truncated word, no word that is not a
+# drug, no misspelled or misheard name of the transcripts.
+# Brands capitalized, active substances in lower case.
+Célestène
+Monazol
+Respilène
+Rhinathiol
+Tégrétol
+acétylleucine
+alprazolam
+amiodarone
+amlodipine
+amorolfine
+atovaquone-proguanil
+bisoprolol
+calcipotriol
+carbamazépine
+carbimazole
+ciprofloxacine
+diazépam
+dulaglutide
+dydrogestérone
+glipizide
+hélicidine
+isotrétinoïne
+lercanidipine
+lévofloxacine
+lévothyroxine
+metformine
+métronidazole
+niclosamide
+oméprazole
+paracétamol
+propranolol
+prégabaline
+ramipril
+risédronate
+théophylline
+tobramycine
+tropatépine
+éthambutol

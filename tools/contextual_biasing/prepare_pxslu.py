@@ -5,13 +5,17 @@ drug prescriptions: 1,981 recordings with transcripts and BIO entity labels.
 This script:
 
 1. reads the raw corpus (paths.txt, seq.in, seq.out) and its official split
-   (data_splits/<split>/<split>.txt: 1-based line numbers of the raw corpus);
+   (data_splits/<split>/<split>.txt: line numbers of the raw corpus, starting at 0;
+   its readme does not say so, but only then is test what the readme describes, all
+   the recordings of the doctors and only them: checked with metadata.txt);
 2. fixes drug name spellings with the corrections of the dataset
    (scripts/drug_name_correction_V4.txt), as whole words, in a single pass
    (the dataset's own clean_PxSLU.py replaces substrings one after another,
    which creates words like "alalepsal" or "amikacinee");
 3. removes the utterances with unidentifiable drug names
    (scripts/drug_name_exclusion.txt, same rule as clean_PxSLU.py);
+   and the recordings of lists/pxslu/excluded_recordings.txt (reviewed by hand: drug
+   name misspelled or misheard in the transcript);
 4. removes truncated words (tokens containing "/", e.g. "qu/", "/pone");
 5. writes the drug lists (one term per line), in their usual case: brand names
    capitalized (each part of a hyphenated name), active substances in lower
@@ -23,6 +27,9 @@ This script:
      condition;
    - drugs_pxslu_upper.txt: the same in capitals (does a model write the drug
      names in capitals when given them in capitals?);
+   - drugs_pxslu_ext.txt: the same plus the names of drugs_pxslu_added.txt (reviewed
+     list, kept by hand), the drug names spoken in the test split that are missing from
+     the previous list, mostly active substances ("inn" tags of the corpus);
    - drugs_bdpm.txt: drug names of the French public drug database (Base de
      donnees publique des medicaments, ANSM, Licence Ouverte / Open Licence 2.0),
      plus the PxSLU targets missing from it (list = targets + distractors);
@@ -41,7 +48,9 @@ This script:
      of the per call lists of Contextual Earnings-22 ("global": 25 terms on
      average), and short enough for every model (Whisper hotwords: at most 223
      tokens; this list: at most ~130 tokens, ~160 in capitals); "pxslu25_upper"
-     in capitals;
+     in capitals; "pxslu25_ext": the same from drugs_pxslu_ext.txt;
+   - the targets to score: drugs_pxslu.txt for every list, except "pxslu_ext" and
+     "pxslu25_ext" (drugs_pxslu_ext.txt);
    - "oracle", "oracle_upper": only the targets spoken in the utterance (not a
      realistic setting, not run in the configs).
 
@@ -97,6 +106,17 @@ def make_corrector(corrections):
     keys = sorted(corrections, key=len, reverse=True)
     pattern = re.compile(r"(?<!\w)(" + "|".join(map(re.escape, keys)) + r")(?!\w)")
     return lambda text: pattern.sub(lambda m: corrections[m.group(1)], text)
+
+
+def read_split(pxslu, split, categories):
+    """0-based line numbers of an official split, checked with the category of the
+    speakers: test is all the doctors, train and dev are the others (corpus readme)."""
+    numbers = [int(x) for x in read_lines(pxslu / "data_splits" / split / f"{split}.txt") if x.strip()]
+    n_doctors = sum(categories[n] == "doctor" for n in numbers)
+    if n_doctors != (categories.count("doctor") if split == "test" else 0) or (split == "test" and n_doctors != len(numbers)):
+        raise ValueError(f"Split {split}: {n_doctors} recordings of doctors among {len(numbers)} "
+                         "(test should be all the doctors, train and dev none of them)")
+    return numbers
 
 
 def is_excluded(text, exclusions):
@@ -274,6 +294,8 @@ def main():
     corrections = read_corrections(pxslu / "scripts" / "drug_name_correction_V4.txt")
     correct = make_corrector(corrections)
     exclusions = [w.strip() for w in read_lines(pxslu / "scripts" / "drug_name_exclusion.txt") if w.strip()]
+    excluded_file = lists_dir / "excluded_recordings.txt"
+    excluded_recordings = {line.split("\t")[0] for line in read_terms(excluded_file)} if excluded_file.exists() else set()
 
     # PxSLU drug names, with the same corrections as the transcripts, then in the
     # form (case, single spelling) of the reviewed table
@@ -290,6 +312,10 @@ def main():
     write_list(lists_dir / "drugs_pxslu.txt", targets)
     write_list(lists_dir / "drugs_pxslu_upper.txt", [t.upper() for t in targets])
     lists = {"pxslu": lists_dir / "drugs_pxslu.txt", "pxslu_upper": lists_dir / "drugs_pxslu_upper.txt"}
+    # Extended list: plus the names of the test split missing from it
+    targets_ext = sorted(set(targets) | set(read_terms(lists_dir / "drugs_pxslu_added.txt")), key=sort_key)
+    write_list(lists_dir / "drugs_pxslu_ext.txt", targets_ext)
+    lists["pxslu_ext"] = lists_dir / "drugs_pxslu_ext.txt"
     substance_words = bdpm_substance_words(args.bdpm_dir)
     distractors = {"bdpm": bdpm_drug_names(args.bdpm_dir)} | {
         name: {t.lower() for t in read_terms(Path(args.drug_lists_dir) / filename)} for name, filename in LISTS.items()
@@ -303,28 +329,33 @@ def main():
 
     paths = read_lines(pxslu / "raw" / "paths.txt")
     texts = read_lines(pxslu / "raw" / "seq.in")
-    assert len(paths) == len(texts), "paths.txt and seq.in are not aligned"
+    # Category of the speaker of each recording (doctor, expert, non-expert)
+    categories = [line.split(",")[-1].strip() for line in read_lines(pxslu / "raw" / "metadata.txt")]
+    assert len(paths) == len(texts) == len(categories), "paths.txt, seq.in and metadata.txt are not aligned"
     targets_tokens = {t: tuple(tokens(t)) for t in targets}
     forms = {toks: t for t, toks in targets_tokens.items()}
+    targets_ext_tokens = {t: tuple(tokens(t)) for t in targets_ext}
 
     for split in args.splits:
-        line_numbers = [int(x) for x in read_lines(pxslu / "data_splits" / split / f"{split}.txt") if x.strip()]
+        line_numbers = read_split(pxslu, split, categories)
         rows, n_excluded, n_corrected = [], 0, 0
         for number in line_numbers:
-            path, raw = paths[number - 1].strip(), texts[number - 1].strip()
+            path, raw = paths[number].strip(), texts[number].strip()
             text = spelling(correct(raw))
             n_corrected += text != raw
-            if is_excluded(text, exclusions):
+            if is_excluded(text, exclusions) or path in excluded_recordings:
                 n_excluded += 1
                 continue
             text = clean_text(text)
             if not text:
                 continue
             oracle = find_terms(text, targets_tokens)
+            oracle_ext = find_terms(text, targets_ext_tokens)
             text = recase(text, forms)
             info = soundfile.info(str(pxslu / "recordings" / path))
             utterance_id = f"PxSLU_{path.replace('/', '_').removesuffix('.wav')}"
             local = local_list(oracle, targets, LOCAL_LIST_SIZE, utterance_id)
+            local_ext = local_list(oracle_ext, targets_ext, LOCAL_LIST_SIZE, utterance_id)
             rows.append({
                 "audio_filepath": f"{args.audio_prefix}/{path}",
                 "duration": round(info.frames / info.samplerate, 3),
@@ -335,8 +366,13 @@ def main():
                 "line": number,
                 "contextual_biasing": {name: str(lists_ref / path_.name) for name, path_ in lists.items()}
                 | {f"pxslu{LOCAL_LIST_SIZE}": local, f"pxslu{LOCAL_LIST_SIZE}_upper": [t.upper() for t in local],
+                   f"pxslu{LOCAL_LIST_SIZE}_ext": local_ext,
                    "oracle": oracle, "oracle_upper": [t.upper() for t in oracle]},
-                "contextual_biasing_targets": str(lists_ref / "drugs_pxslu.txt"),
+                "contextual_biasing_targets": {
+                    "default": str(lists_ref / "drugs_pxslu.txt"),
+                    "pxslu_ext": str(lists_ref / "drugs_pxslu_ext.txt"),
+                    f"pxslu{LOCAL_LIST_SIZE}_ext": str(lists_ref / "drugs_pxslu_ext.txt"),
+                },
             })
         manifest = output / "manifests" / f"PxSLU_{split}.jsonl"
         manifest.parent.mkdir(parents=True, exist_ok=True)

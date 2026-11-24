@@ -12,7 +12,8 @@ Manifest fields (all optional, a manifest without them is a regular ASR manifest
 - ``contextual_biasing_targets``: the terms to score (same forms: inline list or
   file). Default: the biasing list itself. Useful when the list given to
   the model contains many words that are not targets (large dictionaries), or to
-  score every condition on the same targets.
+  score every condition on the same targets. A dict {list name: terms} gives targets
+  per list, with those of the other lists under "default".
 
 The config key ``contextual_biasing`` of a benchmark selects the list given to the
 model: null (no list: the baseline) or the name of a list. In every condition, the transcriptions are scored on
@@ -410,8 +411,11 @@ def score_dataset(data, rows, config, language="fr"):
     duration = sum(data[i].get("audio_duration") or 0 for i in ids)
     key_cache = {}
     norms = {mode: _Normalized(normalize, key_cache) for mode, normalize in _make_normalizers(language).items()}
-    # Targets (the same for every list variant), None: the list itself
-    targets = {i: load_terms(rows[i].get(TARGETS_KEY)) for i in ids}
+    # Targets (the same for every list variant unless given per list), None: the list itself
+    def targets_of(row, name):
+        value = row.get(TARGETS_KEY)
+        return load_terms(value.get(name, value.get("default")) if isinstance(value, dict) else value)
+
     results = {}
     for name in names:
         items = []
@@ -419,8 +423,8 @@ def score_dataset(data, rows, config, language="fr"):
             row_lists = row_variants(rows[i])
             if name not in row_lists:
                 raise ValueError(f"Contextual biasing list '{name}' missing for row {i}")
-            terms = load_terms(row_lists[name])
-            items.append((i, data[i]["text"], data[i]["prediction"], terms, terms if targets[i] is None else targets[i]))
+            terms, targets = load_terms(row_lists[name]), targets_of(rows[i], name)
+            items.append((i, data[i]["text"], data[i]["prediction"], terms, terms if targets is None else targets))
         results[name] = {mode: score_variant(items, norm, duration) for mode, norm in norms.items()}
     return results
 

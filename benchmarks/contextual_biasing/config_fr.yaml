@@ -3,6 +3,9 @@
 # Each model with a biasing mechanism is run once per value of `contextual_biasing`:
 #   null       no list given (baseline; scored on every list of the manifest)
 #   pxslu      global list of the PxSLU drug names (~400 terms, the targets)
+#   pxslu_ext  pxslu plus the drug names of the test split missing from it (mostly active
+#              substances), also counted as targets; pxslu25_ext: 25 of them per
+#              utterance, as pxslu25 below
 #   bdpm       targets + drug names of the French public drug database (BDPM,
 #              ANSM, Licence Ouverte) (~4,100 terms, ~18k tokens)
 #   vidal      targets + Vidal drug dictionary (~2,800 terms, ~12k tokens)
@@ -48,13 +51,13 @@ benchmarks:
   - backend: faster-whisper
     model: large-v3
     precision: float16
-    contextual_biasing: [null, pxslu25, pxslu, pxslu25_upper]
+    contextual_biasing: [null, pxslu25, pxslu25_ext, pxslu, pxslu_ext, pxslu25_upper]
   - backend: faster-whisper
     model: large-v3-turbo
     precision: float16
     accurate: [false, true]
     full_name: true
-    contextual_biasing: [null, pxslu25, pxslu, pxslu25_upper]
+    contextual_biasing: [null, pxslu25, pxslu25_ext, pxslu, pxslu_ext, pxslu25_upper]
   # The same, with the terms separated by spaces instead of ", " (fewer tokens: more
   # of the list within the 223; result folders "...-spaces"). Run once: worse than with
   # commas (more false alarms and loops), left out of the page.
@@ -79,7 +82,7 @@ benchmarks:
     # - Qwen/Qwen3-ASR-0.6B
     port: 8106
     extra_args: --max-model-len 65536
-    contextual_biasing: [null, pxslu25, pxslu, bdpm, vidal, theriaque, pxslu25_upper, pxslu_upper]
+    contextual_biasing: [null, pxslu25, pxslu25_ext, pxslu, pxslu_ext, bdpm, vidal, theriaque, pxslu25_upper, pxslu_upper]
     contextual_biasing_template: "Vocabulary: {terms}."
 
   # --- Nemotron-3.5-Transcribe (vLLM chat, server started separately) ---
@@ -95,7 +98,7 @@ benchmarks:
     prompt: "Audio transcription. Language: French. Wording: verbatim, including fillers and repetitions. Formatting: punctuation and capitalization. Output: transcript only."
     extra_body: {chat_template_kwargs: {enable_thinking: false}}
     concurrency: 32
-    contextual_biasing: [null, pxslu25, pxslu, bdpm, vidal, theriaque, pxslu25_upper, pxslu_upper]
+    contextual_biasing: [null, pxslu25, pxslu25_ext, pxslu, pxslu_ext, bdpm, vidal, theriaque, pxslu25_upper, pxslu_upper]
     contextual_biasing_template: "{prompt} Context terms: {terms}."
 
   # --- Granite Speech 4.1 / 5.0 (vLLM chat): "Keywords: kw1, kw2" (model cards) ---
@@ -119,7 +122,7 @@ benchmarks:
     prompt: <|audio|>La parole est en français. Transcrivez-la exactement ; ne la traduisez pas. Transcrivez la parole avec une ponctuation et des majuscules appropriées.
     extra_args: --max-model-len 16384
     concurrency: 128
-    contextual_biasing: [null, pxslu25, pxslu, pxslu25_upper, pxslu_upper]
+    contextual_biasing: [null, pxslu25, pxslu25_ext, pxslu, pxslu_ext, pxslu25_upper, pxslu_upper]
     contextual_biasing_template: "{prompt} Keywords: {terms}"
 
   # --- MOSS-Transcribe-Diarize (vLLM): hotwords appended to the default (Chinese)
@@ -131,27 +134,27 @@ benchmarks:
     port: 8102
     language: null   # auto-detection, as in benchmarks/sota (texts scored in French: wer_language)
     transcription_prompt: "请将音频转写为文本，每一段需以起始时间戳和说话人编号（[S01]、[S02]、[S03]…）开头，正文为对应的语音内容，并在段末标注结束时间戳，以清晰标明该段语音范围。"
-    contextual_biasing: [null, pxslu25, pxslu, bdpm, vidal, theriaque, pxslu25_upper, pxslu_upper]
+    contextual_biasing: [null, pxslu25, pxslu25_ext, pxslu, pxslu_ext, bdpm, vidal, theriaque, pxslu25_upper, pxslu_upper]
     contextual_biasing_template: "{prompt}热词提示：{terms}"
 
   # --- VibeVoice-ASR (transformers): extra context of the request. Smaller batches
-  # for the long lists (12k to 38k tokens per request); theriaque is slow (several
-  # hours), run last, after the other models.
+  # for the long lists (12k to 38k tokens per request); theriaque is not run: too slow
+  # (about 0.14 times real time, 10 hours).
   - backend: vibevoice-asr
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
     batch_size: 64
-    contextual_biasing: [null, pxslu25, pxslu, pxslu25_upper, pxslu_upper]
+    contextual_biasing: [null, pxslu25, pxslu25_ext, pxslu, pxslu_ext, pxslu25_upper, pxslu_upper]
   - backend: vibevoice-asr
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
     batch_size: 8
     contextual_biasing: [bdpm, vidal]
-  - backend: vibevoice-asr
-    model: microsoft/VibeVoice-ASR-HF
-    dtype: bfloat16
-    batch_size: 4
-    contextual_biasing: theriaque
+  # - backend: vibevoice-asr
+  #   model: microsoft/VibeVoice-ASR-HF
+  #   dtype: bfloat16
+  #   batch_size: 4
+  #   contextual_biasing: theriaque
 
   # --- NeMo phrase boosting (GPU-PB, decoding-time boosting tree; greedy_batch
   # decoding, beam for Canary). alpha (boosting weight): 1.0 and 2.0 for every model.
@@ -170,6 +173,10 @@ benchmarks:
   - {<<: *parakeet, contextual_biasing: pxslu25, contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: pxslu, contextual_biasing_alpha: 2.0}
+  - {<<: *parakeet, contextual_biasing: pxslu25_ext, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: pxslu25_ext, contextual_biasing_alpha: 2.0}
+  - {<<: *parakeet, contextual_biasing: pxslu_ext, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: pxslu_ext, contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: bdpm, contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: vidal, contextual_biasing_alpha: 1.0}
@@ -190,6 +197,10 @@ benchmarks:
   - {<<: *canary, contextual_biasing: pxslu25, contextual_biasing_alpha: 2.0}
   - {<<: *canary, contextual_biasing: pxslu, contextual_biasing_alpha: 1.0}
   - {<<: *canary, contextual_biasing: pxslu, contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: pxslu25_ext, contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: pxslu25_ext, contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: pxslu_ext, contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: pxslu_ext, contextual_biasing_alpha: 2.0}
   - {<<: *canary, contextual_biasing: bdpm, contextual_biasing_alpha: 1.0}
   - {<<: *canary, contextual_biasing: bdpm, contextual_biasing_alpha: 2.0}
   - {<<: *canary, contextual_biasing: vidal, contextual_biasing_alpha: 1.0}
@@ -211,6 +222,10 @@ benchmarks:
   - {<<: *linto, contextual_biasing: pxslu25, contextual_biasing_alpha: 2.0}
   - {<<: *linto, contextual_biasing: pxslu, contextual_biasing_alpha: 1.0}
   - {<<: *linto, contextual_biasing: pxslu, contextual_biasing_alpha: 2.0}
+  - {<<: *linto, contextual_biasing: pxslu25_ext, contextual_biasing_alpha: 1.0}
+  - {<<: *linto, contextual_biasing: pxslu25_ext, contextual_biasing_alpha: 2.0}
+  - {<<: *linto, contextual_biasing: pxslu_ext, contextual_biasing_alpha: 1.0}
+  - {<<: *linto, contextual_biasing: pxslu_ext, contextual_biasing_alpha: 2.0}
   - {<<: *linto, contextual_biasing: bdpm, contextual_biasing_alpha: 1.0}
   - {<<: *linto, contextual_biasing: bdpm, contextual_biasing_alpha: 2.0}
   - {<<: *linto, contextual_biasing: vidal, contextual_biasing_alpha: 1.0}
@@ -251,7 +266,7 @@ benchmarks:
     audio_placeholder: "<|audio|>"
     prompt: "Transcris fidèlement tout ce qui est dit dans l'extrait, avec la ponctuation et les majuscules."
     extra_args: --max-model-len 16384
-    contextual_biasing: [null, pxslu25, pxslu, vidal, pxslu25_upper, pxslu_upper]
+    contextual_biasing: [null, pxslu25, pxslu25_ext, pxslu, pxslu_ext, vidal, pxslu25_upper, pxslu_upper]
     contextual_biasing_template: "{prompt}\n\nVocabulaire: {terms} <|audio|>"
 
   # Luciole-8B-Audio-1.0: NeMo SALM with a hybrid (Mamba) Luciole-8B LLM, same
