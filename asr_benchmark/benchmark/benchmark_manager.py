@@ -55,19 +55,31 @@ def normalize_punctuation(text):
     return _UNICODE_PUNCTUATION_RE.sub(lambda m: UNICODE_PUNCTUATION[m.group()], text)
 
 
+def normalize_numbers(text, language="fr"):
+    """One way to write the numbers that the conversion to letters reads differently, in
+    French: "1.5" -> "1,5" ("un virgule cinq", not "un point cinq"; "1.500" is left, it
+    may be a thousand), "2 pourcent" and "2 %" -> "2 pour cent"."""
+    if language.split("-")[0] != "fr":
+        return text
+    text = re.sub(r"(?<![\d.,])(\d+)\.(\d{1,2}|\d{4,})(?![\d.,]*\d)", r"\1,\2", text)
+    return re.sub(r"\bpourcents?\b|\s*%", " pour cent", text, flags=re.IGNORECASE)
+
+
 def spell_numbers(text, language="fr"):
     """"le 15 décembre" -> "le quinze décembre", as the nocasepunc normalization does."""
     if not re.search(r"\d", text):
         return text
+    text = normalize_numbers(text, language)
     return numbers_and_symbols_to_letters(text, lang=language)
 
 
 def separate_punctuation(text):
     """
     Example: "Hello,world!" -> "Hello , world !"
+    The decimal marks are kept ("1,5", "1.5"): otherwise the number is read as two ("un cinq").
     """
     text = normalize_punctuation(text)
-    text = re.sub(r'([.,!?;:()\"\'\-])', r' \1 ', text)
+    text = re.sub(r'((?<!\d)[.,]|[.,](?!\d)|[!?;:()\"\'\-])', r' \1 ', text)
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
@@ -300,6 +312,8 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
     if any(re.search( r"[^\w\s'-]", ref) for ref in references):
         modes = ["wer", "cer", "wer_nocasepunc", "cer_nocasepunc"]
 
+    references = [normalize_numbers(ref, language) for ref in references]
+    predictions = [normalize_numbers(pred, language) for pred in predictions]
     texts = {"nocasepunc": (references, predictions)}
     if "wer" in modes:
         texts = {
