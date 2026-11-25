@@ -57,6 +57,8 @@ from pathlib import Path
 
 import jiwer
 
+from asr_benchmark.benchmark.normalization import normalize_for_wer
+
 logger = logging.getLogger(__name__)
 
 MANIFEST_KEY = "contextual_biasing"
@@ -178,17 +180,9 @@ def folder_tag(config):
 
 def _make_normalizers(language):
     """{mode: function text -> list of tokens}."""
-    from ssak.utils.text import normalize_text
-
-    # Same typographic punctuation folding as the WER (imported here: benchmark_manager
-    # imports this module)
-    from asr_benchmark.benchmark.benchmark_manager import normalize_punctuation
-
+    # Same normalization as the WER
     def words(text, case_sensitive):
-        # Same normalization as the WER
-        return normalize_text(
-            normalize_punctuation(text), language, case_sensitive=case_sensitive, remove_apostrophes_and_dashes=True, for_wer=True
-        ).split()
+        return normalize_for_wer(text, language, case_sensitive=case_sensitive).split()
 
     def nocasepunc(text):
         return words(text, case_sensitive=False)

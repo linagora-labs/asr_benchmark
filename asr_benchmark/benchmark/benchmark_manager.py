@@ -14,43 +14,12 @@ from itertools import product
 import asr_benchmark.utils.benchmark as utils
 from asr_benchmark.benchmark import contextual_biasing
 from asr_benchmark.benchmark.backend_to_model import get_model
+from asr_benchmark.benchmark.normalization import normalize_for_wer
 from asr_benchmark.utils import logger
 from ssak.utils.wer import compute_wer
 from ssak.utils.monitoring import Monitoring
 
 PATH_TO_WARMUP_FILE = "examples/bonjour.wav"
-
-# Typographic punctuation that models emit but references usually write in ASCII
-# (or the reverse). Mapped to the ASCII equivalent before tokenizing, otherwise
-# e.g. "c\u2019est" and "c'est" yield different tokens and every French elision
-# counts as an error in the punctuated wer/cer.
-UNICODE_PUNCTUATION = {
-    "\u2019": "'",   # right single quotation mark, the usual ASR apostrophe
-    "\u2018": "'",   # left single quotation mark
-    "\u02bc": "'",   # modifier letter apostrophe
-    "\u2032": "'",   # prime
-    "\u201c": '"',   # left double quotation mark
-    "\u201d": '"',   # right double quotation mark
-    "\u00ab": '"',   # left-pointing double angle quotation mark
-    "\u00bb": '"',   # right-pointing double angle quotation mark
-    "\u2013": "-",   # en dash
-    "\u2014": "-",   # em dash
-    "\u2212": "-",   # minus sign
-    "\u2026": "...", # horizontal ellipsis
-    "\u00a0": " ",   # non-breaking space
-    "\u202f": " ",   # narrow no-break space (French thin space before ; : ! ?)
-}
-
-_UNICODE_PUNCTUATION_RE = re.compile("|".join(map(re.escape, UNICODE_PUNCTUATION)))
-
-
-def normalize_punctuation(text):
-    """
-    Map typographic punctuation to its ASCII equivalent.
-
-    Example: "c\u2019est \u2014 oui\u2026" -> "c'est - oui..."
-    """
-    return _UNICODE_PUNCTUATION_RE.sub(lambda m: UNICODE_PUNCTUATION[m.group()], text)
 
 
 def check_if_benched(output_folder, input_file, config, debug):
@@ -290,14 +259,12 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
     # acronyms, ... ("1,5" -> "un virgule cinq", "S.N.C.F." -> "SNCF").
     options = {}
     if any(re.search( r"[^\w\s'-]", ref) for ref in references):
-        options[""] = dict(language=language, remove_apostrophes_and_dashes=True, case_sensitive=True, keep_punctuation=True)
+        options[""] = dict(case_sensitive=True, keep_punctuation=True)
     if has_case(references):
-        options["_nopunc"] = dict(language=language, remove_apostrophes_and_dashes=True, case_sensitive=True)
-    options["_nocasepunc"] = dict(language=language, remove_apostrophes_and_dashes=True)
+        options["_nopunc"] = dict(case_sensitive=True)
+    options["_nocasepunc"] = dict()
     modes = [metric + suffix for suffix in options for metric in ("wer", "cer")]
 
-    references = [normalize_punctuation(ref) for ref in references]
-    predictions = [normalize_punctuation(pred) for pred in predictions]
     word_alignments = {}  # suffix of the mode -> word-level alignment, reused by the cer mode
     for key in modes:
         suffix = key[len("wer"):]
@@ -316,9 +283,8 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
                 (Path(alignment_dir) / key).mkdir(parents=True, exist_ok=True)
                 alignment = str(Path(alignment_dir) / key / (dataset + ".txt"))
             wer_score = compute_wer(
-                references,
-                predictions,
-                **options[suffix],
+                [normalize_for_wer(ref, language, **options[suffix]) for ref in references],
+                [normalize_for_wer(pred, language, **options[suffix]) for pred in predictions],
                 use_percents=True,
                 alignment=alignment,
             )
@@ -337,10 +303,12 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
     return results
 
 
-def text_language(config):
-    """Language of the texts (normalization): wer_language when the model's language
-    setting is not it (e.g. null for auto-detection), else language."""
-    return config.get("wer_language") or config.get("language") or "fr"
+def text_language(config, data=None):
+    """Language of the texts (normalization) of a dataset's predictions ({id: row}): that of
+    the rows (multilingual benchmarks), else the config's: wer_language when the model's
+    language setting is not it (e.g. null for auto-detection), else language."""
+    row = next(iter(data.values()), {}) if data else {}
+    return row.get("language") or config.get("wer_language") or config.get("language") or "fr"
 
 
 def process_wer(output_folder, config):
@@ -357,7 +325,7 @@ def process_wer(output_folder, config):
         if not list(data.values())[0].get("text", False):
             logger.info(f"No reference for {dataset}, skipping WER computation")
             continue
-        language = text_language(config)
+        language = text_language(config, data)
         alignment_dir = output_path / "alignments" if config.get("save_alignments", True) else None
         results = score_dataset(data, language, alignment_dir, dataset)
         # Contextual biasing measures, when the manifest has biasing lists

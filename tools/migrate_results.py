@@ -11,7 +11,7 @@ import json
 import re
 from pathlib import Path
 
-from asr_benchmark.benchmark.benchmark_manager import make_perf_file, score_dataset
+from asr_benchmark.benchmark.benchmark_manager import make_perf_file, score_dataset, text_language
 
 
 def segment_key(audio_filepath, offset):
@@ -30,7 +30,7 @@ def same_dataset(old, name):
     return old.replace("_max30", "") == name
 
 
-def migrate(exp, manifest, language, dry_run):
+def migrate(exp, manifest, metadata, dry_run):
     predictions_dir = exp / "predictions"
     old = {f.stem: json.loads(f.read_text(encoding="utf-8")) for f in predictions_dir.glob("*.json")}
     root = next((m.group(1) for preds in old.values() for p in preds.values()
@@ -66,7 +66,7 @@ def migrate(exp, manifest, language, dry_run):
             continue
         (predictions_dir / f"{name}.json").write_text(json.dumps(preds, indent=4, ensure_ascii=False), encoding="utf-8")
         with contextlib.redirect_stderr(io.StringIO()):  # ssak's progress bars
-            scores = score_dataset(preds, language)
+            scores = score_dataset(preds, text_language(metadata, preds))
         (exp / "performances" / f"{name}.json").write_text(json.dumps(scores, indent=4), encoding="utf-8")
 
 
@@ -83,6 +83,6 @@ if __name__ == "__main__":
             row = json.loads(line)
             manifest[row["name"]].append(row)
     for exp in sorted(p for p in args.results.iterdir() if (p / "predictions").is_dir()):
-        metadata = exp / "metadata.json"
-        language = (json.loads(metadata.read_text(encoding="utf-8")).get("language") if metadata.exists() else None) or "fr"
-        migrate(exp, manifest, language, args.dry_run)
+        metadata_file = exp / "metadata.json"
+        metadata = json.loads(metadata_file.read_text(encoding="utf-8")) if metadata_file.exists() else {}
+        migrate(exp, manifest, metadata, args.dry_run)

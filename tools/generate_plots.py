@@ -38,6 +38,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
+from asr_benchmark.benchmark.benchmark_manager import text_language
 from asr_benchmark.visualization.table import plot_wer_table, prepare_model_name
 
 # Short dataset labels (same as generate_plots.ipynb).
@@ -115,12 +116,14 @@ def collect(folders, casepunc=False, with_texts=False):
                 # RTF list + canonical dataset name (+ optional texts) from predictions.
                 rtfs = []
                 refs, texts_pred = [], []
+                language = text_language(meta)
                 dataset = perf_file.stem
                 n_files = perf.get("num_data", 0)
                 pred_file = exp / "predictions" / perf_file.name
                 if pred_file.exists():
                     preds = json.loads(pred_file.read_text())
                     n_files = len(preds)
+                    language = text_language(meta, preds)
                     for rec in preds.values():
                         rtf = rec.get("rtf")
                         if rtf is None and rec.get("audio_duration"):
@@ -144,6 +147,7 @@ def collect(folders, casepunc=False, with_texts=False):
                     "count": perf[wer_key].get("count", 0),
                     "n_files": n_files,
                     "rtfs": rtfs,
+                    "language": language,
                     "refs": refs,
                     "preds": texts_pred,
                     "ram": ram,
@@ -228,27 +232,28 @@ def plot_wer(df, output):
 _MACRO = {}
 
 
-def _macro_init(normalization):
-    _MACRO["norm"] = normalization
+def _macro_init(casepunc):
+    _MACRO["casepunc"] = casepunc
     import ssak.utils.wer as sw  # silence compute_wer's own inner progress bars in each worker
     sw.tqdm = type("_Q", (), {"tqdm": staticmethod(lambda x, *a, **k: x)})
 
 
-def _macro_score(pair):
-    ref, pred = pair
+def _macro_score(task):
+    language, *texts = task
     from ssak.utils.wer import compute_wer
-    res = compute_wer(
-        [ref], [pred], use_percents=True,
-        language="fr", remove_apostrophes_and_dashes=True,
-        case_sensitive=not _MACRO["norm"], keep_punctuation=not _MACRO["norm"],
-    )
+    from asr_benchmark.benchmark.normalization import normalize_for_wer
+    casepunc = _MACRO["casepunc"]
+    ref, pred = (normalize_for_wer(t, language, case_sensitive=casepunc, keep_punctuation=casepunc) for t in texts)
+    res = compute_wer([ref], [pred], use_percents=True)
     return res["wer"] if res.get("count", 0) > 0 else None
 
 
-def _macro_key(normalization, ref, pred):
+def _macro_key(casepunc, language, ref, pred):
     import hashlib
     h = hashlib.sha1()
-    h.update(normalization.encode("utf-8"))
+    # Version of the normalization: to change with it, so that the cached scores of the
+    # previous one are recomputed
+    h.update(f"ssak-c73c4e6-2 {language} {'casepunc' if casepunc else 'nocasepunc'}".encode("utf-8"))
     for s in ("\x00", ref, "\x00", pred):
         h.update(s.encode("utf-8"))
     return h.hexdigest()
@@ -261,18 +266,16 @@ def compute_macro_wer(df, cap, casepunc, workers=None, cache_path=None):
     cap <= 0 means no cap. Per-file re-scoring (text normalization + alignment) is the slow
     part, so: only files not already in the on-disk cache are (re)computed, across a process
     pool. The cache stores the *uncapped* per-file WER keyed by a hash of (normalization,
-    reference, prediction) -- so it is safe across models/datasets and re-used when the cap
+    language, reference, prediction) -- so it is safe across models/datasets and re-used when the cap
     changes; a changed prediction gets a new key and is recomputed.
     """
     df = df.reset_index(drop=True)
-    normalization = "" if casepunc else "fr+"
-
-    # Flatten every file into a (ref, pred) task + its content key, remembering its row.
+    # Flatten every file into a (language, ref, pred) task + its content key, remembering its row.
     pairs, keys, row_of = [], [], []
-    for ri, (refs, preds) in enumerate(zip(df["refs"], df["preds"])):
+    for ri, (language, refs, preds) in enumerate(zip(df["language"], df["refs"], df["preds"])):
         for ref, pred in zip(refs, preds):
-            pairs.append((ref, pred))
-            keys.append(_macro_key(normalization, ref, pred))
+            pairs.append((language, ref, pred))
+            keys.append(_macro_key(casepunc, language, ref, pred))
             row_of.append(ri)
 
     # Load cache and figure out what actually needs computing (deduped by content key).
@@ -297,11 +300,11 @@ def compute_macro_wer(df, cap, casepunc, workers=None, cache_path=None):
         tpairs = [todo[k] for k in tkeys]
         desc = f"Computing macro-avg WER ({workers} worker{'s' if workers > 1 else ''})"
         if workers == 1:
-            _macro_init(normalization)
+            _macro_init(casepunc)
             results = map(_macro_score, tpairs)
             pool = None
         else:
-            pool = mp.Pool(workers, initializer=_macro_init, initargs=(normalization,))
+            pool = mp.Pool(workers, initializer=_macro_init, initargs=(casepunc,))
             results = pool.imap(_macro_score, tpairs, chunksize=64)
         try:
             for key, val in zip(tkeys, tqdm(results, total=len(tpairs), desc=desc, unit="file")):

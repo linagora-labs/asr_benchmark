@@ -23,10 +23,10 @@ def main(results, dry_run=False, manifest=None):
     rows = contextual_biasing.manifest_rows(str(manifest)) if manifest else None
     for exp in sorted(p for p in results.iterdir() if (p / "metadata.json").exists()):
         metadata = json.loads((exp / "metadata.json").read_text(encoding="utf-8"))
-        language = text_language(metadata)
         for pred_file in sorted((exp / "predictions").glob("*.json")):
             perf_file = exp / "performances" / pred_file.name
             data = json.loads(pred_file.read_text(encoding="utf-8"))
+            language = text_language(metadata, data)
             with contextlib.redirect_stderr(io.StringIO()):  # ssak's progress bars
                 new = score_dataset(data, language)
             old = json.loads(perf_file.read_text(encoding="utf-8")) if perf_file.exists() else {}
