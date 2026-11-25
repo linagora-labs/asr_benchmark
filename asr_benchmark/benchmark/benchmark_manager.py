@@ -55,10 +55,13 @@ def normalize_punctuation(text):
     return _UNICODE_PUNCTUATION_RE.sub(lambda m: UNICODE_PUNCTUATION[m.group()], text)
 
 
-# Languages normalized by ssak (numbers_and_symbols_to_letters, compute_wer's "<lang>+"
-# normalization). The others (sota_multilingual benchmark) use num2words and
-# normalize_generic(): ssak raises KeyError / NotImplementedError on them.
-SSAK_LANGUAGES = ("fr", "en")
+# Languages normalized by ssak (numbers_and_symbols_to_letters, compute_wer(language=...)).
+# The others (Arabic in the sota_multilingual benchmark) use num2words and
+# normalize_generic(): ssak's Arabic normalization needs lang_trans and data files
+# (assets/) that are not installed with the package.
+SSAK_LANGUAGES = ("fr", "en", "es", "de", "it", "pt", "nl")
+# Languages whose fillers REPLACEMENTS_WER removes in every mode
+FILLER_LANGUAGES = ("fr", "en")
 DECIMAL_WORDS = {"de": "komma", "es": "coma", "it": "virgola", "pt": "vírgula", "nl": "komma", "ar": "فاصلة"}
 _THOUSANDS_RE = re.compile(r"\b\d{1,3}(?:[ .  ]\d{3})+\b")
 _NUMBER_RE = re.compile(r"\d+(?:[.,]\d+)?")
@@ -104,7 +107,7 @@ def normalize_generic(text, language):
     lower case, punctuation and symbols (apostrophes and hyphens included) replaced by
     spaces, accents kept. Arabic: diacritics and tatweel removed, alef forms merged.
 
-    Example (es): "¿Cuántos? 23, dijo." -> "cuántos veintitrés dijo"
+    Example (ar): "دفع 15 دولاراً." -> "دفع خمسة عشر دولارا"
     """
     text = unicodedata.normalize("NFKC", normalize_punctuation(text))
     text = spell_numbers(text, language).lower()
@@ -400,9 +403,11 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
     word_alignments = {}  # "punc" / "nocasepunc" -> word-level alignment, reused by the cer mode
     for key in modes:
         text_mode = "nocasepunc" if "nocasepunc" in key else "punc"
-        normalization = f"{language}+" if text_mode == "nocasepunc" and language in SSAK_LANGUAGES else ""
+        # nocasepunc: ssak normalization (numbers in letters, lower case, punctuation,
+        # apostrophes and dashes removed, disfluencies removed)
+        ssak_language = language if text_mode == "nocasepunc" and language in SSAK_LANGUAGES else None
         # French fillers ("euh", "hum"): not removed from the other languages
-        replacements = REPLACEMENTS_WER if language in SSAK_LANGUAGES else {}
+        replacements = REPLACEMENTS_WER if language in FILLER_LANGUAGES else {}
         if "cer" in key:
             measures = character_measures(word_alignments[text_mode])
             sub, dele, ins, hits = map(sum, zip(*measures))
@@ -421,7 +426,8 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
             wer_score = compute_wer(
                 refs,
                 preds,
-                normalization=normalization,
+                language=ssak_language,
+                remove_apostrophes_and_dashes=True,
                 use_percents=True,
                 alignment=alignment,
                 replacements_pred=replacements,

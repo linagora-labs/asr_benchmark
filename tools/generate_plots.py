@@ -238,7 +238,8 @@ def _macro_score(pair):
     ref, pred = pair
     from ssak.utils.wer import compute_wer
     res = compute_wer(
-        [ref], [pred], normalization=_MACRO["norm"], use_percents=True,
+        [ref], [pred], language=_MACRO["norm"].rstrip("+") or None,
+        remove_apostrophes_and_dashes=True, use_percents=True,
         replacements_ref={"euh": "", "hum": ""}, replacements_pred={"euh": "", "hum": ""},
     )
     return res["wer"] if res.get("count", 0) > 0 else None
@@ -247,7 +248,8 @@ def _macro_score(pair):
 def _macro_key(normalization, ref, pred):
     import hashlib
     h = hashlib.sha1()
-    h.update(normalization.encode("utf-8"))
+    # "ssak-c73c4e6": cached scores of the previous ssak normalization are recomputed
+    h.update(("ssak-c73c4e6" + normalization).encode("utf-8"))
     for s in ("\x00", ref, "\x00", pred):
         h.update(s.encode("utf-8"))
     return h.hexdigest()
