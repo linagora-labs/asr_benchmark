@@ -1,0 +1,39 @@
+{
+  "language": "fr",
+  "wer_language": "fr",
+  "backend": "nemo",
+  "model": "nvidia/parakeet-tdt-0.6b-v3",
+  "contextual_biasing": "pxslu",
+  "contextual_biasing_alpha": 1.0,
+  "compute_rtf": false,
+  "vad": "false",
+  "device": "cuda",
+  "num_threads": null,
+  "decoder": "ctc",
+  "contextual_biasing_context_score": 1.0,
+  "contextual_biasing_depth_scaling": 2.0,
+  "input_manifest": "/tmp/manifest_x8lvdcry.jsonl",
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": true,
+  "contextual_biasing_tree_time_ms": {
+    "count": 1,
+    "first": 58.3,
+    "median": 58.3,
+    "max": 58.3,
+    "total": 58.3
+  },
+  "model_info": {
+    "params": 627008134
+  },
+  "transcription_time": {
+    "PxSLU_test": {
+      "seconds": 34.86,
+      "audio_seconds": 5406.44,
+      "files": 557
+    }
+  }
+}

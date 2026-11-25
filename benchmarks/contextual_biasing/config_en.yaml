@@ -144,9 +144,9 @@ benchmarks:
   # One entry per condition: with NeMo 3.0, loading a model a second time in the same
   # process fails (torch.load), and the DGX runner (one process per entry and model)
   # would run all the conditions of an entry in one process.
-  # LibriSpeech lists 1000 and 2000 left out: the tree is rebuilt for each utterance
-  # (parakeet: 25 min with the 100 lists on test-other, 2.8 h with 1000 on test-clean and
-  # test-other). List 500 at alpha 1.0 only.
+  # LibriSpeech lists 500, 1000 and 2000 at alpha 1.0 only: the tree is rebuilt for each
+  # utterance (parakeet: 25 min with the 100 lists on test-other, 2.8 h with 1000 on test-clean
+  # and test-other).
   - &parakeet
     backend: nemo
     model: nvidia/parakeet-tdt-0.6b-v3
@@ -156,9 +156,9 @@ benchmarks:
   - {<<: *parakeet, contextual_biasing: "100", contextual_biasing_alpha: 1.0}
   - {<<: *parakeet, contextual_biasing: "100", contextual_biasing_alpha: 2.0}
   - {<<: *parakeet, contextual_biasing: "500", contextual_biasing_alpha: 1.0}
-  # - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
   # - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 2.0}
-  # - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
   # - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 2.0}
   # - {<<: *parakeet, contextual_biasing: local, contextual_biasing_alpha: 1.0}
   # - {<<: *parakeet, contextual_biasing: local, contextual_biasing_alpha: 2.0}
@@ -173,9 +173,9 @@ benchmarks:
   - {<<: *canary, contextual_biasing: "100", contextual_biasing_alpha: 1.0}
   - {<<: *canary, contextual_biasing: "100", contextual_biasing_alpha: 2.0}
   - {<<: *canary, contextual_biasing: "500", contextual_biasing_alpha: 1.0}
-  # - {<<: *canary, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
   # - {<<: *canary, contextual_biasing: "1000", contextual_biasing_alpha: 2.0}
-  # - {<<: *canary, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
   # - {<<: *canary, contextual_biasing: "2000", contextual_biasing_alpha: 2.0}
   # - {<<: *canary, contextual_biasing: local, contextual_biasing_alpha: 1.0}
   # - {<<: *canary, contextual_biasing: local, contextual_biasing_alpha: 2.0}
@@ -199,20 +199,6 @@ benchmarks:
     audio_placeholder: "<|audio|>"
     prompt: "Make a word-for-word transcription in English of the spoken content."
     extra_args: --max-model-len 16384
-
-  # Luciole-1B, newer checkpoint trained with hotwords (v5_transcribe_v2, step 100k;
-  # same architecture and NEMO_FORK as Luciole-1B-Audio-1.0). Prompt "promptfr1" of
-  # its authors (in French, asking for English); the list after it, then the audio.
-  - backend: vllm
-    model: /home/abert/models/salm/Luciole-1B/luciole_v5_transcribe_v2/hf_checkpoints/step_100000
-    served_model_name: Luciole-1B_v5_transcribe_v2_step100k-promptfr1
-    port: 8113
-    endpoint: chat
-    audio_placeholder: "<|audio|>"
-    prompt: "Transcris fidèlement tout ce qui est dit dans l'extrait, avec la ponctuation et les majuscules, et en anglais."
-    extra_args: --max-model-len 16384
-    contextual_biasing: [null, "100", "500", "1000", "2000", global]  # local: not run (oracle)
-    contextual_biasing_template: "{prompt}\n\nVocabulaire: {terms} <|audio|>"
 
   # Luciole-8B-Audio-1.0: NeMo SALM with a hybrid (Mamba) Luciole-8B LLM, same
   # plugin and prompt as Luciole-1B-Audio-1.0; no biasing mechanism.

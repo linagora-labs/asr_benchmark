@@ -1,0 +1,27 @@
+{
+  "language": "fr",
+  "wer_language": "fr",
+  "backend": "nemo",
+  "model": "nvidia/canary-1b-v2",
+  "compute_rtf": false,
+  "vad": "false",
+  "device": "cuda",
+  "num_threads": null,
+  "input_manifest": "/tmp/manifest_tx6zxs4n.jsonl",
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": true,
+  "model_info": {
+    "params": 962155520
+  },
+  "transcription_time": {
+    "PxSLU_test": {
+      "seconds": 88.07,
+      "audio_seconds": 5406.44,
+      "files": 557
+    }
+  }
+}

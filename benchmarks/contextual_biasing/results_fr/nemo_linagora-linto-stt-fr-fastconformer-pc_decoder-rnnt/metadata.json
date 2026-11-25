@@ -1,0 +1,28 @@
+{
+  "language": "fr",
+  "wer_language": "fr",
+  "backend": "nemo",
+  "model": "linagora/linto_stt_fr_fastconformer_pc",
+  "decoder": "rnnt",
+  "compute_rtf": false,
+  "vad": "false",
+  "device": "cuda",
+  "num_threads": null,
+  "input_manifest": "/tmp/manifest_y62l9a3z.jsonl",
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": true,
+  "model_info": {
+    "params": 114621442
+  },
+  "transcription_time": {
+    "PxSLU_test": {
+      "seconds": 18.34,
+      "audio_seconds": 5406.44,
+      "files": 557
+    }
+  }
+}

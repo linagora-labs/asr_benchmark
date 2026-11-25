@@ -1,0 +1,53 @@
+{
+  "language": "fr",
+  "wer_language": "fr",
+  "backend": "vllm",
+  "model": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+  "launch": false,
+  "server": "http://172.17.0.1",
+  "port": 8118,
+  "endpoint": "chat",
+  "prompt": "Audio transcription. Language: French. Wording: verbatim, including fillers and repetitions. Formatting: punctuation and capitalization. Output: transcript only.",
+  "extra_body": {
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    }
+  },
+  "concurrency": 32,
+  "contextual_biasing": "theriaque",
+  "contextual_biasing_template": "{prompt} Context terms: {terms}.",
+  "compute_rtf": false,
+  "device": "cuda",
+  "vllm_command": [
+    "vllm",
+    "serve"
+  ],
+  "trust_remote_code": false,
+  "served_model_name": null,
+  "request_model": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+  "gpu_memory_utilization": 0.6,
+  "extra_args": [],
+  "temperature": 0.0,
+  "audio_placeholder": null,
+  "contextual_biasing_field": "prompt",
+  "max_tokens": 256,
+  "strip_diarization": true,
+  "startup_timeout": 2400,
+  "request_timeout": 600,
+  "env": {},
+  "log_file": "logs/vllm_nvidia-NVIDIA-Nemotron-3.5-Transcribe-30B-A4B.log",
+  "input_manifest": "/tmp/manifest_une173m8.jsonl",
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": false,
+  "transcription_time": {
+    "PxSLU_test": {
+      "seconds": 5355.61,
+      "audio_seconds": 5406.44,
+      "files": 557
+    }
+  }
+}

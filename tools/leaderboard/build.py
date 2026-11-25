@@ -8,12 +8,15 @@ Writes <output>/index.html, <output>/leaderboard.json and the result cards of ca
 
 The Multilingual tab: benchmarks/sota_multilingual/results (--multilingual_results), plus the
 French FLEURS and TEDx of the same models from --results.
+
+The Contextual Biasing tab: the page of tools/contextual_biasing (--contextual_results).
 """
 import argparse
 import json
 import re
 import statistics
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -259,7 +262,7 @@ def multilingual(results, french_results, rtf_results=None, include_private=Fals
         prefix, language = i.rsplit("_", 1)
         name, domain, url = MULTILINGUAL_DATASETS.get(prefix, (prefix, "", None))
         if i in MULTILINGUAL_FRENCH.values():
-            selection = "Whole, segments of 30 s at most (French leaderboard)"
+            selection = "Whole, 30 s at most (as in French ASR)"
         else:
             selection = MULTILINGUAL_SELECTION.get(i, "Whole")
         datasets.append({
@@ -319,10 +322,20 @@ def histogram(durations):
     return counts
 
 
-def last_commit_date(path):
+def duration_stats(durations):
+    return {
+        "hours": round(sum(durations) / 3600, 2),
+        "utterances": len(durations),
+        "mean_seconds": round(statistics.mean(durations), 1),
+        "median_seconds": round(statistics.median(durations), 1),
+        "histogram": histogram(durations),
+    }
+
+
+def last_commit_date(*paths):
     try:
         out = subprocess.run(
-            ["git", "log", "-1", "--format=%cI", "--", str(path)],
+            ["git", "log", "-1", "--format=%cI", "--", *map(str, paths)],
             capture_output=True, text=True, check=True,
         ).stdout.strip()
         return out or None
@@ -330,8 +343,37 @@ def last_commit_date(path):
         return None
 
 
+def contextual_page(results, model_info):
+    """(HTML, script, test sets) of the Contextual Biasing tab, from the page of tools/contextual_biasing: its
+    styles and body for a shadow root, its script as a function of the document, the description of its
+    test sets (with the durations of the manifests next to the results). (None, None, []) without results.
+    results: {language: results folder}; model_info: results folder with the model_info of the models."""
+    results = {language: folder for language, folder in results.items() if folder.exists()}
+    if not results:
+        return None, None, []
+    sys.path.insert(0, str(HERE.parent / "contextual_biasing"))
+    import build_page
+
+    data = build_page.page_data(results, model_info=model_info)
+    page = build_page.page_html(data)
+    style, body, script = (re.search(p, page, re.DOTALL).group(1) for p in (
+        r"<style>(.*?)</style>", r"<body>(.*?)<script>", r"<script>(.*)</script>"))
+    # The shadow root has no html nor body: their rules go to its host
+    style = re.sub(r"(?m)^  (:root|body) \{", "  :host {", style).replace("html { overflow-y: scroll; }", "")
+    style += "  :host { display: block; background: none; }\n  main { max-width: none; padding: 0; }\n  h1 { display: none; }\n"
+    style += "  .embedded { display: inline; }\n"
+    sets = build_page.test_sets(data)
+    for d in sets:
+        manifest = next((m for folder in results.values()
+                         if (m := folder.parent / "manifests" / f"{d['id']}.jsonl").exists()), None)
+        lines = manifest.read_text(encoding="utf-8").splitlines() if manifest else []
+        durations = [json.loads(line)["duration"] for line in lines if line.strip()]
+        d |= duration_stats(durations) if durations else {}
+    return f"<style>{style}</style>{body}", f"function (document) {{{script}}}", sets
+
+
 def build(results, manifest, output, rtf_results=None, rtf_manifest=None, cards=None, multilingual_results=None,
-          include_private=False, french_extra=()):
+          include_private=False, french_extra=(), contextual_results=None):
     experiments = sorted(p for p in results.iterdir() if (p / "metadata.json").exists())
     models = [model_entry(exp, rtf_results) for exp in experiments]
     for m in models:
@@ -340,13 +382,6 @@ def build(results, manifest, output, rtf_results=None, rtf_manifest=None, cards=
     order = list(DATASETS)
     stems = sorted({stem for m in models for stem in m["scores"]},
                    key=lambda s: (order.index(s), "") if s in DATASETS else (len(order), s.lower()))
-    stats = lambda d: {
-        "hours": round(sum(d) / 3600, 2),
-        "utterances": len(d),
-        "mean_seconds": round(statistics.mean(d), 1),
-        "median_seconds": round(statistics.median(d), 1),
-        "histogram": histogram(d),
-    }
     datasets = [
         {
             "id": stem,
@@ -354,19 +389,20 @@ def build(results, manifest, output, rtf_results=None, rtf_manifest=None, cards=
             "hours": round(max((m["scores"][stem]["seconds"] or 0) for m in models if stem in m["scores"]) / 3600, 2) or None,
             "utterances": max((m["scores"][stem]["n"] or 0) for m in models if stem in m["scores"]),
         }
-        | (stats(durations[stem]) if durations.get(stem) else {})
+        | (duration_stats(durations[stem]) if durations.get(stem) else {})
         for stem in stems
     ]
     totals = {}
     for language in {d["language"] for d in datasets}:
         rows = [d for d in datasets if d["language"] == language]
         totals[language] = (
-            stats([x for d in rows for x in durations[d["id"]]]) if all(durations.get(d["id"]) for d in rows)
+            duration_stats([x for d in rows for x in durations[d["id"]]]) if all(durations.get(d["id"]) for d in rows)
             else {"hours": round(sum(d["hours"] or 0 for d in rows), 2), "utterances": sum(d["utterances"] for d in rows)}
         )
+    html, script, contextual_sets = contextual_page(contextual_results or {}, results)
     data = {
         "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "results_updated": last_commit_date(results),
+        "results_updated": last_commit_date(*filter(None, [results, multilingual_results, *(contextual_results or {}).values()])),
         "repo": REPO_URL,
         "histogram_bin": HISTOGRAM_BIN,
         "datasets": datasets,
@@ -374,13 +410,19 @@ def build(results, manifest, output, rtf_results=None, rtf_manifest=None, cards=
         "speed_set": speed_set(rtf_manifest, rtf_results),
         "models": models,
         "multilingual": multilingual(multilingual_results, results, rtf_results, include_private, french_extra),
+        "contextual_test_sets": contextual_sets,
     }
     output.mkdir(parents=True, exist_ok=True)
     (output / "leaderboard.json").write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
     template = (HERE / "template.html").read_text(encoding="utf-8")
     # "</" is escaped so the data can never close the <script> tag.
     payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
-    (output / "index.html").write_text(template.replace("/*__DATA__*/null", payload), encoding="utf-8")
+    for kind in ("css", "js"):  # before the data
+        template = template.replace(f"/*__COMMON_{kind.upper()}__*/", (HERE / f"common.{kind}").read_text(encoding="utf-8"))
+    template = template.replace("/*__DATA__*/null", payload)
+    if html:  # after the data of this page (the other page comes with its own)
+        template = template.replace("<!--__CONTEXTUAL_PAGE__-->", html).replace("/*__CONTEXTUAL_SCRIPT__*/null", script)
+    (output / "index.html").write_text(template, encoding="utf-8")
     print(f"{len(models)} models x {len(datasets)} datasets -> {output}/index.html")
     build_cards(cards, data, output, SITE_URL)
 
@@ -398,10 +440,14 @@ if __name__ == "__main__":
                         help="Result cards to draw (SVG for model cards), see cards.py")
     parser.add_argument("--multilingual_results", type=Path, default=Path("benchmarks/sota_multilingual/results"),
                         help="Results of the Multilingual tab (benchmarks/sota_multilingual)")
+    parser.add_argument("--contextual_results", nargs="*", metavar="LANG=FOLDER",
+                        default=[f"{lang}=benchmarks/contextual_biasing/results_{lang}" for lang in ("fr", "en")],
+                        help="Results of the Contextual Biasing tab (benchmarks/contextual_biasing)")
     parser.add_argument("--include_private", action="store_true",
                         help="Multilingual tab: also the local checkpoints (local preview only, not for the published page)")
     parser.add_argument("--french_results_extra", type=Path, nargs="*", default=[],
                         help="Multilingual tab: other folders for the French scores of models not in --results")
     args = parser.parse_args()
     build(args.results, args.manifest, args.output, args.rtf_results, args.rtf_manifest, args.cards, args.multilingual_results,
-          args.include_private, args.french_results_extra)
+          args.include_private, args.french_results_extra,
+          {lang: Path(folder) for lang, folder in (item.split("=", 1) for item in args.contextual_results)})

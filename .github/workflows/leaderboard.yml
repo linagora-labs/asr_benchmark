@@ -12,6 +12,9 @@ on:
       - "benchmarks/sota/config*.yaml"
       - "benchmarks/sota/manifest*.jsonl"
       - "benchmarks/sota_multilingual/results/**"
+      - "benchmarks/contextual_biasing/results_*/**"
+      - "tools/contextual_biasing/**"
+      - "asr_benchmark/utils/biasing.py"
       - "tools/leaderboard/**"
       - ".github/workflows/leaderboard.yml"
   workflow_dispatch:

@@ -1,0 +1,29 @@
+{
+  "language": "fr",
+  "wer_language": "fr",
+  "backend": "faster-whisper",
+  "model": "large-v3",
+  "precision": "float16",
+  "contextual_biasing": "pxslu",
+  "compute_rtf": false,
+  "vad": "false",
+  "device": "cuda",
+  "accurate": false,
+  "previous_text": false,
+  "batch_size": 1,
+  "contextual_biasing_mode": "hotwords",
+  "input_manifest": "/tmp/manifest_9q2pnrjg.jsonl",
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": true,
+  "transcription_time": {
+    "PxSLU_test": {
+      "seconds": 342.48,
+      "audio_seconds": 5406.44,
+      "files": 557
+    }
+  }
+}

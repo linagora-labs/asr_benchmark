@@ -45,19 +45,20 @@ benchmarks:
   # --- faster-whisper: `hotwords`, at most 223 tokens (the rest is cut). No global
   # list fits: pxslu25 (at most ~130 tokens, ~160 in capitals) fits; pxslu (~1,700
   # tokens) is given anyway, as a real deployment would: faster-whisper keeps its
-  # first 223 tokens, about 50 of the 389 names in alphabetical order. large-v3: greedy;
+  # first 223 tokens, about 50 of the 389 names in alphabetical order (pxslu_upper: the same,
+  # in capitals). large-v3: greedy;
   # large-v3-turbo: greedy and beam search (accurate: 5 beams, temperature fallback),
   # with full folder names to keep both.
   - backend: faster-whisper
     model: large-v3
     precision: float16
-    contextual_biasing: [null, pxslu25, pxslu25_ext, pxslu, pxslu_ext, pxslu25_upper]
+    contextual_biasing: [null, pxslu25, pxslu25_ext, pxslu, pxslu_ext, pxslu25_upper, pxslu_upper]
   - backend: faster-whisper
     model: large-v3-turbo
     precision: float16
     accurate: [false, true]
     full_name: true
-    contextual_biasing: [null, pxslu25, pxslu25_ext, pxslu, pxslu_ext, pxslu25_upper]
+    contextual_biasing: [null, pxslu25, pxslu25_ext, pxslu, pxslu_ext, pxslu25_upper, pxslu_upper]
   # The same, with the terms separated by spaces instead of ", " (fewer tokens: more
   # of the list within the 223; result folders "...-spaces"). Run once: worse than with
   # commas (more false alarms and loops), left out of the page.
@@ -254,20 +255,6 @@ benchmarks:
     audio_placeholder: "<|audio|>"
     prompt: "Fais une transcription mot pour mot en français du contenu parlé."
     extra_args: --max-model-len 16384
-
-  # Luciole-1B, newer checkpoint trained with hotwords (v5_transcribe_v2, step 100k;
-  # same architecture and NEMO_FORK as Luciole-1B-Audio-1.0). Prompt "promptfr1" of
-  # its authors; the list after it, then the audio. 16k context: up to vidal.
-  - backend: vllm
-    model: /home/abert/models/salm/Luciole-1B/luciole_v5_transcribe_v2/hf_checkpoints/step_100000
-    served_model_name: Luciole-1B_v5_transcribe_v2_step100k-promptfr1
-    port: 8113
-    endpoint: chat
-    audio_placeholder: "<|audio|>"
-    prompt: "Transcris fidèlement tout ce qui est dit dans l'extrait, avec la ponctuation et les majuscules."
-    extra_args: --max-model-len 16384
-    contextual_biasing: [null, pxslu25, pxslu25_ext, pxslu, pxslu_ext, vidal, pxslu25_upper, pxslu_upper]
-    contextual_biasing_template: "{prompt}\n\nVocabulaire: {terms} <|audio|>"
 
   # Luciole-8B-Audio-1.0: NeMo SALM with a hybrid (Mamba) Luciole-8B LLM, same
   # plugin and prompt as Luciole-1B-Audio-1.0; no biasing mechanism.

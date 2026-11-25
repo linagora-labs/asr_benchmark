@@ -1,0 +1,30 @@
+{
+  "language": "en",
+  "wer_language": "en",
+  "backend": "vibevoice-asr",
+  "model": "microsoft/VibeVoice-ASR-HF",
+  "dtype": "bfloat16",
+  "contextual_biasing": "1000",
+  "compute_rtf": false,
+  "device": "cuda",
+  "max_new_tokens": 1024,
+  "sampling_rate": 24000,
+  "prompt": null,
+  "input_manifest": "/tmp/manifest_wu8jfae5.jsonl",
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": false,
+  "model_info": {
+    "params": 8330325888
+  },
+  "transcription_time": {
+    "LibriSpeech_test-other": {
+      "seconds": 5562.87,
+      "audio_seconds": 19229.57,
+      "files": 2939
+    }
+  }
+}

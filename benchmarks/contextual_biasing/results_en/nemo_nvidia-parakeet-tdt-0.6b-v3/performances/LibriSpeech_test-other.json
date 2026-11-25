@@ -1,0 +1,158 @@
+{
+    "num_data": 2939,
+    "duration": 19229.570000000043,
+    "wer_nocasepunc": {
+        "del": 0.3563281235270828,
+        "ins": 0.4128881431345563,
+        "sub": 2.916611677758715,
+        "hits": 96.7270601987142,
+        "count": 53041,
+        "wer": 3.685827944420354,
+        "ci95": [
+            3.444,
+            3.918
+        ]
+    },
+    "cer_nocasepunc": {
+        "del": 0.3719379248428883,
+        "ins": 0.42140750105351876,
+        "sub": 0.5265761556642665,
+        "hits": 99.10148591949284,
+        "count": 272895,
+        "wer": 1.3199215815606735,
+        "ci95": [
+            1.226,
+            1.413
+        ]
+    },
+    "contextual_biasing": {
+        "100": {
+            "nocasepunc": {
+                "precision": 100.0,
+                "recall": 82.36,
+                "f1": 90.327,
+                "tp": 4412,
+                "fp": 0,
+                "fn": 945,
+                "b_wer": 17.438,
+                "u_wer": 2.071,
+                "b_count": 5574,
+                "u_count": 47467,
+                "false_alarms": 1,
+                "false_alarms_per_hour": 0.187,
+                "list_size_mean": 101.8
+            },
+            "cased": {
+                "precision": 100.0,
+                "recall": 65.484,
+                "f1": 79.143,
+                "tp": 3508,
+                "fp": 0,
+                "fn": 1849,
+                "b_wer": 17.438,
+                "u_wer": 2.071,
+                "b_count": 5574,
+                "u_count": 47467,
+                "false_alarms": 1,
+                "false_alarms_per_hour": 0.187,
+                "list_size_mean": 101.8
+            }
+        },
+        "500": {
+            "nocasepunc": {
+                "precision": 100.0,
+                "recall": 82.36,
+                "f1": 90.327,
+                "tp": 4412,
+                "fp": 0,
+                "fn": 945,
+                "b_wer": 17.279,
+                "u_wer": 2.069,
+                "b_count": 5637,
+                "u_count": 47404,
+                "false_alarms": 2,
+                "false_alarms_per_hour": 0.374,
+                "list_size_mean": 501.3
+            },
+            "cased": {
+                "precision": 100.0,
+                "recall": 65.484,
+                "f1": 79.143,
+                "tp": 3508,
+                "fp": 0,
+                "fn": 1849,
+                "b_wer": 17.279,
+                "u_wer": 2.069,
+                "b_count": 5637,
+                "u_count": 47404,
+                "false_alarms": 2,
+                "false_alarms_per_hour": 0.374,
+                "list_size_mean": 501.3
+            }
+        },
+        "1000": {
+            "nocasepunc": {
+                "precision": 100.0,
+                "recall": 82.36,
+                "f1": 90.327,
+                "tp": 4412,
+                "fp": 0,
+                "fn": 945,
+                "b_wer": 17.149,
+                "u_wer": 2.066,
+                "b_count": 5697,
+                "u_count": 47344,
+                "false_alarms": 5,
+                "false_alarms_per_hour": 0.936,
+                "list_size_mean": 1000.0
+            },
+            "cased": {
+                "precision": 100.0,
+                "recall": 65.484,
+                "f1": 79.143,
+                "tp": 3508,
+                "fp": 0,
+                "fn": 1849,
+                "b_wer": 17.149,
+                "u_wer": 2.066,
+                "b_count": 5697,
+                "u_count": 47344,
+                "false_alarms": 5,
+                "false_alarms_per_hour": 0.936,
+                "list_size_mean": 1000.0
+            }
+        },
+        "2000": {
+            "nocasepunc": {
+                "precision": 100.0,
+                "recall": 82.36,
+                "f1": 90.327,
+                "tp": 4412,
+                "fp": 0,
+                "fn": 945,
+                "b_wer": 16.873,
+                "u_wer": 2.064,
+                "b_count": 5808,
+                "u_count": 47233,
+                "false_alarms": 8,
+                "false_alarms_per_hour": 1.498,
+                "list_size_mean": 1994.9
+            },
+            "cased": {
+                "precision": 100.0,
+                "recall": 65.484,
+                "f1": 79.143,
+                "tp": 3508,
+                "fp": 0,
+                "fn": 1849,
+                "b_wer": 16.873,
+                "u_wer": 2.064,
+                "b_count": 5808,
+                "u_count": 47233,
+                "false_alarms": 8,
+                "false_alarms_per_hour": 1.498,
+                "list_size_mean": 1994.9
+            }
+        }
+    }
+}

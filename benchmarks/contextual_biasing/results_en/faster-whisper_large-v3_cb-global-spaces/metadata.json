@@ -1,0 +1,30 @@
+{
+  "language": "en",
+  "wer_language": "en",
+  "backend": "faster-whisper",
+  "model": "large-v3",
+  "precision": "float16",
+  "contextual_biasing": "global",
+  "contextual_biasing_separator": " ",
+  "compute_rtf": false,
+  "vad": "false",
+  "device": "cuda",
+  "accurate": false,
+  "previous_text": false,
+  "batch_size": 1,
+  "contextual_biasing_mode": "hotwords",
+  "input_manifest": "/tmp/manifest_e4zurhth.jsonl",
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": true,
+  "transcription_time": {
+    "ContextualEarnings22_test": {
+      "seconds": 1073.57,
+      "audio_seconds": 11565.0,
+      "files": 771
+    }
+  }
+}

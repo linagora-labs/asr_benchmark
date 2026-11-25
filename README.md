@@ -2,7 +2,7 @@
 
 Toolkit to benchmark various speech recognition APIs (NeMo, Whisper...) and visualize the results. Supported models are mostly french. It can compute WER, RTF (or latencies when streaming) and measure hardware usage.
 
-🏆 **[French ASR Leaderboard](https://linagora-labs.github.io/asr_benchmark/)**
+🏆 **[Open French-Centric ASR Leaderboard](https://linagora-labs.github.io/asr_benchmark/)**
 
 ## How to bench
 
@@ -75,7 +75,7 @@ Some tools are available in the `tools` folder:
 - plot_benchmark_monitoring.py: processing time, RAM and VRAM plots from benchmark results
 - leaderboard/build.py: builds the leaderboard page (`site/`) from a results folder (and the speed runs of `results_rtf` for the RTFx column)
 - fill_model_info.py: fills the `model_info` (license, size, languages) of results `metadata.json` from the Hugging Face API
-- rescore_results.py: recomputes the scores (and confidence intervals) of existing results from their predictions, after a scoring change
+- rescore_results.py: recomputes the scores (and confidence intervals) of existing results from their predictions, after a scoring change (`-j` processes; `--config` for the contextual biasing measures)
 - build_manifests.py: builds the manifests of the whole test sets of the sota benchmark (`benchmarks/sota/manifests/`), with their references normalized
 - select_manifest.py: writes the segments selected by the `datasets` block of a config (durations and ratio of each test set) in a manifest
 - migrate_results.py: aligns existing results on a new manifest (reuses the predictions of the segments still selected, with their new references, removes the others, rescores)
@@ -108,7 +108,7 @@ To add a backend: inherit from `asr_benchmark.benchmark.interfaces.Model`, imple
 
 ## Leaderboard
 
-Built from `benchmarks/sota/results` (and `results_rtf` for the RTFx column) by `tools/leaderboard/build.py`, and published by a GitHub Action (`.github/workflows/leaderboard.yml`) on each push to `main`. Local preview: `python tools/leaderboard/build.py`, then open `site/index.html`.
+Built from `benchmarks/sota/results` (and `results_rtf` for the RTFx column), `benchmarks/sota_multilingual/results` and `benchmarks/contextual_biasing/results_*` by `tools/leaderboard/build.py`, and published by a GitHub Action (`.github/workflows/leaderboard.yml`) on each push to `main`. Local preview: `python tools/leaderboard/build.py`, then open `site/index.html`.
 
 For any results folder:
 ```bash

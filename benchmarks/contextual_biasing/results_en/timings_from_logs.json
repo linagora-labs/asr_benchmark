@@ -1,0 +1,418 @@
+{
+ "faster-whisper_large-v3": {
+  "seconds": 4888,
+  "datasets": [
+   "ContextualEarnings22_test",
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_whisper_20261120_041636.log"
+ },
+ "faster-whisper_large-v3-turbo_precision-float16_accurate-False_previous-False": {
+  "seconds": 2305,
+  "datasets": [
+   "ContextualEarnings22_test",
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_whisper_20261120_041636.log"
+ },
+ "faster-whisper_large-v3-turbo_precision-float16_accurate-False_previous-False_cb-100": {
+  "seconds": 1004,
+  "datasets": [
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_whisper_20261121_215738.log"
+ },
+ "faster-whisper_large-v3-turbo_precision-float16_accurate-False_previous-False_cb-global": {
+  "seconds": 363,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_whisper_20261120_041636.log"
+ },
+ "faster-whisper_large-v3-turbo_precision-float16_accurate-False_previous-False_cb-local": {
+  "seconds": 394,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_whisper_20261120_041636.log"
+ },
+ "faster-whisper_large-v3-turbo_precision-float16_accurate-True_previous-False": {
+  "seconds": 3016,
+  "datasets": [
+   "ContextualEarnings22_test",
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_whisper_20261120_041636.log"
+ },
+ "faster-whisper_large-v3-turbo_precision-float16_accurate-True_previous-False_cb-100": {
+  "seconds": 1340,
+  "datasets": [
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_whisper_20261121_215738.log"
+ },
+ "faster-whisper_large-v3-turbo_precision-float16_accurate-True_previous-False_cb-global": {
+  "seconds": 518,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_whisper_20261120_041636.log"
+ },
+ "faster-whisper_large-v3-turbo_precision-float16_accurate-True_previous-False_cb-local": {
+  "seconds": 625,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_whisper_20261120_041636.log"
+ },
+ "faster-whisper_large-v3_cb-100": {
+  "seconds": 2050,
+  "datasets": [
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_whisper_20261121_215738.log"
+ },
+ "faster-whisper_large-v3_cb-global": {
+  "seconds": 803,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_whisper_20261120_041636.log"
+ },
+ "faster-whisper_large-v3_cb-local": {
+  "seconds": 810,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_whisper_20261120_041636.log"
+ },
+ "nemo_nvidia-canary-1b-v2": {
+  "seconds": 1306,
+  "datasets": [
+   "ContextualEarnings22_test",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_nemo_20261120_171840.log"
+ },
+ "nemo_nvidia-canary-1b-v2_cb-100-alpha1.0": {
+  "seconds": 3602,
+  "datasets": [
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_nemo_20261120_171840.log"
+ },
+ "nemo_nvidia-canary-1b-v2_cb-100-alpha2.0": {
+  "seconds": 1983,
+  "datasets": [
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_nemo_20261120_171840.log"
+ },
+ "nemo_nvidia-canary-1b-v2_cb-global-alpha1.0": {
+  "seconds": 237,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_nemo_20261120_171840.log"
+ },
+ "nemo_nvidia-canary-1b-v2_cb-global-alpha2.0": {
+  "seconds": 248,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_nemo_20261120_171840.log"
+ },
+ "nemo_nvidia-canary-1b-v2_cb-local-alpha1.0": {
+  "seconds": 612,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_nemo_20261120_171840.log"
+ },
+ "nemo_nvidia-canary-1b-v2_cb-local-alpha2.0": {
+  "seconds": 620,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_nemo_20261120_171840.log"
+ },
+ "nemo_nvidia-parakeet-tdt-0.6b-v3": {
+  "seconds": 342,
+  "datasets": [
+   "ContextualEarnings22_test",
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_nemo_20261120_171840.log"
+ },
+ "nemo_nvidia-parakeet-tdt-0.6b-v3_cb-100-alpha1.0": {
+  "seconds": 1525,
+  "datasets": [
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_nemo_20261121_114413.log"
+ },
+ "nemo_nvidia-parakeet-tdt-0.6b-v3_cb-100-alpha2.0": {
+  "seconds": 1412,
+  "datasets": [
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_nemo_20261121_114413.log"
+ },
+ "nemo_nvidia-parakeet-tdt-0.6b-v3_cb-1000-alpha1.0": {
+  "seconds": 9951,
+  "datasets": [
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_nemo_20261120_171840.log"
+ },
+ "nemo_nvidia-parakeet-tdt-0.6b-v3_cb-global-alpha1.0": {
+  "seconds": 116,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_nemo_20261121_114413.log"
+ },
+ "nemo_nvidia-parakeet-tdt-0.6b-v3_cb-global-alpha2.0": {
+  "seconds": 114,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_nemo_20261121_114413.log"
+ },
+ "nemo_nvidia-parakeet-tdt-0.6b-v3_cb-local-alpha1.0": {
+  "seconds": 334,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_nemo_20261121_114413.log"
+ },
+ "nemo_nvidia-parakeet-tdt-0.6b-v3_cb-local-alpha2.0": {
+  "seconds": 335,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_nemo_20261121_114413.log"
+ },
+ "vibevoice-asr_microsoft-VibeVoice-ASR-HF": {
+  "seconds": 2402,
+  "datasets": [
+   "ContextualEarnings22_test",
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_transformers_20261120_153122.log"
+ },
+ "vibevoice-asr_microsoft-VibeVoice-ASR-HF_cb-100": {
+  "seconds": 2677,
+  "datasets": [
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_transformers_20261120_153122.log"
+ },
+ "vibevoice-asr_microsoft-VibeVoice-ASR-HF_cb-global": {
+  "seconds": 674,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_transformers_20261120_153122.log"
+ },
+ "vibevoice-asr_microsoft-VibeVoice-ASR-HF_cb-local": {
+  "seconds": 600,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_transformers_20261120_153122.log"
+ },
+ "vllm_CohereLabs-cohere-transcribe-03-2026": {
+  "seconds": 1059,
+  "datasets": [
+   "ContextualEarnings22_test",
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_OpenMOSS-Team-MOSS-Transcribe-Diarize": {
+  "seconds": 1074,
+  "datasets": [
+   "ContextualEarnings22_test",
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_OpenMOSS-Team-MOSS-Transcribe-Diarize_cb-100": {
+  "seconds": 825,
+  "datasets": [
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_OpenMOSS-Team-MOSS-Transcribe-Diarize_cb-1000": {
+  "seconds": 2077,
+  "datasets": [
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_OpenMOSS-Team-MOSS-Transcribe-Diarize_cb-2000": {
+  "seconds": 3636,
+  "datasets": [
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_OpenMOSS-Team-MOSS-Transcribe-Diarize_cb-global": {
+  "seconds": 416,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_OpenMOSS-Team-MOSS-Transcribe-Diarize_cb-local": {
+  "seconds": 435,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_Qwen-Qwen3-ASR-1.7B": {
+  "seconds": 1151,
+  "datasets": [
+   "ContextualEarnings22_test",
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_Qwen-Qwen3-ASR-1.7B_cb-100": {
+  "seconds": 844,
+  "datasets": [
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_Qwen-Qwen3-ASR-1.7B_cb-1000": {
+  "seconds": 2121,
+  "datasets": [
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_Qwen-Qwen3-ASR-1.7B_cb-2000": {
+  "seconds": 3575,
+  "datasets": [
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_Qwen-Qwen3-ASR-1.7B_cb-global": {
+  "seconds": 422,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_Qwen-Qwen3-ASR-1.7B_cb-local": {
+  "seconds": 451,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_ibm-granite-granite-speech-5.0-2b": {
+  "seconds": 992,
+  "datasets": [
+   "ContextualEarnings22_test",
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_ibm-granite-granite-speech-5.0-2b_cb-100": {
+  "seconds": 891,
+  "datasets": [
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_ibm-granite-granite-speech-5.0-2b_cb-1000": {
+  "seconds": 2120,
+  "datasets": [
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_ibm-granite-granite-speech-5.0-2b_cb-2000": {
+  "seconds": 3690,
+  "datasets": [
+   "LibriSpeech_test-clean",
+   "LibriSpeech_test-other"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_ibm-granite-granite-speech-5.0-2b_cb-global": {
+  "seconds": 424,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_ibm-granite-granite-speech-5.0-2b_cb-local": {
+  "seconds": 430,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "sota_vllm_20261120_080616.log"
+ },
+ "vllm_nvidia-NVIDIA-Nemotron-3.5-Transcribe-30B-A4B": {
+  "seconds": 757,
+  "datasets": [
+   "ContextualEarnings22_test",
+   "LibriSpeech_test-other"
+  ],
+  "log": "nemotron_en.log"
+ },
+ "vllm_nvidia-NVIDIA-Nemotron-3.5-Transcribe-30B-A4B_cb-100": {
+  "seconds": 623,
+  "datasets": [
+   "LibriSpeech_test-other"
+  ],
+  "log": "nemotron_en.log"
+ },
+ "vllm_nvidia-NVIDIA-Nemotron-3.5-Transcribe-30B-A4B_cb-1000": {
+  "seconds": 2783,
+  "datasets": [
+   "LibriSpeech_test-other"
+  ],
+  "log": "nemotron_en.log"
+ },
+ "vllm_nvidia-NVIDIA-Nemotron-3.5-Transcribe-30B-A4B_cb-2000": {
+  "seconds": 5261,
+  "datasets": [
+   "LibriSpeech_test-other"
+  ],
+  "log": "nemotron_en.log"
+ },
+ "vllm_nvidia-NVIDIA-Nemotron-3.5-Transcribe-30B-A4B_cb-global": {
+  "seconds": 217,
+  "datasets": [
+   "ContextualEarnings22_test"
+  ],
+  "log": "nemotron_en.log"
+ }
+}

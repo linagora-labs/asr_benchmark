@@ -1,0 +1,38 @@
+{
+  "language": "en",
+  "wer_language": "en",
+  "backend": "nemo",
+  "model": "nvidia/canary-1b-v2",
+  "contextual_biasing": "500",
+  "contextual_biasing_alpha": 1.0,
+  "compute_rtf": false,
+  "vad": "false",
+  "device": "cuda",
+  "num_threads": null,
+  "contextual_biasing_context_score": 1.0,
+  "contextual_biasing_depth_scaling": 1.0,
+  "input_manifest": "/tmp/manifest_fx912zco.jsonl",
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": true,
+  "contextual_biasing_tree_time_ms": {
+    "count": 2939,
+    "first": 48.1,
+    "median": 58.7,
+    "max": 855.1,
+    "total": 219637.0
+  },
+  "model_info": {
+    "params": 962155520
+  },
+  "transcription_time": {
+    "LibriSpeech_test-other": {
+      "seconds": 2033.5,
+      "audio_seconds": 19229.57,
+      "files": 2939
+    }
+  }
+}

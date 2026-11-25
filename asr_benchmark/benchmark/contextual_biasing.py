@@ -57,12 +57,12 @@ from pathlib import Path
 
 import jiwer
 
+from asr_benchmark.utils.biasing import MANIFEST_KEY, config_variant, folder_tag  # noqa: F401
 from ssak.utils.text import normalize_text
 from ssak.utils.wer import ignore_first_capital
 
 logger = logging.getLogger(__name__)
 
-MANIFEST_KEY = "contextual_biasing"
 TARGETS_KEY = "contextual_biasing_targets"
 
 # A transcription that repeats a term (loop) does not count more than one that writes it once
@@ -133,14 +133,6 @@ def row_variants(row):
     return {str(k): v for k, v in value.items()}
 
 
-def config_variant(config):
-    """Name of the list given to the model according to the config, None for no list."""
-    value = config.get("contextual_biasing")
-    if value is None or str(value).lower() in ("none", "null", "false", ""):
-        return None
-    return str(value)
-
-
 def applies_to(row, config):
     """Whether a run with this config concerns a manifest row: always without list,
     else only when the row has the selected list (a benchmark can mix datasets with
@@ -166,12 +158,6 @@ def terms_for_row(row, config):
             f"(available: {sorted(variants)})"
         )
     return load_terms(variants[variant])
-
-
-def folder_tag(config):
-    """Suffix of the result folder: "_cb-<list>" when a list is given, else ""."""
-    variant = config_variant(config)
-    return "" if variant is None else re.sub(r"[^\w.\-]", "-", f"_cb-{variant}")
 
 
 # --------------------------------------------------------------------------------------

@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from asr_benchmark.benchmark import contextual_biasing  # noqa: E402
+from asr_benchmark.utils import biasing as contextual_biasing  # noqa: E402
 
 MEASURES = ["f1", "precision", "recall", "b_wer", "u_wer", "false_alarms_per_hour"]
 
@@ -55,6 +55,9 @@ def rtfx(name, metadata, dataset, predictions, log_timings):
     return None, None
 
 
+STATS_FILE = "run_stats.json"
+
+
 def load_runs(results):
     """{folder name: (metadata, {dataset: performances})}, with the runaway rate of each
     dataset ("runaway", from its predictions) and its throughput ("rtfx", "rtfx_approx")"""
@@ -65,14 +68,27 @@ def load_runs(results):
         metadata = json.loads((exp / "metadata.json").read_text(encoding="utf-8"))
         predictions = {f.stem: json.loads(f.read_text(encoding="utf-8"))
                        for f in sorted((exp / "predictions").glob("*.json"))}
+        saved = json.loads((exp / STATS_FILE).read_text(encoding="utf-8")) if (exp / STATS_FILE).exists() else {}
         perfs = {}
         for f in sorted((exp / "performances").glob("*.json")):
             perfs[f.stem] = json.loads(f.read_text(encoding="utf-8"))
             if f.stem in predictions:
                 perfs[f.stem]["runaway"] = runaway_rate(predictions[f.stem])
             perfs[f.stem]["rtfx"], perfs[f.stem]["rtfx_approx"] = rtfx(exp.name, metadata, f.stem, predictions, log_timings)
+            for key, value in saved.get(f.stem, {}).items():
+                if perfs[f.stem].get(key) is None:
+                    perfs[f.stem][key] = value
         runs[exp.name] = (metadata, perfs)
     return runs
+
+
+def save_stats(results):
+    """What load_runs computes from the predictions of each run (runaway rate, throughput)
+    in <run>/run_stats.json, read when the predictions are missing (those made with lists
+    that cannot be redistributed are not in git)."""
+    for name, (_, perfs) in load_runs(results).items():
+        stats = {dataset: {key: perf.get(key) for key in ("runaway", "rtfx", "rtfx_approx")} for dataset, perf in perfs.items()}
+        (Path(results) / name / STATS_FILE).write_text(json.dumps(stats, indent=2), encoding="utf-8")
 
 
 # Key of the WER in each mode: always without punctuation
@@ -161,7 +177,14 @@ def main():
     parser.add_argument("--mode", default="nocasepunc", choices=["nocasepunc", "cased"],
                         help="Text normalization of the measures")
     parser.add_argument("--csv", default=None, help="Also write the table as CSV")
+    parser.add_argument("--save_stats", action="store_true",
+                        help="Only write the runaway rate and the throughput of each run, computed from its "
+                             "predictions, in <run>/run_stats.json (read when the predictions are missing)")
     args = parser.parse_args()
+
+    if args.save_stats:
+        save_stats(args.results)
+        return
 
     table = collect(load_runs(args.results), args.mode)
     if not table:

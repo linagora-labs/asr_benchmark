@@ -163,6 +163,16 @@ benchmarks/sota/results/*/alignments/
 benchmarks/sota/results_rtf/*/alignments/
 !benchmarks/sota_multilingual/results/
 benchmarks/sota_multilingual/results/*/alignments/
+# ... and the contextual biasing results, without the alignments, the predictions made with lists
+# that cannot be redistributed (they show terms of these lists), the LibriSpeech test-clean runs
+# (left out of the benchmark), and the models that are not public (they stay in the local page)
+!benchmarks/contextual_biasing/results_fr/
+!benchmarks/contextual_biasing/results_en/
+benchmarks/contextual_biasing/results_*/*/alignments/
+benchmarks/contextual_biasing/results_*/*_cb-vidal*/predictions/
+benchmarks/contextual_biasing/results_*/*_cb-theriaque*/predictions/
+benchmarks/contextual_biasing/results_*/*/*/LibriSpeech_test-clean.json
+benchmarks/contextual_biasing/results_*/vllm_Luciole-*/
 
 dev/
 out*/

@@ -1,0 +1,12 @@
+{
+  "ContextualEarnings22_test": {
+    "runaway": 0.1297016861219196,
+    "rtfx": 62.242,
+    "rtfx_approx": false
+  },
+  "LibriSpeech_test-other": {
+    "runaway": 0.0,
+    "rtfx": 47.242,
+    "rtfx_approx": false
+  }
+}

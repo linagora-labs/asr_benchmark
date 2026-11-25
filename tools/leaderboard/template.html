@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>French ASR Leaderboard</title>
-<meta name="description" content="Transcription errors of open-weight speech recognition models on French test sets.">
+<title>Open French-Centric ASR Leaderboard</title>
+<meta name="description" content="Benchmark of open-weight speech recognition models on French, and on some European languages and Arabic. Unlike many benchmarks limited to read speech, it also covers spontaneous and conversational speech (meetings, web videos, earnings calls).">
 <style>
   /* Light theme only for now. */
   :root { color-scheme: light; --bg: #fbfbfa; --surface: #fff; --text: #1d1d1b; --muted: #6b6a66; --line: #e6e4df; --accent: #1f6f78; }
@@ -31,6 +31,7 @@
   .group-label.all:hover { color: var(--accent); }
   select, button { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
   button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+  button[aria-pressed="mixed"] { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--surface)); }
   button:disabled { opacity: .4; cursor: not-allowed; }
   .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; margin-bottom: 12px; }
   .swatch { display: inline-block; width: 12px; height: 12px; margin-right: 5px; border-radius: 2px; vertical-align: -1px; }
@@ -40,16 +41,23 @@
   th { font-size: 13px; vertical-align: bottom; }
   th:nth-child(-n+2), td:nth-child(-n+2), .left { text-align: left; }
   td.avg { font-weight: 700; }
-  th.sortable { cursor: pointer; user-select: none; }
-  th.sortable:hover, th[aria-sort="ascending"] { color: var(--accent); }
+  /* Score columns: same width (the names of the test sets are written on several lines) */
+  #board th, #board td { padding-left: 8px; padding-right: 8px; }
+  #board th { font-size: 12px; }
+  #board th.score, #board td.score { box-sizing: border-box; width: 78px; min-width: 78px; padding-left: 3px; padding-right: 5px; }
+  td.score small { display: block; line-height: 1.2; }  /* confidence interval: second line, as under the name of the model */
+  th.score { white-space: normal; overflow-wrap: break-word; }
   small { font-size: 11px; opacity: .75; }
   .notes { margin-top: 20px; font-size: 14px; }
+  #symbols { margin: 12px 0 0; color: var(--muted); }
   .tabs { display: flex; flex-wrap: wrap; gap: 4px 24px; align-items: center; margin-top: 24px; border-bottom: 1px solid var(--line); }
   .tabs a { padding: 8px 2px; margin-bottom: -1px; color: var(--muted); text-decoration: none; font-weight: 600; border-bottom: 2px solid transparent; }
   .tabs a[aria-current="page"] { color: var(--accent); border-color: var(--accent); }
   .tabs label { margin-left: auto; }
   .intro { margin: 16px 0 0; }
-  #tab-testsets .scroll { margin-top: 24px; }
+  #tab-testsets .scroll { margin-top: 12px; }
+  #tab-testsets h2 { scroll-margin-top: 12px; } #tab-testsets section:first-child h2 { margin-top: 24px; }
+  #tab-testsets td.wrap { white-space: normal; min-width: 320px; }
   h2 { margin: 40px 0 0; font-size: 19px; }
   tr.total td { font-weight: 700; }
   .chart { position: relative; padding: 8px 8px 0; }
@@ -65,45 +73,32 @@
   .tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
          padding: 6px 10px; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,.08); white-space: nowrap; }
   .swatch.front { background: var(--accent); border-radius: 50%; } .swatch.other { background: #a3a19b; border-radius: 50%; }
-  #tab-speed .legend { margin: 12px 0 0; }
+  #speed-chart .legend { margin: 12px 0 0; } #speed-chart .chart { margin-top: 12px; }
   .hist rect { fill: var(--accent); }
   .hist text { fill: var(--muted); font-size: 10px; }
   /* Multilingual tab: one row of test sets per language, its toggle first */
   .group.by-language { flex-basis: 100%; align-items: flex-start; }
   #datasets.by-language { flex-direction: column; gap: 6px; }
   .language-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-  /* Horizontal scrollbar of the wide tables, stuck to the bottom of the window while the table is
-     on screen (stickyScrollbar()); it replaces the table's own, at the far end of long tables */
-  .scroll-wrap > .scroll { scrollbar-width: none; }
-  .scroll-wrap > .scroll::-webkit-scrollbar { display: none; }
-  /* Drawn by the page, not the browser: the system's overlay scrollbars stay thin until hovered */
-  .sticky-scrollbar { position: sticky; bottom: 0; z-index: 2; padding: 4px 0; background: var(--bg); }
-  .sticky-scrollbar .track { position: relative; height: 14px; background: var(--line); border-radius: 7px; cursor: pointer; }
-  .sticky-scrollbar .thumb { position: absolute; top: 2px; bottom: 2px; min-width: 40px; background: #8a8883; border-radius: 5px; cursor: grab; touch-action: none; }
-  .sticky-scrollbar .thumb:hover, .sticky-scrollbar .thumb.dragging { background: var(--accent); }
-  .sticky-scrollbar .thumb.dragging { cursor: grabbing; }
-  /* Header row stuck to the top of the window while its table is on screen (stickyHeader()): moved
-     by a transform, the tables' horizontal scroll container stopping position: sticky */
-  thead.stuck th { background: var(--surface); box-shadow: 0 1px 0 var(--line), 0 2px 6px rgba(0,0,0,.06); }
-  thead { position: relative; z-index: 2; }  /* above the sticky rank column */
-  /* Rank column (#) of the leaderboard kept on screen when the table scrolls horizontally */
-  #board th:first-child, #board td:first-child { position: sticky; left: 0; z-index: 1; background: var(--surface);
-    box-shadow: inset -1px 0 0 var(--line); }
+  /*__COMMON_CSS__*/
   th.language-start, td.language-start { border-left: 2px solid #a3a19b; }
+  /* Multilingual tab: narrower score columns, the language in a header row above its test sets */
+  #board.by-language th.score, #board.by-language td.score { width: 68px; min-width: 68px; }
+  #board th.language { text-align: center; font-size: 13px; padding-top: 6px; padding-bottom: 2px; border-bottom: none; }
   .language-row button[data-language] { min-width: 120px; font-weight: 600; }
 </style>
 </head>
 <body>
 <main>
-  <h1>French ASR Leaderboard</h1>
+  <h1>Open French-Centric ASR Leaderboard</h1>
   <div class="muted" id="meta"></div>
-  <p class="intro">Transcription errors of open-weight speech recognition models on French test sets.
-    Only models whose weights are publicly available are evaluated.</p>
+  <p class="intro">Benchmark of open-weight speech recognition models on French, and on some European languages and Arabic. Unlike many benchmarks limited to read speech, it also covers spontaneous and conversational speech (meetings, web videos, earnings calls).</p>
 
   <nav class="tabs">
-    <a href="#">Leaderboard</a> <a href="#multilingual" id="multilingual-link">Multilingual</a> <a href="#speed">WER vs RTFx</a> <a href="#test-sets">Test sets</a>
+    <a href="#">French ASR</a> <a href="#multilingual" id="multilingual-link">Multilingual ASR</a> <a href="#contextual-biasing" id="contextual-link">Contextual Biasing ASR</a> <a href="#test-sets">Test sets</a>
     <label>Language <select id="language"></select></label>
   </nav>
+  <p class="intro" id="tab-intro"></p>
 
   <div class="controls" id="controls">
     <div class="group"><span class="group-label">Metric</span>
@@ -116,7 +111,7 @@
   </div>
   <div class="controls" id="filters">
     <div class="group"><span class="group-label all" data-all="filter-architecture" title="Select all / none">Architecture</span> <span id="filter-architecture"></span></div>
-    <div class="group"><span class="group-label all" data-all="filter-task" title="Select all / none">Task</span> <span id="filter-task"></span></div>
+    <div class="group"><span class="group-label all" data-all="filter-task" title="Select all / none">Scope</span> <span id="filter-task"></span></div>
     <div class="group" id="columns-control"><span class="group-label all" data-all="columns" title="Select all / none">Columns</span> <span id="columns"></span></div>
   </div>
 
@@ -126,12 +121,11 @@
     <span><span class="swatch second-last"></span>Second to last</span> <span><span class="swatch last"></span>Last</span>
   </div>
 
-  <div class="notes" id="multilingual-notes" hidden></div>
-  <div class="scroll"><table id="board"></table></div>
-  <div class="notes muted" id="notes"></div>
-  </section>
+  <div class="scroll"><table id="board" class="sticky-first"></table></div>
+  <div class="legend" id="symbols"></div>
 
-  <section id="tab-speed" hidden>
+  <section id="speed-chart">
+  <h2>WER vs RTFx</h2>
   <div class="scroll chart"><svg id="scatter" role="img"></svg><div class="tip" id="tip" hidden></div></div>
   <div class="legend">
     <span><span class="swatch front"></span>Best trade-off: no other model is both faster and more accurate</span>
@@ -140,19 +134,46 @@
   <div class="notes muted" id="chart-notes"></div>
   </section>
 
+  <div class="note-groups muted" id="notes"></div>
+  </section>
+
+  <section id="tab-contextual" hidden></section>
+
   <section id="tab-testsets" hidden>
-  <div class="scroll"><table id="testsets"></table></div>
-  <div class="notes" id="testsets-notes"></div>
-  <div id="speed" hidden>
-    <h2>Speed test set (RTFx)</h2>
+  <section>
+    <h2 id="test-sets-french">French ASR</h2>
+    <div class="scroll"><table id="testsets"></table></div>
+    <div class="notes" id="testsets-notes"></div>
+  </section>
+  <section id="speed" hidden>
+    <h2 id="test-sets-speed">Speed (RTFx)</h2>
     <div class="notes" id="speed-notes"></div>
     <div class="scroll"><table id="speedset"></table></div>
-  </div>
+  </section>
+  <section id="multilingual-sets" hidden>
+    <h2 id="test-sets-multilingual">Multilingual ASR</h2>
+    <div class="scroll"><table id="multilingual-table"></table></div>
+    <div class="notes" id="multilingual-sets-notes"></div>
+  </section>
+  <section id="contextual-sets" hidden>
+    <h2 id="test-sets-contextual">Contextual Biasing ASR</h2>
+    <div class="scroll"><table id="contextual-table"></table></div>
+    <div class="notes" id="contextual-sets-notes"></div>
+    <div class="scroll"><table id="contextual-lists"></table></div>
+  </section>
   </section>
 </main>
 
+<!-- Contextual Biasing ASR tab: the page of tools/contextual_biasing (build.py), shown in a shadow
+     root (its own styles and ids) -->
+<template id="contextual-page"><!--__CONTEXTUAL_PAGE__--></template>
+<script>
+const contextualPage = /*__CONTEXTUAL_SCRIPT__*/null;
+</script>
+
 <script>
 const DATA = /*__DATA__*/null;
+/*__COMMON_JS__*/
 const LANGUAGES = { fr: "French", en: "English", ar: "Arabic", de: "German", es: "Spanish", it: "Italian", nl: "Dutch", pt: "Portuguese" };
 // sort: id of the test set whose column orders the table, null for the average.
 const state = { language: "fr", metric: "wer", case: false, punc: false, selected: new Set(), sort: null,
@@ -170,8 +191,6 @@ const shownModels = () => multi() ? DATA.multilingual.models : modelsOf(state.la
 const datasetLabel = d => multi() ? `${d.name} ${d.language}` : d.name;
 const result = (m, d) => (m.scores[d.id] || {})[metricKey()];  // {wer, sub, del, ins, ci95} or undefined
 // Model info columns.
-const params = n => n >= 1e9 ? `${(n / 1e9).toFixed(n < 1e10 ? 1 : 0)}B` : `${Math.round(n / 1e6)}M`;
-const licenseText = l => ({ "apache-2.0": "Apache-2.0", gemma: "Gemma" })[l] || l.toUpperCase();
 const languagesText = l => l && l.length <= 5 ? l.join(", ") : "multi";
 // Hover text of the prompt sign: the prompt sent and its source.
 const promptText = m => [m.prompt && `Prompt: ${m.prompt}`, m.prompt_source && `(${m.prompt_source})`].filter(Boolean).join("\n");
@@ -180,13 +199,14 @@ const halfWidth = r => r && r.ci95 ? (r.ci95[1] - r.ci95[0]) / 2 : null;
 // with them: they are left out of these modes.
 const scored = d => (multi() ? DATA.multilingual : DATA).models.some(m => result(m, d));
 
-// All the test sets of a language (or of the Multilingual tab) are selected by default.
+// All the test sets of a language (or of the Multilingual tab, but those of UNSELECTED) are selected by default.
+const UNSELECTED = new Set(["ar"]);  // languages not selected by default in the Multilingual tab
 function selectLanguage(lang) {
   state.language = lang;
   selectDatasets();
 }
 function selectDatasets() {
-  state.selected = new Set(shownDatasets().map(d => d.id));
+  state.selected = new Set(shownDatasets().filter(d => !(multi() && UNSELECTED.has(d.language))).map(d => d.id));
   if (!shownDatasets().some(d => d.id === state.sort)) state.sort = state.sort === "rank" || state.sort in { params: 1, rtfx: 1 } ? state.sort : null;
   const button = d => `<button data-id="${esc(d.id)}" aria-pressed="${state.selected.has(d.id)}">${esc(d.name)}</button>`;
   // Multilingual tab: one row per language, starting with a button that toggles the whole language
@@ -239,6 +259,33 @@ function renderTestSets() {
   renderSpeedSet(bins);
 }
 
+// Test sets of the other two benchmarks (they do not depend on the language selected)
+const languageName = l => LANGUAGES[l] || l;
+function renderOtherTestSets() {
+  const fill = (id, head, body) => { document.getElementById(id).innerHTML = `<thead><tr>${head.map(h => `<th${["Type", "Terms to recognize", "Content"].includes(h) ? ' class="left"' : ""}>${h}</th>`).join("")}</tr></thead><tbody>${body}</tbody>`; };
+  const meanLength = d => d.mean_seconds ?? (d.hours ? 3600 * d.hours / d.utterances : null);
+  const size = d => `<td>${d.utterances ?? "—"}</td><td>${d.hours != null ? f1(d.hours) + " h" : "—"}</td><td>${meanLength(d) != null ? f1(meanLength(d)) + " s" : "—"}</td>`;
+  const multilingualSets = DATA.multilingual ? DATA.multilingual.datasets : [];
+  document.getElementById("multilingual-sets").hidden = !multilingualSets.length;
+  fill("multilingual-table", ["Language", "Test set", "Type", "Selection", "Utterances", "Duration", "Mean length"],
+    multilingualSets.map((d, i) => `<tr><td>${i && multilingualSets[i - 1].language === d.language ? "" : esc(languageName(d.language))}</td><td>${datasetLink(d)}</td>` +
+      `<td class="left">${esc(d.domain)}</td><td>${esc(d.selection)}</td>${size(d)}</tr>`).join(""));
+  document.getElementById("multilingual-sets-notes").innerHTML = `
+    <p>Test splits without duration filter, except the French ones, shared with the French benchmark. Sound events of mTEDx, e.g. "(Risas)", are removed from the references.
+    The exact utterances are listed in <a href="${DATA.repo}/tree/main/benchmarks/sota_multilingual/manifests">manifests</a>.</p>`;
+  const sets = DATA.contextual_test_sets;
+  document.getElementById("contextual-sets").hidden = !sets.length;
+  const tick = 10 / DATA.histogram_bin, bins = Math.ceil(Math.max(0, ...sets.map(d => (d.histogram || []).length)) / tick) * tick;  // up to a tick
+  fill("contextual-table", ["Test set", "Language", "Type", "Terms to recognize", "Utterances", "Duration", "Mean length", "Length distribution"],
+    sets.map(d => `<tr><td>${datasetLink(d)}</td><td>${esc(languageName(d.language))}</td><td class="left">${esc(d.domain)}</td><td class="left">${esc(d.terms)}</td>${size(d)}` +
+      `<td>${d.histogram ? histogramSvg(d.histogram, bins) : "—"}</td></tr>`).join(""));
+  document.getElementById("contextual-sets-notes").innerHTML = `
+    <p>Lists given to the models, which all hold the terms to recognize and others that are not spoken (distractors):</p>`;
+  fill("contextual-lists", ["Test set", "List", "Terms", "Content"],
+    sets.flatMap(d => d.lists.map((l, i) => `<tr><td>${i ? "" : esc(d.name)}</td><td title="${esc(l.id)}">${esc(l.label)}</td><td>${Math.round(l.size).toLocaleString("en")}</td>` +
+      `<td class="left wrap">${esc(l.content)}</td></tr>`)).join(""));
+}
+
 // Segments the RTFx is measured on (separate from the test sets), per source test set.
 const duration = s => s >= 90 ? f1(s / 60) + " min" : f1(s) + " s";
 function renderSpeedSet(testsetBins) {
@@ -253,7 +300,7 @@ function renderSpeedSet(testsetBins) {
   const body = set.sources.map(d => row(datasetLink(d), d.domain, d)).join("") + row("Total", "", t, "total");
   document.getElementById("speedset").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
   document.getElementById("speed-notes").innerHTML = `
-    <p><b>RTFx</b> (inverse real-time factor): seconds of audio transcribed per second of computation, higher is faster.<br>
+    <p><b>RTFx</b> (inverse real-time factor), French and Multilingual ASR tabs: seconds of audio transcribed per second of computation, higher is faster.<br>
       Measured on ${t.utterances} segments ranging from ${Math.round(t.min_seconds)} to ${Math.round(t.max_seconds)} s, listed in <a href="${DATA.repo}/blob/main/benchmarks/sota/manifest_rtf.jsonl">manifest_rtf.jsonl</a>.<br>
       No batching, only the transcription is timed. Batched inference can reach a much higher RTFx (throughput).${set.hardware.length ? `<br>GPU: ${esc(set.hardware.join(", "))}` : ""}</p>`;
 }
@@ -295,8 +342,8 @@ function rankClass(value, values) {
 }
 
 function cell(value, pm, cls, title) {
-  if (value == null) return `<td class="muted${cls || ""}">—</td>`;
-  return `<td class="${cls}" title="${esc(title)}">${f1(value)}${pm != null ? ` <small>±${f1(pm)}</small>` : ""}</td>`;
+  if (value == null) return `<td class="score muted${cls || ""}">—</td>`;
+  return `<td class="score ${cls}" title="${esc(title)}">${f1(value)}${pm != null ? ` <small>±${f1(pm)}</small>` : ""}</td>`;
 }
 
 // Model info columns, after the test sets. sort: sortable by its header (key in byInfo).
@@ -315,7 +362,7 @@ const INFO = [
   { key: "architecture", label: "Architecture",
     title: "Encoder: CTC / transducer decoding. Encoder-decoder: attention decoder. Audio LLM: audio encoder + LLM decoder. Streaming: model built for streaming, transcribed offline here",
     cell: m => `<td class="left">${esc([m.architecture || "—", m.streaming && "streaming"].filter(Boolean).join(" · "))}</td>` },
-  { key: "task", label: "Task", title: "ASR: transcription only. ASR/AST: transcription and speech translation. Multi: general audio tasks (QA, summarization...)",
+  { key: "task", label: "Scope", title: "What the model is made for. ASR: transcription only. ASR/AST: transcription and speech translation. Multi: general audio tasks (QA, summarization...)",
     cell: m => `<td class="left">${esc(m.task || "—")}</td>` },
 ];
 // Columns that can be hidden (Columns buttons): the average rank and the model info.
@@ -342,9 +389,11 @@ function render() {
     button.disabled = !scored(d);
     button.title = scored(d) ? d.domain : "No score in this mode (references without case and punctuation)";
   }
-  // Language toggles: pressed when all the language's (scored) test sets are selected
-  document.querySelectorAll("#datasets button[data-language]").forEach(b => b.setAttribute("aria-pressed",
-    shownDatasets().filter(d => d.language === b.dataset.language && scored(d)).every(d => state.selected.has(d.id))));
+  // Language toggles: pressed when all the language's (scored) test sets are selected, "mixed" when some are
+  document.querySelectorAll("#datasets button[data-language]").forEach(b => {
+    const selected = shownDatasets().filter(d => d.language === b.dataset.language && scored(d)).map(d => state.selected.has(d.id));
+    b.setAttribute("aria-pressed", selected.every(Boolean) ? "true" : selected.some(Boolean) ? "mixed" : "false");
+  });
   const sortBy = datasets.find(d => d.id === state.sort);  // undefined: sort by the average or the rank
   const byRank = state.sort === "rank";
   const byInfo = { params: m => m.params, rtfx: m => m.rtfx != null ? -m.rtfx : null }[state.sort];  // RTFx: fastest first
@@ -365,18 +414,21 @@ function render() {
   const languageStart = new Set(multi() ? datasets.filter((d, i) => !i || datasets[i - 1].language !== d.language).map(d => d.id) : []);
   const startClass = d => languageStart.has(d.id) ? " language-start" : "";
 
-  const th = (id, label, sub, title, cls = "") => {
+  // Multilingual tab: a first header row with the languages, the other columns over both rows
+  const span = multi() ? ' rowspan="2"' : "";
+  const th = (id, label, sub, title, cls = "", rowspan = span) => {
     const sorted = id === sortedId;
-    return `<th data-sort="${esc(id)}" class="sortable${cls}" aria-sort="${sorted ? "ascending" : "none"}" title="${esc(title)}">` +
+    return `<th${rowspan} data-sort="${esc(id)}" class="sortable${cls}" aria-sort="${sorted ? "ascending" : "none"}" title="${esc(title)}">` +
       `${sorted ? "▲ " : ""}${label}<br><small>${sub}</small></th>`;
   };
-  const head = `<tr><th>#</th><th>Model</th>${th("", "Average", `${datasets.length} test sets`, "Sort by the average")}` +
-    (shownColumn("rank") ? th("rank", "Avg rank", `${datasets.length} test sets`, "Sort by the average rank") : "") +
-    // last word + version on their own line ("Common<br>Voice 18.0"): keeps the column as narrow as the others
-    datasets.map(d => th(d.id, multi() ? `${esc(d.name)}<br>${esc(LANGUAGES[d.language] || d.language)}` : esc(d.name).replace(/ (\S+ \d[\d.]*)$/, "<br>$1"),
-      d.hours != null ? f1(d.hours) + " h" : "", `${d.domain}${multi() && d.selection ? ` (${d.selection})` : ""}. Sort by this test set`, startClass(d))).join("") +
+  const languages = multi() ? [...new Set(datasets.map(d => d.language))] : [];
+  const datasetHeads = datasets.map(d => th(d.id, esc(d.name),
+      d.hours != null ? f1(d.hours) + " h" : "", `${multi() ? languageName(d.language) + ": " : ""}${d.domain}${multi() && d.selection ? ` (${d.selection})` : ""}. Sort by this test set`, " score" + startClass(d), "")).join("");
+  const head = `<tr><th${span}>#</th><th${span}>Model</th>${th("", "Average", `${datasets.length} test sets`, "Sort by the average", " score")}` +
+    (shownColumn("rank") ? th("rank", "Avg rank", `${datasets.length} test sets`, "Sort by the average rank", " score") : "") +
+    (multi() ? languages.map(l => `<th colspan="${datasets.filter(d => d.language === l).length}" class="language language-start">${esc(languageName(l))}</th>`).join("") : datasetHeads) +
     INFO.filter(c => shownColumn(c.key)).map(c => c.sort ? th(c.key, c.label, c.sub, c.title) :
-      `<th class="left" title="${esc(c.title)}">${c.label}</th>`).join("") + "</tr>";
+      `<th${span} class="left" title="${esc(c.title)}">${c.label}</th>`).join("") + "</tr>" + (multi() ? `<tr>${datasetHeads}</tr>` : "");
   let rank = 0;
   const body = rows.map(({ m, avg, rank: avgRank, key }) => {
     const name = (m.url ? `<a href="${esc(m.url)}">${esc(m.model)}</a>` : esc(m.model)) +
@@ -386,7 +438,7 @@ function render() {
       const r = result(m, d);
       // Multilingual tab: language not in the model card (model_info.languages)
       if (!r && multi() && m.languages && !m.languages.includes(d.language))
-        return `<td class="muted${startClass(d)}" title="Language not supported by the model (model card)">n/s</td>`;
+        return `<td class="score ns${startClass(d)}" title="Language not supported by the model (model card)">n/s</td>`;
       if (!r) return cell(null, null, startClass(d));
       const title = [
         `${datasetLabel(d)} · ${m.model} (${[m.variant, m.backend].filter(Boolean).join(" · ")})`,
@@ -398,15 +450,17 @@ function render() {
       return cell(r.wer, halfWidth(r), rankClass(r.wer, values[d.id]) + startClass(d), title);
     }).join("");
     const avgCell = avg ? cell(avg.wer, avg.pm, "avg " + rankClass(avg.wer, avgValues), "Mean over the selected test sets")
-                        : `<td class="muted" title="Not evaluated on all the selected test sets">—</td>`;
+                        : `<td class="score muted" title="Not evaluated on all the selected test sets">—</td>`;
     const rankCell = avgRank != null ? cell(avgRank, null, rankClass(avgRank, rankValues), "Mean of the ranks over the selected test sets")
-                                     : `<td class="muted">—</td>`;
+                                     : `<td class="score muted">—</td>`;
     const info = INFO.filter(c => shownColumn(c.key)).map(c => c.cell(m)).join("");
     return `<tr><td>${key != null ? ++rank : ""}</td><td>${name}<br><small>${esc([m.variant, m.backend].filter(Boolean).join(" · "))}</small></td>` +
       `${avgCell}${shownColumn("rank") ? rankCell : ""}${cells}${info}</tr>`;
   }).join("");
+  document.getElementById("board").classList.toggle("by-language", multi());
   document.getElementById("board").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
   renderChart(rows, datasets);
+  renderIntro();
 }
 
 // Average WER (same selection as the leaderboard) against RTFx, log scale.
@@ -493,78 +547,12 @@ function renderChart(rows, datasets) {
 
   const missing = (list, why) => list.length ? `<p>${why}: ${list.map(r => esc(r.m.model + (r.m.variant ? ` (${r.m.variant})` : ""))).join(", ")}.</p>` : "";
   document.getElementById("chart-notes").innerHTML =
-    `<p>Each dot is a model: its average over the test sets selected above, against its RTFx (seconds of audio transcribed per second of computation, ` +
-    `see the <a href="#test-sets">test sets</a> tab). Vertical bars: 95% confidence interval of the average. Hover a dot for the details.</p>` +
+    `<p>Each dot is a model: its average over the test sets selected above, against its <a href="#test-sets-speed">RTFx</a> (speed). Vertical bars: 95% confidence interval of the average. Hover a dot for the details.</p>` +
     missing(rows.filter(r => r.avg && !r.m.rtfx), "Speed not measured yet") +
     missing(rows.filter(r => !r.avg), "Not evaluated on all the selected test sets");
 }
 
-// Each table's horizontal scrollbar sticks to the bottom of the window while the table is on
-// screen (wrapper: the sticky bar stays within the table's extent). Drawn by the page (track +
-// thumb to drag, click on the track to jump, wheel to scroll): the system's overlay scrollbars
-// are too thin to catch.
-function stickyScrollbar(box) {
-  const wrap = document.createElement("div"), bar = document.createElement("div");
-  wrap.className = "scroll-wrap";
-  bar.className = "sticky-scrollbar";
-  bar.innerHTML = `<div class="track"><div class="thumb"></div></div>`;
-  box.replaceWith(wrap);
-  wrap.append(box, bar);
-  const track = bar.firstChild, thumb = track.firstChild;
-  const range = () => box.scrollWidth - box.clientWidth;  // scrollable distance of the table
-  const free = () => track.clientWidth - thumb.offsetWidth;  // movable distance of the thumb
-  const update = () => {
-    bar.hidden = range() <= 0;
-    if (bar.hidden) return;
-    thumb.style.width = `${100 * box.clientWidth / box.scrollWidth}%`;
-    thumb.style.left = `${free() * box.scrollLeft / range()}px`;
-  };
-  box.addEventListener("scroll", update);
-  thumb.onpointerdown = e => {
-    e.preventDefault();
-    e.stopPropagation();
-    thumb.setPointerCapture(e.pointerId);
-    thumb.classList.add("dragging");
-    const x0 = e.clientX, left0 = box.scrollLeft;
-    thumb.onpointermove = m => { box.scrollLeft = left0 + (m.clientX - x0) * range() / Math.max(free(), 1); };
-    thumb.onpointerup = thumb.onpointercancel = () => {
-      thumb.classList.remove("dragging");
-      thumb.onpointermove = thumb.onpointerup = thumb.onpointercancel = null;
-    };
-  };
-  // Click on the track: the thumb's center goes there
-  track.onpointerdown = e => {
-    if (e.target !== track) return;
-    const x = e.clientX - track.getBoundingClientRect().left - thumb.offsetWidth / 2;
-    box.scrollLeft = Math.max(0, Math.min(1, x / Math.max(free(), 1))) * range();
-  };
-  bar.addEventListener("wheel", e => {
-    box.scrollLeft += e.deltaX || e.deltaY;
-    e.preventDefault();
-  }, { passive: false });
-  const observer = new ResizeObserver(update);  // window resize, tab shown, table re-rendered
-  observer.observe(box);
-  observer.observe(box.querySelector("table"));
-}
-document.querySelectorAll(".scroll").forEach(box => box.querySelector("table") && stickyScrollbar(box));
-
-// The header row of each table follows the window's scroll while the table is on screen (its
-// .scroll box scrolls horizontally, so position: sticky would stick within the box, not the window):
-// moved down by the distance scrolled past the table's top, until the table's last row.
-function stickyHeaders() {
-  document.querySelectorAll(".scroll table").forEach(table => {
-    const head = table.tHead;
-    if (!head) return;
-    const top = table.getBoundingClientRect().top, max = table.offsetHeight - head.offsetHeight;
-    const shift = Math.max(0, Math.min(-top, max));
-    head.style.transform = shift ? `translateY(${shift}px)` : "";
-    head.classList.toggle("stuck", shift > 0);
-  });
-}
-window.addEventListener("scroll", stickyHeaders, { passive: true });
-window.addEventListener("resize", stickyHeaders);
-// Tables re-rendered (sort, filters, tab): their new header goes back in place
-document.querySelectorAll(".scroll table").forEach(table => new MutationObserver(stickyHeaders).observe(table, { childList: true }));
+setUpTables(document);
 
 // Controls
 const languages = [...new Set(DATA.datasets.map(d => d.language))];
@@ -641,43 +629,95 @@ document.querySelectorAll(".group-label[data-all]").forEach(label => label.oncli
 
 // Texts
 const updated = DATA.results_updated && new Date(DATA.results_updated).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
-document.getElementById("meta").innerHTML = `${updated ? `Updated on ${updated} · ` : ""}<a href="${DATA.repo}">${DATA.repo.replace("https://", "")}</a>`;
-document.getElementById("notes").innerHTML = `
-  <p><b>WER</b> (word error rate) and <b>CER</b> (character error rate), in %: lower is better. Click a column header to sort by that test set, or by the average.</p>
-  <p><b>Capped at 100% per segment</b>: the errors of each segment count at most as many as the words (or characters) of its reference, so that one or two hallucinated segments cannot inflate a score on their own. The excess is removed from the insertions.</p>
-  <p><b>Average</b>: mean of the scores over the selected test sets. A model not evaluated on all the selected test sets gets no average (—): unselect a test set to compare it.</p>
-  <p><b>Avg rank</b>: mean of the model's rank on each selected test set (1 = best), among the models that have an average. Unlike the average, a test set with high error rates does not weigh more than the others.</p>
-  <p><b>±</b>: half-width of the 95% confidence interval, by bootstrap over the utterances of each test set (hover a score for the exact interval and the error breakdown).</p>
-  <p><b>Case sensitive</b> and <b>With punctuation marks</b>: by default, case and punctuation are ignored. With "Yes", they count as errors, and the test sets whose references do not have them are left out. Segments of at most 30 s.</p>
-  <p><b>Size</b>, <b>License</b> and <b>Languages</b> (up to 5, "multi" beyond: hover for the list) come from the model cards.</p>
-  <p><b>Architecture</b> and <b>Task</b> buttons filter the models (table and chart); <b>Columns</b> show or hide the columns after the scores. A click on the label of a group (Test sets, Architecture, Task, Columns) selects all its buttons, or none.</p>
-  <p>💬: model run with a text prompt; hover it for the prompt and where it comes from (model card, built-in transcription prompt, or ours).</p>
-  <p><b>RTFx</b>: seconds of audio transcribed per second of computation, higher is faster. ⚠️: the speed was measured with a slower runtime than the model's own (hover for details).</p>
-  <p>Results and configuration: <a href="${DATA.repo}/tree/main/benchmarks/sota">benchmarks/sota</a>. Raw data: <a href="leaderboard.json">leaderboard.json</a>.</p>`;
+document.getElementById("meta").innerHTML = `By <a href="https://linagora.com">LINAGORA</a>${updated ? ` · Updated on ${updated}` : ""} · ` +
+  `<a href="${DATA.repo}">${DATA.repo.replace("https://", "")}</a>`;
 
-// Multilingual tab
+// One line above each tab
+const sectionLinks = () => [["french", "French ASR"], ["speed", "Speed (RTFx)"], ["multilingual", "Multilingual ASR"], ["contextual", "Contextual Biasing ASR"]]
+  .filter(([id]) => !document.getElementById(`test-sets-${id}`).parentElement.hidden)
+  .map(([id, label]) => `<a href="#test-sets-${id}">${label}</a>`).join(" · ");
+function renderIntro() {
+  const scores = `${{ wer: "Word error rate (WER, %)", cer: "Character error rate (CER, %)" }[state.metric]} of ${shownModels().length} models`;
+  document.getElementById("tab-intro").innerHTML = location.hash.startsWith("#test-sets") ? `What the models are evaluated on: ${sectionLinks()}`
+    : multi() ? `${scores} in ${new Set(shownDatasets().map(d => d.language)).size} languages: lower is better.`
+    : `${scores} on ${shownDatasets().length} <a href="#test-sets">test sets</a> in ${languageName(state.language)}: lower is better.`;
+}
+
+// Below the table: symbols, then the notes
+function renderNotes() {
+  const multilingual = multi(), gpu = DATA.speed_set && DATA.speed_set.hardware.length ? ` on one ${esc(DATA.speed_set.hardware.join(", "))} GPU` : "";
+  document.getElementById("symbols").innerHTML = [
+    "±: half-width of the 95% confidence interval", "⚠️: caveat on the model or its speed (hover it)", "💬: run with a text prompt (hover it)",
+    ...(multilingual ? ['<span class="swatch ns"></span>n/s: language not supported by the model'] : []), "—: not evaluated or not measured",
+  ].map(s => `<span>${s}</span>`).join("");
+  const arabic = multilingual ? DATA.multilingual.models.filter(m => Object.keys(m.scores).some(id => id.endsWith("_ar"))).length : 0;
+  const folder = multilingual ? "benchmarks/sota_multilingual" : "benchmarks/sota";
+  const groups = {
+    "Scores": [
+      `<b>WER</b> (word error rate) and <b>CER</b> (character error rate): in %, lower is better. Hover a score for its confidence interval (bootstrap over the utterances) and its substitutions, deletions and insertions.`,
+      `<b>Normalization</b>: references and transcriptions are normalized in the same way (with <a href="https://github.com/linagora-labs/ssak">ssak</a>) before they are compared: numbers, symbols and units in words, hesitations such as "euh" removed, apostrophes and dashes ignored.` +
+        (multilingual ? ` In Arabic: diacritics removed, alef forms merged.` : ""),
+      `<b>Case sensitive</b>, <b>With punctuation marks</b>: ignored by default. With "Yes", they count as errors, and the test sets whose references do not have them are left out. A capital letter at the start of a transcription is not an error when the reference has none.`,
+      `<b>Cap</b>: the errors of a segment count at most as many as the words (or characters) of its reference, so that a few hallucinated segments do not inflate a score on their own. The excess is removed from the insertions.`,
+      `<b>Average</b>: mean of the scores on the selected test sets. A model not evaluated on all of them has none: unselect a test set to compare it.`,
+      `<b>Avg rank</b>: mean of the ranks of the model on each selected test set (1 = best), among the models that have an average. Unlike in the average, a test set with high error rates does not weigh more than the others.`,
+    ],
+    "Models and columns": [
+      `Click a column header to sort the table. The line under the name of a model gives its variant (if any) and the software that runs it: a model can be there several times.`,
+      `<b>Architecture</b>: <i>encoder</i> (CTC or transducer decoding), <i>encoder-decoder</i> (attention decoder) or <i>audio LLM</i> (audio encoder and LLM decoder); <i>streaming</i> models are transcribed offline here, which penalizes them.`,
+      `<b>Scope</b>: what the model is made for, <i>ASR</i> (transcription only), <i>ASR/AST</i> (transcription and speech translation) or <i>Multi</i> (general audio tasks).`,
+      `<b>RTFx</b>: speed, in seconds of audio transcribed per second,${gpu ? `${gpu},` : ""} one segment at a time (<a href="#test-sets-speed">details</a>).`,
+      `<b>Size</b> (parameters), <b>License</b> and <b>Languages</b> come from the model cards.`,
+      `<b>Buttons</b>: Architecture and Scope filter the models; Columns show or hide columns. A click on the label of a group of buttons selects all of them, or none.`,
+    ],
+    "Data": multilingual ? [
+      `Models that support several languages, on FLEURS, mTEDx, VoxPopuli and Common Voice (<a href="#test-sets-multilingual">details</a>). The language of the test set is given to the models that take one (in their prompt, or as a parameter).`,
+      ...(arabic ? [`<b>Arabic</b> is not selected at first: ${arabic} of the ${DATA.multilingual.models.length} models support it, and the others would have no average.`] : []),
+      `Results and configuration: <a href="${DATA.repo}/tree/main/${folder}">${folder}</a>. Raw data: <a href="leaderboard.json">leaderboard.json</a>.`,
+    ] : [
+      `Segments of 1 to 30 s, from public French corpora and one internal corpus of web videos (<a href="#test-sets-french">details</a>).`,
+      `Results and configuration: <a href="${DATA.repo}/tree/main/${folder}">${folder}</a>. Raw data: <a href="leaderboard.json">leaderboard.json</a>.`,
+    ],
+  };
+  document.getElementById("notes").innerHTML = Object.entries(groups).map(([title, items]) =>
+    `<div><h3>${title}</h3><ul>${items.map(i => `<li>${i}</li>`).join("")}</ul></div>`).join("");
+}
 document.getElementById("multilingual-link").hidden = !DATA.multilingual;
-document.getElementById("multilingual-notes").innerHTML = DATA.multilingual ? `
-  <p>Same models on test sets in other languages: FLEURS (${[...new Set(DATA.multilingual.datasets.filter(d => d.name === "FLEURS").map(d => d.language))].join(", ")}),
-    Multilingual TEDx, VoxPopuli and Common Voice. The models are asked for the language of each test set (in their prompt, or as a parameter).
-    Not evaluated (—): language not supported by the model.</p>
-  <p>Whole test splits, without duration filter (Common Voice English: 10%), except French FLEURS and TEDx, which come from the French leaderboard (segments of 30 s at most).
-    Normalization of the languages other than French and English: lowercase, punctuation removed, numbers in words, accents kept (Arabic: diacritics removed, alef forms merged).
-    mTEDx sound events, e.g. "(Risas)", are removed from the references.</p>
-  <p>Results and configuration: <a href="${DATA.repo}/tree/main/benchmarks/sota_multilingual">benchmarks/sota_multilingual</a>.</p>` : "";
 
-// Tabs: the URL hash (#test-sets) picks the tab, so that it can be linked.
+// Contextual Biasing ASR tab, built the first time it is shown. Its script gets a "document"
+// limited to its shadow root.
+document.getElementById("contextual-link").hidden = !contextualPage;
+let contextualShown = false;
+function showContextual() {
+  if (contextualShown) return;
+  contextualShown = true;
+  const root = document.getElementById("tab-contextual").attachShadow({ mode: "open" });
+  root.append(document.getElementById("contextual-page").content.cloneNode(true));
+  contextualPage({
+    getElementById: id => root.getElementById(id),
+    querySelector: selector => root.querySelector(selector),
+    querySelectorAll: selector => root.querySelectorAll(selector),
+    addEventListener: (type, listener) => (type.startsWith("key") ? document : root).addEventListener(type, listener),
+  });
+}
+
+// Tabs: the URL hash (#test-sets) picks the tab, so that it can be linked. #speed: the chart of the first tab.
 let wasMulti = false;
 function showTab() {
-  const tab = ["#speed", "#test-sets"].includes(location.hash) || (location.hash === "#multilingual" && DATA.multilingual) ? location.hash : "";
+  const tab = location.hash.startsWith("#test-sets") ? "#test-sets"
+    : multi() || (location.hash === "#contextual-biasing" && contextualPage) ? location.hash : "";
+  const contextual = tab === "#contextual-biasing";
   document.getElementById("tab-board").hidden = tab !== "" && tab !== "#multilingual";
-  document.getElementById("multilingual-notes").hidden = tab !== "#multilingual";
-  languageSelect.parentElement.hidden = languages.length < 2 || tab === "#multilingual";
-  document.getElementById("tab-speed").hidden = tab !== "#speed";
+  languageSelect.parentElement.hidden = languages.length < 2 || tab === "#multilingual" || contextual;
+  document.getElementById("speed-chart").hidden = tab !== "";
   document.getElementById("tab-testsets").hidden = tab !== "#test-sets";
-  document.getElementById("controls").hidden = tab === "#test-sets";  // the test sets tab does not use them
-  document.getElementById("filters").hidden = tab === "#test-sets";
-  document.getElementById("columns-control").hidden = tab === "#speed";  // the chart has no columns
+  document.getElementById("tab-contextual").hidden = !contextual;
+  document.getElementById("controls").hidden = tab === "#test-sets" || contextual;  // not used by these tabs
+  document.getElementById("filters").hidden = tab === "#test-sets" || contextual;
+  document.getElementById("tab-intro").hidden = contextual;  // its page has its own
+  renderIntro();
+  if (contextual) showContextual();
+  else renderNotes();
   document.querySelectorAll(".tabs a").forEach(a => a.setAttribute("aria-current", a.hash === tab ? "page" : "false"));
 }
 window.onhashchange = () => {
@@ -685,10 +725,17 @@ window.onhashchange = () => {
   if (multi() !== wasMulti) selectDatasets();  // other models and test sets
   wasMulti = multi();
 };
-showTab();
 wasMulti = multi();
-
 selectLanguage(languageSelect.value);
+renderOtherTestSets();
+showTab();
+// Places within a tab: the chart of the first one, the sections of the test sets
+function scrollToPlace() {
+  const place = location.hash === "#speed" ? "speed-chart" : location.hash.startsWith("#test-sets-") ? location.hash.slice(1) : null;
+  if (place && document.getElementById(place)) document.getElementById(place).scrollIntoView();
+}
+window.addEventListener("hashchange", scrollToPlace);
+scrollToPlace();
 </script>
 </body>
 </html>

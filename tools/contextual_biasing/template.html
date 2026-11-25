@@ -19,11 +19,14 @@
   h1 { margin: 0 0 4px; font-size: 26px; }
   h2 { margin: 40px 0 8px; font-size: 19px; }
   .muted { color: var(--muted); }
+  a { color: var(--accent); }
+  .embedded { display: none; }  /* links to the other tabs of the leaderboard */
   .intro { margin: 16px 0 0; max-width: 1000px; }
   .controls { display: flex; flex-wrap: wrap; gap: 10px 32px; margin: 24px 0 12px; align-items: center; }
   .group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .group-label { color: var(--muted); margin-right: 2px; }
-  button.small { font-size: 13px; padding: 2px 8px; color: var(--muted); }
+  .group-label.all { cursor: pointer; user-select: none; text-decoration: underline dotted; text-underline-offset: 3px; }
+  .group-label.all:hover { color: var(--accent); }
   select, button { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
   button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
   .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; margin: 8px 0 12px; }
@@ -32,7 +35,8 @@
   table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
   th, td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
   th { font-size: 13px; vertical-align: bottom; }
-  th:first-child, td:first-child { text-align: left; }
+  th:nth-child(-n+2), td:nth-child(-n+2) { text-align: left; }
+  td small { font-size: 11px; color: var(--muted); }
   td.none { color: var(--muted); }
   td a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
   td a:hover { text-decoration-color: currentColor; }
@@ -58,7 +62,6 @@
   /* Charts. Series colors: categorical palette, fixed order (validated: CVD and
      normal-vision separation of adjacent slots; three slots below 3:1 contrast, hence the
      value labels and the tables). */
-  .panels.small { grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); }
   svg .grid { stroke: var(--line); }
   svg .tick { fill: var(--muted); font-size: 12px; } svg .name { fill: var(--text); }
   svg [data-tip] { cursor: default; }
@@ -71,114 +74,126 @@
   table.compact th, table.compact td { padding: 5px 6px; text-align: center; white-space: normal; line-height: 1.25; }
   table.compact td { vertical-align: top; }
   table.compact tr.level-start td { border-top: 2px solid var(--muted); }
-  table.compact th.ranked { box-shadow: inset 0 -3px 0 var(--accent); }
   td.fallback { color: var(--muted); font-style: italic; }
-  .controls.rank { margin: 4px 0 8px; }  /* values on one line, with or without a change below */
-  table.compact th:first-child, table.compact td:first-child { text-align: left; overflow-wrap: anywhere; }
-  table.compact col.model { width: 252px; } table.compact col.value { width: 74px; }
-  table.compact th { font-size: 12px; overflow-wrap: anywhere; }
+  table.compact th:nth-child(-n+2), table.compact td:nth-child(-n+2) { text-align: left; overflow-wrap: anywhere; }
+  table.compact th:nth-child(n+3), table.compact td:nth-child(n+3) { padding-left: 3px; padding-right: 3px; }
+  table.compact th { font-size: 11.5px; overflow-wrap: anywhere; }
+  table.compact td { font-size: 14px; } table.compact td.info { font-size: 12.5px; }
+  sup { line-height: 0; }
   table.compact .delta { display: block; margin: 0; }
   table.compact th small { font-weight: 400; color: var(--muted); }
   .caption { font-size: 13px; margin-top: 8px; }
-  .board > div { min-width: 0; }
-  @media (min-width: 1250px) {
-    .board { display: grid; grid-template-columns: min-content minmax(420px, 1fr); gap: 0 28px; align-items: start; }
-    .board .panels.small { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
-  }
-  #lines .panel, #panels .panel { cursor: zoom-in; }
+  table.compact th.ranked { box-shadow: inset 0 -3px 0 var(--accent); }
+  /* Views of the tab */
+  .subtabs { display: flex; flex-wrap: wrap; gap: 4px 20px; margin: 28px 0 4px; border-bottom: 1px solid var(--line); }
+  .subtabs button { border: none; border-bottom: 2px solid transparent; border-radius: 0; background: none; padding: 6px 2px;
+    margin-bottom: -1px; color: var(--muted); font-weight: 600; }
+  .subtabs button[aria-pressed="true"] { background: none; color: var(--accent); border-color: var(--accent); }
+  .panels.small { grid-template-columns: repeat(auto-fill, minmax(min(460px, 100%), 1fr)); }
+  #lines .panel, #panels .panel, #pareto .panel { cursor: zoom-in; }
   .zoom { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: flex; align-items: center; justify-content: center; z-index: 20; }
   .zoom-box { position: relative; background: var(--surface); border-radius: 8px; padding: 16px 20px; width: min(1200px, 96vw); max-height: 96vh; overflow: auto; }
   .zoom-box h3 { margin: 0 0 4px; font-size: 17px; }
   #zoom-chart svg { display: block; width: 100%; height: auto; max-height: 78vh; font-size: 11px; }
   #zoom-close { position: absolute; top: 8px; right: 10px; font-size: 20px; line-height: 1; padding: 2px 10px; }
+  /*__COMMON_CSS__*/
   @media (max-width: 520px) { .panels, .panels.small { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 <main>
   <h1>Contextual Biasing ASR Benchmark</h1>
-  <p class="intro">How well speech recognition models write the terms of a list (drug names, rare words, company
-    names) without the list, and when the list is given to the model (prompt, hotwords or boosting).
-    Each run with a list is compared with the run of the same model without it, on the same terms.</p>
+  <p class="intro">Some models accept a list of words to expect (names, drugs, companies...): what do they gain from it,
+    and what does it cost?</p>
 
   <div class="controls">
-    <div class="group"><span class="group-label">Models</span> <span class="group" id="models"></span>
-      <button class="small" id="models-all" title="Show all the models">All</button> <button class="small" id="models-none" title="Hide all the models">None</button></div>
+    <div class="group"><span class="group-label all" id="models-label" title="Select all / none">Models</span> <span class="group" id="models"></span></div>
   </div>
   <div class="controls">
     <div class="group"><span class="group-label">Test set</span> <span class="group" id="dataset"></span></div>
+    <span class="muted" id="dataset-note"></span>
   </div>
+  <nav class="subtabs" id="views">
+    <button data-v="leaderboard" aria-pressed="true">Leaderboard</button>
+    <button data-v="pareto">Pareto front plots</button>
+    <button data-v="dumbbell">Dumbbell plots</button>
+    <button data-v="size">Effect of the list size</button>
+  </nav>
   <div class="controls">
-    <div class="group"><span class="group-label">Metric</span> <span class="group" id="metric"></span></div>
+    <div class="group" id="metric-group"><span class="group-label">Metric</span> <span class="group" id="metric"></span></div>
     <div class="group"><span class="group-label">Case sensitive</span> <span class="group" id="mode">
       <button data-v="nocasepunc" aria-pressed="true" title="Case ignored. Punctuation marks are always removed">No</button>
       <button data-v="cased" title="WER, B-WER, U-WER: the case of all the words counts. F1: a list term counts as correct only if written with the case of the list. Punctuation marks are always removed">Yes</button></span></div>
   </div>
+  <div class="controls" id="sort-group">
+    <div class="group"><span class="group-label" title="By WER with this list (or without list); the models whose WER is within the confidence interval of the best one are ranked by B-WER">Sort by</span> <span class="group" id="sort-by"></span></div>
+  </div>
 
-  <!-- Table and figures side by side on wide screens, one below the other otherwise -->
-  <div class="board">
-  <div>
-  <h2>Leaderboard</h2>
-  <div class="controls rank"><div class="group"><span class="group-label">Rank on</span> <span class="group" id="rank-list"></span></div></div>
+  <section data-view="leaderboard">
   <div class="legend">
     <span><span class="swatch rank first"></span>1st</span> <span><span class="swatch rank second"></span>2nd</span>
     <span><span class="swatch rank second-last"></span>Second to last</span> <span><span class="swatch rank last"></span>Last</span>
   </div>
-  <div class="scroll fit"><table id="overview" class="compact"></table></div>
+  <div class="scroll fit"><table id="overview" class="compact sticky-first"></table></div>
+  <div class="legend muted" id="symbols"></div>
   <div class="muted caption" id="overview-caption"></div>
-  </div>
+  </section>
 
-  <div>
-  <h2>Main plots</h2>
+  <section data-view="pareto" hidden>
+  <div class="legend" id="pareto-legend"></div>
+  <div class="panels small" id="pareto"></div>
+  <div class="muted caption" id="pareto-caption"></div>
+  </section>
+
+  <section data-view="dumbbell" hidden>
+  <div class="legend" id="panels-legend">
+    <span><svg width="64" height="14" style="vertical-align:-2px"><line x1="7" x2="55" y1="7" y2="7" stroke="var(--muted)" stroke-width="2.5"/><circle cx="7" cy="7" r="4.5" fill="var(--muted)"/><path d="M55,0.5 L56.8,5 L61.5,5.2 L57.8,8.1 L59.1,12.7 L55,10 L50.9,12.7 L52.2,8.1 L48.5,5.2 L53.2,5 Z" fill="var(--muted)"/></svg>
+      From the model without list (dot) to the model with the list (star), in the order of the leaderboard</span>
+  </div>
+  <div class="panels" id="panels"></div>
+  </section>
+
+  <section data-view="size" hidden>
   <div class="legend" id="lines-legend"></div>
   <div class="panels small" id="lines"></div>
   <div class="muted caption">Each model without list, then with each list given to it, from the smallest list to the
     largest. A line stops where the model has no run with the list.<br>Hollow points: the same list given in capitals (to
     read with "Case sensitive").</div>
-  </div>
-  </div>
+  </section>
 
-  <h2>Without and with the list</h2>
-  <div class="legend" id="panels-legend">
-    <span><svg width="64" height="14" style="vertical-align:-2px"><line x1="7" x2="55" y1="7" y2="7" stroke="var(--muted)" stroke-width="2.5"/><circle cx="7" cy="7" r="4.5" fill="var(--muted)"/><path d="M55,0.5 L56.8,5 L61.5,5.2 L57.8,8.1 L59.1,12.7 L55,10 L50.9,12.7 L52.2,8.1 L48.5,5.2 L53.2,5 Z" fill="var(--muted)"/></svg>
-      From the model without list (dot) to the model with the list (star)</span>
+  <div class="note-groups muted">
+    <div><h3>Scores</h3><ul>
+      <li id="metrics-notes"></li>
+      <li><b>Case sensitive</b>: for WER, B-WER and U-WER, the case of all the words counts, compared with the reference
+        (without case when the references have no case, as for LibriSpeech). For F1, precision and recall, a term is correct
+        only if written as in the list given to the model (as in the targets for runs without list).</li>
+      <li><b>Punctuation</b>: never counted. The marks are removed after the conversion of the numbers, acronyms...</li>
+      <li><b>Ranking</b>: by WER; the models whose WER is within the 95% confidence interval of the best one form a level
+        (between two lines), ranked by B-WER, and so on from the best of the others.</li>
+    </ul></div>
+    <div><h3>Models and columns</h3><ul>
+      <li><b>Sort by</b>: the list the models are ranked on, in the leaderboard and the plots. The line under the name of a model gives its decoding
+        (if several are compared) and the software that runs it.</li>
+      <li><b>List given</b>: <i>prompt</i> (text given to the model), <i>hotwords</i> (of Whisper, at most 223 tokens) or
+        <i>boosting</i> (scores of the terms raised at decoding time, NeMo). Hover it for the details.</li>
+      <li><b>Size</b> (parameters), <b>License</b> and <b>Architecture</b>: as in the other tabs.</li>
+      <li><b>RTFx</b>: on one NVIDIA DGX Spark (GB10), as the benchmark runs each model: vLLM servers with 32 to 128
+        concurrent requests, NeMo and VibeVoice-ASR in batches (64; 4 to 16 with the long lists), faster-whisper one file
+        at a time. It compares the cost of the lists for a model more than the models with each other, and not with the
+        RTFx of the other tabs. A list given in the prompt is processed with every request: the longer the list, the slower.</li>
+    </ul></div>
+    <div><h3>Data</h3><ul>
+      <li><b>Terms</b>: all the terms to recognize are in the lists, with others that are not spoken. What happens when
+        a spoken term is missing from the list is not measured.</li>
+      <li><b>English</b>, <b>French and English</b>: mean over the test sets (each weighs the same),
+        by size class of the lists: <i>short</i> (25 names, call keywords, 100 distractors), <i>medium</i> (389 names,
+        500 distractors), <i>long</i> (drug dictionaries, 1,000 and 2,000 distractors). In English, only LibriSpeech has
+        medium and long lists: their values are not comparable with the ones of the short lists (compare the changes).</li>
+      <li>Two of the lists (Vidal, Th&eacute;riaque) are private: the runs with them are published without their transcriptions.</li>
+      <li>Results and configuration:
+        <a href="https://github.com/linagora-labs/asr_benchmark/tree/main/benchmarks/contextual_biasing">benchmarks/contextual_biasing</a>.</li>
+    </ul></div>
   </div>
-  <div class="panels" id="panels"></div>
-
-  <h2>All metrics <select id="list"></select></h2>
-  <div class="muted">Sorted by the selected metric (with the list, or without for models without run with it); colors: rank in each column.</div>
-  <div class="scroll"><table id="details"></table></div>
-
-  <h2>Metrics</h2>
-  <ul class="notes">
-    <li><b>WER</b>: word error rate of the whole transcription (normalized text).</li>
-    <li><b>B-WER</b>: word error rate on the words of the list terms of the reference; <b>U-WER</b>: on the other words.</li>
-    <li><b>F1, R, P</b>: F1, recall and precision of the list terms (each occurrence of a term of the targets, in the
-      reference and in the transcription).</li>
-    <li><b>FA/h</b>: false alarms per hour, list terms written although not spoken (at most one per term and utterance, as
-      in F1 and P: a transcription that loops on a term is counted in <b>Runaway</b>).</li>
-    <li><b>Runaway</b>: percentage of the utterances whose transcription runs away (more than twice as many words as
-      the reference, plus 10): loops, invented sentences, prompt recited. A few of them weigh a lot on B-WER, WER and
-      FA/h.</li>
-    <li><b>RTFx</b>: seconds of audio transcribed per second (higher is faster), on one NVIDIA DGX Spark (GB10), as
-      the benchmark runs each model: vLLM servers with 32 to 128 concurrent requests, NeMo and VibeVoice-ASR in batches
-      (64; 4 to 16 with the long lists), faster-whisper one file at a time. It compares the cost of the lists for a
-      model more than the models with each other. "~": approximate, taken from the logs (time of the whole run, model
-      loading and scoring included, hence underestimated for short runs). A list given in the prompt is processed
-      with every request: the longer the list, the slower.</li>
-    <li><b>Punctuation</b>: never counted. The marks are removed after the conversion of the numbers, acronyms...</li>
-    <li><b>Case sensitive</b>: for WER, B-WER and U-WER, the case of all the words counts, compared with the reference
-      (without case when the references have no case, as for LibriSpeech). For F1, precision and recall, a term is correct
-      only if written as in the list given to the model (as in the targets for runs without list).</li>
-    <li>Test sets <i>English</i> and <i>French and English</i>: the mean over the test sets (each weighs the same),
-      by size class of the lists: <i>short</i> (pxslu25, global, 100), <i>medium</i> (pxslu, 500), <i>long</i> (vidal,
-      bdpm, theriaque, 1000, 2000). In English, only LibriSpeech has medium and long lists: their values are not
-      comparable with the ones of the short lists (compare the changes).</li>
-    <li>Lists: <i>local</i> lists only hold terms of the utterance; the others are global lists
-      (one list for the whole test set). <i>_upper</i>: the same list in capitals, given to check that the model
-      writes the terms as given (to read with "Case sensitive" and F1). <i>_ext</i>: the drug names of PxSLU completed
-      with the ones spoken in the recordings but absent from its annotated names.</li>
-  </ul>
 </main>
 <div class="tip" id="tip" hidden></div>
 <!-- A chart enlarged to the page, with its legend (click on a chart; close: click outside, button or Escape) -->
@@ -189,29 +204,39 @@
 
 <script>
 const DATA = /*__DATA__*/null;
+/*__COMMON_JS__*/
+const MODELS = Object.assign({}, ...Object.values(DATA).map((lang) => lang.models));  // by label
+const DESCRIPTIONS = /*__INFO__*/null;  // test sets and lists (TEST_SETS and LISTS of build_page.py)
 const LANGUAGES = { fr: "French", en: "English" };
 const METRICS = [
-  { key: "wer", label: "WER", higher: false },
-  { key: "b_wer", label: "B-WER", higher: false }, { key: "u_wer", label: "U-WER", higher: false },
-  { key: "f1", label: "F1", higher: true }, { key: "recall", label: "R", higher: true },
-  { key: "precision", label: "P", higher: true },
-  { key: "false_alarms_per_hour", label: "FA/h", higher: false, unbounded: true },
-  { key: "runaway", label: "Runaway", higher: false, unbounded: true },
-  { key: "rtfx", label: "RTFx", higher: true, unbounded: true, log: true },
+  { key: "wer", label: "WER", higher: false, about: "word error rate of the whole transcription, in %" },
+  { key: "b_wer", label: "B-WER", higher: false, about: "word error rate on the words of the list terms (biased words)" },
+  { key: "u_wer", label: "U-WER", higher: false, about: "word error rate on the other words (unbiased words)" },
+  { key: "f1", label: "F1", higher: true, about: "harmonic mean of the precision and the recall of the list terms" },
+  { key: "recall", label: "Recall", higher: true, about: "share of the spoken list terms that the model writes" },
+  { key: "precision", label: "Precision", higher: true, about: "share of the list terms written by the model that are spoken" },
+  { key: "false_alarms_per_hour", label: "False alarms/h", higher: false, unbounded: true,
+    about: "list terms written although not spoken, per hour of audio (at most one per term and utterance, as in F1 and precision)" },
+  { key: "runaway", label: "Runaway", higher: false, unbounded: true,
+    about: "percentage of the utterances whose transcription has more than twice as many words as the reference, plus 10 (loops, " +
+      "invented sentences, list recited). A few of them weigh a lot on B-WER, WER and false alarms" },
+  { key: "rtfx", label: "RTFx", higher: true, unbounded: true, log: true, about: "seconds of audio transcribed per second (speed)" },
 ];
 // RTFx taken from the benchmark logs (time of the whole run, model loading included):
 // approximate, shown with "~"
 const APPROX_NOTE = "approximate: time of the whole run (model loading and scoring included), from the logs";
 const isApprox = (row, key) => !!(row && row[key.replace(/(_cb)?$/, "_approx$1")]);
 const approxMark = (row, key) => (isApprox(row, key) ? "~" : "");
-const state = { language: Object.keys(DATA)[0], dataset: null, mode: "nocasepunc", metric: "wer", list: null, hidden: new Set() };
+const state = { language: Object.keys(DATA)[0], dataset: null, mode: "nocasepunc", metric: "wer", view: "leaderboard", hidden: new Set() };
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const fmt = (v) => (v === null || v === undefined ? "" : v.toFixed(1));
 const metric = () => METRICS.find((m) => m.key === state.metric);
 
-function buttons(container, values, current, onClick, labels = {}) {
-  container.innerHTML = values.map((v) => `<button data-v="${esc(v)}" aria-pressed="${v === current}">${esc(labels[v] || v)}</button>`).join(" ");
+const better = (m) => `${m.higher ? "higher" : "lower"} is better`;
+
+function buttons(container, values, current, onClick, labels = {}, titles = {}) {
+  container.innerHTML = values.map((v) => `<button data-v="${esc(v)}" aria-pressed="${v === current}"${titles[v] ? ` title="${esc(titles[v])}"` : ""}>${esc(labels[v] || v)}</button>`).join(" ");
   container.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => onClick(b.dataset.v)));
 }
 
@@ -285,7 +310,12 @@ function onlyText(list) {
   const row = rows().find((r) => r.list === list && r.only_text);
   return row ? row.only_text : "";
 }
-const listTitle = (list) => (sizeLabel(list) ? `${list} (${sizeLabel(list)})` : list);
+// Name of a list as shown, its size when the name does not already tell it, and its hover text
+const CLASS_LABELS = { short: "Short lists", medium: "Medium lists", long: "Long lists" };
+const listLabel = (list) => list === NO_LIST ? "No list" : CLASS_LABELS[list] || (DESCRIPTIONS.lists[list] || [list])[0];
+const shownSize = (list) => (list !== NO_LIST && sizeLabel(list) && !listLabel(list).split(" ").includes(sizeLabel(list)) ? sizeLabel(list) : "");
+const listTitle = (list) => listLabel(list) + (shownSize(list) ? ` (${shownSize(list)})` : "");
+const listHint = (list) => (DESCRIPTIONS.lists[list] ? `${DESCRIPTIONS.lists[list][1]} (list "${list}")` : "");
 // Order of the models (best first), from the overview, used by the charts
 let ORDER = [];
 const byOrder = (a, b) => ORDER.indexOf(rowName(a)) - ORDER.indexOf(rowName(b)) || rowName(a).localeCompare(rowName(b));
@@ -307,6 +337,7 @@ const CUT_LISTS = { "faster-whisper": {
   "100": "hotwords cut to 223 tokens (about 60 % of the list reach the model)",
   "pxslu": "hotwords cut to 223 tokens (the first 51 of the 389 names, in alphabetical order, reach the model)",
   "pxslu_ext": "hotwords cut to 223 tokens (the first 49 of the 427 names, in alphabetical order, reach the model)",
+  "pxslu_upper": "hotwords cut to 223 tokens (the first 42 of the 389 names in capitals, in alphabetical order, reach the model)",
 } };
 // The same for the runs with the terms separated by spaces (setting "spaces")
 const CUT_LISTS_SPACES = { "faster-whisper": {
@@ -316,16 +347,25 @@ const CUT_LISTS_SPACES = { "faster-whisper": {
 function cutNote(row, list) {
   const notes = (row && (row.setting === "spaces" ? CUT_LISTS_SPACES : CUT_LISTS)[row.backend]) || {};
   if (!SIZE_CLASSES[list]) return notes[list];
-  return SIZE_CLASSES[list].filter((l) => notes[l]).map((l) => `${l}: ${notes[l]}`).join("; ") || undefined;
+  return SIZE_CLASSES[list].filter((l) => notes[l]).map((l) => `${listLabel(l)}: ${notes[l]}`).join("; ") || undefined;
 }
 
 // Runs not done (yet) because the model is too slow with the list, not because the
 // model cannot take it: marked in the empty cells, by backend and list, with the reason
 const TOO_SLOW = {
-  "nemo": { lists: ["500", "1000", "2000"], why: "NeMo: the boosting tree is rebuilt for each utterance with " +
-    "the per-utterance lists (Parakeet with 500: 30 min on test-other)" },
-  "vibevoice-asr": { lists: ["theriaque"], why: "VibeVoice-ASR with theriaque: about 10 h for 1.4 h of audio" },
+  "vibevoice-asr": { lists: ["theriaque"], why: "VibeVoice-ASR with Thériaque: about 10 h for 1.4 h of audio" },
 };
+// Lists that a model cannot take, by label or backend (n/s in the empty cells, as for the models that take no list)
+const TOO_LONG = {
+  "faster-whisper": { lists: ["vidal", "bdpm", "theriaque", "500", "1000", "2000"], why: "list too long: at most 223 tokens" },
+  "granite-speech-5.0-2b": { lists: ["vidal", "bdpm", "theriaque"], why: "list too long: up to 2,000 keywords (model card)" },
+};
+function notSupported(all, name, list) {
+  const label = baseLabel(name), info = infoOf(name);
+  if (!(MODELS[label] || {}).list_given) return "The model takes no list";
+  const rule = TOO_LONG[label] || TOO_LONG[info.backend];
+  return rule && (SIZE_CLASSES[list] || [list]).some((l) => rule.lists.includes(l)) ? `Not supported, ${rule.why}` : null;
+}
 const SLOW_NOTE = "not run (yet) for time, too slow with this list; not a limit of the model";
 function tooSlow(all, name, list) {
   const row = all.find((r) => rowName(r) === name || r.label === baseLabel(name));
@@ -333,27 +373,40 @@ function tooSlow(all, name, list) {
   return rule && (SIZE_CLASSES[list] || [list]).some((l) => rule.lists.includes(l)) ? rule.why : null;
 }
 
+// Why a model has no run with a list: not supported ("ns"), too slow ("slow") or not run ("none"), with
+// the sign to show and the hover text
+function noRun(all, name, list) {
+  const ns = notSupported(all, name, list), slow = !ns && tooSlow(all, name, list);
+  return ns ? { kind: "ns", sign: "n/s", why: ns }
+    : slow ? { kind: "slow", sign: "—", mark: "<sup>†</sup>", why: `${SLOW_NOTE}. ${slow}` }
+    : { kind: "none", sign: "—", why: "Not run with this list" };
+}
+
 // List the leaderboard is ranked on (per test set), by default the main setting
 const DEFAULT_RANK_LISTS = ["pxslu", "global", "100", "short"];
+const NO_LIST = "";  // ranking without list
 let RANKING = { list: null, entries: [] };
 function rankList(lists) {
   const key = `${state.language}|${state.dataset}`;
   state.rankList ||= {};
-  if (!lists.includes(state.rankList[key])) state.rankList[key] = lists.find((l) => DEFAULT_RANK_LISTS.includes(l)) || lists[0];
+  if (state.rankList[key] !== NO_LIST && !lists.includes(state.rankList[key])) state.rankList[key] = lists.find((l) => DEFAULT_RANK_LISTS.includes(l)) || lists[0];
   return state.rankList[key];
 }
 // Ranking on one list: the run with the list, or else the run without list (models
 // without mechanism, or list too long for them). First by WER, with a tolerance: the
 // models whose WER is within the 95 % confidence interval of the best one form a
 // level; the next level starts from the best of the others. Within a level, by B-WER.
+// NO_LIST: the runs without list, on the terms of the smallest one.
 function ranking(all, list) {
+  const withList = list !== NO_LIST;
+  if (!withList) list = runLists(all)[0];
   const entries = tableModels(all).map((name) => {
-    const run = runOf(all, name, list);
+    const run = withList && runOf(all, name, list);
     if (run && present(run.wer_cb)) {
-      return { name, wer: run.wer_cb, high: run.wer_ci95_high_cb, bwer: run.b_wer_cb, fallback: false, row: run };
+      return { name, wer: run.wer_cb, high: run.wer_ci95_high_cb, bwer: run.b_wer_cb, fallback: false, cb: true, row: run };
     }
     const base = all.find((r) => r.list === list && r.label === baseLabel(name));
-    return base && present(base.wer) ? { name, wer: base.wer, high: base.wer_ci95_high, bwer: base.b_wer, fallback: true, row: base } : null;
+    return base && present(base.wer) ? { name, wer: base.wer, high: base.wer_ci95_high, bwer: base.b_wer, fallback: withList, row: base } : null;
   }).filter(Boolean);
   let rest = [...entries].sort((a, b) => a.wer - b.wer), level = 0;
   const ranked = [];
@@ -372,9 +425,10 @@ function overview() {
   const m = metric(), all = rows(), styles = modelStyles();
   const lists = runLists(all);
   const ranked = lists.length ? rankList(lists) : null;
-  RANKING = { list: ranked, entries: ranked ? ranking(all, ranked) : [] };
-  buttons($("rank-list"), lists, ranked, (v) => { state.rankList[`${state.language}|${state.dataset}`] = v; render(); },
-    Object.fromEntries(lists.map((l) => [l, listTitle(l)])));
+  RANKING = { list: ranked, entries: ranked !== null ? ranking(all, ranked) : [] };
+  const choices = [NO_LIST, ...lists];
+  buttons($("sort-by"), choices, ranked, (v) => { state.rankList[`${state.language}|${state.dataset}`] = v; render(); },
+    Object.fromEntries(choices.map((l) => [l, listTitle(l)])), Object.fromEntries(choices.map((l) => [l, listHint(l)])));
   const models = tableModels(all).map((name) => {
     // Without list: measured on the terms of the smallest list with a measure
     const firstList = lists.find((l) => present(baselineOf(all, name, l, m.key)));
@@ -387,7 +441,6 @@ function overview() {
     });
     return { name, none, noneRow, cells };
   });
-  const slowShown = new Set();
   // Order of the ranking (models without any measure on the ranked list at the end)
   const position = Object.fromEntries(RANKING.entries.map((e, i) => [e.name, i]));
   const levelOf = Object.fromEntries(RANKING.entries.map((e) => [e.name, e.level]));
@@ -396,85 +449,131 @@ function overview() {
   const columns = lists.map((_, i) => models.map((x) => x.cells[i]).filter(Boolean).map((c) => c.value));
   const nones = models.map((x) => x.none).filter(present);
   const rankedIndex = lists.indexOf(ranked);
-  // List name (broken after "_" if needed) and size below it
-  const name = (l) => esc(l).replace(/_/g, "_<wbr>");
-  const head = (l) => name(l) + (sizeLabel(l) ? `<br><small>(${sizeLabel(l)})</small>` : "") + (onlyText(l) ? `<br><small>${esc(onlyText(l))}</small>` : "");
-  let html = `<colgroup><col class="model">${'<col class="value">'.repeat(lists.length + 1)}</colgroup>`;
+  // List name and size below it
+  const head = (l) => `<th class="group-start${l === ranked ? " ranked" : ""}" title="${esc([listHint(l), l === ranked && "The models are sorted on this list"].filter(Boolean).join(". "))}">` +
+    `${esc(listLabel(l))}${shownSize(l) ? `<br><small>(${shownSize(l)})</small>` : ""}${l !== NO_LIST && onlyText(l) ? `<br><small>${esc(onlyText(l))}</small>` : ""}</th>`;
   // Fixed layout: the columns take the widths of the colgroup only with an explicit table width
-  $("overview").style.width = `${252 + 74 * (lists.length + 1)}px`;
-  html += `<tr><th>Model</th><th class="group-start">No list</th>${lists.map((l, i) => `<th class="group-start${i === rankedIndex ? " ranked" : ""}" title="${i === rankedIndex ? "The models are ranked on this list" : ""}">${head(l)}</th>`).join("")}</tr>`;
+  const widths = [38, 234, ...Array(lists.length + 1).fill(66), ...MODEL_COLUMNS.map((c) => c.width)];
+  $("overview").style.width = `${widths.reduce((a, b) => a + b)}px`;
+  let html = `<colgroup>${widths.map((w) => `<col style="width: ${w}px">`).join("")}</colgroup>`;
+  html += `<thead><tr><th>#</th><th>Model</th>${[NO_LIST, ...lists].map(head).join("")}` +
+    `${MODEL_COLUMNS.map((c) => `<th class="group-start" title="${esc(c.title)}">${c.label}</th>`).join("")}</tr></thead><tbody>`;
   let previousLevel = null;
-  for (const x of models) {
+  const shown = { ns: false, none: false, slow: false, cut: false, approx: false, fallback: false };
+  models.forEach((x, k) => {
     const level = levelOf[x.name];
-    html += `<tr class="${previousLevel !== null && level !== previousLevel ? "level-start" : ""}">${nameCell(x.name, styles)}`;
+    html += `<tr class="${previousLevel !== null && level !== previousLevel ? "level-start" : ""}"><td>${k + 1}</td>${nameCell(x.name, styles)}`;
     previousLevel = level;
     const noneApprox = isApprox(x.noneRow, m.key);
-    html += `<td class="group-start ${rankClass(x.none, nones, m.higher)}"${noneApprox ? ` title="${APPROX_NOTE}"` : ""}>${noneApprox ? "~" : ""}${fmt(x.none)}</td>`;
+    shown.approx ||= noneApprox;
+    html += `<td class="group-start ${rankClass(x.none, nones, m.higher)}"${noneApprox ? ` title="${APPROX_NOTE}"` : ""}>${noneApprox ? "~" : ""}${present(x.none) ? fmt(x.none) : "—"}</td>`;
     x.cells.forEach((c, i) => {
       if (!c) {
-        // Ranked list without run with it: the measure without list, used for the ranking
+        // No run with this list: not supported, too slow, or not run. On the ranked list, the measure
+        // without list, used for the ranking
         const base = i === rankedIndex ? all.find((r) => r.list === ranked && r.label === baseLabel(x.name)) : null;
-        const slow = tooSlow(all, x.name, lists[i]);
-        if (slow) slowShown.add(slow);
-        const mark = slow ? "<sup>\u2020</sup>" : "";
-        if (base && present(base[m.key])) {
-          html += `<td class="group-start fallback" title="No run with this list${slow ? ` (${esc(`${SLOW_NOTE}. ${slow}`)})` : ""}: value without list (used for the ranking)">${approxMark(base, m.key)}${fmt(base[m.key])}${mark}</td>`;
-        } else {
-          html += slow ? `<td class="group-start none" title="${esc(`${SLOW_NOTE}. ${slow}`)}">${mark}</td>` : `<td class="group-start"></td>`;
-        }
+        const { kind, sign, mark = "", why } = noRun(all, x.name, lists[i]);
+        const value = base && present(base[m.key]);
+        shown[kind] = true;
+        shown.fallback ||= !!value;
+        html += `<td class="group-start ${kind === "ns" ? "ns" : "none"}${value ? " fallback" : ""}" title="${esc(why)}${value ? ". Value without list, used for the ranking" : ""}">` +
+          `${value ? approxMark(base, m.key) + fmt(base[m.key]) : sign}${mark}</td>`;
         return;
       }
       const run = runOf(all, x.name, lists[i]), cut = cutNote(run, lists[i]), approx = isApprox(run, m.key + "_cb");
+      shown.cut ||= !!cut;
+      shown.approx ||= approx;
       html += `<td class="group-start ${rankClass(c.value, columns[i], m.higher)}" title="Without list: ${approxMark(run, m.key)}${fmt(c.before)}${cut ? `; ${cut}` : ""}${approx ? `; ${APPROX_NOTE}` : ""}">${approx ? "~" : ""}${fmt(c.value)}${cut ? "*" : ""}<span class="delta ${changeClass(m, c.before, c.value)}">${changeText(m, c.before, c.value)}</span></td>`;
     });
-    html += "</tr>";
-  }
-  $("overview").innerHTML = html;
-  const cutShown = models.some((x) => lists.some((l) => cutNote(runOf(all, x.name, l), l)));
-  const notes = [
-    `${m.label}${m.log ? " (below: ratio" : " (below: change"} from the model without list, on the terms of the same list). "No list": on the terms of the smallest list.`,
-    `Ranked on "${ranked}" by WER; the models between two lines are within the confidence interval of the first one, and ranked by B-WER. Italic: no run with the list, value without list.`,
+    html += MODEL_COLUMNS.map((c) => c.cell(MODELS[baseLabel(x.name)] || {})).join("") + "</tr>";
+  });
+  $("overview").innerHTML = html + "</tbody>";
+  $("symbols").innerHTML = [
+    `Below a value: ${m.log ? "ratio" : "change"} from the model without list`,
+    shown.ns && '<span class="swatch rank ns"></span>n/s: no list, or not one so long, supported by the model (hover it)',
+    shown.none && "—: not run",
+    shown.slow && "<sup>†</sup>: too slow to be run with this list (hover it)",
+    shown.cut && "*: list cut to 223 tokens (limit of Whisper)",
+    shown.approx && `~: ${APPROX_NOTE}`,
+    shown.fallback && "<i>Italic</i>: value without list, used for the ranking",
+    models.some((x) => isNemo(x.name)) && `<sup>‡</sup>: ${NEMO_NOTE.replace(/\.$/, "")}`,
+  ].filter(Boolean).map((s) => `<span>${s}</span>`).join("");
+  $("overview-caption").innerHTML = ranked === null ? "" : [
+    `${m.label}: ${m.about}; ${better(m)}. Each list is scored on its own terms ("No list": on the terms of the smallest list).`,
+    `Ranked on "${listLabel(ranked)}" by (WER, B-WER), with a line between the levels of WER that the confidence intervals tell apart.`,
     state.language === AGG ? aggregateNote(all, lists) : "",
-    cutShown ? "* Hotwords cut to 223 tokens, the limit of Whisper." : "",
-    m.log ? `~ ${APPROX_NOTE}.` : "",
-    slowShown.size ? `\u2020 Not run for time. ${[...slowShown].join(". ")}.` : "",
-    models.some((x) => isNemo(x.name)) ? `\u2021 ${NEMO_NOTE}` : "",
-  ];
-  $("overview-caption").innerHTML = notes.filter(Boolean).map(esc).join("<br>");
+  ].filter(Boolean).map(esc).join("<br>");
 }
 
-// WER (x) by B-WER (y) on the ranked list; highlighted: the models that no other one
-// beats on both (Pareto front)
-function scatterPanel(styles) {
-  const entries = RANKING.entries.filter((e) => present(e.bwer));
+// Model info columns of the table, after the lists
+const MODEL_COLUMNS = [
+  { label: "List given", width: 64, title: "How the list is given to the model",
+    cell: ({ list_given }) => (list_given ? `<td class="group-start info" title="${esc(list_given[1])}">${esc(list_given[0])}</td>` : `<td class="group-start ns" title="The model takes no list">n/s</td>`) },
+  { label: "Size", width: 48, title: "Number of parameters", cell: ({ params: n }) => `<td class="group-start info">${n ? params(n) : "—"}</td>` },
+  { label: "License", width: 76, title: "License of the weights", cell: ({ license }) => `<td class="group-start info">${license ? esc(licenseText(license)) : "—"}</td>` },
+  { label: "Architecture", width: 84, title: "Encoder: CTC / transducer decoding. Encoder-decoder: attention decoder. Audio LLM: audio encoder + LLM decoder",
+    cell: ({ architecture }) => `<td class="group-start info">${esc(architecture || "—")}</td>` },
+];
+
+// Pareto front plots, on the list of the ranking: one measure against another, highlighted (dashed line)
+// the models that no other one beats on both
+const PARETO = [["wer", "b_wer"], ["wer", "f1"], ["recall", "precision"]];
+// Axis of a measure: log, or linear without the outliers (drawn as arrows at the edge)
+function scatterAxis(values, m, from, to) {
+  if (m.log) {
+    const { lo, hi, ticks } = logRange(values);
+    return { at: (v) => from + ((Math.log10(v) - lo) / (hi - lo)) * (to - from), ticks, max: Infinity };
+  }
+  let lo, hi;
+  if (m.higher) {  // the whole range (an outlier below would be hidden at the edge)
+    const margin = Math.max(0.05 * (Math.max(...values) - Math.min(...values)), 0.5);
+    lo = Math.max(0, Math.min(...values) - margin); hi = Math.min(100, Math.max(...values) + margin);
+  } else { lo = m.key === "wer" ? Math.min(...values) * 0.92 : 0; hi = axisMax(values, m) * 1.08; }
+  const step = niceStep((hi - lo) / 4), ticks = [];
+  for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) ticks.push(+v.toPrecision(6));
+  return { at: (v) => from + ((Math.max(lo, Math.min(v, hi)) - lo) / (hi - lo)) * (to - from), ticks, max: hi };
+}
+function scatterPanel(styles, xKey, yKey) {
+  const xm = METRICS.find((m) => m.key === xKey), ym = METRICS.find((m) => m.key === yKey);
+  const value = (e, m) => e.row[m.key + (e.cb ? "_cb" : "")];
+  const entries = RANKING.entries.map((e) => ({ ...e, x: value(e, xm), y: value(e, ym) }))
+    .filter((e) => present(e.x) && present(e.y) && (!xm.log || e.x > 0) && (!ym.log || e.y > 0));
   if (!entries.length) return "";
-  const width = 420, height = 280, left = 42, right = 14, top = 12, bottom = 40;
-  const lower = { higher: false };
-  const maxX = axisMax(entries.map((e) => e.wer), lower) * 1.08, minX = Math.min(...entries.map((e) => e.wer)) * 0.92;
-  const maxY = axisMax(entries.map((e) => e.bwer), lower) * 1.08;
-  // Outliers at the edge of the plot (arrows)
-  const x = (v) => left + ((Math.min(v, maxX) - minX) / (maxX - minX)) * (width - left - right);
-  const y = (v) => top + (1 - Math.min(v, maxY) / maxY) * (height - top - bottom);
-  const front = entries.filter((e) => !entries.some((o) => o !== e && o.wer <= e.wer && o.bwer <= e.bwer && (o.wer < e.wer || o.bwer < e.bwer)))
-    .sort((a, b) => a.wer - b.wer);
-  let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="WER by B-WER of each model">`;
-  const stepX = niceStep((maxX - minX) / 4), stepY = niceStep(maxY / 4);
-  for (let v = Math.ceil(minX / stepX) * stepX; v <= maxX; v += stepX) svg += `<line class="grid" x1="${x(v)}" x2="${x(v)}" y1="${top}" y2="${height - bottom}"/><text class="tick" x="${x(v)}" y="${height - bottom + 16}" text-anchor="middle">${+v.toPrecision(4)}</text>`;
-  for (let v = 0; v <= maxY; v += stepY) svg += `<line class="grid" x1="${left}" x2="${width - right}" y1="${y(v)}" y2="${y(v)}"/><text class="tick" x="${left - 5}" y="${y(v) + 4}" text-anchor="end">${+v.toPrecision(4)}</text>`;
-  svg += `<text class="tick" x="${(left + width - right) / 2}" y="${height - 6}" text-anchor="middle">WER</text>`;
-  svg += `<text class="tick" x="12" y="${(top + height - bottom) / 2}" text-anchor="middle" transform="rotate(-90 12 ${(top + height - bottom) / 2})">B-WER</text>`;
-  svg += `<path d="${front.map((e, i) => `${i ? "L" : "M"}${x(e.wer).toFixed(1)},${y(e.bwer).toFixed(1)}`).join("")}" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  const width = 460, height = 300, left = 46, right = 16, top = 14, bottom = 40;
+  const ax = scatterAxis(entries.map((e) => e.x), xm, left, width - right);
+  const ay = scatterAxis(entries.map((e) => e.y), ym, height - bottom, top);
+  const beats = (o, e, m, k) => (m.higher ? o[k] >= e[k] : o[k] <= e[k]);
+  const strictly = (o, e, m, k) => (m.higher ? o[k] > e[k] : o[k] < e[k]);
+  const front = entries.filter((e) => !entries.some((o) => o !== e && beats(o, e, xm, "x") && beats(o, e, ym, "y")
+    && (strictly(o, e, xm, "x") || strictly(o, e, ym, "y")))).sort((a, b) => a.x - b.x);
+  const fmtTick = (v) => (Math.abs(v) >= 1000 ? v.toLocaleString("en") : +v.toPrecision(4));
+  let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(xm.label)} against ${esc(ym.label)} of each model">`;
+  for (const v of ax.ticks) svg += `<line class="grid" x1="${ax.at(v)}" x2="${ax.at(v)}" y1="${top}" y2="${height - bottom}"/><text class="tick" x="${ax.at(v)}" y="${height - bottom + 16}" text-anchor="middle">${fmtTick(v)}</text>`;
+  for (const v of ay.ticks) svg += `<line class="grid" x1="${left}" x2="${width - right}" y1="${ay.at(v)}" y2="${ay.at(v)}"/><text class="tick" x="${left - 5}" y="${ay.at(v) + 4}" text-anchor="end">${fmtTick(v)}</text>`;
+  const axisName = (m) => `${m.label} (${m.higher ? "higher" : "lower"} is better${m.log ? ", log scale" : ""})`;
+  svg += `<text class="tick" x="${(left + width - right) / 2}" y="${height - 6}" text-anchor="middle">${esc(axisName(xm))}</text>`;
+  svg += `<text class="tick" x="12" y="${(top + height - bottom) / 2}" text-anchor="middle" transform="rotate(-90 12 ${(top + height - bottom) / 2})">${esc(axisName(ym))}</text>`;
+  svg += `<path d="${front.map((e, i) => `${i ? "L" : "M"}${ax.at(e.x).toFixed(1)},${ay.at(e.y).toFixed(1)}`).join("")}" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
   const outs = { up: 0, right: 0 };
   for (const e of entries) {
     const s = styles[e.name] || { color: "var(--muted)" }, onFront = front.includes(e);
-    const text = `${e.name}${e.fallback ? " (no list)" : ""}: WER ${fmt(e.wer)}, B-WER ${fmt(e.bwer)}, level ${e.level}`;
-    if (e.bwer > maxY) { svg += outArrow(x(e.wer), top, "up", e.bwer, s.color, text, outs.up++); continue; }
-    if (e.wer > maxX) { svg += outArrow(width - right, y(e.bwer), "right", e.wer, s.color, text, outs.right++); continue; }
-    svg += `<circle cx="${x(e.wer)}" cy="${y(e.bwer)}" r="${onFront ? 6.5 : 5}" fill="${s.color}" stroke="${e.fallback ? "var(--muted)" : "var(--surface)"}" stroke-width="2" ${tip(`${e.name}${e.fallback ? " (no list)" : ""}: WER ${fmt(e.wer)}, B-WER ${fmt(e.bwer)}, level ${e.level}`)}/>`;
+    const text = `${e.name}${e.fallback ? " (no list)" : ""}: ${xm.label} ${fmt(e.x)}, ${ym.label} ${fmt(e.y)}`;
+    if (e.y > ay.max) { svg += outArrow(ax.at(e.x), top, "up", e.y, s.color, text, outs.up++); continue; }
+    if (e.x > ax.max) { svg += outArrow(width - right, ay.at(e.y), "right", e.x, s.color, text, outs.right++); continue; }
+    svg += `<circle cx="${ax.at(e.x)}" cy="${ay.at(e.y)}" r="${onFront ? 6.5 : 5}" fill="${s.color}" stroke="${e.fallback ? "var(--muted)" : "var(--surface)"}" stroke-width="2" ${tip(text)}/>`;
   }
   svg += "</svg>";
-  return `<div class="panel"><h3>WER and B-WER <span class="muted" style="font-weight:400">(list ${esc(RANKING.list)}; dashed: models that no other beats on both)</span></h3>${svg}</div>`;
+  return `<div class="panel"><h3>${esc(xm.label)} vs ${esc(ym.label)}</h3>${svg}</div>`;
 }
+function pareto() {
+  const styles = modelStyles();
+  $("pareto").innerHTML = PARETO.map(([x, y]) => scatterPanel(styles, x, y)).join("");
+  $("pareto-legend").innerHTML = modelLegend(ORDER, styles);
+  $("pareto-caption").innerHTML = RANKING.list === null ? "" : esc((RANKING.list === NO_LIST ? "Without list (Sort by), on the terms of the smallest list. " :
+    `With the list "${listLabel(RANKING.list)}" (Sort by), or without list for the models without run with it (grey outline). `) + "Dashed line: the models that no other one beats on both measures.");
+}
+const modelLegend = (names, styles) => names.filter((n) => styles[n]).map((name) =>
+  `<span style="color: ${styles[name].text}"><span class="swatch line" style="border-top-color: ${styles[name].color}"></span>${esc(name)}</span>`).join("");
 
 // Range of a linear axis: from the best to the worst value, without the worst outliers
 // (above Q3 + 3 IQR for the measures where lower is better, see axisMax; below Q1 - 3 IQR
@@ -514,7 +613,7 @@ function panel(list, listRows, m, styles) {
     ticks = [];
     for (let v = Math.ceil(min / step) * step; v <= max; v += step) ticks.push(+v.toPrecision(6));
   }
-  let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(m.label)} without and with the list ${esc(list)}">`;
+  let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(m.label)} without and with the list ${esc(listLabel(list))}">`;
   for (const t of ticks) {
     svg += `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="${top}" y2="${top + sorted.length * rowH}"/>`;
     svg += `<text class="tick" x="${x(t)}" y="${height - 8}" text-anchor="middle">${t}</text>`;
@@ -523,7 +622,7 @@ function panel(list, listRows, m, styles) {
   sorted.forEach((r, i) => {
     const y = top + i * rowH + rowH / 2, a = r[m.key], b = r[m.key + "_cb"], name = rowName(r);
     const s = styles[name] || { color: "var(--muted)", text: "var(--text)" };
-    const text = `${name}, without list: ${fmt(a)}${present(b) ? `, with ${list}: ${fmt(b)}` : ""}`;
+    const text = `${name}, without list: ${fmt(a)}${present(b) ? `, with ${listLabel(list)}: ${fmt(b)}` : ""}`;
     svg += `<text x="${left - 8}" y="${y + 4}" text-anchor="end" font-size="13.5" fill="${s.text}">${esc(name)}</text>`;
     if (present(a) && present(b) && a !== b) {
       svg += `<line x1="${x(a)}" x2="${x(b)}" y1="${y}" y2="${y}" stroke="${s.color}" stroke-width="2.5" stroke-opacity=".6"/>`;
@@ -536,35 +635,13 @@ function panel(list, listRows, m, styles) {
   });
   svg += "</svg>";
   const size = sizeLabel(list), only = onlyText(list);
-  return `<div class="panel"><h3>${esc(list)} <span class="muted" style="font-weight:400">(${size ? `${size} terms, ` : ""}${only ? `${esc(only)}, ` : ""}${esc(m.label)}: ${m.higher ? "higher" : "lower"} is better)</span></h3>${svg}</div>`;
+  return `<div class="panel"><h3>${esc(listLabel(list))} <span class="muted" style="font-weight:400">(${size ? `${size} terms, ` : ""}${only ? `${esc(only)}, ` : ""}${esc(m.label)}: ${better(m)})</span></h3>${svg}</div>`;
 }
 
 function panels() {
   const m = metric(), all = rows(), styles = modelStyles();
   $("panels").innerHTML = runLists(all)
     .map((l) => panel(l, all.filter((r) => r.list === l), m, styles)).join("");
-}
-
-function details() {
-  const all = rows(), styles = modelStyles();
-  const lists = runLists(all);
-  if (!lists.includes(state.list)) state.list = lists[0];
-  $("list").innerHTML = lists.map((l) => `<option value="${esc(l)}" ${l === state.list ? "selected" : ""}>${esc(listTitle(l))}</option>`).join("");
-  // Sorted by the selected measure, with the list (or without, for models without run with it)
-  const m0 = metric(), key = (r) => (present(r[m0.key + "_cb"]) ? r[m0.key + "_cb"] : r[m0.key]);
-  const listRows = all.filter((r) => r.list === state.list)
-    .sort((a, b) => (m0.higher ? key(b) - key(a) : key(a) - key(b)) || rowName(a).localeCompare(rowName(b)));
-  const column = (k) => listRows.map((r) => r[k]).filter(present);
-  let html = `<tr><th>Model</th>${METRICS.map((m) => `<th class="group-start">${m.label}</th><th>with list</th>`).join("")}</tr>`;
-  for (const r of listRows) {
-    html += `<tr>${nameCell(rowName(r), styles)}`;
-    for (const m of METRICS) {
-      const a = r[m.key], b = r[m.key + "_cb"], change = changeText(m, a, b);
-      html += `<td class="group-start ${rankClass(a, column(m.key), m.higher)}">${approxMark(r, m.key)}${fmt(a)}</td><td class="${rankClass(b, column(m.key + "_cb"), m.higher)}">${present(b) ? approxMark(r, m.key + "_cb") : ""}${fmt(b)}${change ? `<span class="delta ${changeClass(m, a, b)}">${change}</span>` : ""}</td>`;
-    }
-    html += "</tr>";
-  }
-  $("details").innerHTML = html;
 }
 
 // ---- Charts
@@ -673,16 +750,18 @@ function infoOf(name) {  // a row of the model, for its backend and URL
   return INFO[name] || allRows().find((r) => r.label === name) || {};
 }
 const isNemo = (name) => infoOf(name).backend === "nemo";
-// Name of a model in its color, with a link to its model card
+// Name of a model in its color, with a link to its model card, and its decoding and software below
 function nameCell(name, styles) {
-  const { url } = infoOf(name);
+  const { url, backend, label } = infoOf(name), model = MODELS[label] || {};
+  const text = esc(model.name || name);
   return `<td style="color: ${(styles[name] || {}).text || "inherit"}">` +
-    (url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(name)}</a>` : esc(name)) +
-    (isNemo(name) ? ` <sup title="${esc(NEMO_NOTE)}">\u2021</sup>` : "") + "</td>";
+    (url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${text}</a>` : text) +
+    (isNemo(name) ? ` <sup title="${esc(NEMO_NOTE)}">‡</sup>` : "") +
+    `<br><small>${esc([model.variant, backend].filter(Boolean).join(" · "))}</small></td>`;
 }
 
-// WER by B-WER, then one panel per measure (WER, B-WER, F1, RTFx), one line per model
-const LINE_METRICS = ["wer", "b_wer", "f1", "rtfx"];
+// One panel per measure, one line per model
+const LINE_METRICS = ["wer", "b_wer", "f1", "precision", "recall", "rtfx"];
 function lines() {
   const all = rows(), lists = chartLists(), styles = modelStyles();
   const models = [...new Set(all.map(rowName))].sort((a, b) => ORDER.indexOf(a) - ORDER.indexOf(b));
@@ -691,15 +770,15 @@ function lines() {
     lists.length ? baselineOf(all, name, lists[0], key) : null,
     ...lists.map((l) => (runOf(all, name, l) || {})[key + "_cb"]),
   ];
-  // Below each list: its name (on two lines when it has a suffix), its size, its test sets
-  const under = xs.map((l, i) => (i ? [...l.replace(/_(?=[^_]*$)/, "\n_").split("\n"), `(${sizeLabel(l)})`, ...(onlyText(l) ? onlyText(l).replace(/ only$/, "").split(", ") : [])] : [l]));
+  // Below each list: its name (a word per line), its size, its test sets
+  const under = xs.map((l, i) => (i ? [...listLabel(l).split(" "), ...(shownSize(l) ? [`(${shownSize(l)})`] : []), ...(onlyText(l) ? onlyText(l).replace(/ only$/, "").split(", ") : [])] : [l]));
   const bottom = 18 + 14 * Math.max(...under.map((u) => u.length));
   const width = 420, left = 38, right = 14, top = 12, inset = 22, height = 234 + bottom;
   const x = (i) => left + inset + (i * (width - left - right - 2 * inset)) / Math.max(1, xs.length - 1);
   // No line between two lists that are not measured on the same test sets
   const sameSets = (i) => i > 0 && onlyText(xs[i]) === onlyText(i === 1 ? xs[1] : xs[i - 1]);
   const path = (pts) => pts.map((p, i) => (p === null ? "" : `${pts[i - 1] == null || !sameSets(i) ? "M" : "L"}${p[0].toFixed(1)},${p[1].toFixed(1)}`)).join("");
-  $("lines").innerHTML = scatterPanel(styles) + LINE_METRICS.map((key) => {
+  $("lines").innerHTML = LINE_METRICS.map((key) => {
     const m = METRICS.find((mm) => mm.key === key);
     const values = models.flatMap((n) => [...series(n, key), ...lists.map((l) => (runOf(all, n, `${l}_upper`) || {})[key + "_cb"])]).filter(present);
     let y, ticks, max = Infinity;
@@ -719,7 +798,7 @@ function lines() {
     let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(m.label)} of each model by list">`;
     for (const v of ticks) svg += `<line class="grid" x1="${left}" x2="${width - right}" y1="${y(v)}" y2="${y(v)}"/><text class="tick" x="${left - 5}" y="${y(v) + 4}" text-anchor="end">${+v.toPrecision(6)}</text>`;
     xs.forEach((_, i) => {
-      under[i].forEach((line, k) => { svg += `<text class="tick" x="${x(i)}" y="${height - bottom + 16 + 14 * k}" text-anchor="middle">${esc(line)}</text>`; });
+      under[i].forEach((line, k) => { svg += `<text class="tick" x="${x(i)}" y="${height - bottom + 16 + 14 * k}" text-anchor="middle"${xs.length > 7 ? ' style="font-size: 10px"' : ""}>${esc(line)}</text>`; });
     });
     for (const name of models) {
       const s = styles[name], vals = series(name, key);
@@ -729,20 +808,20 @@ function lines() {
         if (!present(up)) return;
         const xu = x(i + 1) + 9;
         if (present(vals[i + 1])) svg += `<line x1="${x(i + 1)}" x2="${xu}" y1="${y(vals[i + 1])}" y2="${y(up)}" stroke="${s.color}" stroke-width="1.5" stroke-dasharray="2 2"/>`;
-        const text = `${name}, with ${l} in capitals: ${m.label} ${fmt(up)}`;
+        const text = `${name}, with ${listLabel(l)} in capitals: ${m.label} ${fmt(up)}`;
         svg += point(xu, up, i + 1, s.color, text, `<circle cx="${xu}" cy="${y(up)}" r="4" fill="var(--surface)" stroke="${s.color}" stroke-width="2" ${tip(text)}/>`);
       });
       svg += `<g><path d="${path(vals.map((v, i) => (present(v) ? [x(i), y(v)] : null)))}" fill="none" stroke="${s.color}" stroke-width="2"/>`;
       vals.forEach((v, i) => {
         if (!present(v)) return;
-        const text = `${name}, ${xs[i] === "No list" ? "no list" : `with ${xs[i]}`}: ${m.label} ${fmt(v)}`;
+        const text = `${name}, ${xs[i] === "No list" ? "no list" : `with ${listLabel(xs[i])}`}: ${m.label} ${fmt(v)}`;
         svg += point(x(i), v, i, s.color, text, `<circle cx="${x(i)}" cy="${y(v)}" r="4.5" fill="${s.color}" stroke="var(--surface)" stroke-width="2" ${tip(text)}/>`);
       });
       svg += "</g>";
     }
-    return `<div class="panel"><h3>${esc(m.label)} <span class="muted" style="font-weight:400">(${m.higher ? "higher" : "lower"} is better${m.log ? ", log scale" : ""})</span></h3>${svg}</svg></div>`;
+    return `<div class="panel"><h3>${esc(m.label)} <span class="muted" style="font-weight:400">(${better(m)}${m.log ? ", log scale" : ""})</span></h3>${svg}</svg></div>`;
   }).join("");
-  $("lines-legend").innerHTML = `<span><svg width="30" height="12" style="vertical-align:-1px"><circle cx="6" cy="6" r="4" fill="var(--muted)"/><circle cx="22" cy="6" r="3.5" fill="none" stroke="var(--muted)" stroke-width="2"/></svg>List in its usual case / in capitals</span>` + models.map((name) => `<span style="color: ${styles[name].text}"><span class="swatch line" style="border-top-color: ${styles[name].color}"></span>${esc(name)}</span>`).join("");
+  $("lines-legend").innerHTML = `<span><svg width="30" height="12" style="vertical-align:-1px"><circle cx="6" cy="6" r="4" fill="var(--muted)"/><circle cx="22" cy="6" r="3.5" fill="none" stroke="var(--muted)" stroke-width="2"/></svg>List in its usual case / in capitals</span>` + modelLegend(models, styles);
 }
 
 // Click on a chart: enlarged copy, with the legend of its section
@@ -752,7 +831,7 @@ function openZoom(panel, legend) {
   $("zoom").hidden = false;
 }
 const closeZoom = () => { $("zoom").hidden = true; $("zoom-chart").innerHTML = ""; };
-[["lines", "lines-legend"], ["panels", "panels-legend"]].forEach(([charts, legend]) => {
+[["lines", "lines-legend"], ["panels", "panels-legend"], ["pareto", "pareto-legend"]].forEach(([charts, legend]) => {
   $(charts).addEventListener("click", (e) => {
     const panel = e.target.closest(".panel");
     if (panel) openZoom(panel, $(legend));
@@ -793,7 +872,7 @@ const AGGREGATES = [
 ];
 // Mean, geometric for the measures on a log scale (RTFx)
 const mean = (v, log) => (log ? Math.exp(v.reduce((s, x) => s + Math.log(x), 0) / v.length) : v.reduce((s, x) => s + x, 0) / v.length);
-const setName = (d) => d.replace(/_/g, " ");
+const setName = (d) => (DESCRIPTIONS.test_sets[d] || { name: d.replace(/_/g, " ") }).name;
 function aggregateRows(agg, mode) {
   const sets = agg.sets.filter(([lang, d]) => DATA[lang] && DATA[lang].datasets.includes(d))
     .map(([lang, d]) => ({ d, rows: DATA[lang].rows[mode].filter((r) => r.dataset === d) }));
@@ -808,7 +887,7 @@ function aggregateRows(agg, mode) {
       size_text: [...new Set([Math.min(...sizes), Math.max(...sizes)].map(sizeText))].join("-"),
       // When not all the test sets have lists of this class
       only_text: parts.length < sets.length ? `${parts.map((p) => p.d.split("_")[0]).join(", ")} only` : "",
-      members_text: parts.map((p) => `${p.lists.join(", ")} (${setName(p.d)})`).join("; "),
+      members_text: parts.map((p) => `${p.lists.map(listLabel).join(", ")} (${setName(p.d)})`).join("; "),
     };
     // Value of a key: mean over the lists of each test set, then over the test sets
     const values = (pick) => parts.map((p) => p.lists.map((l) => pick(p.rows, l)));
@@ -858,19 +937,14 @@ function addAggregates() {
   if (lang.datasets.length) DATA[AGG] = lang;
 }
 function aggregateNote(all, lists) {
-  const parts = lists.map((l) => { const r = all.find((x) => x.list === l); return r ? `${l}: ${r.members_text}` : null; }).filter(Boolean);
+  const parts = lists.map((l) => { const r = all.find((x) => x.list === l); return r ? `${listLabel(l)}: ${r.members_text}` : null; }).filter(Boolean);
   return `Mean over the test sets. ${parts.join(". ")}.`;
 }
 
-// Test sets of all the languages: "<name> (<language>)", the split left out when the
-// language has a single test set of this corpus (e.g. "LibriSpeech", "PxSLU test")
+// Test sets of all the languages: "<name> (<language>)"
 function datasetChoices() {
-  return Object.entries(DATA).flatMap(([language, lang]) => lang.datasets.map((d) => {
-    const corpus = d.replace(/_[^_]*$/, "");
-    const alone = lang.datasets.filter((o) => o.replace(/_[^_]*$/, "") === corpus).length === 1;
-    const name = alone ? corpus : d.replace(/_/g, " ");
-    return { key: `${language}|${d}`, language, dataset: d, label: language === AGG ? d : `${name} (${LANGUAGES[language] || language})` };
-  }));
+  return Object.entries(DATA).flatMap(([language, lang]) => lang.datasets.map((d) =>
+    ({ key: `${language}|${d}`, language, dataset: d, label: language === AGG ? d : `${setName(d)} (${LANGUAGES[language] || language})` })));
 }
 
 function render() {
@@ -882,8 +956,12 @@ function render() {
     const c = choices.find((x) => x.key === v);
     state.language = c.language; state.dataset = c.dataset; render();
   }, Object.fromEntries(choices.map((c) => [c.key, c.label])));
+  const set = DESCRIPTIONS.test_sets[state.dataset];
+  $("dataset-note").innerHTML = state.language === AGG ? "Mean over the test sets" : !set ? "" :
+    `<a href="${esc(set.url)}" target="_blank" rel="noopener">${esc(set.domain)}</a>; terms to recognize: ${esc(set.terms.toLowerCase())}` +
+    `<span class="embedded"> (<a href="#test-sets-contextual">details</a>)</span>`;
   buttons($("metric"), METRICS.map((m) => m.key), state.metric, (v) => { state.metric = v; render(); },
-    Object.fromEntries(METRICS.map((m) => [m.key, m.label])));
+    Object.fromEntries(METRICS.map((m) => [m.key, m.label])), Object.fromEntries(METRICS.map((m) => [m.key, `${m.about}; ${better(m)}`])));
   document.querySelectorAll("#mode button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.v === state.mode));
   const hidden = hiddenSet();
   const styles = modelStyles();
@@ -900,15 +978,26 @@ function render() {
   overview();  // first: sets the order of the models used by the charts
   lines();
   panels();
-  details();
+  pareto();
+  // Views: the measure selected only matters for the leaderboard and the dumbbell plots, the sorting not for the list sizes
+  document.querySelectorAll("#views button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.v === state.view));
+  document.querySelectorAll("section[data-view]").forEach((s) => { s.hidden = s.dataset.view !== state.view; });
+  $("metric-group").hidden = !["leaderboard", "dumbbell"].includes(state.view);
+  $("sort-group").hidden = state.view === "size";
 }
 
 document.querySelectorAll("#mode button").forEach((b) => b.addEventListener("click", () => { state.mode = b.dataset.v; render(); }));
-$("models-all").addEventListener("click", () => { state.hidden = new Set(); render(); });
-$("models-none").addEventListener("click", () => { state.hidden = new Set(modelKeys()); render(); });
-$("list").addEventListener("change", (e) => { state.list = e.target.value; details(); });
+// A click on the label selects all the models, or none if all are selected
+$("models-label").addEventListener("click", () => { state.hidden = new Set(state.hidden.size ? [] : modelKeys()); render(); });
+$("views").addEventListener("click", (e) => {
+  if (!e.target.dataset.v) return;
+  state.view = e.target.dataset.v;
+  render();
+});
+$("metrics-notes").outerHTML = METRICS.map((m) => `<li><b>${esc(m.label)}</b>: ${esc(m.about)} (${better(m)}).</li>`).join("");
 addAggregates();
 render();
+setUpTables(document);
 </script>
 </body>
 </html>

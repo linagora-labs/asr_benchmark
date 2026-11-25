@@ -41,7 +41,7 @@ Earnings-22). Figures of the test splits as run (after the cleaning described be
 | Language | French | English | English |
 | Speech | dictated drug prescriptions, spontaneous | read audiobooks | earnings calls: conversational, many accents |
 | Size | 540 utterances, 1.47 h (mean 10 s, max 30 s) | 2,939 utterances, 5.34 h (mean 6.5 s, max 35 s) | 771 clips of 15 s from 54 calls, 3.21 h |
-| Terms to recognize (targets) | drug names: 329 occurrences in 324 utterances, 168 distinct | rare words: 5,350 occurrences in 2,141 utterances, 3,838 distinct | names of persons, companies, products: 1,324 occurrences in 729 clips, 651 distinct |
+| Terms to recognize (targets) | drug names: 329 occurrences in 324 utterances, 168 distinct | rare words: 5,357 occurrences in 2,140 utterances, 3,835 distinct | names of persons, companies, products: 1,392 occurrences in the 771 clips, 673 distinct |
 | Lists run | global: `pxslu` (389 terms), `pxslu_ext` (427), `vidal` (2,753), `bdpm` (4,050), `theriaque` (8,851); per utterance: `pxslu25`, `pxslu25_ext` (25) | per utterance: `100`, `500`, `1000`, `2000` (rare words of the utterance + N distractors) | per clip: `global` (keywords of the whole call, 25 on average, 1 to 46) |
 | Distractors (list terms not spoken) | other drug names (real dictionaries) | rare words drawn at random | other names of the same call |
 | Licence | CC BY 4.0 | audio and text CC BY 4.0; lists MIT | transcripts and lists CC BY-SA 4.0 (licence of Earnings-22); audio licence not stated |
@@ -82,8 +82,8 @@ capitalized, active substances in lower case, acronyms in capitals; reviewed tab
 `lists/pxslu/drugs_pxslu_case.tsv`).
 
 **Hotwords.** Drug names (brands and active substances), in global lists of growing
-size, all containing the 389 drug names of the corpus:
-- `pxslu`: the 389 drug names of the corpus (all splits), curated and made
+size, all containing these 389 drug names of the corpus:
+- `pxslu`: 389 drug names of the corpus (all splits; mostly brands), curated and made
   consistent with the corrected transcripts. 168 of them are spoken in the test split. It plays the role of a small domain list given to every request.
 - `bdpm` (4,050 terms): brand names and active substances of the French public drug
   database (Base de données publique des médicaments, ANSM; homeopathic and herbal
@@ -95,10 +95,10 @@ size, all containing the 389 drug names of the corpus:
 - `pxslu25` (per utterance): 25 names of `pxslu`, the ones spoken in the utterance
   plus others drawn at random. It has the size of the per-call lists of Contextual
   Earnings-22, and fits in Whisper's 223-token hotwords.
-- `pxslu_ext` (427 terms), `pxslu25_ext`: the same lists completed with the 38 drug
-  names spoken in the test split that are not among the annotated names of the corpus
-  (`lists/pxslu/drugs_pxslu_added.txt`, reviewed by hand). The targets are then the 427
-  names (391 occurrences in 382 utterances).
+- `pxslu_ext` (427 terms), `pxslu25_ext`: the same lists completed with 38 drug
+  names spoken in the test split and missing from `pxslu`: 33 active substances (e.g.
+  "paracétamol", tag "inn" of the corpus) and 5 brands (`lists/pxslu/drugs_pxslu_added.txt`,
+  reviewed by hand). The targets are then the 427 names (391 occurrences in 382 utterances).
 - `pxslu_upper`, `pxslu25_upper`: the same lists in capitals (does a model follow
   the case of the list?).
 - The manifests also hold per-utterance `oracle` lists (only the targets spoken in
@@ -135,7 +135,7 @@ case: names ("darcy", "cain") but also uncommon words ("balsam", "squalid") and
 inflections of common ones ("sings", "grinned", "ambitions").
 
 **Advantages.** Results comparable with the published ones (B-WER, U-WER, with the
-scorer of the paper). The largest test set here (5,350 target occurrences: narrow
+scorer of the paper). The largest test set here (5,357 target occurrences: narrow
 confidence intervals). The list size is the only thing that changes between 100 and
 2,000 terms, which isolates its effect. Clean read speech: the errors come from the
 words, not from the acoustics.
@@ -173,7 +173,7 @@ realistic distractors, per-call lists. Short clips and short lists: every model 
 included.
 
 **Drawbacks.** Short lists only (at most 46 terms): it does not test long lists.
-Almost every clip contains a keyword (729 of 771), so the false alarms are measured
+Every clip contains a keyword, so the false alarms are measured
 on keyword-dense audio and the gain is larger than on a whole call. The clips are
 fixed 15-second windows that start and end in the middle of sentences. The
 references are verbatim (hesitations "uh", word fragments "th-"), which weighs on the
@@ -251,9 +251,9 @@ Earnings-22 at most 161. The configs leave out the lists a model cannot take
 (Whisper: `pxslu25`, the Contextual Earnings-22 lists, and two lists given anyway and
 cut to their first 223 tokens, unrelated to the targets as the lists are sorted
 alphabetically: the LibriSpeech N=100 lists, ~60 % of each, and `pxslu`, its first 51
-names of 389; Granite: no list above 16k tokens). Left out for time: NeMo with the
-LibriSpeech N=1000 and 2000 lists (the boosting tree is rebuilt for each utterance:
-2.8 h for Parakeet with N=1000 on test-clean and test-other), and N=500 at alpha 2.0.
+names of 389, and `pxslu_upper`, its first 42 names in capitals; Granite: no list above 16k
+tokens). NeMo with the LibriSpeech N=500, 1000 and 2000 lists at alpha 1.0 only (the boosting
+tree is rebuilt for each utterance: about 40 min per run on test-other).
 VibeVoice-ASR with the longest lists (`theriaque`, LibriSpeech N >= 500) runs last:
 it processes them at about real time or slower.
 
@@ -300,21 +300,39 @@ uv run python tools/contextual_biasing/build_page.py --output benchmarks/context
     --results fr=benchmarks/contextual_biasing/results_fr en=benchmarks/contextual_biasing/results_en
 ```
 
+The results (`results_fr`, `results_en`) are versioned as in `benchmarks/sota`:
+`predictions/` and `performances/` (scores) of each run, without the alignments. When the
+scoring changes, the scores are recomputed from the predictions:
+
+```bash
+uv run python tools/rescore_results.py benchmarks/contextual_biasing/results_fr \
+    --config benchmarks/contextual_biasing/config_fr.yaml -j 16
+uv run python tools/rescore_results.py benchmarks/contextual_biasing/results_en \
+    --config benchmarks/contextual_biasing/config_en.yaml -j 16
+```
+
+The page is also the tab "Contextual Biasing ASR" of the leaderboard
+(`tools/leaderboard/build.py`). The names and descriptions of the test sets and lists are in
+`build_page.py` (`TEST_SETS`, `LISTS`; also used by the "Test sets" tab of the leaderboard).
+
 `report.py` prints, per dataset and list, the measures of each model without list,
 with the list, and the difference (optionally as CSV). `build_page.py` writes the same
-measures as an HTML page (`page/index.html`, a single file): leaderboard of a measure
-for each model and list, plots of WER by B-WER and of WER, B-WER, F1 and RTFx by list
-size, charts of each list without and with it, and all the measures of one list; both
-text normalizations, and a selection of the models shown. Left out of the page: Whisper
+measures as an HTML page (`page/index.html`, a single file), in four views: leaderboard of a
+measure for each model and list; Pareto front plots (WER against B-WER and F1, recall against
+precision); dumbbell plots of each list (each model without and with it); WER, B-WER, F1,
+precision, recall and RTFx by list size. Both text normalizations, and a selection of the
+models shown. Left out of the page: Whisper
 large-v3, the Luciole models without hotwords, and Luciole in French (PxSLU is in its
 training data) (`--exclude_models`); the Whisper runs with the hotwords separated by
-spaces (`--exclude_settings`); the Parakeet run with the LibriSpeech N=1000 lists, the
-only NeMo run with them (`--exclude_runs`). Of the NeMo boosting weights, the page shows
+spaces (`--exclude_settings`); runs given with `--exclude_runs` (none by default). Of the NeMo boosting weights, the page shows
 the one that linto-stt uses by default for the length of the list (2 under 100 terms,
 else 1: `nemo_alpha` in `build_page.py`; these models are marked with a double dagger).
-An empty cell of the leaderboard means no run with this list; it is marked with a dagger
-when the run was left out only because the model is too slow with the list (`TOO_SLOW`
-in `template.html`).
+A cell without run is "n/s" (not supported) when the model takes no list, or not one so long
+(`TOO_LONG` in `template.html`), else a dash (not run), marked with a dagger when the run was
+left out only because the model is too slow with the list (`TOO_SLOW`). The license, size and
+architecture of the models come from the metadata of `benchmarks/sota/results` (`--model_info`).
+The styles and scripts shared with the leaderboard are in `tools/leaderboard/common.css` and
+`common.js`.
 
 After the test sets, two aggregated test sets, "English" (Contextual Earnings-22 and
 LibriSpeech test-other) and "French and English" (the same plus PxSLU test), give the
@@ -329,7 +347,7 @@ list only with a run with each of its lists (`SIZE_CLASSES` and `AGGREGATES` in
 `template.html`). The confidence interval of the mean WER, used by the ranking,
 combines those of the test sets as independent errors.
 
-Ranking of the leaderboard, on one list ("Rank on"; by default `pxslu`, Contextual
+Ranking of the leaderboard, on one list ("Sort by"; by default `pxslu`, Contextual
 Earnings-22 `global`, LibriSpeech `100`, `short` for the aggregated test sets): each model with this list, or without list
 when it has no run with it (no biasing mechanism, or list too long). First by WER, with
 a tolerance: the models whose WER is within the 95 % confidence interval of the best

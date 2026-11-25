@@ -1,0 +1,39 @@
+{
+  "language": "en",
+  "wer_language": "en",
+  "backend": "nemo",
+  "model": "nvidia/parakeet-tdt-0.6b-v3",
+  "contextual_biasing": "500",
+  "contextual_biasing_alpha": 1.0,
+  "compute_rtf": false,
+  "vad": "false",
+  "device": "cuda",
+  "num_threads": null,
+  "decoder": "ctc",
+  "contextual_biasing_context_score": 1.0,
+  "contextual_biasing_depth_scaling": 2.0,
+  "input_manifest": "/tmp/manifest_p0esty9w.jsonl",
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": true,
+  "contextual_biasing_tree_time_ms": {
+    "count": 2939,
+    "first": 59.4,
+    "median": 53.3,
+    "max": 895.5,
+    "total": 235451.3
+  },
+  "model_info": {
+    "params": 627008134
+  },
+  "transcription_time": {
+    "LibriSpeech_test-other": {
+      "seconds": 1772.11,
+      "audio_seconds": 19229.57,
+      "files": 2939
+    }
+  }
+}
