@@ -75,10 +75,15 @@ def load_runs(results):
     return runs
 
 
-def measures(perf, scores):
+# Key of the WER in each mode: always without punctuation
+WER_KEYS = {"nocasepunc": "wer_nocasepunc", "cased": "wer_nopunc"}
+
+
+def measures(perf, scores, mode):
     """WER (and the upper bound of its 95 % confidence interval), runaway rate and
     throughput of the run, and biasing measures of one list."""
-    wer = perf.get("wer_nocasepunc", {})
+    # No WER with case when the references have no case
+    wer = perf.get(WER_KEYS[mode]) or perf.get("wer_nocasepunc", {})
     return {"wer": wer.get("wer"), "wer_ci95_high": (wer.get("ci95") or [None, None])[1],
             "runaway": perf.get("runaway"), "rtfx": perf.get("rtfx"), "rtfx_approx": perf.get("rtfx_approx"),
             **{m: scores[m] for m in MEASURES}}
@@ -94,11 +99,11 @@ def collect(runs, mode):
         for dataset, perf in perfs.items():
             for list_name, scores in (perf.get(contextual_biasing.MANIFEST_KEY) or {}).items():
                 if given:
-                    biased.append((name, dataset, list_name, measures(perf, scores[mode])))
+                    biased.append((name, dataset, list_name, measures(perf, scores[mode], mode)))
                 else:
                     rows[(name, dataset, list_name)] = {
                         "dataset": dataset, "list": list_name, "model": name,
-                        "list_size": scores[mode]["list_size_mean"], **measures(perf, scores[mode]),
+                        "list_size": scores[mode]["list_size_mean"], **measures(perf, scores[mode], mode),
                     }
     table = list(rows.values())
     # A run with a list is in "<baseline folder>_cb-<list>[-<backend settings>]"

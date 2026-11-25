@@ -20,27 +20,26 @@ model: null (no list: the baseline) or the name of a list. In every condition, t
 the lists, so that the gain of giving a list can be measured (see score_dataset).
 
 Measures, for each list and two text normalizations ("nocasepunc": lower
-case without punctuation, as for WER; "cased": punctuation removed, case checked
-on the list terms only):
+case without punctuation, as for WER; "cased": case kept, punctuation removed):
 
 - term precision / recall / F1 on the targets: for each term and utterance,
   tp = min(#ref, #hyp), fp = max(0, #hyp - #ref), fn = max(0, #ref - #hyp), where
   # counts the occurrences of the term (a sequence of words) in the reference and
   in the prediction. Same definition as ssak's compute_wer(words_list=...).
-In "cased" mode, the terms are found without case, and an occurrence in the
-prediction is correct only when written as in the list given to the model (else
-as in the targets), except for the first letter of the utterance, written as in
-the reference. The other words are compared without case. So a model given
-"DOLIPRANE" has to write "DOLIPRANE", and an active substance at the start of a
-sentence-case reference is expected capitalized.
-Words are split at punctuation, apostrophes included except in English (where
-"eden's" stays one word, as in the scorer of Le et al.: on their published
-hypotheses, the "cased" B-WER/U-WER of LibriSpeech equal those of their score.py;
-"nocasepunc" splits English apostrophes, as the normalization of the WER does).
+In "cased" mode, the terms are found without case, and for precision / recall / F1
+an occurrence in the prediction is correct only when written as in the list given to
+the model (else as in the targets), except for the first letter of the utterance,
+written as in the reference. So a model given "DOLIPRANE" has to write "DOLIPRANE",
+and an active substance at the start of a sentence-case reference is expected
+capitalized. The word error rates (WER, B-WER, U-WER) compare the case of all the
+words with the one of the reference (without case when the references have no case).
+The words are those of the WER (split at apostrophes: "eden's" is two words, unlike in
+the scorer of Le et al., so the values are not exactly comparable with the published ones).
 
 - B-WER / U-WER (Le et al., Interspeech 2021, arXiv:2104.02194): word error rate
   on the reference words that belong to the biasing list, and on the other words.
-  An inserted word counts in B-WER if it belongs to the list, in U-WER otherwise.
+  An inserted word counts in B-WER if it belongs to the list, in U-WER otherwise. The
+  errors are those of the WER, split in two.
   With multi-word terms, a word is "biased" when it is part of an occurrence of a
   term (so that "un" is not biased because of the term "un-alfa").
 - false alarms: occurrences of list terms in the prediction beyond their count
@@ -172,38 +171,25 @@ def folder_tag(config):
 # --------------------------------------------------------------------------------------
 
 
-# Languages where an apostrophe belongs to the word (English "eden's", as in the
-# reference scorer of Le et al. 2021); elsewhere (French "l'aspirine") it separates words.
-_APOSTROPHE_IN_WORDS = ("en",)
-_NOT_WORD_KEEP_APOSTROPHE = re.compile(r"[^\w']+")
-
-
-def _tokenize(text, language):
-    if language.split("-")[0] in _APOSTROPHE_IN_WORDS:
-        return _NOT_WORD_KEEP_APOSTROPHE.sub(" ", text).split()
-    return _NOT_WORD.sub(" ", text).split()
-
-
 def _make_normalizers(language):
     """{mode: function text -> list of tokens}."""
-    from ssak.utils.text import format_text
-
-    from ssak.utils.text_numbers import normalize_spoken_numbers
+    from ssak.utils.text import normalize_text
 
     # Same typographic punctuation folding as the WER (imported here: benchmark_manager
     # imports this module)
     from asr_benchmark.benchmark.benchmark_manager import normalize_punctuation
 
-    def words(text, **kwargs):
-        # Same normalization as the WER, disfluencies removed ("euh", "uh"...)
-        text = format_text(normalize_punctuation(text), language=language, remove_disfluencies=True, **kwargs)
-        return _tokenize(normalize_spoken_numbers(text, language), language)
+    def words(text, case_sensitive):
+        # Same normalization as the WER
+        return normalize_text(
+            normalize_punctuation(text), language, case_sensitive=case_sensitive, remove_apostrophes_and_dashes=True, for_wer=True
+        ).split()
 
     def nocasepunc(text):
-        return words(text)
+        return words(text, case_sensitive=False)
 
     def cased(text):
-        return words(text, lower_case=False)
+        return words(text, case_sensitive=True)
 
     return {"nocasepunc": nocasepunc, "cased": cased}
 
@@ -263,7 +249,7 @@ def _split_errors(text, phrases_by_length, expected):
     inserted word when it is part of an occurrence of a list term in the prediction
     (for single-word terms: the word belongs to the list, as in Le et al. 2021;
     multi-word terms do not make their common words, like "un" in "un-alfa", biased).
-    A biased word is also an error when not written as expected (see _Text)."""
+    The errors are those of the WER: B errors + U errors = errors of the WER."""
     b_err = b_cnt = u_err = u_cnt = 0
     ref_forms = _phrase_tokens(text.ref, phrases_by_length, expected)
     hyp_biased = [f is not None for f in _phrase_tokens(text.hyp, phrases_by_length, expected)]
@@ -283,12 +269,9 @@ def _split_errors(text, phrases_by_length, expected):
             if ref_forms[k] is None:
                 u_cnt += 1
                 u_err += error
-                continue
-            if not error:
-                j = chunk.hyp_start_idx + k - chunk.ref_start_idx
-                error = text.hyp_written[j] != _with_first_letter(ref_forms[k], j == 0 and text.upper_start)
-            b_cnt += 1
-            b_err += error
+            else:
+                b_cnt += 1
+                b_err += error
     return b_err, b_cnt, u_err, u_cnt
 
 
@@ -297,15 +280,17 @@ def _pct(num, den):
 
 
 class _Text:
-    """Tokens of a reference and a prediction: in lower case (to find the terms and
-    align), and as written (prediction), with the case of the reference's first letter."""
+    """Tokens of a reference and a prediction: in lower case (to find the terms), and as
+    written (prediction), with the case of the reference's first letter. The alignment is
+    the one of the WER (with case, or not)."""
 
-    def __init__(self, ref_tokens, hyp_tokens):
+    def __init__(self, ref_tokens, hyp_tokens, case_sensitive):
         self.ref = [t.lower() for t in ref_tokens]
         self.hyp = [t.lower() for t in hyp_tokens]
         self.hyp_written = hyp_tokens
         self.upper_start = bool(ref_tokens) and ref_tokens[0][:1].isupper()
-        self.alignment = jiwer.process_words(" ".join(self.ref), " ".join(self.hyp)).alignments[0] if self.ref else None
+        ref, hyp = (ref_tokens, hyp_tokens) if case_sensitive else (self.ref, self.hyp)
+        self.alignment = jiwer.process_words(" ".join(ref), " ".join(hyp)).alignments[0] if ref else None
 
     def written_as(self, start, form):
         """Is the occurrence of a phrase at this position of the prediction written as `form`?"""
@@ -319,8 +304,9 @@ class _Normalized:
     """Normalized texts and terms of one normalization mode, shared by the list
     variants (the lists of a dataset overlap: e.g. 100 to 2000 distractors)."""
 
-    def __init__(self, normalize, key_cache):
+    def __init__(self, normalize, key_cache, case_sensitive=True):
         self.normalize = normalize
+        self.case_sensitive = case_sensitive  # of the word error rates
         self.phrases = {}  # term -> normalized tokens, as written
         self.keys = key_cache  # term -> its words without case and accents (quick pre-filter)
         self.texts = {}  # id -> (_Text, words)
@@ -329,7 +315,7 @@ class _Normalized:
         if i not in self.texts:
             ref_tokens, hyp_tokens = self.normalize(ref), self.normalize(hyp)
             words = _quick_words(ref) | _quick_words(hyp) | _quick_words(" ".join(ref_tokens + hyp_tokens))
-            self.texts[i] = (_Text(ref_tokens, hyp_tokens), words)
+            self.texts[i] = (_Text(ref_tokens, hyp_tokens, self.case_sensitive), words)
         return self.texts[i]
 
     def candidates(self, terms, words):
@@ -413,11 +399,15 @@ def score_dataset(data, rows, config, language="fr"):
         return None
     if len(ids) < len(data):
         logger.warning(f"{len(data) - len(ids)} predictions have no contextual biasing list: not scored")
+    from asr_benchmark.benchmark.benchmark_manager import has_case
+
     given = config_variant(config)
     names = [given] if given is not None else list(row_variants(rows[ids[0]]))
     duration = sum(data[i].get("audio_duration") or 0 for i in ids)
     key_cache = {}
-    norms = {mode: _Normalized(normalize, key_cache) for mode, normalize in _make_normalizers(language).items()}
+    # Word error rates without case when the references have no case, as for the WER
+    case_sensitive = has_case([row["text"] for row in data.values()])
+    norms = {mode: _Normalized(normalize, key_cache, case_sensitive) for mode, normalize in _make_normalizers(language).items()}
     # Targets (the same for every list variant unless given per list), None: the list itself
     def targets_of(row, name):
         value = row.get(TARGETS_KEY)

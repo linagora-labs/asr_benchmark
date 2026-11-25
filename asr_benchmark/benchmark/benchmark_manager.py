@@ -15,7 +15,6 @@ import asr_benchmark.utils.benchmark as utils
 from asr_benchmark.benchmark import contextual_biasing
 from asr_benchmark.benchmark.backend_to_model import get_model
 from asr_benchmark.utils import logger
-from ssak.utils.text_latin import numbers_and_symbols_to_letters
 from ssak.utils.wer import compute_wer
 from ssak.utils.monitoring import Monitoring
 
@@ -53,23 +52,6 @@ def normalize_punctuation(text):
     """
     return _UNICODE_PUNCTUATION_RE.sub(lambda m: UNICODE_PUNCTUATION[m.group()], text)
 
-
-def spell_numbers(text, language="fr"):
-    """"le 15 décembre" -> "le quinze décembre", as the nocasepunc normalization does."""
-    if not re.search(r"\d", text):
-        return text
-    return numbers_and_symbols_to_letters(text, lang=language)
-
-
-def separate_punctuation(text):
-    """
-    Example: "Hello,world!" -> "Hello , world !"
-    The decimal marks are kept ("1,5", "1.5"): otherwise the number is read as two ("un cinq").
-    """
-    text = normalize_punctuation(text)
-    text = re.sub(r'((?<!\d)[.,]|[.,](?!\d)|[!?;:()\"\'\-])', r' \1 ', text)
-    text = re.sub(r'\s+', ' ', text).strip()
-    return text
 
 def check_if_benched(output_folder, input_file, config, debug):
     data = dict()
@@ -288,6 +270,11 @@ def bootstrap_ci(counts, score, n_resamples=1000, level=0.95, seed=0):
     return [round(float(v + shift), 3) for v in np.percentile(rates, [tail, 100 - tail])]
 
 
+def has_case(references):
+    """Whether the references have lower case and upper case (not only "THE CAT" or "the cat")."""
+    return any(ref != ref.lower() for ref in references) and any(ref != ref.upper() for ref in references)
+
+
 def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
     """WER/CER of one dataset's predictions ({id: {"text", "prediction", ...}}), in
     every mode, each with its 95% confidence interval ("ci95"). Each file's errors are
@@ -296,23 +283,26 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
     references = [data[id]["text"] for id in data]
     results = dict(num_data=len(predictions), duration=sum([data[id]["audio_duration"] for id in data]))
 
-    modes = ["wer_nocasepunc", "cer_nocasepunc"]
+    # - wer: with case and punctuation (when the references have punctuation)
+    # - wer_nopunc: with case, without punctuation (when the references have both cases)
+    # - wer_nocasepunc: without case nor punctuation
+    # The punctuation is separated or removed by the normalization, after the conversion of the numbers,
+    # acronyms, ... ("1,5" -> "un virgule cinq", "S.N.C.F." -> "SNCF").
+    options = {}
     if any(re.search( r"[^\w\s'-]", ref) for ref in references):
-        modes = ["wer", "cer", "wer_nocasepunc", "cer_nocasepunc"]
+        options[""] = dict(language=language, remove_apostrophes_and_dashes=True, case_sensitive=True, keep_punctuation=True)
+    if has_case(references):
+        options["_nopunc"] = dict(language=language, remove_apostrophes_and_dashes=True, case_sensitive=True)
+    options["_nocasepunc"] = dict(language=language, remove_apostrophes_and_dashes=True)
+    modes = [metric + suffix for suffix in options for metric in ("wer", "cer")]
 
-    texts = {"nocasepunc": (references, predictions)}
-    if "wer" in modes:
-        texts = {
-            "nocasepunc": ([separate_punctuation(ref) for ref in references], [separate_punctuation(pred) for pred in predictions]),
-            "punc": ([separate_punctuation(spell_numbers(ref, language)) for ref in references],
-                     [separate_punctuation(spell_numbers(pred, language)) for pred in predictions]),
-        }
-
-    word_alignments = {}  # normalization -> word-level alignment, reused by the cer mode
+    references = [normalize_punctuation(ref) for ref in references]
+    predictions = [normalize_punctuation(pred) for pred in predictions]
+    word_alignments = {}  # suffix of the mode -> word-level alignment, reused by the cer mode
     for key in modes:
-        normalization = f"{language}+" if "nocasepunc" in key else ""
+        suffix = key[len("wer"):]
         if "cer" in key:
-            measures = character_measures(word_alignments[normalization])
+            measures = character_measures(word_alignments[suffix])
             sub, dele, ins, hits = map(sum, zip(*measures))
             count = sub + dele + hits
             pct = lambda x: 100 * x / max(count, 1)
@@ -325,17 +315,16 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
             if alignment_dir:
                 (Path(alignment_dir) / key).mkdir(parents=True, exist_ok=True)
                 alignment = str(Path(alignment_dir) / key / (dataset + ".txt"))
-            refs, preds = texts["nocasepunc" if "nocasepunc" in key else "punc"]
             wer_score = compute_wer(
-                refs,
-                preds,
-                normalization=normalization,
+                references,
+                predictions,
+                **options[suffix],
                 use_percents=True,
                 alignment=alignment,
             )
-            word_alignments[normalization] = wer_score.pop("raw_alignement")
+            word_alignments[suffix] = wer_score.pop("raw_alignement")
             del wer_score["alignment"]
-            counts = utterance_errors(word_alignments[normalization])
+            counts = utterance_errors(word_alignments[suffix])
         # Each file's errors are capped at its reference length (100% WER), so that one
         # hallucination loop does not dominate the dataset score. Only insertions can
         # exceed the reference length, so the excess is removed from them.

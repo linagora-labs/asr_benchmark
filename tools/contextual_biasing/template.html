@@ -109,8 +109,8 @@
   <div class="controls">
     <div class="group"><span class="group-label">Metric</span> <span class="group" id="metric"></span></div>
     <div class="group"><span class="group-label">Case sensitive</span> <span class="group" id="mode">
-      <button data-v="nocasepunc" aria-pressed="true" title="Text normalized: lowercase, punctuation removed">No</button>
-      <button data-v="cased" title="A list term counts as correct only if written with the case of the list (the case of the other words is not checked)">Yes</button></span></div>
+      <button data-v="nocasepunc" aria-pressed="true" title="Case ignored. Punctuation marks are always removed">No</button>
+      <button data-v="cased" title="WER, B-WER, U-WER: the case of all the words counts. F1: a list term counts as correct only if written with the case of the list. Punctuation marks are always removed">Yes</button></span></div>
   </div>
 
   <!-- Table and figures side by side on wide screens, one below the other otherwise -->
@@ -167,8 +167,10 @@
       model more than the models with each other. "~": approximate, taken from the logs (time of the whole run, model
       loading and scoring included, hence underestimated for short runs). A list given in the prompt is processed
       with every request: the longer the list, the slower.</li>
-    <li><b>Case sensitive</b>: a term is correct only if written as in the list given to the model (as in the
-      targets for runs without list); the case of the other words is not checked.</li>
+    <li><b>Punctuation</b>: never counted. The marks are removed after the conversion of the numbers, acronyms...</li>
+    <li><b>Case sensitive</b>: for WER, B-WER and U-WER, the case of all the words counts, compared with the reference
+      (without case when the references have no case, as for LibriSpeech). For F1, precision and recall, a term is correct
+      only if written as in the list given to the model (as in the targets for runs without list).</li>
     <li>Test sets <i>English</i> and <i>French and English</i>: the mean over the test sets (each weighs the same),
       by size class of the lists: <i>short</i> (pxslu25, global, 100), <i>medium</i> (pxslu, 500), <i>long</i> (vidal,
       bdpm, theriaque, 1000, 2000).</li>

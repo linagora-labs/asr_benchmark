@@ -364,9 +364,16 @@ NeMo 3.0 fails to load a model twice in one process).
 
 ## Measures
 
+All the measures are without punctuation marks, removed after the conversion of the
+numbers, acronyms, units... ("1,5 mg" -> "un virgule cinq milligramme", "S.N.C.F." ->
+"SNCF"), with the normalization of ssak (`normalize_text(..., for_wer=True)`).
+
+The WER is given without case (`wer_nocasepunc`) and with case (`wer_nopunc`: the case
+of all the words counts; only when the references have lower and upper case, else the
+page shows the WER without case, e.g. for LibriSpeech).
+
 In `performances/<dataset>.json`, key `contextual_biasing`, for each list and two
-normalizations (`nocasepunc`: as for the WER; `cased`: case checked on the list
-terms only):
+normalizations (`nocasepunc`: without case; `cased`: with case):
 
 - `precision`, `recall`, `f1` of the target terms: for each term and utterance,
   tp = min(#ref, #hyp), fp = max(0, #hyp - #ref), fn = max(0, #ref - #hyp), where #
@@ -375,7 +382,8 @@ terms only):
 - `b_wer`, `u_wer` (Le et al. 2021): WER on the reference words that belong to a
   list term, and on the other words; an inserted word counts in B-WER if it
   belongs to a list term. With multi-word terms, a word is biased only when it is
-  part of an occurrence of a term.
+  part of an occurrence of a term. The errors are those of the WER, split in two
+  (before its cap at 100 % per utterance).
 - `false_alarms` (and per hour): occurrences of list terms in the prediction
   beyond their count in the reference (e.g. distractors written although not
   spoken).
@@ -405,15 +413,17 @@ time to build the boosting tree and set it in the decoding (count, first, median
 max, total, in ms): once for a global list, once per utterance for per-utterance
 lists. It is what a server pays each time the hotwords of a request change.
 
-Case (`cased`): terms are found without case; an occurrence in the prediction is
-correct only when written as in the list given to the model (else as in the
-targets), with the first letter of the utterance as in the reference; the other
-words are compared without case. So a model given "DOLIPRANE" has to write
-"DOLIPRANE" (`*_upper` lists: does the model follow the case of the terms?). The
+Case (`cased`): terms are found without case. For `precision`, `recall` and `f1`, an
+occurrence in the prediction is correct only when written as in the list given to the
+model (else as in the targets), with the first letter of the utterance as in the
+reference. So a model given "DOLIPRANE" has to write "DOLIPRANE" (`*_upper` lists:
+does the model follow the case of the terms?). `b_wer`, `u_wer` and the WER compare the
+case of all the words with the one of the reference (without case when the references
+have no case): with the `*_upper` lists, look at F1. The
 other datasets are used as published: compare them with the literature in
-`nocasepunc`. In English, apostrophes stay inside words in `cased` ("eden's"), as
-in the scorer of Le et al. (on their published hypotheses, the LibriSpeech
-`cased` B-WER/U-WER equal those of their `score.py`).
+`nocasepunc`, and approximately: the words are those of the WER, after the
+normalization of the numbers, spelling..., split at apostrophes ("eden's" is two words,
+unlike in the scorer of Le et al.).
 
 ## State of the art
 

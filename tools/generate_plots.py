@@ -238,8 +238,9 @@ def _macro_score(pair):
     ref, pred = pair
     from ssak.utils.wer import compute_wer
     res = compute_wer(
-        [ref], [pred], normalization=_MACRO["norm"], use_percents=True,
-        replacements_ref={"euh": "", "hum": ""}, replacements_pred={"euh": "", "hum": ""},
+        [ref], [pred], use_percents=True,
+        language="fr", remove_apostrophes_and_dashes=True,
+        case_sensitive=not _MACRO["norm"], keep_punctuation=not _MACRO["norm"],
     )
     return res["wer"] if res.get("count", 0) > 0 else None
 
