@@ -57,7 +57,8 @@ from pathlib import Path
 
 import jiwer
 
-from asr_benchmark.benchmark.normalization import normalize_for_wer
+from ssak.utils.text import normalize_text
+from ssak.utils.wer import ignore_first_capital
 
 logger = logging.getLogger(__name__)
 
@@ -182,7 +183,7 @@ def _make_normalizers(language):
     """{mode: function text -> list of tokens}."""
     # Same normalization as the WER
     def words(text, case_sensitive):
-        return normalize_for_wer(text, language, case_sensitive=case_sensitive).split()
+        return normalize_text(text, language, case_sensitive=case_sensitive, remove_apostrophes_and_dashes=True, for_wer=True).split()
 
     def nocasepunc(text):
         return words(text, case_sensitive=False)
@@ -288,8 +289,10 @@ class _Text:
         self.hyp = [t.lower() for t in hyp_tokens]
         self.hyp_written = hyp_tokens
         self.upper_start = bool(ref_tokens) and ref_tokens[0][:1].isupper()
-        ref, hyp = (ref_tokens, hyp_tokens) if case_sensitive else (self.ref, self.hyp)
-        self.alignment = jiwer.process_words(" ".join(ref), " ".join(hyp)).alignments[0] if ref else None
+        ref, hyp = (" ".join(tokens) for tokens in ((ref_tokens, hyp_tokens) if case_sensitive else (self.ref, self.hyp)))
+        if case_sensitive:
+            hyp = ignore_first_capital(ref, hyp)  # as in the WER
+        self.alignment = jiwer.process_words(ref, hyp).alignments[0] if ref else None
 
     def written_as(self, start, form):
         """Is the occurrence of a phrase at this position of the prediction written as `form`?"""

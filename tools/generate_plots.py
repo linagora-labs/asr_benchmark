@@ -239,12 +239,13 @@ def _macro_init(casepunc):
 
 
 def _macro_score(task):
-    language, *texts = task
+    language, ref, pred = task
     from ssak.utils.wer import compute_wer
-    from asr_benchmark.benchmark.normalization import normalize_for_wer
     casepunc = _MACRO["casepunc"]
-    ref, pred = (normalize_for_wer(t, language, case_sensitive=casepunc, keep_punctuation=casepunc) for t in texts)
-    res = compute_wer([ref], [pred], use_percents=True)
+    res = compute_wer(
+        [ref], [pred], use_percents=True,
+        language=language, remove_apostrophes_and_dashes=True, case_sensitive=casepunc, keep_punctuation=casepunc,
+    )
     return res["wer"] if res.get("count", 0) > 0 else None
 
 
@@ -253,7 +254,7 @@ def _macro_key(casepunc, language, ref, pred):
     h = hashlib.sha1()
     # Version of the normalization: to change with it, so that the cached scores of the
     # previous one are recomputed
-    h.update(f"ssak-c73c4e6-2 {language} {'casepunc' if casepunc else 'nocasepunc'}".encode("utf-8"))
+    h.update(f"ssak-c73c4e6-4 {language} {'casepunc' if casepunc else 'nocasepunc'}".encode("utf-8"))
     for s in ("\x00", ref, "\x00", pred):
         h.update(s.encode("utf-8"))
     return h.hexdigest()

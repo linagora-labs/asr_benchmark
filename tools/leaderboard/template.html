@@ -108,8 +108,10 @@
   <div class="controls" id="controls">
     <div class="group"><span class="group-label">Metric</span>
       <span id="metric"><button data-v="wer" aria-pressed="true">WER</button> <button data-v="cer">CER</button></span></div>
-    <div class="group"><span class="group-label">Text</span>
-      <span id="norm"><button data-v="1" aria-pressed="true" title="Lowercase, punctuation removed">Normalized</button> <button data-v="0" title="Case and punctuation count as errors">Case &amp; punct.</button></span></div>
+    <div class="group"><span class="group-label">Case sensitive</span>
+      <span id="case"><button data-v="0" aria-pressed="true" title="Case ignored">No</button> <button data-v="1" title="Case errors count">Yes</button></span></div>
+    <div class="group"><span class="group-label">With punctuation marks</span>
+      <span id="punc"><button data-v="0" aria-pressed="true" title="Punctuation marks removed">No</button> <button data-v="1" title="Each punctuation mark counts as a word">Yes</button></span></div>
     <div class="group" id="datasets-group"><span class="group-label all" data-all="datasets" title="Select all / none">Test sets</span> <span id="datasets"></span></div>
   </div>
   <div class="controls" id="filters">
@@ -153,12 +155,12 @@
 const DATA = /*__DATA__*/null;
 const LANGUAGES = { fr: "French", en: "English", ar: "Arabic", de: "German", es: "Spanish", it: "Italian", nl: "Dutch", pt: "Portuguese" };
 // sort: id of the test set whose column orders the table, null for the average.
-const state = { language: "fr", metric: "wer", norm: true, selected: new Set(), sort: null,
+const state = { language: "fr", metric: "wer", case: false, punc: false, selected: new Set(), sort: null,
                 hidden: new Set(), architecture: new Set(), task: new Set() };
 
 const f1 = v => v.toFixed(1);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-const metricKey = () => state.metric + (state.norm ? "_nocasepunc" : "");
+const metricKey = () => state.metric + (state.case ? (state.punc ? "" : "_nopunc") : state.punc ? "_nocase" : "_nocasepunc");
 const datasetsOf = lang => DATA.datasets.filter(d => d.language === lang);
 const modelsOf = lang => DATA.models.filter(m => datasetsOf(lang).some(d => d.id in m.scores));
 // Multilingual tab: its own models and test sets (all languages), same table.
@@ -174,8 +176,8 @@ const languagesText = l => l && l.length <= 5 ? l.join(", ") : "multi";
 // Hover text of the prompt sign: the prompt sent and its source.
 const promptText = m => [m.prompt && `Prompt: ${m.prompt}`, m.prompt_source && `(${m.prompt_source})`].filter(Boolean).join("\n");
 const halfWidth = r => r && r.ci95 ? (r.ci95[1] - r.ci95[0]) / 2 : null;
-// Test sets without casing/punctuation in their references (MLS, SUMM-RE) have no
-// "Case & punct." score: they are left out of that mode.
+// Test sets without case or punctuation in their references (MLS, SUMM-RE) have no score
+// with them: they are left out of these modes.
 const scored = d => (multi() ? DATA.multilingual : DATA).models.some(m => result(m, d));
 
 // All the test sets of a language (or of the Multilingual tab) are selected by default.
@@ -431,7 +433,7 @@ function renderChart(rows, datasets) {
       `<text x="${x(t)}" y="${H - B + 18}" text-anchor="middle">${t}×</text>`).join("") +
     yTicks.map(t => `<line class="grid" x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}"/>` +
       `<text x="${L - 8}" y="${y(t) + 4}" text-anchor="end">${t}</text>`).join("");
-  const metric = `${state.metric.toUpperCase()} (%)${state.norm ? "" : ", case & punct."}`;
+  const metric = `${state.metric.toUpperCase()} (%)${state.case ? ", case" : ""}${state.punc ? ", punctuation" : ""}`;
   const titles = `<text class="axis-title" x="${(L + W - R) / 2}" y="${H - 8}" text-anchor="middle">RTFx, log scale (faster →)</text>` +
     `<text class="axis-title" transform="translate(16 ${(T + H - B) / 2}) rotate(-90)" text-anchor="middle">Average ${metric}, ${datasets.length} test sets (lower is better)</text>`;
   const front = points.filter(p => p.front).sort((a, b) => a.rtfx - b.rtfx);
@@ -571,7 +573,7 @@ languageSelect.innerHTML = languages.map(l => `<option value="${l}">${LANGUAGES[
 languageSelect.value = languages.includes("fr") ? "fr" : languages[0];
 languageSelect.onchange = () => selectLanguage(languageSelect.value);
 languageSelect.parentElement.hidden = languages.length < 2;  // only French for now
-for (const [id, apply] of [["metric", v => state.metric = v], ["norm", v => state.norm = v === "1"]]) {
+for (const [id, apply] of [["metric", v => state.metric = v], ["case", v => state.case = v === "1"], ["punc", v => state.punc = v === "1"]]) {
   document.getElementById(id).onclick = e => {
     if (!e.target.dataset.v) return;
     document.querySelectorAll(`#${id} button`).forEach(b => b.setAttribute("aria-pressed", b === e.target));
@@ -646,7 +648,7 @@ document.getElementById("notes").innerHTML = `
   <p><b>Average</b>: mean of the scores over the selected test sets. A model not evaluated on all the selected test sets gets no average (—): unselect a test set to compare it.</p>
   <p><b>Avg rank</b>: mean of the model's rank on each selected test set (1 = best), among the models that have an average. Unlike the average, a test set with high error rates does not weigh more than the others.</p>
   <p><b>±</b>: half-width of the 95% confidence interval, by bootstrap over the utterances of each test set (hover a score for the exact interval and the error breakdown).</p>
-  <p><b>Normalized</b> scores ignore case and punctuation; <b>Case &amp; punct.</b> counts them as errors; it leaves out the test sets whose references have no case and punctuation. Segments of at most 30 s.</p>
+  <p><b>Case sensitive</b> and <b>With punctuation marks</b>: by default, case and punctuation are ignored. With "Yes", they count as errors, and the test sets whose references do not have them are left out. Segments of at most 30 s.</p>
   <p><b>Size</b>, <b>License</b> and <b>Languages</b> (up to 5, "multi" beyond: hover for the list) come from the model cards.</p>
   <p><b>Architecture</b> and <b>Task</b> buttons filter the models (table and chart); <b>Columns</b> show or hide the columns after the scores. A click on the label of a group (Test sets, Architecture, Task, Columns) selects all its buttons, or none.</p>
   <p>💬: model run with a text prompt; hover it for the prompt and where it comes from (model card, built-in transcription prompt, or ours).</p>

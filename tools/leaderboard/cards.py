@@ -9,7 +9,8 @@ Spec keys, all optional:
     title       text above the table (default: "French ASR benchmark")
     subtitle    text under the title (default: metric and test sets)
     language    language of the test sets (default "fr")
-    metric      wer_nocasepunc (default) | wer | cer_nocasepunc | cer, as on the page
+    metric      wer_nocasepunc (default) | wer_nopunc (with case) | wer_nocase (with
+                punctuation) | wer (with both), or the same with cer, as on the page
     datasets    test sets (ids or display names), default: all those of the language
                 scored in this metric
     filters     {field: allowed values} on the model fields of leaderboard.json
@@ -43,8 +44,9 @@ from html import escape
 FONT = "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
 COLORS = {"first": "#5dade2", "second": "#82e0aa", "second-last": "#fdcb6e", "last": "#e74c3c"}
 TEXT, MUTED, LINE, ACCENT, BG, HIGHLIGHT = "#1d1d1b", "#6b6a66", "#e6e4df", "#1f6f78", "#ffffff", "#eef5f6"
-METRIC_LABELS = {"wer_nocasepunc": "WER (%), without case and punctuation", "wer": "WER (%), case and punctuation",
-                 "cer_nocasepunc": "CER (%), without case and punctuation", "cer": "CER (%), case and punctuation"}
+METRIC_LABELS = {metric + suffix: f"{metric.upper()} (%), {label}" for metric in ("wer", "cer") for suffix, label in (
+    ("_nocasepunc", "without case and punctuation"), ("_nopunc", "case, without punctuation"),
+    ("_nocase", "punctuation, without case"), ("", "case and punctuation"))}
 DEFAULT_COLUMNS = ["average", "datasets", "rtfx", "params"]
 KEYWORDS = {"first": 1, "second": 2, "third": 3}
 

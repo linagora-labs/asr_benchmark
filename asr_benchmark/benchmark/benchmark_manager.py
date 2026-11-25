@@ -2,7 +2,6 @@ from pathlib import Path
 import os
 import re
 import time
-import unicodedata
 import json
 import matplotlib
 matplotlib.use("Agg")
@@ -15,7 +14,6 @@ from itertools import product
 import asr_benchmark.utils.benchmark as utils
 from asr_benchmark.benchmark import contextual_biasing
 from asr_benchmark.benchmark.backend_to_model import get_model
-from asr_benchmark.benchmark.normalization import normalize_for_wer
 from asr_benchmark.utils import logger
 from ssak.utils.wer import compute_wer
 from ssak.utils.monitoring import Monitoring
@@ -287,14 +285,18 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
 
     # - wer: with case and punctuation (when the references have punctuation)
     # - wer_nopunc: with case, without punctuation (when the references have both cases)
+    # - wer_nocase: without case, with punctuation (when the references have punctuation)
     # - wer_nocasepunc: without case nor punctuation
     # The punctuation is separated or removed by the normalization, after the conversion of the numbers,
     # acronyms, ... ("1,5" -> "un virgule cinq", "S.N.C.F." -> "SNCF").
     options = {}
-    if any(re.search( r"[^\w\s'-]", ref) for ref in references):
+    has_punctuation = any(re.search(r"[^\w\s'-]", ref) for ref in references)
+    if has_punctuation:
         options[""] = dict(case_sensitive=True, keep_punctuation=True)
     if has_case(references):
         options["_nopunc"] = dict(case_sensitive=True)
+    if has_punctuation:
+        options["_nocase"] = dict(keep_punctuation=True)
     options["_nocasepunc"] = dict()
     modes = [metric + suffix for suffix in options for metric in ("wer", "cer")]
 
@@ -316,8 +318,11 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
                 (Path(alignment_dir) / key).mkdir(parents=True, exist_ok=True)
                 alignment = str(Path(alignment_dir) / key / (dataset + ".txt"))
             wer_score = compute_wer(
-                [normalize_for_wer(ref, language, **options[suffix]) for ref in references],
-                [normalize_for_wer(pred, language, **options[suffix]) for pred in predictions],
+                references,
+                predictions,
+                language=language,
+                remove_apostrophes_and_dashes=True,
+                **options[suffix],
                 use_percents=True,
                 alignment=alignment,
             )

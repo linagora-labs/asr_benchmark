@@ -5006,7 +5006,7 @@ wheels = [
 [[package]]
 name = "ssak"
 version = "0.0.2"
-source = { git = "https://github.com/linagora-labs/ssak#c73c4e67a5841df3706792c53376aa9b87752aee" }
+source = { git = "https://github.com/linagora-labs/ssak#6a3c4919926bb22d85e3a5a2efa483e54c014182" }
 
 [[package]]
 name = "stack-data"

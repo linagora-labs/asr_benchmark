@@ -13,7 +13,7 @@ uv run python benchmarker.py CONFIG_FILE [--output_folder DIR] [--input_manifest
 - `--debug`: only 2 files per benchmark.
 - The config (YAML) has a `benchmarks` list, each entry with a `backend` and a `model`. Parameter lists are expanded (grid).
 - Results go to `output_folder/<model folder>`. Already computed folders are skipped (resumption). `full_name: True` adds the settings to the folder name.
-- Scores: `wer`, `cer` (with case and punctuation), `wer_nopunc`, `cer_nopunc` (with case, without punctuation), `wer_nocasepunc`, `cer_nocasepunc` (without case nor punctuation), with a 95% bootstrap confidence interval. Each file's errors are capped at 100%.
+- Scores: `wer`, `cer` (with case and punctuation), `wer_nopunc`, `cer_nopunc` (with case, without punctuation), `wer_nocase`, `cer_nocase` (without case, with punctuation), `wer_nocasepunc`, `cer_nocasepunc` (without case nor punctuation), with a 95% bootstrap confidence interval. Each file's errors are capped at 100%.
 - Logs go to `logs/`.
 
 ### Data

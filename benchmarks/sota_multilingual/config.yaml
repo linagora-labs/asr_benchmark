@@ -4,7 +4,7 @@
 # On the DGX: tools/run_sota_dgx.sh PART -c benchmarks/sota_multilingual/config.yaml
 # Each dataset has its `language`: the model switches to it (language, and `prompts` of the
 # entry) before transcribing the dataset, without being reloaded, and the scoring uses it
-# (languages other than fr/en: normalize_generic() in benchmark_manager.py). `languages` (per
+# (text normalization of ssak). `languages` (per
 # entry): only the datasets of these languages, for the models that do not support them all.
 min_duration: 0
 max_duration: 1000

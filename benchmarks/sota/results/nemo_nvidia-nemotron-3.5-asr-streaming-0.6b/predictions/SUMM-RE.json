@@ -26,7 +26,7 @@
     "audio_offset": 703.66,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "c' est un truc bête mais un concert tu me dis ouais vous pouvez dire ça pour le concert arobase arobase ouai ouais je sais pas une chanson en fait les gens vont pas venir pour la chanson de la bu est ouverte à tous quoi alors qu un concert de gens connus ils vont passer un petit coup de pub avant ou après je sais pas et",
+    "text": "c' est un truc bête mais un concert tu me dis ouais vous pouvez dire ça pour le concert ouai ouais je sais pas une chanson en fait les gens vont pas venir pour la chanson de la bu est ouverte à tous quoi alors qu un concert de gens connus ils vont passer un petit coup de pub avant ou après je sais pas et",
     "prediction": "La précédez, c'est un truc bête, mais un concert après tu dis ouais, vous pouvez dire ça pour le concert. Ouais, je sais pas une chanson, en fait, les gens vont pas venir pour la chanson de la B U est ouverte à à tous quoi ah qu'un un concert de de gens connus ils font passer un petit coup de pub avant ou après, je sais pas et"
   },
   "SUMM-RE_007a_ECRH_021_111.5": {
@@ -366,7 +366,7 @@
     "audio_offset": 991.816,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase ben ils viennent pas en fait c' est interdit d entrée arobase",
+    "text": "ben ils viennent pas en fait c' est interdit d entrée",
     "prediction": "Ils viennent pas en fait, ça a perdu d'entrer."
   },
   "SUMM-RE_012c_EBPZ_019_1022.0": {
@@ -1226,7 +1226,7 @@
     "audio_offset": 281.815,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "voilà arobase euh le le premier film on pourrait commencer à le lancer vers euh",
+    "text": "voilà euh le le premier film on pourrait commencer à le lancer vers euh",
     "prediction": "Voilà euh le le premier film on pourrait commencer à le lancer vers euh."
   },
   "SUMM-RE_024c_EBPH_070_381.7": {
@@ -1276,7 +1276,7 @@
     "audio_offset": 85.379,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "deux voilà heu ben après réflexion arobase aprés réflexion puisqu' il faut faire un choix",
+    "text": "deux voilà heu ben après réflexion aprés réflexion puisqu' il faut faire un choix",
     "prediction": "Après réflexion, après réflexion, puisqu'il faut faire un choix."
   },
   "SUMM-RE_025b_EBDH_071_1181.2": {
@@ -1326,7 +1326,7 @@
     "audio_offset": 1197.535,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "et du coup là nous avons choisi faut on peut peut-être revenir sur est-ce qu on fait payer l entrée donc ça oui ça oui ça oui oui on fait payer c' est pour ça et combien de temps vous pensez que ça durerait je pense qu on peut faire un petit en enfin même limite un petit intracte entre une heure et demie là je pense que ben euh bien sûr un intracte il y a dix films évidemment qu on va faire des intractes euh sinon arobase ben oui donc",
+    "text": "et du coup là nous avons choisi faut on peut peut-être revenir sur est-ce qu on fait payer l entrée donc ça oui ça oui ça oui oui on fait payer c' est pour ça et combien de temps vous pensez que ça durerait je pense qu on peut faire un petit en enfin même limite un petit intracte entre une heure et demie là je pense que ben euh bien sûr un intracte il y a dix films évidemment qu on va faire des intractes euh sinon ben oui donc",
     "prediction": "Et du coup là, nous avons choisi faut on peut peut être revenir sur est ce qu'on fait payer l'entrée? Donc ça oui, ça oui, oui, on fait payer, c'est pour ça et combien de temps vous pensez que ça durée? Je pense qu'on peut faire un petit enfin même limite un petit entract entre une heure et demie là je pense que bah bien sûr un entracte, il y a dix films. Évidemment qu'on va faire des intracts, sinon oui donc euh Hm."
   },
   "SUMM-RE_025b_EBDH_072_1238.9": {
@@ -1416,7 +1416,7 @@
     "audio_offset": 0.0,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase comme t es la modératrice c' est toi qui doit taper dans les mains en premier euh",
+    "text": "comme t es la modératrice c' est toi qui doit taper dans les mains en premier euh",
     "prediction": "C'est pareil, ça m'intéresse à la moderatrice, c'est toi qui a tapé dans les mains en premier."
   },
   "SUMM-RE_039b_EDDH_104_1028.0": {
@@ -1426,7 +1426,7 @@
     "audio_offset": 1028.0,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "moi je c' est google qui l a dit arobase non mais",
+    "text": "moi je c' est google qui l a dit non mais",
     "prediction": "C'est Google qui l'a dit non, mais"
   },
   "SUMM-RE_039b_EDDH_104_1113.3": {
@@ -1476,7 +1476,7 @@
     "audio_offset": 190.495,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ben je le sais arobase du coup parce que je vais souvent aux festivals de jazz etcetera",
+    "text": "ben je le sais du coup parce que je vais souvent aux festivals de jazz etcetera",
     "prediction": "Bah je le sais du coup parce que je vais souvent en festival de jazz, et cetera."
   },
   "SUMM-RE_039b_EDDH_106_615.5": {
@@ -1506,7 +1506,7 @@
     "audio_offset": 1192.215,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "et quartet comme q u a r t e t comme quartet nignt arobase c' est un groupe japonais",
+    "text": "et quartet comme q u a r t e t comme quartet nignt c' est un groupe japonais",
     "prediction": "Comme Q A R T E T commerce at Night Japonais."
   },
   "SUMM-RE_039b_EDDH_107_312.1": {
@@ -1516,7 +1516,7 @@
     "audio_offset": 312.072,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "parce qu on on on fait système arobase",
+    "text": "parce qu on on on fait système",
     "prediction": "On fait système"
   },
   "SUMM-RE_039b_EDDH_107_34.1": {
@@ -2346,7 +2346,7 @@
     "audio_offset": 1056.535,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase non c' est pas la peine non voilà une petite pause d un quart d heure de vingt minutes une petite pause café de vingt minutes",
+    "text": "non c' est pas la peine non voilà une petite pause d un quart d heure de vingt minutes une petite pause café de vingt minutes",
     "prediction": "Non, c'est pas la peine. Non, non une petite pause d'un quart d'heure de vingt minutes, une petite pause café de vingt minutes."
   },
   "SUMM-RE_049b_EBDH_100_222.8": {
@@ -2386,7 +2386,7 @@
     "audio_offset": 380.641,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "mh moi j ai toujours une petite préférence pour le beau arobase hein une belle architecture c' est toujours agréable voilà",
+    "text": "mh moi j ai toujours une petite préférence pour le beau hein une belle architecture c' est toujours agréable voilà",
     "prediction": "Moi, j'ai toujours de petites préférences pour le beau, hein, une belle architecture, c'est toujours agréable."
   },
   "SUMM-RE_049b_EBDH_100_394.7": {
@@ -2406,7 +2406,7 @@
     "audio_offset": 590.46,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "on est arobase pas si loin que ça de l histoire je dirais parce que c' est on a l' humour et on a le une parodie de oui oui c' est vrai",
+    "text": "on est pas si loin que ça de l histoire je dirais parce que c' est on a l' humour et on a le une parodie de oui oui c' est vrai",
     "prediction": "n'est pas si loin que ça de l'histoire, je dirais parce que c'est un animaux et on a une une parodie. Oui, de oui, oui, c'est vrai."
   },
   "SUMM-RE_049b_EBDH_100_85.5": {
@@ -2456,7 +2456,7 @@
     "audio_offset": 114.055,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "en je sais pas combien d épisodes arobase c' est très long mais ça a ce mérite euh euh historique de de voir comment euh ben une une reine elle est euh elle est maîtresse de de certaines décisions mais que ben y a y a des conventions qui font que ben c' est pas si facile que ça",
+    "text": "en je sais pas combien d épisodes c' est très long mais ça a ce mérite euh euh historique de de voir comment euh ben une une reine elle est euh elle est maîtresse de de certaines décisions mais que ben y a y a des conventions qui font que ben c' est pas si facile que ça",
     "prediction": "Je sais pas combien d'épisodes c'est très long, mais ça se mérite historique de de voir comment une une reine elle est elle est maîtresse de de certaines décisions mais que bah y a y a des conventions qui font que bah c'est pas si facile que ça."
   },
   "SUMM-RE_049b_EBDH_110_403.8": {
@@ -2526,7 +2526,7 @@
     "audio_offset": 256.711,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "sinon on met une station de lavage juste avant arobase ça fait deux en un",
+    "text": "sinon on met une station de lavage juste avant ça fait deux en un",
     "prediction": "juste avant, ça fait deux ans, hein?"
   },
   "SUMM-RE_049b_EBDH_122_565.1": {
@@ -2906,7 +2906,7 @@
     "audio_offset": 566.267,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "hein surtout euh quand on est une nana et qu on veut pas hein se faire emmerder par un mec arobase donc voilà faut pas trop diaboliser tout quoi",
+    "text": "hein surtout euh quand on est une nana et qu on veut pas hein se faire emmerder par un mec donc voilà faut pas trop diaboliser tout quoi",
     "prediction": "Surtout quand on est une nana et qu'on veut pas, hein, se faire emmerder par un mec, donc voilà, faut pas trop diaboliser quoi?"
   },
   "SUMM-RE_054a_EARH_129_87.1": {
@@ -2976,7 +2976,7 @@
     "audio_offset": 924.82,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "euh les marques notamment quoi porter des marques montrer qu on a montrer ce qu on a pour faire bien partie d une catégorie ce genre de choses donc c' est pas nouveau c' est juste que là bon c' est un nouveau un nouveau médium en fait arobase ouais",
+    "text": "euh les marques notamment quoi porter des marques montrer qu on a montrer ce qu on a pour faire bien partie d une catégorie ce genre de choses donc c' est pas nouveau c' est juste que là bon c' est un nouveau un nouveau médium en fait ouais",
     "prediction": "Les marques, notamment quoi porter des marques, montrer qu'on a montrer ce qu'on a pour faire bien partie d'une catégorie, ce genre de chose, donc c'est pas nouveau, c'est juste que la bon, c'est un nouveau, un nouveau médium en fait, ouais."
   },
   "SUMM-RE_054a_EARH_129_1042.8": {
@@ -3256,7 +3256,7 @@
     "audio_offset": 266.035,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "et moi du coup attendez on chacune la parole du coup arobase moi le drive-in ou euh donc euh déjà comme on a dit on n a pas choisi le lieu",
+    "text": "et moi du coup attendez on chacune la parole du coup moi le drive-in ou euh donc euh déjà comme on a dit on n a pas choisi le lieu",
     "prediction": "chacune la parole le driving ou donc déjà comme on a toujours n'a pas choisi le lieu."
   },
   "SUMM-RE_059b_EBDH_140_675.1": {
@@ -3706,7 +3706,7 @@
     "audio_offset": 816.875,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "parce que imposer un film et imposer aussi le prix du film à la personne c' est pas très cool arobase",
+    "text": "parce que imposer un film et imposer aussi le prix du film à la personne c' est pas très cool",
     "prediction": "Parce que imposer un film et imposer aussi le prix du film à la personne, c'est pas très cool."
   },
   "SUMM-RE_070b_EBDL_162_572.1": {
@@ -3776,7 +3776,7 @@
     "audio_offset": 867.145,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ah ben il est de brooklyn peter parker arobase",
+    "text": "ah ben il est de brooklyn peter parker",
     "prediction": "Ah bah il est de Brooklyn Peter Parker."
   },
   "SUMM-RE_070b_EBDL_163_880.8": {
@@ -3996,7 +3996,7 @@
     "audio_offset": 1010.205,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "euh ouais je pense que je pourrais euh ben programmer arobase une réunion euh",
+    "text": "euh ouais je pense que je pourrais euh ben programmer une réunion euh",
     "prediction": "Ouais, je je pense que je pourrais bah programmer une réunion, euh."
   },
   "SUMM-RE_072c_EEPH_167_206.9": {
@@ -4456,7 +4456,7 @@
     "audio_offset": 510.709,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "quand tu allumes ton téléphone c' est pas pour aller sur la calculatrice tu vas surtout sur les réseaux sociaux arobase même si il y a ça aussi",
+    "text": "quand tu allumes ton téléphone c' est pas pour aller sur la calculatrice tu vas surtout sur les réseaux sociaux même si il y a ça aussi",
     "prediction": "Quand tu allumes ton téléphone, c'est pas pour aller sur la calculatrice, tu es surtout sur les réseaux sociaux, même s'il y a ça aussi."
   },
   "SUMM-RE_088b_EADH_174_818.2": {
@@ -5366,7 +5366,7 @@
     "audio_offset": 1044.26,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "parce que ça faut qu il y a quelqu' un du coup qui connaisse le plan de l endroit où on va faire qui connaisse qui organise là où tout le monde est censé être au niveau du métrage carré etcetera de chaque personne euh et le sens de circulation ça à mon avis il va y avoir un gros euh une grosse réunion pour ça arobase",
+    "text": "parce que ça faut qu il y a quelqu' un du coup qui connaisse le plan de l endroit où on va faire qui connaisse qui organise là où tout le monde est censé être au niveau du métrage carré etcetera de chaque personne euh et le sens de circulation ça à mon avis il va y avoir un gros euh une grosse réunion pour ça",
     "prediction": "Parce que ça faut que y a quelqu'un du coup qui connaisse le plan de l'endroit où on va faire, qui connaisse, qui organise là où tout le monde est censé être au niveau du métrage carré, et cetera de chaque personne et le sens de circulation, ça, à mon avis, va y avoir un gros, une grosse réunion pour ça."
   },
   "SUMM-RE_012c_EBPZ_019_1088.3": {
@@ -5786,7 +5786,7 @@
     "audio_offset": 916.339,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase et du coup tâche huit contacter des personnes j avais marqué c' était pourquoi déjà",
+    "text": "et du coup tâche huit contacter des personnes j avais marqué c' était pourquoi déjà",
     "prediction": "Et du coup ta suite contacter des personnes, j'avais marqué, c'était pourquoi déjà"
   },
   "SUMM-RE_013c_EAPD_044_98.9": {
@@ -5906,7 +5906,7 @@
     "audio_offset": 93.243,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "si on part du principe que on est sûr d avoir les invités parce que ce serait dommage de réserver la salle et qu on puisse pas les avoir arobase ouais contacter les les trois les trois les trois koobas",
+    "text": "si on part du principe que on est sûr d avoir les invités parce que ce serait dommage de réserver la salle et qu on puisse pas les avoir ouais contacter les les trois les trois les trois koobas",
     "prediction": "Si on part du principe que on est sûr d'avoir les invités parce que ce serait dommage de réserver la salle et qu'on puisse pas les avoir. Ouais, contacter les les trois, les trois, les trois baubs."
   },
   "SUMM-RE_014c_EAPD_005_2.3": {
@@ -6066,7 +6066,7 @@
     "audio_offset": 821.367,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase c' est ça arobase",
+    "text": "c' est ça",
     "prediction": ""
   },
   "SUMM-RE_014c_EAPD_046_904.2": {
@@ -6816,7 +6816,7 @@
     "audio_offset": 473.895,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase qui sont pas du tout sur les réseaux sociaux et pourtant ils sont contre",
+    "text": "qui sont pas du tout sur les réseaux sociaux et pourtant ils sont contre",
     "prediction": "qui sont pas joues sur les réseaux sociaux et pourtant ils sont contre"
   },
   "SUMM-RE_019a_EARD_062_751.5": {
@@ -6876,7 +6876,7 @@
     "audio_offset": 729.545,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ah important il faut préparer aussi les tables pour le buffet arobase l' accueil café arobase",
+    "text": "ah important il faut préparer aussi les tables pour le buffet l' accueil café",
     "prediction": "important, il faut préparer aussi les tables pour le buffet, l'accueil café."
   },
   "SUMM-RE_019c_EAPD_059_819.1": {
@@ -7426,7 +7426,7 @@
     "audio_offset": 1079.63,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "et non mais là sarah tu tu t es tu t' es perdu là arobase",
+    "text": "et non mais là sarah tu tu t es tu t' es perdu là",
     "prediction": "Et non, mais là, Sara, tu tu t'es, t'es perdue là."
   },
   "SUMM-RE_025b_EBDH_072_1192.1": {
@@ -7566,7 +7566,7 @@
     "audio_offset": 627.635,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ah oui mais c' est c' est le public qu on choisit aussi tu vois au c' est pas grave non mais attends regarde avec les bénéfices qu on va arobase pouvoir attirer avec ce premier festival on pourra en refaire un autre",
+    "text": "ah oui mais c' est c' est le public qu on choisit aussi tu vois au c' est pas grave non mais attends regarde avec les bénéfices qu on va pouvoir attirer avec ce premier festival on pourra en refaire un autre",
     "prediction": "Oui, mais c'est c'est le public qu'on choisit aussi, tu vois ou c'est pas non, mais attends, regarde les bénéfices qu'on va pouvoir attirer avec ce premier festival, on pourra refaire un autre."
   },
   "SUMM-RE_025b_EBDH_072_673.8": {
@@ -7596,7 +7596,7 @@
     "audio_offset": 764.24,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "outlander c' est pas mais n' importe quoi arobase n' importe t es sûre que tu l as vu estelle",
+    "text": "outlander c' est pas mais n' importe quoi n' importe t es sûre que tu l as vu estelle",
     "prediction": "J'entends pas, mais n'importe quoi, t'es sûr que tu l'as vu là."
   },
   "SUMM-RE_025b_EBDH_073_1065.3": {
@@ -7606,7 +7606,7 @@
     "audio_offset": 1065.328,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase ouais bah c' est un peu horreur donc donc on pense ça va pas trop euh",
+    "text": "ouais bah c' est un peu horreur donc donc on pense ça va pas trop euh",
     "prediction": "Ouais, bah c'est un peu horreur, donc bon, ça va pas trop."
   },
   "SUMM-RE_025b_EBDH_073_188.3": {
@@ -7636,7 +7636,7 @@
     "audio_offset": 558.95,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ben arobase c' est pour ça genre faudrait peut-être voir si si on en vise plus populaire ou plus en haut quoi",
+    "text": "ben c' est pour ça genre faudrait peut-être voir si si on en vise plus populaire ou plus en haut quoi",
     "prediction": "Bah c'est pour ça genre faudrait peut être voir si on vise plus populaire ou plus en roue quoi?"
   },
   "SUMM-RE_025b_EBDH_073_891.5": {
@@ -7656,7 +7656,7 @@
     "audio_offset": 921.622,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase bah en fait c' est une femme qui euh",
+    "text": "bah en fait c' est une femme qui euh",
     "prediction": "Bah, en fait, si si une femme qui"
   },
   "SUMM-RE_025b_EBDH_074_596.5": {
@@ -7676,7 +7676,7 @@
     "audio_offset": 667.573,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ça rapporte arobase j' ai trop pensé à sara porte arobase",
+    "text": "ça rapporte j' ai trop pensé à sara porte",
     "prediction": "Ça rapporte, j'ai trop pensé à Sarah."
   },
   "SUMM-RE_039b_EDDH_104_103.6": {
@@ -7696,7 +7696,7 @@
     "audio_offset": 112.177,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase non mais arobase",
+    "text": "non mais",
     "prediction": ""
   },
   "SUMM-RE_039b_EDDH_104_129.2": {
@@ -7756,7 +7756,7 @@
     "audio_offset": 489.42,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ben je sais p euh ben j irais plus du rock alors ben ça reste du rock normal arobase",
+    "text": "ben je sais p euh ben j irais plus du rock alors ben ça reste du rock normal",
     "prediction": "J'ai resté plus du rock, alors Bah ça reste du rock normal."
   },
   "SUMM-RE_039b_EDDH_104_552.9": {
@@ -7816,7 +7816,7 @@
     "audio_offset": 468.188,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase essaie d' arrondir les angles euh arobase",
+    "text": "essaie d' arrondir les angles euh",
     "prediction": "Ve d'aronguir les angles."
   },
   "SUMM-RE_039b_EDDH_105_70.9": {
@@ -7906,7 +7906,7 @@
     "audio_offset": 991.975,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "peu connu c' est qu ils sont connus nulle part en fait arobase",
+    "text": "peu connu c' est qu ils sont connus nulle part en fait",
     "prediction": "Peco connue celles qui sont connues nulle part, en fait."
   },
   "SUMM-RE_039b_EDDH_107_10.8": {
@@ -7956,7 +7956,7 @@
     "audio_offset": 110.8,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ça s appelle du pogo arobase on va éviter le pogo pour une question de sécurité arobase et de toute façon si on est assis on ne pourra pas faire de pogo",
+    "text": "ça s appelle du pogo on va éviter le pogo pour une question de sécurité et de toute façon si on est assis on ne pourra pas faire de pogo",
     "prediction": "Ça s'appelle du pogo, on va éviter le pogo pour une question de sécurité et de toute façon, si on est assiem, on pourra pas faire de pogo."
   },
   "SUMM-RE_039b_EDDH_107_1144.5": {
@@ -7966,7 +7966,7 @@
     "audio_offset": 1144.53,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "tu dis allô lola y a personne qui va te dire arobase",
+    "text": "tu dis allô lola y a personne qui va te dire",
     "prediction": "Tu dis allô là, il y a personne qui va te dire."
   },
   "SUMM-RE_039b_EDDH_107_1341.4": {
@@ -7996,7 +7996,7 @@
     "audio_offset": 483.31,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ouais mais grunge c' est encore autre chose en fait arobase t as toute une éthique voilà c' est nirvana le grunge",
+    "text": "ouais mais grunge c' est encore autre chose en fait t as toute une éthique voilà c' est nirvana le grunge",
     "prediction": "Voilà, c'est nirmal à le crunch."
   },
   "SUMM-RE_039b_EDDH_107_503.7": {
@@ -8016,7 +8016,7 @@
     "audio_offset": 733.733,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase non mais c' est ce qui se fait en effet tu fais la première d un groupe super connu et alors que tu es pas spécialement très connu",
+    "text": "non mais c' est ce qui se fait en effet tu fais la première d un groupe super connu et alors que tu es pas spécialement très connu",
     "prediction": "Non, mais c'est ce qui se fait en effet, tu fais la première d'un groupe super connu alors que t'es pas spécialement très connu."
   },
   "SUMM-RE_039b_EDDH_107_875.2": {
@@ -9686,7 +9686,7 @@
     "audio_offset": 44.221,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ben je pense que suspens historique ça euh l histoire a beaucoup de suspens je dirais même si on connait même si on connait la fin on connait pas toujours le chemin arobase",
+    "text": "ben je pense que suspens historique ça euh l histoire a beaucoup de suspens je dirais même si on connait même si on connait la fin on connait pas toujours le chemin",
     "prediction": "Je pense que suspend historique, ça l'histoire a beaucoup de suspense, je dirais, même si on connaît, même si on connaît la fin, on connaît pas toujours le chemin."
   },
   "SUMM-RE_049b_EBDH_100_757.9": {
@@ -9726,7 +9726,7 @@
     "audio_offset": 911.15,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase ah ouais donc on a fini donc on a fini voilà on a fini c' est bon on n a pas besoin on s arrête là arobase voilà arobase",
+    "text": "ah ouais donc on a fini donc on a fini voilà on a fini c' est bon on n a pas besoin on s arrête là voilà",
     "prediction": "Donc on a fini, donc on a fini, voilà, on a fini, c'est bon, on a pas besoin, on s'arrêtera."
   },
   "SUMM-RE_049b_EBDH_100_930.1": {
@@ -9756,7 +9756,7 @@
     "audio_offset": 1027.11,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase oui l historique du bâtiment on lie euh le réel au au film",
+    "text": "oui l historique du bâtiment on lie euh le réel au au film",
     "prediction": "L'historique du bâtiment lit le réel au au film."
   },
   "SUMM-RE_049b_EBDH_110_105.0": {
@@ -9786,7 +9786,7 @@
     "audio_offset": 249.625,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "oui et puis on veut quelque chose de de qualité euh on va pas regarder à travers un pare-brise sale quand même arobase",
+    "text": "oui et puis on veut quelque chose de de qualité euh on va pas regarder à travers un pare-brise sale quand même",
     "prediction": "Oui, puis on veut quelque chose de de qualité, on va pas regarder à travers un par brissal quand même."
   },
   "SUMM-RE_049b_EBDH_110_285.1": {
@@ -9816,7 +9816,7 @@
     "audio_offset": 340.35,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "et euh c' est magnifique quoi d aller à la piscine dans une dans un bâtiment comme ça arobase",
+    "text": "et euh c' est magnifique quoi d aller à la piscine dans une dans un bâtiment comme ça",
     "prediction": "C'est magnifique quoi d'aller à la piscine dans une dans un bâtiment comme ça"
   },
   "SUMM-RE_049b_EBDH_110_349.1": {
@@ -9856,7 +9856,7 @@
     "audio_offset": 386.176,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ah oui donc tu rejoins mon avis arobase",
+    "text": "ah oui donc tu rejoins mon avis",
     "prediction": "Oui, donc tu rejoins mon avis."
   },
   "SUMM-RE_049b_EBDH_110_603.0": {
@@ -9886,7 +9886,7 @@
     "audio_offset": 690.125,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "frida kahlo elle est donc déjà c' est une femme hein arobase elle c' est une femme donc c' est vrai que ça met en valeur une femme qu on a on n a pas mis encore hein",
+    "text": "frida kahlo elle est donc déjà c' est une femme hein elle c' est une femme donc c' est vrai que ça met en valeur une femme qu on a on n a pas mis encore hein",
     "prediction": "déjà, c'est une femme, hein, donc c'est vrai que ça met en valeur une femme qu'on a, on n'a pas mis encore, hein?"
   },
   "SUMM-RE_049b_EBDH_110_939.9": {
@@ -9926,7 +9926,7 @@
     "audio_offset": 322.793,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ah voilà art déco arobase oui moi j ai des belles images en tête il y a des il y a des piscines des fois qui sont installées dans des dans ces lieux qui ont été renouvées le style connaissez pas le style art nouveau justement art nouveau art déco et c' est magnifique quoi d aller à la piscine dans une",
+    "text": "ah voilà art déco oui moi j ai des belles images en tête il y a des il y a des piscines des fois qui sont installées dans des dans ces lieux qui ont été renouvées le style connaissez pas le style art nouveau justement art nouveau art déco et c' est magnifique quoi d aller à la piscine dans une",
     "prediction": "Voilà art d'écoles en tête, y a des y a des piscines des fois qui sont installées dans des dans ces lieux qui ont été renouvelés le Jugendstill, vous connaissez pas le style Art Nouveau, justement Arnouveau Art déco et euh, c'est magnifique quoi de d'aller à la piscine dans une"
   },
   "SUMM-RE_049b_EBDH_122_470.9": {
@@ -10096,7 +10096,7 @@
     "audio_offset": 24.445,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "je serai le arobase du coup je serai dernier à prendre la parole hum du coup guéla tu peux commencer",
+    "text": "je serai le du coup je serai dernier à prendre la parole hum du coup guéla tu peux commencer",
     "prediction": "Je serai le du coup je serai le dernier à prendre la parole du coup qui là tu peux commencer."
   },
   "SUMM-RE_051a_EARH_125_462.5": {
@@ -10106,7 +10106,7 @@
     "audio_offset": 462.5,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase pardon je suis je suis euh responsable du sujet gafam google amazon facebook apple microsoft",
+    "text": "pardon je suis je suis euh responsable du sujet gafam google amazon facebook apple microsoft",
     "prediction": "Pardon pardon, je suis, je suis responsable du sujet Gafam Google Amazon, Facebook, Apple Microsoft."
   },
   "SUMM-RE_051a_EARH_125_500.2": {
@@ -10416,7 +10416,7 @@
     "audio_offset": 751.64,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ok j' ai trouvé on va prendre arobase on va prendre un un artiste en martinique et",
+    "text": "ok j' ai trouvé on va prendre on va prendre un un artiste en martinique et",
     "prediction": "Ok, j'ai trouvé, on va prendre, on va prendre un un artiste en martinique et"
   },
   "SUMM-RE_053b_EDDH_125_791.8": {
@@ -10656,7 +10656,7 @@
     "audio_offset": 149.138,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "l impact négatif euh moi j en vois pas arobase mais c' est peut-être parce que j ai pas assez de savoir sur le sujet",
+    "text": "l impact négatif euh moi j en vois pas mais c' est peut-être parce que j ai pas assez de savoir sur le sujet",
     "prediction": "L'impact négatif, moi, j'en vois pas, mais c'est peut être parce que j'ai pas assez de ne savoir sur le sujet."
   },
   "SUMM-RE_054a_EARH_129_161.7": {
@@ -10896,7 +10896,7 @@
     "audio_offset": 1022.72,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "euh cupcakes des trucs mignons tu vois arobase cupcakes euh gâteaux",
+    "text": "euh cupcakes des trucs mignons tu vois cupcakes euh gâteaux",
     "prediction": "Euh Cupcakes, des trucs mignons, tu vois Cupcakes Gateau."
   },
   "SUMM-RE_054c_EAPH_129_1089.6": {
@@ -10926,7 +10926,7 @@
     "audio_offset": 1174.215,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "parce que y' avait déjà moi et toi deux fois du coup on a deux tâches chacun et là techniquement euh il enfin c' est minime ce qu' il reste mais on on aurait pu mieux s' organiser quand même arobase",
+    "text": "parce que y' avait déjà moi et toi deux fois du coup on a deux tâches chacun et là techniquement euh il enfin c' est minime ce qu' il reste mais on on aurait pu mieux s' organiser quand même",
     "prediction": "Parce que y avait déjà moi et toi deux fois du coup on a deux tâches chacun et là techniquement enfin, c'est c'est minime ce qui reste, mais bon, on on aurait pu mieux s'organiser quand même."
   },
   "SUMM-RE_054c_EAPH_129_385.8": {
@@ -12366,7 +12366,7 @@
     "audio_offset": 308.85,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase c' est vrai qu au début c' est c' est bondé et d un coup plus personne",
+    "text": "c' est vrai qu au début c' est c' est bondé et d un coup plus personne",
     "prediction": "C'est vrai qu'au début, c'est c'est mon découp plus personne."
   },
   "SUMM-RE_072b_EEDH_167_36.1": {
@@ -12486,7 +12486,7 @@
     "audio_offset": 288.945,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase oui non mais plus dans des activités en mode de",
+    "text": "oui non mais plus dans des activités en mode de",
     "prediction": "Oui, non, mais plus dans des activités en mode de"
   },
   "SUMM-RE_072c_EEPH_122_295.4": {
@@ -12636,7 +12636,7 @@
     "audio_offset": 189.915,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "je pense qu il faut avoir un peu moins d éthique pour dire non on veut pas que des écologistes viennent en parler arobase",
+    "text": "je pense qu il faut avoir un peu moins d éthique pour dire non on veut pas que des écologistes viennent en parler",
     "prediction": "Je pense que il faut avoir un peu moins d'éthique pour dire non, on peut pas que des écologistes viennent en parler."
   },
   "SUMM-RE_072c_EEPH_167_279.9": {
@@ -12656,7 +12656,7 @@
     "audio_offset": 287.575,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ça fait un peu exploiter les petits enfants pour arobase leur demander de faire nos pancartes demander à l-",
+    "text": "ça fait un peu exploiter les petits enfants pour leur demander de faire nos pancartes demander à l-",
     "prediction": "Ça veut un peu exploiter les petits enfants pour leur demander de faire nos bancs cartes, demander à"
   },
   "SUMM-RE_072c_EEPH_167_3.4": {
@@ -12676,7 +12676,7 @@
     "audio_offset": 325.144,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase on décorera la salle de réunion assez euh arobase assez peu décorée",
+    "text": "on décorera la salle de réunion assez euh assez peu décorée",
     "prediction": "On décora la salle de réunion assez assez peu décorée."
   },
   "SUMM-RE_072c_EEPH_167_468.8": {
@@ -12686,7 +12686,7 @@
     "audio_offset": 468.83,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "puis vous savez négocié et arobase vous êtes euh plutôt ouais bonne euh négociatrice",
+    "text": "puis vous savez négocié et vous êtes euh plutôt ouais bonne euh négociatrice",
     "prediction": "Puis vous avez négocié, vous êtes putain ouais, bonne négociatrice."
   },
   "SUMM-RE_072c_EEPH_167_501.9": {
@@ -12716,7 +12716,7 @@
     "audio_offset": 534.745,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "c' est vrai quand un objet ne marche pas j ai tendance à frapper dessus pour le faire réparer arobase c' est pas arobase la préparation de la vidéo",
+    "text": "c' est vrai quand un objet ne marche pas j ai tendance à frapper dessus pour le faire réparer c' est pas la préparation de la vidéo",
     "prediction": "C'est vrai quand un objet ne marchait pas, j'ai tendance à frapper dessus pour le faire réparer, c'est pas la préparation de la vidéo."
   },
   "SUMM-RE_074c_EAPH_171_1029.6": {
@@ -12906,7 +12906,7 @@
     "audio_offset": 865.495,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "désolée j étais en train de noter j étais très concentrée hum arobase euh donc ça va bientôt être terminé hum",
+    "text": "désolée j étais en train de noter j étais très concentrée hum euh donc ça va bientôt être terminé hum",
     "prediction": "Désolé, je t'en train de noter, je t'étais très concentré donc ça va bientôt être terminé."
   },
   "SUMM-RE_074c_EAPH_172_885.5": {
@@ -12916,7 +12916,7 @@
     "audio_offset": 885.536,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "hum voilà moi je trouve que notre idée est super arobase",
+    "text": "hum voilà moi je trouve que notre idée est super",
     "prediction": "Voilà, moi, je trouve que notre idée est superbe."
   },
   "SUMM-RE_074c_EAPH_173_159.8": {
@@ -13326,7 +13326,7 @@
     "audio_offset": 1136.275,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "oui mais vous mais ok mais arobase ouais mais les gars tu l inclus pas dedans",
+    "text": "oui mais vous mais ok mais ouais mais les gars tu l inclus pas dedans",
     "prediction": "Oui, mais vous oui, mais Ok, mais ouais, mais les gars, tu l'inclus pas dedans."
   },
   "SUMM-RE_080b_EBDH_191_194.2": {
@@ -13746,7 +13746,7 @@
     "audio_offset": 1197.285,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "ben le truc c' est que l idée de prendre quelqu' un qui est parfait et de justement montrer qu en fait ben c' est pas si parfait que ça on n a pas de nom donc euh next arobase",
+    "text": "ben le truc c' est que l idée de prendre quelqu' un qui est parfait et de justement montrer qu en fait ben c' est pas si parfait que ça on n a pas de nom donc euh next",
     "prediction": "Ben le truc, c'est que l'idée de prendre quelqu'un qui est parfait et de justement montrer qu'en fait Bah c'est pas si parfait que ça, on n'a pas de nom, donc next."
   },
   "SUMM-RE_088b_EADH_175_601.2": {
@@ -14016,7 +14016,7 @@
     "audio_offset": 567.076,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "arobase de l association pour qu il nous arobase pour qu' il nous dise arobase ce qu on a comme budget et",
+    "text": "de l association pour qu il nous pour qu' il nous dise ce qu on a comme budget et",
     "prediction": "L'association pour qu'il nous pour qui nous dise qu'on a comme budget et"
   },
   "SUMM-RE_093c_EBPZ_205_683.6": {
@@ -14086,7 +14086,7 @@
     "audio_offset": 428.098,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "on a combien de budget déjà arobase juste pour la blague j espère qu on a du budget par contre",
+    "text": "on a combien de budget déjà juste pour la blague j espère qu on a du budget par contre",
     "prediction": "La combien de budget déjà juste pour la vlague, j'espère qu'on a du budget, par contre."
   },
   "SUMM-RE_100b_EADH_218_826.9": {
@@ -14506,7 +14506,7 @@
     "audio_offset": 571.514,
     "dataset": "SUMM-RE",
     "full_dataset": "SUMM-RE",
-    "text": "il a été plus choqué du fait que tu connaisses que du fait qu il vienne en france quand même c' est arobase",
+    "text": "il a été plus choqué du fait que tu connaisses que du fait qu il vienne en france quand même c' est",
     "prediction": "Il a été plus choqué du fait que tu connaisses que du fait qu'ils viennent en France quand même"
   },
   "SUMM-RE_102c_EBPH_222_665.0": {

@@ -59,7 +59,7 @@ MULTILINGUAL_DATASETS = {
 MULTILINGUAL_SELECTION = {"CommonVoice_en": "10%"}
 MULTILINGUAL_FRENCH = {"FLEURS": "FLEURS_fr", "TEDX_fr": "TEDX_fr"}  # stem in --results -> id
 MULTILINGUAL_LANGUAGES = ["fr", "en", "nl", "it", "de", "es", "pt", "ar"]  # column order
-METRICS = ["wer_nocasepunc", "wer", "cer_nocasepunc", "cer"]
+METRICS = [metric + suffix for metric in ("wer", "cer") for suffix in ("_nocasepunc", "_nopunc", "_nocase", "")]
 EMPTY_WARNING = 0.01  # share of empty outputs from which the model gets a caveat
 SPECIAL_TOKEN = re.compile(r"<\|[^|]*\|>")
 
