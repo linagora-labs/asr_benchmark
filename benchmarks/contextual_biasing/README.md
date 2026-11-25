@@ -305,18 +305,16 @@ with the list, and the difference (optionally as CSV). `build_page.py` writes th
 measures as an HTML page (`page/index.html`, a single file): leaderboard of a measure
 for each model and list, plots of WER by B-WER and of WER, B-WER, F1 and RTFx by list
 size, charts of each list without and with it, and all the measures of one list; both
-text normalizations, and a selection of the models shown (NeMo runs at alpha 1.0 and
-2.0; the other weights of the tuning on PxSLU dev, and the Whisper runs with the
-hotwords separated by spaces instead of commas, are left out, `--exclude_settings`;
-the Parakeet run with the LibriSpeech N=1000 lists, the only NeMo run with them, is
-left out too, `--exclude_runs`). An empty cell of the leaderboard means no run with this
-list; it is marked with a dagger when the run was left out only because the model is
-too slow with the list (`TOO_SLOW` in `template.html`). A model trained on a test set is marked with
-a double dagger on it, listed last and left out of its ranking and of the aggregated
-test sets (`TRAINED_ON` in `template.html`): the Luciole models on PxSLU. The training
-data published for Luciole-Audio (`OpenLLM-France/Luciole-Audio-Training-Dataset`,
-`PxSLU_fr`) holds all the PxSLU test and dev recordings; this is presumed, not
-checked, for the `v5_transcribe_v2` checkpoint.
+text normalizations, and a selection of the models shown. Left out of the page: Whisper
+large-v3, the Luciole models without hotwords, and Luciole in French (PxSLU is in its
+training data) (`--exclude_models`); the Whisper runs with the hotwords separated by
+spaces (`--exclude_settings`); the Parakeet run with the LibriSpeech N=1000 lists, the
+only NeMo run with them (`--exclude_runs`). Of the NeMo boosting weights, the page shows
+the one that linto-stt uses by default for the length of the list (2 under 100 terms,
+else 1: `nemo_alpha` in `build_page.py`; these models are marked with a double dagger).
+An empty cell of the leaderboard means no run with this list; it is marked with a dagger
+when the run was left out only because the model is too slow with the list (`TOO_SLOW`
+in `template.html`).
 
 After the test sets, two aggregated test sets, "English" (Contextual Earnings-22 and
 LibriSpeech test-other) and "French and English" (the same plus PxSLU test), give the
@@ -324,8 +322,9 @@ mean over the test sets, each weighing the same (geometric mean for RTFx). As th
 sets have different lists, the columns are size classes of the lists: `short`
 (`pxslu25`, `global`, `100`), `medium` (`pxslu`, `500`), `long` (`vidal`, `bdpm`,
 `theriaque`, `1000`, `2000`). The lists of a class on one test set are averaged first;
-a class is kept when at least two test sets have lists of it (English: `short` only).
-A model has a value only if it has one on every test set of the class, and with the
+the test sets of a class are written in its header when some have no list of it (English:
+only LibriSpeech has `medium` and `long` lists, so these values are not comparable with
+those of `short`). A model has a value only if it has one on every test set of the class, and with the
 list only with a run with each of its lists (`SIZE_CLASSES` and `AGGREGATES` in
 `template.html`). The confidence interval of the mean WER, used by the ranking,
 combines those of the test sets as independent errors.
