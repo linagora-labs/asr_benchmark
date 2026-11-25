@@ -157,7 +157,8 @@
     <li><b>B-WER</b>: word error rate on the words of the list terms of the reference; <b>U-WER</b>: on the other words.</li>
     <li><b>F1, R, P</b>: F1, recall and precision of the list terms (each occurrence of a term of the targets, in the
       reference and in the transcription).</li>
-    <li><b>FA/h</b>: false alarms per hour, list terms written although not spoken.</li>
+    <li><b>FA/h</b>: false alarms per hour, list terms written although not spoken (at most one per term and utterance, as
+      in F1 and P: a transcription that loops on a term is counted in <b>Runaway</b>).</li>
     <li><b>Runaway</b>: percentage of the utterances whose transcription runs away (more than twice as many words as
       the reference, plus 10): loops, invented sentences, prompt recited. A few of them weigh a lot on B-WER, WER and
       FA/h.</li>
@@ -176,7 +177,8 @@
       bdpm, theriaque, 1000, 2000).</li>
     <li>Lists: <i>local</i> lists only hold terms of the utterance; the others are global lists
       (one list for the whole test set). <i>_upper</i>: the same list in capitals, given to check that the model
-      writes the terms as given (to read with "Case sensitive").</li>
+      writes the terms as given (to read with "Case sensitive" and F1). <i>_ext</i>: the drug names of PxSLU completed
+      with the ones spoken in the recordings but absent from its annotated names.</li>
   </ul>
 </main>
 <div class="tip" id="tip" hidden></div>
@@ -300,6 +302,7 @@ function tableModels(all) {
 const CUT_LISTS = { "faster-whisper": {
   "100": "hotwords cut to 223 tokens (about 60 % of the list reach the model)",
   "pxslu": "hotwords cut to 223 tokens (the first 51 of the 389 names, in alphabetical order, reach the model)",
+  "pxslu_ext": "hotwords cut to 223 tokens (the first 49 of the 427 names, in alphabetical order, reach the model)",
 } };
 // The same for the runs with the terms separated by spaces (setting "spaces")
 const CUT_LISTS_SPACES = { "faster-whisper": {
@@ -317,6 +320,7 @@ function cutNote(row, list) {
 const TOO_SLOW = {
   "nemo": { lists: ["500", "1000", "2000"], why: "NeMo: the boosting tree is rebuilt for each utterance with " +
     "the per-utterance lists (Parakeet with 500: 30 min on test-other); 500 at alpha 1.0 only" },
+  "vibevoice-asr": { lists: ["theriaque"], why: "VibeVoice-ASR with theriaque: about 10 h for 1.4 h of audio" },
 };
 const SLOW_NOTE = "not run (yet) for time, too slow with this list; not a limit of the model";
 function tooSlow(all, name, list) {

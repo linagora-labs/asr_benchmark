@@ -16,3 +16,4 @@ nnUIA2PgbN/recording_0.wav	paracénapol
 VJ3hX4DdJE/recording_1.wav	profan, corrected to profen by the corpus
 VJ3hX4DdJE/recording_2.wav	profane, corrected to profen by the corpus
 VJ3hX4DdJE/recording_3.wav	profan, corrected to profen by the corpus
+LbCT2dNIbl/recording_7.wav	lévémir (a sentence about its pronunciation: "lévémir et pas Levemir")

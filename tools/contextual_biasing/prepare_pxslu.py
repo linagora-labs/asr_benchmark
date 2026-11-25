@@ -11,7 +11,8 @@ This script:
 2. fixes drug name spellings with the corrections of the dataset
    (scripts/drug_name_correction_V4.txt), as whole words, in a single pass
    (the dataset's own clean_PxSLU.py replaces substrings one after another,
-   which creates words like "alalepsal" or "amikacinee");
+   which creates words like "alalepsal" or "amikacinee"), and with those of
+   lists/pxslu/reference_spelling.tsv (reviewed by hand);
 3. removes the utterances with unidentifiable drug names
    (scripts/drug_name_exclusion.txt, same rule as clean_PxSLU.py);
    and the recordings of lists/pxslu/excluded_recordings.txt (reviewed by hand: drug
@@ -174,6 +175,11 @@ def read_case_table(path):
     return table
 
 
+def read_spelling(path):
+    """{spelling in the transcripts: usual spelling} (lower case)."""
+    return dict(line.split("\t") for line in read_terms(path)) if path.exists() else {}
+
+
 def bdpm_substance_words(bdpm_dir):
     """Words of the active substances of the BDPM, in capitals without accents."""
     return {
@@ -307,7 +313,7 @@ def main():
         raise ValueError(f"Drug names missing from {lists_dir / 'drugs_pxslu_case.tsv'}: {missing}")
     form = {t: case_table[t] for t in names}  # spelling in the corpus -> form
     # Other spellings of a drug are replaced by its form in the transcripts
-    spelling = make_corrector({t: f.lower() for t, f in form.items() if f.lower() != t})
+    spelling = make_corrector({t: f.lower() for t, f in form.items() if f.lower() != t} | read_spelling(lists_dir / "reference_spelling.tsv"))
     targets = sorted(set(form.values()), key=sort_key)
     write_list(lists_dir / "drugs_pxslu.txt", targets)
     write_list(lists_dir / "drugs_pxslu_upper.txt", [t.upper() for t in targets])

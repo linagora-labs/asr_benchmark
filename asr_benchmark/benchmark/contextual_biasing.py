@@ -25,7 +25,7 @@ case without punctuation, as for WER; "cased": case kept, punctuation removed):
 - term precision / recall / F1 on the targets: for each term and utterance,
   tp = min(#ref, #hyp), fp = max(0, #hyp - #ref), fn = max(0, #ref - #hyp), where
   # counts the occurrences of the term (a sequence of words) in the reference and
-  in the prediction. Same definition as ssak's compute_wer(words_list=...).
+  in the prediction (fp: at most one per term and utterance, see below).
 In "cased" mode, the terms are found without case, and for precision / recall / F1
 an occurrence in the prediction is correct only when written as in the list given to
 the model (else as in the targets), except for the first letter of the utterance,
@@ -44,6 +44,8 @@ the scorer of Le et al., so the values are not exactly comparable with the publi
   term (so that "un" is not biased because of the term "un-alfa").
 - false alarms: occurrences of list terms in the prediction beyond their count
   in the reference (for instance distractors written although not spoken).
+In precision, F1 and false alarms, a term has at most one false alarm per utterance, so
+that a transcription looping on a term does not dominate the score (see the runaway rate).
 """
 
 import json
@@ -59,6 +61,9 @@ logger = logging.getLogger(__name__)
 
 MANIFEST_KEY = "contextual_biasing"
 TARGETS_KEY = "contextual_biasing_targets"
+
+# A transcription that repeats a term (loop) does not count more than one that writes it once
+MAX_FALSE_ALARMS = 1  # of one term in one utterance
 
 _NOT_WORD = re.compile(r"[^\w]+")
 
@@ -359,10 +364,10 @@ def score_variant(items, norm, duration):
         for p in target_phrases:
             r, h = ref_counts.get(p, 0), hyp_written.get(p, 0)
             tp += min(r, h)
-            fp += max(0, h - r)
+            fp += min(max(0, h - r), MAX_FALSE_ALARMS)
             fn += max(0, r - h)
         for p in list_phrases:
-            fa += max(0, hyp_counts.get(p, 0) - ref_counts.get(p, 0))
+            fa += min(max(0, hyp_counts.get(p, 0) - ref_counts.get(p, 0)), MAX_FALSE_ALARMS)
 
         be, bc, ue, uc = _split_errors(text, all_phrases, expected)
         b_err, b_cnt, u_err, u_cnt = b_err + be, b_cnt + bc, u_err + ue, u_cnt + uc

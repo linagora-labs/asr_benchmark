@@ -40,18 +40,17 @@ Earnings-22). Figures of the test splits as run (after the cleaning described be
 |---|---|---|---|
 | Language | French | English | English |
 | Speech | dictated drug prescriptions, spontaneous | read audiobooks | earnings calls: conversational, many accents |
-| Size | 556 utterances, 1.38 h (mean 9 s, max 30 s) | 2,939 utterances, 5.34 h (mean 6.5 s, max 35 s) | 771 clips of 15 s from 54 calls, 3.21 h |
-| Terms to recognize (targets) | drug names: 329 occurrences in 323 utterances, 188 distinct | rare words: 5,350 occurrences in 2,141 utterances, 3,838 distinct | names of persons, companies, products: 1,324 occurrences in 729 clips, 651 distinct |
-| Lists run | global: `pxslu` (389 terms), `vidal` (2,753), `bdpm` (4,050), `theriaque` (8,851); per utterance: `pxslu25` (25) | per utterance: `100`, `500`, `1000`, `2000` (rare words of the utterance + N distractors) | per clip: `global` (keywords of the whole call, 25 on average, 1 to 46) |
+| Size | 540 utterances, 1.47 h (mean 10 s, max 30 s) | 2,939 utterances, 5.34 h (mean 6.5 s, max 35 s) | 771 clips of 15 s from 54 calls, 3.21 h |
+| Terms to recognize (targets) | drug names: 329 occurrences in 324 utterances, 168 distinct | rare words: 5,350 occurrences in 2,141 utterances, 3,838 distinct | names of persons, companies, products: 1,324 occurrences in 729 clips, 651 distinct |
+| Lists run | global: `pxslu` (389 terms), `pxslu_ext` (427), `vidal` (2,753), `bdpm` (4,050), `theriaque` (8,851); per utterance: `pxslu25`, `pxslu25_ext` (25) | per utterance: `100`, `500`, `1000`, `2000` (rare words of the utterance + N distractors) | per clip: `global` (keywords of the whole call, 25 on average, 1 to 46) |
 | Distractors (list terms not spoken) | other drug names (real dictionaries) | rare words drawn at random | other names of the same call |
 | Licence | CC BY 4.0 | audio and text CC BY 4.0; lists MIT | transcripts and lists CC BY-SA 4.0 (licence of Earnings-22); audio licence not stated |
 | Reference | Kocabiyikoglu et al., LREC 2022 ([arXiv:2207.08292](https://arxiv.org/abs/2207.08292)) | Panayotov et al., ICASSP 2015; lists: Le et al., Interspeech 2021 ([arXiv:2104.02194](https://arxiv.org/abs/2104.02194)) | Durmus et al. 2026 ([arXiv:2604.07354](https://arxiv.org/abs/2604.07354)) |
 
-The dev splits (PxSLU dev: 279 utterances, 0.57 h; Contextual Earnings-22 dev: 100
+The dev splits (PxSLU dev: 282 utterances, 0.53 h; Contextual Earnings-22 dev: 100
 clips, 0.42 h) only serve for tuning (e.g. the NeMo boosting weight,
 `config_fr_nemo_alpha.yaml`): they are not in the runs of `config_fr.yaml` and
-`config_en.yaml`, and are left out of the page (`build_page.py --exclude_datasets`;
-the PxSLU dev results of the earlier runs are kept in the results folder). LibriSpeech
+`config_en.yaml`, and are left out of the page (`build_page.py --exclude_datasets`). LibriSpeech
 test-clean is prepared but left out of the runs: its speakers leave few errors on the
 rare words to correct.
 
@@ -73,8 +72,11 @@ only (570 recordings); dev is a part of the experts and non-experts.
 
 **Preparation** (`prepare_pxslu.py`): the drug name spellings are corrected with the
 corrections shipped with the corpus, the utterances with unidentifiable drug names
-are removed (as in the cleaned version of the corpus: 556 test utterances left), and
-so are the truncated words ("qu/"). The transcripts are written in sentence case,
+are removed (as in the cleaned version of the corpus), and so are the truncated words
+("qu/") and 17 test recordings where a drug name is misspelled, misheard
+or unusable (`lists/pxslu/excluded_recordings.txt`): 540 test utterances are left. Three
+other names are corrected in the references (`lists/pxslu/reference_spelling.tsv`:
+Sintrom, Levemir, Glibénèse). The transcripts are written in sentence case,
 with the drug names in their usual case and one spelling per drug (brands
 capitalized, active substances in lower case, acronyms in capitals; reviewed table
 `lists/pxslu/drugs_pxslu_case.tsv`).
@@ -82,8 +84,7 @@ capitalized, active substances in lower case, acronyms in capitals; reviewed tab
 **Hotwords.** Drug names (brands and active substances), in global lists of growing
 size, all containing the 389 drug names of the corpus:
 - `pxslu`: the 389 drug names of the corpus (all splits), curated and made
-  consistent with the corrected transcripts. About half of them are spoken in the
-  test split. It plays the role of a small domain list given to every request.
+  consistent with the corrected transcripts. 168 of them are spoken in the test split. It plays the role of a small domain list given to every request.
 - `bdpm` (4,050 terms): brand names and active substances of the French public drug
   database (Base de données publique des médicaments, ANSM; homeopathic and herbal
   products left out), plus the targets missing from it. Licence Ouverte 2.0.
@@ -94,6 +95,10 @@ size, all containing the 389 drug names of the corpus:
 - `pxslu25` (per utterance): 25 names of `pxslu`, the ones spoken in the utterance
   plus others drawn at random. It has the size of the per-call lists of Contextual
   Earnings-22, and fits in Whisper's 223-token hotwords.
+- `pxslu_ext` (427 terms), `pxslu25_ext`: the same lists completed with the 38 drug
+  names spoken in the test split that are not among the annotated names of the corpus
+  (`lists/pxslu/drugs_pxslu_added.txt`, reviewed by hand). The targets are then the 427
+  names (391 occurrences in 382 utterances).
 - `pxslu_upper`, `pxslu25_upper`: the same lists in capitals (does a model follow
   the case of the list?).
 - The manifests also hold per-utterance `oracle` lists (only the targets spoken in
@@ -102,7 +107,7 @@ size, all containing the 389 drug names of the corpus:
 
 **Advantages.** The only public French benchmark of this kind that we know of.
 Real domain vocabulary that ASR models get wrong (F1 of the drug names without list:
-32 to 55 depending on the model). Real dictionaries as lists, from a few hundred to
+31 to 57 depending on the model). Real dictionaries as lists, from a few hundred to
 almost 9,000 terms: the "domain dictionary" use case. Short utterances, so every
 model can process them.
 
@@ -110,8 +115,8 @@ model can process them.
 few F1 points are within the noise (see the confidence intervals of the page).
 One kind of term only (drug names) and one speaking style (dictation). The
 transcripts were made in lower case: the case of the references is reconstructed
-(drug names only), so the `cased` measures concern the drug names, not the rest of
-the sentence. Two of the four global lists are not redistributable.
+(drug names and first letter), so the measures with case are only indicative for the
+rest of the sentence. Two of the four global lists are not redistributable.
 
 ### LibriSpeech test-other (English, rare words)
 
@@ -377,8 +382,9 @@ normalizations (`nocasepunc`: without case; `cased`: with case):
 
 - `precision`, `recall`, `f1` of the target terms: for each term and utterance,
   tp = min(#ref, #hyp), fp = max(0, #hyp - #ref), fn = max(0, #ref - #hyp), where #
-  counts the occurrences of the term (one or more words). Same definition as
-  ssak's `compute_wer(words_list=...)`.
+  counts the occurrences of the term (one or more words). A term has at most one
+  false alarm (fp) per utterance, so that a transcription that loops on a term does not
+  dominate the score.
 - `b_wer`, `u_wer` (Le et al. 2021): WER on the reference words that belong to a
   list term, and on the other words; an inserted word counts in B-WER if it
   belongs to a list term. With multi-word terms, a word is biased only when it is
@@ -386,15 +392,15 @@ normalizations (`nocasepunc`: without case; `cased`: with case):
   (before its cap at 100 % per utterance).
 - `false_alarms` (and per hour): occurrences of list terms in the prediction
   beyond their count in the reference (e.g. distractors written although not
-  spoken).
+  spoken), at most one per term and utterance.
 
 `report.py` and the page also give the runaway rate of each run (from its
 predictions, not stored in `performances/`): the percentage of utterances whose
 transcription has more than twice as many words as the reference, plus 10 (loops,
 invented sentences, prompt recited). A few such outputs weigh a lot on B-WER
 (inserted list terms count in it), FA/h and WER: e.g. on PxSLU test, Qwen3-ASR
-recites the start of the `bdpm` list in 6 of 556 utterances (B-WER above 100 %),
-and MOSS keeps generating after the transcription in 23 utterances with `pxslu`.
+recites the start of the `bdpm` list in 2 of the 540 utterances (B-WER above 100 %),
+and 18 transcriptions of MOSS run away with `pxslu`.
 
 RTFx (seconds of audio per second of processing; `report.py` and the page), for each
 run and dataset, from: the transcription time that the benchmark records in
