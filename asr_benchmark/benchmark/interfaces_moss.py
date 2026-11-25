@@ -67,7 +67,13 @@ class MossTranscribeDiarizeModel(Model):
     An end-to-end audio LLM that jointly performs transcription, timestamping and
     speaker diarization in a single pass. For WER benchmarking, the timestamps and
     speaker labels are stripped by default to recover plain transcript text.
+
+    Contextual biasing: hotwords appended to the prompt, as documented in the model
+    card ("Custom Prompt and Hotwords") and examples/prompts.md of the GitHub repo:
+    "<default prompt>热词提示：热词1, 热词2, 热词3".
     """
+    SUPPORTS_CONTEXTUAL_BIASING = True
+    DEFAULT_BIASING_TEMPLATE = "{prompt}热词提示：{terms}"
 
     def load(self) -> None:
         from transformers import AutoModelForCausalLM, AutoProcessor
@@ -94,7 +100,7 @@ class MossTranscribeDiarizeModel(Model):
         return load_audio(audio, return_format="librosa", start=start, duration=duration)
 
     def transcribe(self, audio) -> dict:
-        return self.transcribe_many([audio])[0]
+        return self.transcribe_many([audio], terms=[self.biasing_terms])[0]
 
     def transcribe_batch(self, data: list) -> list[dict]:
         if self.config["batch_size"] <= 1:
@@ -118,17 +124,22 @@ class MossTranscribeDiarizeModel(Model):
         inputs["input_ids"], inputs["attention_mask"] = input_ids, attention_mask
         return inputs
 
-    def transcribe_many(self, audios: list) -> list[dict]:
+    def transcribe_many(self, audios: list, terms: list = None) -> list[dict]:
         device = self.config["device"]
+        terms = terms or [None] * len(audios)
+        prompts = [
+            self.format_biasing(t, prompt=self.config["prompt"]) or self.config["prompt"]
+            for t in terms
+        ]
         texts = [
             self.processor.apply_chat_template(
                 [{"role": "user", "content": [
                     {"type": "audio", "audio": audio},
-                    {"type": "text", "text": self.config["prompt"]},
+                    {"type": "text", "text": prompt},
                 ]}],
                 tokenize=False, add_generation_prompt=True,
             )
-            for audio in audios
+            for audio, prompt in zip(audios, prompts)
         ]
         inputs = self.processor(text=texts, audio=list(audios), return_tensors="pt")
         if len(audios) > 1:

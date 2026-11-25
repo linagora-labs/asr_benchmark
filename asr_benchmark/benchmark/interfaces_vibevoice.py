@@ -38,7 +38,12 @@ class VibeVoiceASRModel(Model):
     the language, code-switching included) and outputs speaker-timestamped
     segments as a JSON-like string; only the concatenated "Content" is kept.
     An optional `prompt` is passed as extra context (hotwords, topic...).
+
+    Contextual biasing: the terms go into that extra context (the processor's
+    `prompt`, one per audio), after the `prompt` of the config if any
+    (contextual_biasing_template, default "{terms}").
     """
+    SUPPORTS_CONTEXTUAL_BIASING = True
 
     def load(self) -> None:
         from transformers import AutoProcessor, VibeVoiceAsrForConditionalGeneration
@@ -60,16 +65,24 @@ class VibeVoiceASRModel(Model):
         )
 
     def transcribe(self, audio) -> dict:
-        return self.transcribe_many([audio])[0]
+        return self.transcribe_many([audio], terms=[self.biasing_terms])[0]
 
     def transcribe_batch(self, data: list) -> list[dict]:
         if self.config["batch_size"] <= 1:
             return super().transcribe_batch(data)
         return self.transcribe_by_batches(data, self.config["batch_size"])
 
-    def transcribe_many(self, audios: list) -> list[dict]:
+    def _context(self, terms):
+        biasing = self.format_biasing(terms)
+        parts = [p for p in (self.config.get("prompt"), biasing) if p]
+        return " ".join(parts) if parts else None
+
+    def transcribe_many(self, audios: list, terms: list = None) -> list[dict]:
+        prompt = self.config.get("prompt")
+        if terms is not None and any(terms):
+            prompt = [self._context(t) for t in terms]
         # The processor left-pads the prompts, so generated tokens start at the same index.
-        inputs = self.processor.apply_transcription_request(audio=audios, prompt=self.config.get("prompt"))
+        inputs = self.processor.apply_transcription_request(audio=audios, prompt=prompt)
         inputs = inputs.to(self.model.device, self.model.dtype)
         input_len = inputs["input_ids"].shape[1]
         with torch.no_grad():

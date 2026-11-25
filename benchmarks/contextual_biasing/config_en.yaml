@@ -1,0 +1,225 @@
+# Contextual Biasing ASR Benchmark, English.
+# - LibriSpeech test-other (test-clean left out, see below), per-utterance lists of Le et al., Interspeech
+#   2021 (arXiv:2104.02194): rare words of the reference + N distractors; lists
+#   "100", "500", "1000", "2000" (named after N).
+# - Contextual Earnings-22 (Argmax): 15 s clips of earnings calls; list "global"
+#   (keywords of the whole call). Its "local" lists (only the keywords spoken in the
+#   clip) are not run: an oracle setting, as the PxSLU "oracle" lists.
+# A run with a list only transcribes the datasets that have this list; the run
+# without list (null) is scored on every list.
+#
+# The "cased" B-WER / U-WER of LibriSpeech (report.py --mode cased) are computed as
+# by the paper's score.py (checked on its published hypotheses).
+#
+# Data: tools/contextual_biasing/prepare_librispeech.py and
+# prepare_contextual_earnings22.py (see the README).
+datasets:
+  # test-clean left out: the "clean" speakers (easier for a baseline recognizer, as
+  # the LibriSpeech split was made) leave few errors on the rare words to correct;
+  # test-other, with more errors, separates the models better.
+  # LibriSpeech_test-clean:
+  #   manifest: benchmarks/contextual_biasing/manifests/LibriSpeech_test-clean.jsonl
+  LibriSpeech_test-other:
+    manifest: benchmarks/contextual_biasing/manifests/LibriSpeech_test-other.jsonl
+  ContextualEarnings22_test:
+    manifest: benchmarks/contextual_biasing/manifests/ContextualEarnings22_test.jsonl
+min_duration: 0
+max_duration: 60
+output_folder: benchmarks/contextual_biasing/results_en
+compute_rtf: False
+plot_monitoring: False
+skip_errors: False
+save_alignments: True
+save_predictions: False
+language: en
+wer_language: en
+
+benchmarks:
+  # --- faster-whisper: `hotwords`, at most 223 tokens (the rest is cut). LibriSpeech
+  # N=100 lists (~370 tokens) are given anyway: they are sorted alphabetically, so the
+  # cut keeps ~60 % of the list, unrelated to the targets (the setting of a real
+  # deployment); N >= 1000 lists would keep too little. Contextual Earnings-22 lists
+  # fit (<= 161 tokens).
+  - backend: faster-whisper
+    model: large-v3
+    precision: float16
+    contextual_biasing: [null, "100", global]  # local: not run (oracle)
+  - backend: faster-whisper
+    model: large-v3-turbo
+    precision: float16
+    accurate: [false, true]
+    full_name: true
+    contextual_biasing: [null, "100", global]  # local: not run (oracle)
+  # The same, with the terms separated by spaces instead of ", " (fewer tokens: more
+  # of the list within the 223; result folders "...-spaces"). Run once: worse than with
+  # commas (more false alarms and loops), left out of the page.
+  # - backend: faster-whisper
+  #   model: large-v3
+  #   precision: float16
+  #   contextual_biasing: ["100", global]
+  #   contextual_biasing_separator: " "
+  # - backend: faster-whisper
+  #   model: large-v3-turbo
+  #   precision: float16
+  #   accurate: [false, true]
+  #   full_name: true
+  #   contextual_biasing: ["100", global]
+  #   contextual_biasing_separator: " "
+
+  # --- Qwen3-ASR (vLLM): `prompt` field (system turn) ---
+  - backend: vllm
+    model:
+    - Qwen/Qwen3-ASR-1.7B
+    # - Qwen/Qwen3-ASR-0.6B
+    port: 8106
+    extra_args: --max-model-len 32768
+    contextual_biasing: [null, "100", "500", "1000", "2000", global]  # local: not run (oracle)
+    contextual_biasing_template: "Vocabulary: {terms}."
+
+  # --- Nemotron-3.5-Transcribe (vLLM chat, server started separately) ---
+  - backend: vllm
+    model: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B
+    launch: false
+    server: http://172.17.0.1
+    port: 8118
+    endpoint: chat
+    prompt: "Transcribe with punctuation and capitalization."
+    extra_body: {chat_template_kwargs: {enable_thinking: false}}
+    concurrency: 32
+    contextual_biasing: [null, "100", "500", "1000", "2000", global]  # local: not run (oracle)
+    contextual_biasing_template: "{prompt} Context terms: {terms}."
+
+  # --- Granite Speech 5.0 (vLLM chat): "Keywords: kw1, kw2" (model card) ---
+  # vLLM 0.28 loads every .safetensors of the repo and fails on out_llm.safetensors
+  # ('bias'): model = folder of symlinks to the HF snapshot without this file;
+  # served_model_name keeps the folder name of the results.
+  - backend: vllm
+    model: /home/jlouradour/models/granite-speech-5.0-2b-vllm
+    served_model_name: ibm-granite/granite-speech-5.0-2b
+    port: 8122
+    endpoint: chat
+    prompt: <|audio|>transcribe the speech to text.
+    extra_args: --max-model-len 16384
+    concurrency: 128
+    contextual_biasing: [null, "100", "500", "1000", "2000", global]  # local: not run (oracle)
+    contextual_biasing_template: "{prompt} Keywords: {terms}"
+  # - backend: vllm
+  #   model: ibm-granite/granite-speech-4.1-2b
+  #   port: 8114
+  #   endpoint: chat
+  #   prompt: <|audio|>transcribe the speech to text.
+  #   extra_args: --max-model-len 16384
+  #   contextual_biasing: [null, "100", "1000", global]  # local: not run (oracle)
+  #   contextual_biasing_template: "{prompt} Keywords: {terms}"
+
+  # --- MOSS-Transcribe-Diarize (vLLM): English hotword prompt of the GitHub
+  # examples/prompts.md; the baseline uses the same prompt without hotwords.
+  - backend: vllm
+    model: OpenMOSS-Team/MOSS-Transcribe-Diarize
+    trust_remote_code: true
+    port: 8102
+    language: null
+    transcription_prompt: "Transcribe the audio. For each segment, start with the timestamp and speaker ID ([S01], [S02], [S03], ...), then the spoken text, and end with the segment timestamp."
+    contextual_biasing: [null, "100", "500", "1000", "2000", global]  # local: not run (oracle)
+    contextual_biasing_template: "{prompt} Hotwords: {terms}"
+
+  # --- VibeVoice-ASR (transformers): extra context of the request ---
+  - backend: vibevoice-asr
+    model: microsoft/VibeVoice-ASR-HF
+    dtype: bfloat16
+    batch_size: 64
+    contextual_biasing: [null, "100", global]  # local: not run (oracle)
+  # Longer lists (~1.8k, ~3.6k and ~7.2k tokens per request): slow (~13 h of GPU for
+  # 1000 and 2000 on test-clean and test-other), run last, after the other models.
+  - backend: vibevoice-asr
+    model: microsoft/VibeVoice-ASR-HF
+    dtype: bfloat16
+    batch_size: 16
+    contextual_biasing: ["500", "1000", "2000"]
+
+  # --- NeMo phrase boosting (GPU-PB, decoding-time boosting tree; greedy_batch
+  # decoding, beam for Canary). alpha (boosting weight): 1.0 and 2.0 for every model.
+  # On PxSLU_dev with parakeet (config_fr_nemo_alpha.yaml), 1.0 was the best F1 / false
+  # alarm trade-off with the global lists, 2.0 gave +5 F1 with 5x false alarms.
+  # One entry per condition: with NeMo 3.0, loading a model a second time in the same
+  # process fails (torch.load), and the DGX runner (one process per entry and model)
+  # would run all the conditions of an entry in one process.
+  # LibriSpeech lists 1000 and 2000 left out: the tree is rebuilt for each utterance
+  # (parakeet: 25 min with the 100 lists on test-other, 2.8 h with 1000 on test-clean and
+  # test-other). List 500 at alpha 1.0 only.
+  - &parakeet
+    backend: nemo
+    model: nvidia/parakeet-tdt-0.6b-v3
+    batch_size: 64
+    language: en   # not a prompt: parakeet detects the language itself; used by the boosting tree
+    contextual_biasing: null
+  - {<<: *parakeet, contextual_biasing: "100", contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: "100", contextual_biasing_alpha: 2.0}
+  - {<<: *parakeet, contextual_biasing: "500", contextual_biasing_alpha: 1.0}
+  # - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
+  # - {<<: *parakeet, contextual_biasing: "1000", contextual_biasing_alpha: 2.0}
+  # - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
+  # - {<<: *parakeet, contextual_biasing: "2000", contextual_biasing_alpha: 2.0}
+  # - {<<: *parakeet, contextual_biasing: local, contextual_biasing_alpha: 1.0}
+  # - {<<: *parakeet, contextual_biasing: local, contextual_biasing_alpha: 2.0}
+  - {<<: *parakeet, contextual_biasing: global, contextual_biasing_alpha: 1.0}
+  - {<<: *parakeet, contextual_biasing: global, contextual_biasing_alpha: 2.0}
+  - &canary
+    backend: nemo
+    model: nvidia/canary-1b-v2
+    batch_size: 64
+    language: en   # source and target language of Canary, and language of the boosting tree
+    contextual_biasing: null
+  - {<<: *canary, contextual_biasing: "100", contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: "100", contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: "500", contextual_biasing_alpha: 1.0}
+  # - {<<: *canary, contextual_biasing: "1000", contextual_biasing_alpha: 1.0}
+  # - {<<: *canary, contextual_biasing: "1000", contextual_biasing_alpha: 2.0}
+  # - {<<: *canary, contextual_biasing: "2000", contextual_biasing_alpha: 1.0}
+  # - {<<: *canary, contextual_biasing: "2000", contextual_biasing_alpha: 2.0}
+  # - {<<: *canary, contextual_biasing: local, contextual_biasing_alpha: 1.0}
+  # - {<<: *canary, contextual_biasing: local, contextual_biasing_alpha: 2.0}
+  - {<<: *canary, contextual_biasing: global, contextual_biasing_alpha: 1.0}
+  - {<<: *canary, contextual_biasing: global, contextual_biasing_alpha: 2.0}
+
+  # --- Baseline without mechanism ---
+  - backend: vllm
+    model: CohereLabs/cohere-transcribe-03-2026
+    trust_remote_code: true
+    port: 8115
+    language: en
+  # Luciole-1B-Audio-1.0: NeMo SALM (Parakeet encoder + Luciole-1B LLM) served by vLLM
+  # with the SALM plugin of the NeMo fork of its model card (linagora-labs/NeMo, branch
+  # luciole-1b-vllm-nemotron-fix): run_sota_dgx.sh salm, NEMO_FORK set to its clone.
+  # Prompt of the model card; no biasing mechanism.
+  - backend: vllm
+    model: OpenLLM-France/Luciole-1B-Audio-1.0
+    port: 8111
+    endpoint: chat
+    audio_placeholder: "<|audio|>"
+    prompt: "Make a word-for-word transcription in English of the spoken content."
+    extra_args: --max-model-len 16384
+
+  # Luciole-1B, newer checkpoint trained with hotwords (v5_transcribe_v2, step 100k;
+  # same architecture and NEMO_FORK as Luciole-1B-Audio-1.0). Prompt "promptfr1" of
+  # its authors (in French, asking for English); the list after it, then the audio.
+  - backend: vllm
+    model: /home/abert/models/salm/Luciole-1B/luciole_v5_transcribe_v2/hf_checkpoints/step_100000
+    served_model_name: Luciole-1B_v5_transcribe_v2_step100k-promptfr1
+    port: 8113
+    endpoint: chat
+    audio_placeholder: "<|audio|>"
+    prompt: "Transcris fidèlement tout ce qui est dit dans l'extrait, avec la ponctuation et les majuscules, et en anglais."
+    extra_args: --max-model-len 16384
+    contextual_biasing: [null, "100", "500", "1000", "2000", global]  # local: not run (oracle)
+    contextual_biasing_template: "{prompt}\n\nVocabulaire: {terms} <|audio|>"
+
+  # Luciole-8B-Audio-1.0: NeMo SALM with a hybrid (Mamba) Luciole-8B LLM, same
+  # plugin and prompt as Luciole-1B-Audio-1.0; no biasing mechanism.
+  - backend: vllm
+    model: OpenLLM-France/Luciole-8B-Audio-1.0
+    port: 8112
+    endpoint: chat
+    audio_placeholder: "<|audio|>"
+    prompt: "Make a word-for-word transcription in English of the spoken content."
+    extra_args: --max-model-len 16384

@@ -1,0 +1,19 @@
+# Recordings of PxSLU left out of the benchmark: drug name misspelled or misheard in the
+# transcript (recording, tab, transcribed name)
+DRgoYhHJP0/recording_0.wav	hydrokehegine
+J4mP0TMzub/recording_1.wav	telonitrosol
+J4mP0TMzub/recording_2.wav	tenonitrozol
+J4mP0TMzub/recording_4.wav	tenonitrozol
+J4mP0TMzub/recording_5.wav	tenonitrozol
+J4mP0TMzub/recording_17.wav	avoxiciline
+vLEsOdQ7A6/recording_0.wav	propradolone
+EVKNUp1TRI/recording_18.wav	propatépine chloridrate
+EVKNUp1TRI/recording_3.wav	tropatepine chloridrate, 1o
+lsmfZfiraI/recording_0.wav	propatépine
+PjTkKzbIo7/recording_0.wav	cetrizine
+SFSor0TsT9/recording_0.wav	betahistine
+nnUIA2PgbN/recording_0.wav	paracénapol
+VJ3hX4DdJE/recording_1.wav	profan, corrected to profen by the corpus
+VJ3hX4DdJE/recording_2.wav	profane, corrected to profen by the corpus
+VJ3hX4DdJE/recording_3.wav	profan, corrected to profen by the corpus
+LbCT2dNIbl/recording_7.wav	lévémir (a sentence about its pronunciation: "lévémir et pas Levemir")

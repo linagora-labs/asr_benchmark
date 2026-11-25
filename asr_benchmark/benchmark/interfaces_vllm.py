@@ -15,6 +15,7 @@ import requests
 from asr_benchmark.utils import log_path
 from asr_benchmark.utils.benchmark import load_audio
 from asr_benchmark.benchmark.interfaces import Model
+from asr_benchmark.benchmark import contextual_biasing
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,21 @@ class VllmTranscriptionModel(Model):
     The vLLM engine runs as a separate server process, so this backend itself only
     needs `requests`. By default load() launches `vllm serve <model>` and cleanup()
     stops it; set launch=false to connect to a server you started yourself.
+
+    Contextual biasing (config key contextual_biasing), how the terms are sent:
+    - endpoint "transcriptions": in the request field `contextual_biasing_field`,
+      "prompt" (default; used by Whisper as previous text and by Qwen3-ASR as system
+      context) or "hotwords" (used by FunASR). Some models ignore both fields
+      (Nemotron-3.5-Transcribe, Voxtral, Granite in vLLM 0.28): use the chat endpoint
+      for them. Text built with contextual_biasing_template ({terms}, and {prompt} for
+      the transcription_prompt of the config), default "{terms}".
+    - endpoint "chat": the user message becomes contextual_biasing_template, which
+      must be given (each model documents its own form), with {prompt} for the
+      prompt of the config and {terms} for the terms. When the template holds the
+      audio_placeholder (e.g. "{prompt}\n\nVocabulaire: {terms} <|audio|>": audio
+      after the terms), {prompt} is the prompt without it.
     """
+    SUPPORTS_CONTEXTUAL_BIASING = True
 
     def load(self) -> None:
         self.server_url = self._base_url()
@@ -136,23 +151,35 @@ class VllmTranscriptionModel(Model):
     def load_audio(self, audio: str, start=0.0, duration=None):
         return load_audio(audio, return_format="file", start=start, duration=duration)
 
-    def _post(self, audio_path: str) -> str:
-        text = self._post_chat(audio_path) if self.config["endpoint"] == "chat" else self._post_transcription(audio_path)
+    def _post(self, audio_path: str, terms=None) -> str:
+        if self.config["endpoint"] == "chat":
+            text = self._post_chat(audio_path, terms)
+        else:
+            text = self._post_transcription(audio_path, terms)
         if self.config["strip_diarization"]:
             text = self._strip_annotations(text)
         return text.strip()
 
-    def _post_chat(self, audio_path: str) -> str:
+    def _prompt_for_template(self) -> str:
+        """{prompt} of contextual_biasing_template: the prompt of the config, without its
+        audio placeholder when the template places the audio itself."""
+        placeholder = self.config["audio_placeholder"]
+        if placeholder and placeholder in (self.config.get("contextual_biasing_template") or ""):
+            return self.config["prompt"].replace(placeholder, "").strip()
+        return self.config["prompt"]
+
+    def _post_chat(self, audio_path: str, terms=None) -> str:
         """POST one audio file with `prompt` to /v1/chat/completions, for audio LLMs that
         vLLM does not serve as transcription models (NeMo SALM / Luciole-Audio, ...)."""
         import base64
 
         with open(audio_path, "rb") as f:
             audio_b64 = base64.b64encode(f.read()).decode()
+        prompt = self.format_biasing(terms, prompt=self._prompt_for_template()) or self.config["prompt"]
         data = {
             "model": self.config["request_model"],
             "messages": [{"role": "user", "content": [
-                {"type": "text", "text": self.config["prompt"]},
+                {"type": "text", "text": prompt},
                 {"type": "input_audio", "input_audio": {"data": audio_b64, "format": "wav"}},
             ]}],
             "max_tokens": self.config["max_tokens"],
@@ -167,7 +194,7 @@ class VllmTranscriptionModel(Model):
             raise RuntimeError(f"vLLM chat completion failed (HTTP {res.status_code}): {res.text[:500]}")
         return res.json()["choices"][0]["message"]["content"] or ""
 
-    def _post_transcription(self, audio_path: str) -> str:
+    def _post_transcription(self, audio_path: str, terms=None) -> str:
         """POST one audio file to /v1/audio/transcriptions and return the transcript."""
         data = {
             "model": self.config["request_model"],
@@ -177,6 +204,10 @@ class VllmTranscriptionModel(Model):
             data["language"] = self.config["language"]
         if self.config["transcription_prompt"]:
             data["prompt"] = self.config["transcription_prompt"]
+        if terms:
+            data[self.config["contextual_biasing_field"]] = self.format_biasing(
+                terms, prompt=self.config["transcription_prompt"] or ""
+            )
         if self.config["max_tokens"]:
             data["max_completion_tokens"] = self.config["max_tokens"]
         if self.config["temperature"] is not None:
@@ -198,7 +229,7 @@ class VllmTranscriptionModel(Model):
         # Serial per-file path (used when compute_rtf is True): latency-based RTF, with
         # hardware monitoring active in the harness.
         try:
-            text = self._post(audio)
+            text = self._post(audio, self.biasing_terms)
         finally:
             Path(audio).unlink(missing_ok=True)
         return {"text": text}
@@ -227,20 +258,20 @@ class VllmTranscriptionModel(Model):
                 path = os.path.join(tmpdir, f"{i}.wav")
                 sf.write(path, arr, 16000)
                 duration = row.get("duration") or (len(arr) / 16000.0)
-                items.append((i, path, duration))
+                items.append((i, path, duration, self.terms_for_row(row)))
 
             results = [None] * len(items)
 
             n_failed = [0]
 
             def work(item):
-                i, path, duration = item
+                i, path, duration, terms = item
                 t0 = time.time()
                 # A single failed/timed-out request must NOT abort the whole batch (which
                 # would lose the entire dataset, since results are saved only at the end).
                 # Record an empty prediction for it and carry on.
                 try:
-                    text = self._post(path)
+                    text = self._post(path, terms)
                 except Exception as e:
                     logger.error(f"vLLM request failed for item {i} ({Path(path).name}): {e}")
                     text = ""
@@ -258,7 +289,7 @@ class VllmTranscriptionModel(Model):
                     results[i] = out
             wall = time.time() - wall_start
 
-            total_audio = sum(d for _, _, d in items)
+            total_audio = sum(item[2] for item in items)
             throughput = round(total_audio / wall, 3) if wall > 0 else None
             failed_note = f", {n_failed[0]} FAILED" if n_failed[0] else ""
             logger.info(
@@ -339,6 +370,15 @@ class VllmTranscriptionModel(Model):
         if config["audio_placeholder"] and config["audio_placeholder"] not in config["prompt"]:
             config["prompt"] = f"{config['prompt']} {config['audio_placeholder']}"
         config["transcription_prompt"] = config.get("transcription_prompt", None)
+        if contextual_biasing.config_variant(config) is not None:
+            config["contextual_biasing_field"] = config.get("contextual_biasing_field", "prompt")
+            if config["contextual_biasing_field"] not in ("prompt", "hotwords"):
+                raise ValueError(f"contextual_biasing_field must be prompt or hotwords, not {config['contextual_biasing_field']}")
+            if config["endpoint"] == "chat" and not config.get("contextual_biasing_template"):
+                raise ValueError(
+                    "contextual_biasing with endpoint chat needs contextual_biasing_template "
+                    "(the user message, with {prompt} and {terms} placeholders, in the form documented for the model)"
+                )
         # Caps looping generations
         config["max_tokens"] = config.get("max_tokens", 256)
         config["max_tokens"] = int(config["max_tokens"]) if config["max_tokens"] else None
@@ -379,6 +419,10 @@ class VllmTranscriptionModel(Model):
         if not metadata.get("transcription_prompt"):
             metadata.pop("transcription_prompt", None)
         return metadata
+
+    def biasing_folder_params(self):
+        field = self.config.get("contextual_biasing_field", "prompt")
+        return [field] if self.config["endpoint"] != "chat" and field != "prompt" else []
 
     def get_folder_name(self):
         c = self.config

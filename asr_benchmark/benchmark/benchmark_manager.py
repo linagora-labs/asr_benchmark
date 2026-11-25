@@ -13,119 +13,15 @@ from tqdm import tqdm
 from itertools import product
 
 import asr_benchmark.utils.benchmark as utils
+from asr_benchmark.benchmark import contextual_biasing
 from asr_benchmark.benchmark.backend_to_model import get_model
+from asr_benchmark.benchmark.normalization import normalize_for_wer
 from asr_benchmark.utils import logger
-from ssak.utils.text_latin import numbers_and_symbols_to_letters
 from ssak.utils.wer import compute_wer
 from ssak.utils.monitoring import Monitoring
 
-REPLACEMENTS_WER = {"euh": "", "hum": ""}
 PATH_TO_WARMUP_FILE = "examples/bonjour.wav"
 
-# Typographic punctuation that models emit but references usually write in ASCII
-# (or the reverse). Mapped to the ASCII equivalent before tokenizing, otherwise
-# e.g. "c\u2019est" and "c'est" yield different tokens and every French elision
-# counts as an error in the punctuated wer/cer.
-UNICODE_PUNCTUATION = {
-    "\u2019": "'",   # right single quotation mark, the usual ASR apostrophe
-    "\u2018": "'",   # left single quotation mark
-    "\u02bc": "'",   # modifier letter apostrophe
-    "\u2032": "'",   # prime
-    "\u201c": '"',   # left double quotation mark
-    "\u201d": '"',   # right double quotation mark
-    "\u00ab": '"',   # left-pointing double angle quotation mark
-    "\u00bb": '"',   # right-pointing double angle quotation mark
-    "\u2013": "-",   # en dash
-    "\u2014": "-",   # em dash
-    "\u2212": "-",   # minus sign
-    "\u2026": "...", # horizontal ellipsis
-    "\u00a0": " ",   # non-breaking space
-    "\u202f": " ",   # narrow no-break space (French thin space before ; : ! ?)
-}
-
-_UNICODE_PUNCTUATION_RE = re.compile("|".join(map(re.escape, UNICODE_PUNCTUATION)))
-
-
-def normalize_punctuation(text):
-    """
-    Map typographic punctuation to its ASCII equivalent.
-
-    Example: "c\u2019est \u2014 oui\u2026" -> "c'est - oui..."
-    """
-    return _UNICODE_PUNCTUATION_RE.sub(lambda m: UNICODE_PUNCTUATION[m.group()], text)
-
-
-# Languages normalized by ssak (numbers_and_symbols_to_letters, compute_wer(language=...)).
-# The others (Arabic in the sota_multilingual benchmark) use num2words and
-# normalize_generic(): ssak's Arabic normalization needs lang_trans and data files
-# (assets/) that are not installed with the package.
-SSAK_LANGUAGES = ("fr", "en", "es", "de", "it", "pt", "nl")
-# Languages whose fillers REPLACEMENTS_WER removes in every mode
-FILLER_LANGUAGES = ("fr", "en")
-DECIMAL_WORDS = {"de": "komma", "es": "coma", "it": "virgola", "pt": "vírgula", "nl": "komma", "ar": "فاصلة"}
-_THOUSANDS_RE = re.compile(r"\b\d{1,3}(?:[ .  ]\d{3})+\b")
-_NUMBER_RE = re.compile(r"\d+(?:[.,]\d+)?")
-# Arabic: short vowels / shadda / sukun (written or not, FLEURS mixes both), tatweel,
-# hamza forms of alef (أ إ آ -> ا) that references and models write inconsistently.
-_ARABIC_DIACRITICS_RE = re.compile(r"[ؐ-ًؚ-ٰٟۖ-ۭـ]")
-_ARABIC_ALEF_RE = re.compile(r"[آأإٱ]")
-
-
-def spell_numbers_num2words(text, language):
-    """"23,5" -> "ventitré virgola cinque": digits in letters with num2words, thousands
-    groups ("10 000", "10.000") read as one number. Left unchanged when num2words fails."""
-    from num2words import num2words
-
-    def spell(m):
-        parts = re.split(r"[.,]", m.group(), maxsplit=1)
-        try:
-            words = num2words(int(parts[0]), lang=language)
-            if len(parts) == 2:
-                decimals = parts[1]
-                zeros = len(decimals) - len(decimals.lstrip("0"))
-                tail = [num2words(0, lang=language)] * zeros + ([num2words(int(decimals), lang=language)] if decimals.lstrip("0") else [])
-                words = " ".join([words, DECIMAL_WORDS.get(language, ",")] + tail)
-        except (ValueError, NotImplementedError, OverflowError):
-            return m.group()
-        return f" {words} "
-
-    text = _THOUSANDS_RE.sub(lambda m: re.sub(r"\D", "", m.group()), text)
-    return re.sub(r"\s+", " ", _NUMBER_RE.sub(spell, text)).strip()
-
-
-def spell_numbers(text, language="fr"):
-    """"le 15 décembre" -> "le quinze décembre", as the nocasepunc normalization does."""
-    if not re.search(r"\d", text):
-        return text
-    if language not in SSAK_LANGUAGES:
-        return spell_numbers_num2words(text, language)
-    return numbers_and_symbols_to_letters(text, lang=language)
-
-
-def normalize_generic(text, language):
-    """nocasepunc normalization of the languages ssak does not handle: numbers in letters,
-    lower case, punctuation and symbols (apostrophes and hyphens included) replaced by
-    spaces, accents kept. Arabic: diacritics and tatweel removed, alef forms merged.
-
-    Example (ar): "دفع 15 دولاراً." -> "دفع خمسة عشر دولارا"
-    """
-    text = unicodedata.normalize("NFKC", normalize_punctuation(text))
-    text = spell_numbers(text, language).lower()
-    if language == "ar":
-        text = _ARABIC_ALEF_RE.sub("ا", _ARABIC_DIACRITICS_RE.sub("", text))
-    text = "".join(" " if unicodedata.category(c)[0] in "PS" else c for c in text)
-    return re.sub(r"\s+", " ", text).strip()
-
-
-def separate_punctuation(text):
-    """
-    Example: "Hello,world!" -> "Hello , world !"
-    """
-    text = normalize_punctuation(text)
-    # ¿ ¡ (Spanish), ، ؟ ؛ (Arabic): sota_multilingual
-    text = re.sub(r'([.,!?;:()\"\'\-¿¡،؟؛])', r' \1 ', text)
-    text = re.sub(r'\s+', ' ', text).strip()
-    return text
 
 def check_if_benched(output_folder, input_file, config, debug):
     data = dict()
@@ -243,6 +139,7 @@ def transcribe_with_rtf(model, data, output_folder, config):
         progress_bar.set_description(f"Transcribing {basename}".ljust(45))
         try:
             audio = model.load_audio(audio_file, start=row.get("offset", 0.0), duration=audio_duration)
+            model.set_biasing_terms(model.terms_for_row(row))
             start = time.time()
             output = model.transcribe(audio)
         except Exception as e:
@@ -254,7 +151,7 @@ def transcribe_with_rtf(model, data, output_folder, config):
         output['rtf'] = round(output['prediction_duration'] / audio_duration, 5)
         yield i, output, row
         monitor.next()
-        progress_bar.set_description(f"Finished {model.get_folder_name()}".ljust(45))
+        progress_bar.set_description(f"Finished {model.get_full_folder_name()}".ljust(45))
     monitor.stop()
 
 def transcribe_with_rtf_concurrent(model, data, output_folder, config):
@@ -375,6 +272,11 @@ def bootstrap_ci(counts, score, n_resamples=1000, level=0.95, seed=0):
     return [round(float(v + shift), 3) for v in np.percentile(rates, [tail, 100 - tail])]
 
 
+def has_case(references):
+    """Whether the references have lower case and upper case (not only "THE CAT" or "the cat")."""
+    return any(ref != ref.lower() for ref in references) and any(ref != ref.upper() for ref in references)
+
+
 def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
     """WER/CER of one dataset's predictions ({id: {"text", "prediction", ...}}), in
     every mode, each with its 95% confidence interval ("ci95"). Each file's errors are
@@ -383,33 +285,24 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
     references = [data[id]["text"] for id in data]
     results = dict(num_data=len(predictions), duration=sum([data[id]["audio_duration"] for id in data]))
 
-    modes = ["wer_nocasepunc", "cer_nocasepunc"]
+    # - wer: with case and punctuation (when the references have punctuation)
+    # - wer_nopunc: with case, without punctuation (when the references have both cases)
+    # - wer_nocasepunc: without case nor punctuation
+    # The punctuation is separated or removed by the normalization, after the conversion of the numbers,
+    # acronyms, ... ("1,5" -> "un virgule cinq", "S.N.C.F." -> "SNCF").
+    options = {}
     if any(re.search( r"[^\w\s'-]", ref) for ref in references):
-        modes = ["wer", "cer", "wer_nocasepunc", "cer_nocasepunc"]
+        options[""] = dict(case_sensitive=True, keep_punctuation=True)
+    if has_case(references):
+        options["_nopunc"] = dict(case_sensitive=True)
+    options["_nocasepunc"] = dict()
+    modes = [metric + suffix for suffix in options for metric in ("wer", "cer")]
 
-    texts = {"nocasepunc": (references, predictions)}
-    if "wer" in modes:
-        texts = {
-            "nocasepunc": ([separate_punctuation(ref) for ref in references], [separate_punctuation(pred) for pred in predictions]),
-            "punc": ([separate_punctuation(spell_numbers(ref, language)) for ref in references],
-                     [separate_punctuation(spell_numbers(pred, language)) for pred in predictions]),
-        }
-
-    if language not in SSAK_LANGUAGES:
-        # compute_wer only knows the ssak languages: the nocasepunc texts are normalized here,
-        # from the raw texts (separate_punctuation would split "10.000" before spelling it)
-        texts["nocasepunc"] = ([normalize_generic(t, language) for t in references], [normalize_generic(t, language) for t in predictions])
-
-    word_alignments = {}  # "punc" / "nocasepunc" -> word-level alignment, reused by the cer mode
+    word_alignments = {}  # suffix of the mode -> word-level alignment, reused by the cer mode
     for key in modes:
-        text_mode = "nocasepunc" if "nocasepunc" in key else "punc"
-        # nocasepunc: ssak normalization (numbers in letters, lower case, punctuation,
-        # apostrophes and dashes removed, disfluencies removed)
-        ssak_language = language if text_mode == "nocasepunc" and language in SSAK_LANGUAGES else None
-        # French fillers ("euh", "hum"): not removed from the other languages
-        replacements = REPLACEMENTS_WER if language in FILLER_LANGUAGES else {}
+        suffix = key[len("wer"):]
         if "cer" in key:
-            measures = character_measures(word_alignments[text_mode])
+            measures = character_measures(word_alignments[suffix])
             sub, dele, ins, hits = map(sum, zip(*measures))
             count = sub + dele + hits
             pct = lambda x: 100 * x / max(count, 1)
@@ -422,20 +315,15 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
             if alignment_dir:
                 (Path(alignment_dir) / key).mkdir(parents=True, exist_ok=True)
                 alignment = str(Path(alignment_dir) / key / (dataset + ".txt"))
-            refs, preds = texts[text_mode]
             wer_score = compute_wer(
-                refs,
-                preds,
-                language=ssak_language,
-                remove_apostrophes_and_dashes=True,
+                [normalize_for_wer(ref, language, **options[suffix]) for ref in references],
+                [normalize_for_wer(pred, language, **options[suffix]) for pred in predictions],
                 use_percents=True,
                 alignment=alignment,
-                replacements_pred=replacements,
-                replacements_ref=replacements,
             )
-            word_alignments[text_mode] = wer_score.pop("raw_alignement")
+            word_alignments[suffix] = wer_score.pop("raw_alignement")
             del wer_score["alignment"]
-            counts = utterance_errors(word_alignments[text_mode])
+            counts = utterance_errors(word_alignments[suffix])
         # Each file's errors are capped at its reference length (100% WER), so that one
         # hallucination loop does not dominate the dataset score. Only insertions can
         # exceed the reference length, so the excess is removed from them.
@@ -446,6 +334,14 @@ def score_dataset(data, language="fr", alignment_dir=None, dataset=None):
         wer_score["ci95"] = bootstrap_ci(capped, wer_score["wer"])
         results[key] = wer_score
     return results
+
+
+def text_language(config, data=None):
+    """Language of the texts (normalization) of a dataset's predictions ({id: row}): that of
+    the rows (multilingual benchmarks), else the config's: wer_language when the model's
+    language setting is not it (e.g. null for auto-detection), else language."""
+    row = next(iter(data.values()), {}) if data else {}
+    return row.get("language") or config.get("wer_language") or config.get("language") or "fr"
 
 
 def process_wer(output_folder, config):
@@ -462,10 +358,14 @@ def process_wer(output_folder, config):
         if not list(data.values())[0].get("text", False):
             logger.info(f"No reference for {dataset}, skipping WER computation")
             continue
+        language = text_language(config, data)
         alignment_dir = output_path / "alignments" if config.get("save_alignments", True) else None
-        # The dataset's language (multilingual benchmarks), else the config's
-        language = next(iter(data.values())).get("language") or config.get("language") or "fr"
         results = score_dataset(data, language, alignment_dir, dataset)
+        # Contextual biasing measures, when the manifest has biasing lists
+        rows = contextual_biasing.manifest_rows(config.get("input_manifest"), config.get("input_audios_paths", ""))
+        biasing = contextual_biasing.score_dataset(data, rows.get(dataset, {}), config, language)
+        if biasing:
+            results[contextual_biasing.MANIFEST_KEY] = biasing
         with open(perf_file, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=4)
 
@@ -473,6 +373,10 @@ def bench_model(config, input_manifest, output_folder, debug=False):
     data, bench_results = check_if_benched(
         output_folder, input_manifest, config,  debug
     )
+    # With a contextual biasing list, only the datasets that have this list
+    for dataset in [d for d, rows in data.items() if not contextual_biasing.applies_to(rows[0], config)]:
+        logger.info(f"Skipping {dataset}: no contextual biasing list '{config['contextual_biasing']}'")
+        del data[dataset]
     if len(data)>0:
         model = get_model(config)
         model.load()
@@ -481,10 +385,12 @@ def bench_model(config, input_manifest, output_folder, debug=False):
         model.set_language(next(iter(data.values()))[0].get("language"))
         audio = model.load_audio(PATH_TO_WARMUP_FILE)
         _ = model.transcribe(audio)
+        transcription_time = {}
         for dataset in data:
             dataset_data = data[dataset]
             model.set_language(dataset_data[0].get("language"))
             bench_dataset_result = bench_results.get(dataset, dict())
+            start = time.time()
             if config.get('compute_rtf', True):
                 if int(config.get('concurrency', 1) or 1) > 1:
                     iterator = transcribe_with_rtf_concurrent(model, dataset_data, output_folder, config)
@@ -493,19 +399,27 @@ def bench_model(config, input_manifest, output_folder, debug=False):
             else:
                 iterator = transcribe_fast(model, dataset_data, output_folder, config)
             process_result(iterator, bench_dataset_result, output_folder, config, save_interval=1 if config.get('compute_rtf', True) else None)
+            # Wall-clock time of the transcriptions of this run (model loading and scoring
+            # excluded): throughput (RTFx) = audio_seconds / seconds, even without compute_rtf
+            transcription_time[dataset] = {
+                "seconds": round(time.time() - start, 2),
+                "audio_seconds": round(sum(bench_dataset_result.get(row["id"], {}).get("audio_duration", 0) for row in dataset_data), 2),
+                "files": len(dataset_data),
+            }
         model.cleanup()
         metadata = model.get_metadata()
         # model_info (license, size, languages: tools/fill_model_info.py, or edited by hand)
         # is not part of the config: keep it across reruns. The size is counted on the
         # loaded model when the API cannot give it (e.g. .nemo checkpoints, no safetensors).
+        # transcription_time: kept for the datasets not transcribed again.
         metadata_file = Path(output_folder) / "metadata.json"
-        model_info = {}
-        if metadata_file.exists():
-            model_info = json.loads(metadata_file.read_text(encoding="utf-8")).get("model_info") or {}
+        previous = json.loads(metadata_file.read_text(encoding="utf-8")) if metadata_file.exists() else {}
+        model_info = previous.get("model_info") or {}
         if n_params and not model_info.get("params"):
             model_info["params"] = n_params
         if model_info:
             metadata["model_info"] = model_info
+        metadata["transcription_time"] = (previous.get("transcription_time") or {}) | transcription_time
         with open(metadata_file, "w", encoding="utf-8") as f:
             f.write(json.dumps(hide_home(metadata), indent=2, ensure_ascii=False))
     else:
@@ -555,7 +469,7 @@ def launch_benchmark(
         config['compute_latency'] = config.get('compute_latency', compute_latency)
         config['plot_monitoring'] = config.get('plot_monitoring', plot_monitoring)
         config['input_audios_paths'] = config.get('input_audios_paths', input_audios_paths)
-        bench_id = model.get_folder_name()
+        bench_id = model.get_full_folder_name()
         logger.info(
             f"Benching {bench_id} (progress {progress_bar.n}/{progress_bar.total})"
         )
