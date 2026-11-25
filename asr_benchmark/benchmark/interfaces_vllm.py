@@ -328,6 +328,10 @@ class VllmTranscriptionModel(Model):
     def cleanup(self):
         self._terminate_server()
 
+    def format_prompt(self, prompt):
+        placeholder = self.config.get("audio_placeholder")
+        return f"{prompt} {placeholder}" if placeholder and placeholder not in prompt else prompt
+
     def add_defaults_to_config(self, config):
         config["server"] = config.get("server", "http://localhost")
         config["port"] = int(config.get("port", 8000))

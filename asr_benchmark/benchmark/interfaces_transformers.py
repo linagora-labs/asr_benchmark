@@ -1,5 +1,6 @@
 import logging
 import os
+import numpy as np
 import torch
 import ssak.utils.vad
 from asr_benchmark.utils.benchmark import load_audio
@@ -119,9 +120,13 @@ class TransformersModel(Model):
     
 class TransformersWhisperModel(TransformersModel):
     """Whisper models through model.generate(), without the ASR pipeline, which decodes an
-    empty text with the per-language tokenizers of some fine-tunes (BuzzASR). Segments of
-    at most 30 s (one Whisper window), transcribed by batches of `batch_size`."""
+    empty text with the per-language tokenizers of some fine-tunes (BuzzASR). Transcribed by
+    batches of `batch_size`. A segment over 30 s (one Whisper window) is cut into windows of at
+    most 30 s, each cut at the quietest 100 ms between 20 and 30 s of the window, and the texts
+    of its windows are joined: no long-form generation, which needs a model trained to predict
+    timestamps."""
     MAX_SECONDS = 30
+    MIN_SECONDS = 20
 
     def load(self) -> None:
         from transformers import WhisperForConditionalGeneration, WhisperProcessor
@@ -132,14 +137,33 @@ class TransformersWhisperModel(TransformersModel):
         ).to(self.config['device']).eval()
         self.processor = WhisperProcessor.from_pretrained(self.config['model'])
 
-    def transcribe_many(self, audios: list) -> list[dict]:
-        for audio in audios:
-            if len(audio) > self.MAX_SECONDS * 16000:
-                raise ValueError(f"{len(audio) / 16000:.1f} s of audio: {self.config['backend']} only transcribes segments of at most {self.MAX_SECONDS} s")
+    def split(self, audio) -> list:
+        """Windows of at most MAX_SECONDS, cut at the quietest 100 ms frame after MIN_SECONDS."""
+        sr, frame = 16000, 1600
+        windows = []
+        while len(audio) > self.MAX_SECONDS * sr:
+            region = np.asarray(audio[self.MIN_SECONDS * sr:self.MAX_SECONDS * sr])
+            energy = (region[:len(region) // frame * frame].reshape(-1, frame) ** 2).sum(axis=1)
+            cut = self.MIN_SECONDS * sr + int(np.argmin(energy)) * frame + frame // 2
+            windows.append(audio[:cut])
+            audio = audio[cut:]
+        return windows + [audio]
+
+    def generate(self, audios: list) -> list[str]:
         features = self.processor(audios, sampling_rate=16000, return_tensors="pt").input_features
         with torch.inference_mode():
             ids = self.model.generate(features.to(self.config['device'], self.dtype), **self.transcribe_kwargs)
-        return [{'text': text} for text in self.processor.batch_decode(ids, skip_special_tokens=True)]
+        return self.processor.batch_decode(ids, skip_special_tokens=True)
+
+    def transcribe_many(self, audios: list) -> list[dict]:
+        windows = [self.split(audio) for audio in audios]
+        flat = [w for ws in windows for w in ws]
+        texts = [t for i in range(0, len(flat), len(audios)) for t in self.generate(flat[i:i + len(audios)])]
+        out, i = [], 0
+        for ws in windows:
+            out.append({'text': " ".join(t.strip() for t in texts[i:i + len(ws)] if t.strip())})
+            i += len(ws)
+        return out
 
     def transcribe(self, audio) -> dict:
         if self.config['vad'] and self.config['vad'] in ['auditok','silero', 'pyannote']:

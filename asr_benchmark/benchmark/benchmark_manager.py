@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 import re
 import time
+import unicodedata
 import json
 import matplotlib
 matplotlib.use("Agg")
@@ -41,8 +42,17 @@ def check_if_benched(output_folder, input_file, config, debug):
         dataset = dataset_file.stem
         with open(dataset_file, "r") as f:
             benched[dataset] = json.load(f)
+    # `languages` (per entry): only the datasets of these languages, for the models that
+    # do not support every language of a multilingual benchmark
+    languages = config.get("languages")
+    if languages:
+        all_data = [row for row in all_data if row.get("language") in languages]
     if debug:
-        all_data = all_data[:1]
+        # One segment (one per dataset in a multilingual benchmark)
+        first = {}
+        for row in all_data:
+            first.setdefault(row["name"] if row.get("language") else None, row)
+        all_data = list(first.values())
     for row in all_data:
         dataset, id = row['name'], row['id']
         if dataset not in data:
@@ -56,6 +66,27 @@ def check_if_benched(output_folder, input_file, config, debug):
         data[dataset] = sorted(data[dataset], key=lambda x: x['id'])
     return data, benched
 
+# The host user's home too: in a docker container (tools/run_sota_dgx.sh), HOME is not the
+# host user's, who passes it as HOST_HOME
+HOMES = sorted({h.rstrip("/") for h in (os.path.expanduser("~"), os.environ.get("HOST_HOME", "")) if h.rstrip("/")},
+               key=len, reverse=True)
+
+
+def hide_home(value):
+    """Paths under the home folder written as ~/...: results are versioned and published (the
+    user name must not appear in them). Recursive on lists and dicts."""
+    if isinstance(value, str):
+        for home in HOMES:
+            if value == home or value.startswith(home + "/"):
+                return "~" + value[len(home):]
+        return value
+    if isinstance(value, list):
+        return [hide_home(v) for v in value]
+    if isinstance(value, dict):
+        return {k: hide_home(v) for k, v in value.items()}
+    return value
+
+
 def make_perf_file(row):
     if "name" in row:
         full_dataset = row["name"]
@@ -64,7 +95,7 @@ def make_perf_file(row):
         dataset = row["dataset"]
         full_dataset = dataset
     perfs = {
-        "audio_filepath": row["audio_filepath"],
+        "audio_filepath": hide_home(row["audio_filepath"]),
         "id": row['id'],
         "audio_duration": round(row.get("duration") if row.get("duration") else utils.get_audio_duration(row["audio_filepath"]), 3),
         "audio_offset": round(row.get("offset", 0.0), 3),
@@ -72,6 +103,8 @@ def make_perf_file(row):
         "full_dataset": full_dataset,
         "text": row["text"],
     }
+    if row.get("language"):
+        perfs["language"] = row["language"]
 
     return perfs
 
@@ -101,7 +134,7 @@ def transcribe_with_rtf(model, data, output_folder, config):
         torch.set_num_threads(model.config.get("num_threads", 4))
     for i, row in enumerate(progress_bar):
         perfs = make_perf_file(row)
-        audio_file, dataset, audio_duration = perfs["audio_filepath"], perfs["dataset"], perfs["audio_duration"]
+        audio_file, dataset, audio_duration = row["audio_filepath"], perfs["dataset"], perfs["audio_duration"]
         basename = Path(audio_file).stem
         progress_bar.set_description(f"Transcribing {basename}".ljust(45))
         try:
@@ -348,11 +381,14 @@ def bench_model(config, input_manifest, output_folder, debug=False):
         model = get_model(config)
         model.load()
         n_params = model.count_parameters()
+        # Some backends need a language for the warm-up (Canary without `language` in the config)
+        model.set_language(next(iter(data.values()))[0].get("language"))
         audio = model.load_audio(PATH_TO_WARMUP_FILE)
         _ = model.transcribe(audio)
         transcription_time = {}
         for dataset in data:
             dataset_data = data[dataset]
+            model.set_language(dataset_data[0].get("language"))
             bench_dataset_result = bench_results.get(dataset, dict())
             start = time.time()
             if config.get('compute_rtf', True):
@@ -385,10 +421,14 @@ def bench_model(config, input_manifest, output_folder, debug=False):
             metadata["model_info"] = model_info
         metadata["transcription_time"] = (previous.get("transcription_time") or {}) | transcription_time
         with open(metadata_file, "w", encoding="utf-8") as f:
-            f.write(json.dumps(metadata, indent=2, ensure_ascii=False))
+            f.write(json.dumps(hide_home(metadata), indent=2, ensure_ascii=False))
     else:
         logger.info(f"Skipping transcriptions, it has already been transcribed")
     process_wer(output_folder, config)
+
+# List values that are a setting, not a grid to expand
+NOT_EXPANDED = ("languages",)
+
 
 def make_configs(configs):
     main_config = {k: v for k, v in configs.items() if k != "benchmarks"}
@@ -397,7 +437,7 @@ def make_configs(configs):
         keys, values = zip(*config.items())
         all_combinations = [
             main_config | dict(zip(keys, prod))
-            for prod in product(*[v if isinstance(v, list) else [v] for v in values])
+            for prod in product(*[v if isinstance(v, list) and k not in NOT_EXPANDED else [v] for k, v in zip(keys, values)])
         ]
         new_configs.extend(all_combinations)
     return new_configs

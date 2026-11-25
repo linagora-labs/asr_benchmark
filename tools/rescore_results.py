@@ -28,7 +28,7 @@ def main(results, dry_run=False, manifest=None):
             data = json.loads(pred_file.read_text(encoding="utf-8"))
             language = text_language(metadata, data)
             with contextlib.redirect_stderr(io.StringIO()):  # ssak's progress bars
-                new = score_dataset(data, language)
+                new = score_dataset(data, next(iter(data.values())).get("language") or language)
             old = json.loads(perf_file.read_text(encoding="utf-8")) if perf_file.exists() else {}
             if rows is not None:
                 biasing = contextual_biasing.score_dataset(data, rows.get(pred_file.stem, {}), metadata, language)

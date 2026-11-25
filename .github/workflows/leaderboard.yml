@@ -11,6 +11,7 @@ on:
       - "benchmarks/sota/results_rtf/**"
       - "benchmarks/sota/config*.yaml"
       - "benchmarks/sota/manifest*.jsonl"
+      - "benchmarks/sota_multilingual/results/**"
       - "tools/leaderboard/**"
       - ".github/workflows/leaderboard.yml"
   workflow_dispatch:

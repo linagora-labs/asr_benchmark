@@ -1,0 +1,105 @@
+{
+  "backend": "vllm",
+  "model": "Reson8/Rumble-2-Flash",
+  "port": 8121,
+  "endpoint": "chat",
+  "extra_args": [
+    "--max-model-len",
+    "4096"
+  ],
+  "gpu_memory_utilization": 0.3,
+  "extra_bodies": {
+    "en": {
+      "chat_template_kwargs": {
+        "language": "English"
+      }
+    },
+    "nl": {
+      "chat_template_kwargs": {
+        "language": "Dutch"
+      }
+    },
+    "it": {
+      "chat_template_kwargs": {
+        "language": "Italian"
+      }
+    },
+    "de": {
+      "chat_template_kwargs": {
+        "language": "German"
+      }
+    },
+    "es": {
+      "chat_template_kwargs": {
+        "language": "Spanish"
+      }
+    },
+    "pt": {
+      "chat_template_kwargs": {
+        "language": "Portuguese"
+      }
+    },
+    "ar": {
+      "chat_template_kwargs": {
+        "language": "Arabic"
+      }
+    }
+  },
+  "vllm_command": [
+    "env",
+    "-u",
+    "PYTHONPATH",
+    "-u",
+    "LD_LIBRARY_PATH",
+    "-u",
+    "LIBRARY_PATH",
+    "-u",
+    "VLLM_USE_STANDALONE_COMPILE",
+    "-u",
+    "TORCH_CUDA_ARCH_LIST",
+    "-u",
+    "TRITON_CUPTI_PATH",
+    "-u",
+    "TRITON_CUDACRT_PATH",
+    "-u",
+    "TRITON_CUOBJDUMP_PATH",
+    "-u",
+    "TRITON_NVDISASM_PATH",
+    "-u",
+    "TRITON_PTXAS_PATH",
+    "-u",
+    "TRITON_CUDART_PATH",
+    "~/.venvs/vllm/bin/vllm",
+    "serve"
+  ],
+  "compute_rtf": false,
+  "server": "http://localhost",
+  "device": "cuda",
+  "launch": true,
+  "trust_remote_code": false,
+  "served_model_name": null,
+  "request_model": "Reson8/Rumble-2-Flash",
+  "language": "ar",
+  "temperature": 0.0,
+  "prompt": "Transcris cet audio en français.",
+  "audio_placeholder": null,
+  "max_tokens": 256,
+  "extra_body": {
+    "chat_template_kwargs": {
+      "language": "Arabic"
+    }
+  },
+  "concurrency": 64,
+  "strip_diarization": true,
+  "startup_timeout": 2400,
+  "request_timeout": 600,
+  "env": {},
+  "log_file": "logs/vllm_Reson8-Rumble-2-Flash.log",
+  "input_manifest": "/tmp/manifest_1ao8em9t.jsonl",
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "word_timestamps": false
+}

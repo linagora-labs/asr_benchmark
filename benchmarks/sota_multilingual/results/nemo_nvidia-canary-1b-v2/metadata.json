@@ -1,0 +1,27 @@
+{
+  "backend": "nemo",
+  "model": "nvidia/canary-1b-v2",
+  "languages": [
+    "en",
+    "nl",
+    "it",
+    "de",
+    "es",
+    "pt"
+  ],
+  "compute_rtf": false,
+  "vad": "false",
+  "device": "cuda",
+  "num_threads": null,
+  "input_manifest": "/tmp/manifest_dk4qfebk.jsonl",
+  "save_predictions": false,
+  "save_alignments": true,
+  "compute_latency": false,
+  "plot_monitoring": false,
+  "input_audios_paths": "",
+  "language": "pt",
+  "word_timestamps": true,
+  "model_info": {
+    "params": 962155520
+  }
+}

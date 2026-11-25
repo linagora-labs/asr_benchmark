@@ -5,6 +5,9 @@ Writes <output>/index.html, <output>/leaderboard.json and the result cards of ca
 
     python tools/leaderboard/build.py                       # benchmarks/sota/results -> site/
     python tools/leaderboard/build.py --results X --manifest M --output Y
+
+The Multilingual tab: benchmarks/sota_multilingual/results (--multilingual_results), plus the
+French FLEURS and TEDx of the same models from --results.
 """
 import argparse
 import json
@@ -45,6 +48,17 @@ SELECTION = {
     "FLEURS": ("Whole", None),
 }
 DEFAULT_LANGUAGE = "fr"
+# Multilingual tab: <prefix>_<language> test sets of benchmarks/sota_multilingual (whole, no
+# duration filter), plus the French ones of --results (id in that tab: its stem there)
+MULTILINGUAL_DATASETS = {
+    "FLEURS": ("FLEURS", "Read Wikipedia sentences", "https://huggingface.co/datasets/google/fleurs"),
+    "TEDX": ("mTEDx", "Prepared talks", "https://www.openslr.org/100/"),
+    "Voxpopuli": ("VoxPopuli", "Parliament speeches", "https://huggingface.co/datasets/facebook/voxpopuli"),
+    "CommonVoice": ("Common Voice 22.0", "Read speech", "https://commonvoice.mozilla.org/en/datasets"),
+}
+MULTILINGUAL_SELECTION = {"CommonVoice_en": "10%"}
+MULTILINGUAL_FRENCH = {"FLEURS": "FLEURS_fr", "TEDX_fr": "TEDX_fr"}  # stem in --results -> id
+MULTILINGUAL_LANGUAGES = ["fr", "en", "nl", "it", "de", "es", "pt", "ar"]  # column order
 METRICS = ["wer_nocasepunc", "wer", "cer_nocasepunc", "cer"]
 EMPTY_WARNING = 0.01  # share of empty outputs from which the model gets a caveat
 SPECIAL_TOKEN = re.compile(r"<\|[^|]*\|>")
@@ -102,9 +116,14 @@ def empty_note(scores):
     return f"Empty outputs: {empty} / {total} ({100 * empty / total:.1f}%)."
 
 
-def model_entry(exp, rtf_results=None):
+def model_entry(exp, rtf_results=None, info_from=None):
+    """info_from: results folder whose run of the same model (same folder name) completes the
+    model_info (filled by hand for the sota benchmark only; the benchmark only writes params)."""
     meta = json.loads((exp / "metadata.json").read_text(encoding="utf-8"))
     backend, model = meta["backend"], meta["model"]
+    if info_from and (info_from / exp.name / "metadata.json").exists():
+        other = json.loads((info_from / exp.name / "metadata.json").read_text(encoding="utf-8")).get("model_info") or {}
+        meta["model_info"] = (meta.get("model_info") or {}) | other
     # faster-whisper takes OpenAI size names ("large-v3"): show the original model.
     display = f"openai/whisper-{model}" if backend == "faster-whisper" and "/" not in model else model
     # vLLM serves local checkpoints (model is a path) under served_model_name: show it,
@@ -123,7 +142,7 @@ def model_entry(exp, rtf_results=None):
         variant = "_".join(filter(None, [variant, f"chunk{meta['chunk_ms']}ms"]))
     # License, size and languages: filled by tools/fill_model_info.py.
     hf = info.get("hf") or display
-    url = f"https://huggingface.co/{hf}" if "/" in hf and not hf.startswith(("/", ".")) else None
+    url = f"https://huggingface.co/{hf}" if "/" in hf and not hf.startswith(("/", ".", "~")) else None
     rtfx, hardware, rtf_backend, rtf_note = speed(exp, rtf_results, model)
     scores = {}
     for perf_file in sorted((exp / "performances").glob("*.json")):
@@ -156,10 +175,99 @@ def model_entry(exp, rtf_results=None):
         "rtf_backend": rtf_backend if rtf_backend != backend else None,  # set when timed with another backend
         "rtf_note": rtf_note,  # caveat on the speed measure, shown with a warning sign
         "wer_note": "\n".join(n.rstrip(".") + "." for n in (info.get("wer_note"), empty_note(scores)) if n) or None,
-        "prompt": (meta.get("prompt") if backend != "vllm" or meta.get("endpoint") == "chat" else None) or info.get("prompt"),
+        # model_info's (by hand) first: e.g. a chat template that ignores the sent prompt
+        "prompt": info.get("prompt") or (meta.get("prompt") if backend != "vllm" or meta.get("endpoint") == "chat" else None),
         "prompt_source": info.get("prompt_source"),
+        "merge_as": info.get("merge_as"),  # one row for several models (e.g. one model per language)
         "scores": scores,
     }
+
+
+def merge_rows(models):
+    """Models with the same model_info.merge_as in one row named after it: the scores of each on
+    its test sets (e.g. one fine-tune per language), languages joined, linked to the Hugging Face
+    organization, with a note."""
+    merged, groups = [], {}
+    for m in models:
+        name = m.pop("merge_as", None)
+        if not name:
+            merged.append(m)
+        elif name not in groups:
+            groups[name] = m | {"id": name, "model": name, "variant": "", "languages": list(m["languages"] or []),
+                                "url": m["url"] and m["url"].rsplit("/", 1)[0]}
+            merged.append(groups[name])
+        else:
+            group = groups[name]
+            group["scores"] |= m["scores"]
+            group["languages"] += [l for l in m["languages"] or [] if l not in group["languages"]]
+    for name, group in groups.items():
+        note = "One model per language, each scored on the test sets of its language"
+        group["wer_note"] = "\n".join(filter(None, [note + ".", group["wer_note"]]))
+    return merged
+
+
+def is_public(exp):
+    """Local checkpoints (model given as a path) without a Hugging Face repo (model_info.hf)
+    are internal: not on the page, which only shows models whose weights are public."""
+    meta = json.loads((exp / "metadata.json").read_text(encoding="utf-8"))
+    return not meta["model"].startswith(("/", ".", "~")) or bool((meta.get("model_info") or {}).get("hf"))
+
+
+def multilingual(results, french_results, rtf_results=None, include_private=False, french_extra=()):
+    """Models and test sets of the Multilingual tab, None without results. include_private: also
+    the local checkpoints (local preview, never published); french_extra: other results folders
+    where to find their French scores (e.g. benchmarks/luciole_dev/results)."""
+    if not results or not results.exists():
+        return None
+    models = []
+    for exp in sorted(p for p in results.iterdir() if (p / "metadata.json").exists()):
+        entry = model_entry(exp, rtf_results, info_from=french_results)
+        if not include_private and not is_public(exp):
+            continue
+        # One prompt per language (`prompts`), or the language in the request body (`extra_bodies`):
+        # the metadata keeps the last language's only
+        meta = json.loads((exp / "metadata.json").read_text(encoding="utf-8"))
+        if meta.get("prompts"):
+            entry["prompt"] = "\n".join(f"{lang}: {prompt}" for lang, prompt in meta["prompts"].items())
+            entry["prompt_source"] = "model card prompt, with the language of the test set"
+        elif meta.get("extra_bodies"):
+            entry["prompt"] = "\n".join(f"{lang}: {json.dumps(body, ensure_ascii=False)}" for lang, body in meta["extra_bodies"].items())
+            entry["prompt_source"] = "model card (vLLM chat): no text prompt, the language of the test set forced in the request"
+        french = next((f / exp.name for f in (french_results, *french_extra) if (f / exp.name / "metadata.json").exists()),
+                      french_results / exp.name)
+        if (french / "metadata.json").exists():
+            for stem, score in model_entry(french)["scores"].items():
+                if stem in MULTILINGUAL_FRENCH:
+                    entry["scores"][MULTILINGUAL_FRENCH[stem]] = score
+        models.append(entry)
+    # Models of a merged row (model_info.merge_as) run on French only (e.g. BuzzASR/french): their
+    # French scores, from --results
+    groups = {m["merge_as"] for m in models if m.get("merge_as")}
+    for exp in sorted(p for p in french_results.iterdir() if (p / "metadata.json").exists()):
+        if not (results / exp.name).exists():
+            entry = model_entry(exp)
+            if entry["merge_as"] in groups:
+                entry["scores"] = {MULTILINGUAL_FRENCH[k]: v for k, v in entry["scores"].items() if k in MULTILINGUAL_FRENCH}
+                models.append(entry)
+    models = merge_rows(models)
+    ids = {stem for m in models for stem in m["scores"]}
+    order = lambda i: (MULTILINGUAL_LANGUAGES.index(i.rsplit("_", 1)[1]) if i.rsplit("_", 1)[1] in MULTILINGUAL_LANGUAGES
+                       else len(MULTILINGUAL_LANGUAGES), list(MULTILINGUAL_DATASETS).index(i.rsplit("_", 1)[0])
+                       if i.rsplit("_", 1)[0] in MULTILINGUAL_DATASETS else len(MULTILINGUAL_DATASETS), i)
+    datasets = []
+    for i in sorted(ids, key=order):
+        prefix, language = i.rsplit("_", 1)
+        name, domain, url = MULTILINGUAL_DATASETS.get(prefix, (prefix, "", None))
+        if i in MULTILINGUAL_FRENCH.values():
+            selection = "Whole, segments of 30 s at most (French leaderboard)"
+        else:
+            selection = MULTILINGUAL_SELECTION.get(i, "Whole")
+        datasets.append({
+            "id": i, "name": name, "domain": domain, "language": language, "url": url, "selection": selection,
+            "hours": round(max((m["scores"][i]["seconds"] or 0) for m in models if i in m["scores"]) / 3600, 2) or None,
+            "utterances": max((m["scores"][i]["n"] or 0) for m in models if i in m["scores"]),
+        })
+    return {"datasets": datasets, "models": models}
 
 
 def manifest_durations(manifest):
@@ -222,9 +330,12 @@ def last_commit_date(path):
         return None
 
 
-def build(results, manifest, output, rtf_results=None, rtf_manifest=None, cards=None):
+def build(results, manifest, output, rtf_results=None, rtf_manifest=None, cards=None, multilingual_results=None,
+          include_private=False, french_extra=()):
     experiments = sorted(p for p in results.iterdir() if (p / "metadata.json").exists())
     models = [model_entry(exp, rtf_results) for exp in experiments]
+    for m in models:
+        m.pop("merge_as", None)  # rows merged in the Multilingual tab only
     durations = manifest_durations(manifest)
     order = list(DATASETS)
     stems = sorted({stem for m in models for stem in m["scores"]},
@@ -262,6 +373,7 @@ def build(results, manifest, output, rtf_results=None, rtf_manifest=None, cards=
         "dataset_totals": totals,
         "speed_set": speed_set(rtf_manifest, rtf_results),
         "models": models,
+        "multilingual": multilingual(multilingual_results, results, rtf_results, include_private, french_extra),
     }
     output.mkdir(parents=True, exist_ok=True)
     (output / "leaderboard.json").write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
@@ -284,5 +396,12 @@ if __name__ == "__main__":
                         help="Manifest of the speed runs, described in the test sets tab")
     parser.add_argument("--cards", type=Path, default=HERE / "cards.json",
                         help="Result cards to draw (SVG for model cards), see cards.py")
+    parser.add_argument("--multilingual_results", type=Path, default=Path("benchmarks/sota_multilingual/results"),
+                        help="Results of the Multilingual tab (benchmarks/sota_multilingual)")
+    parser.add_argument("--include_private", action="store_true",
+                        help="Multilingual tab: also the local checkpoints (local preview only, not for the published page)")
+    parser.add_argument("--french_results_extra", type=Path, nargs="*", default=[],
+                        help="Multilingual tab: other folders for the French scores of models not in --results")
     args = parser.parse_args()
-    build(args.results, args.manifest, args.output, args.rtf_results, args.rtf_manifest, args.cards)
+    build(args.results, args.manifest, args.output, args.rtf_results, args.rtf_manifest, args.cards, args.multilingual_results,
+          args.include_private, args.french_results_extra)
