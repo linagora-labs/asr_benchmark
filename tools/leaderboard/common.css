@@ -34,3 +34,5 @@
   .note-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr)); gap: 20px 36px; margin-top: 32px; font-size: 14px; }
   .note-groups h3 { margin: 0; font-size: 15px; color: var(--text); }
   .note-groups ul { margin: 6px 0 0; padding-left: 18px; } .note-groups li { margin: 5px 0; }
+  /* Vertical line between the scores and the other columns */
+  th.section-start, td.section-start { border-left: 2px solid #a3a19b; }

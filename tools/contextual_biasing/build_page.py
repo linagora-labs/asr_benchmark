@@ -42,10 +42,10 @@ LISTS = {
     "bdpm": ("BDPM", "Drug names of the French public drug database, and the 389 names"),
     "theriaque": ("Thériaque", "Drug names of the Thériaque database, and the 389 names (private list: its terms of use forbid to share it)"),
     "global": ("Call keywords", "For each clip: the keywords of the whole call, about 7 % of them spoken in the clip"),
-    "100": ("100 distractors", "For each utterance: its rare words, and 100 others drawn at random"),
-    "500": ("500 distractors", "For each utterance: its rare words, and 500 others drawn at random"),
-    "1000": ("1,000 distractors", "For each utterance: its rare words, and 1,000 others drawn at random"),
-    "2000": ("2,000 distractors", "For each utterance: its rare words, and 2,000 others drawn at random"),
+    "100": ("100 distractors", "For each utterance: its rare words (1.8 on average, the terms to recognize), and 100 other rare words drawn at random"),
+    "500": ("500 distractors", "For each utterance: its rare words (1.8 on average, the terms to recognize), and 500 other rare words drawn at random"),
+    "1000": ("1,000 distractors", "For each utterance: its rare words (1.8 on average, the terms to recognize), and 1,000 other rare words drawn at random (about 2 fewer on average in the released lists, probably duplicates removed)"),
+    "2000": ("2,000 distractors", "For each utterance: its rare words (1.8 on average, the terms to recognize), and 2,000 other rare words drawn at random (about 7 fewer on average in the released lists, probably duplicates removed)"),
 }
 
 
@@ -74,17 +74,30 @@ def model_variant(metadata, folder):
 
 
 # How the list is given to the model, by backend (the others: in their prompt)
-LIST_GIVEN = {
-    "faster-whisper": ("Hotwords", "Whisper hotwords: put before the previous text in the decoder prompt, at most 223 tokens"),
-    "nemo": ("Boosting", "NeMo phrase boosting: the scores of the listed terms are raised at decoding time"),
-    "vibevoice-asr": ("Prompt", "Extra context of the request"),
+# Techniques to give the list to the model: "Context", an input made for context, that the model is trained
+# to use as background knowledge; "Prompt", the text prompt of the model (made for instructions, or for the
+# previous text in Whisper); "Boosting", the scores of the terms raised at decoding time (no training)
+TECHNIQUES = {
+    "faster-whisper": ("Prompt", "Prompt: the terms put before the previous text in the decoder prompt (faster-whisper hotwords, "
+                                 "at most 223 tokens), a slot that Whisper was not trained to use for this"),
+    "nemo": ("Boosting", "Boosting: the scores of the terms raised at decoding time (NeMo GPU phrase boosting), without training"),
+    "vibevoice-asr": ("Context", "Context: extra text of the request, next to the audio, that VibeVoice-ASR is trained to use"),
+}
+# Models of the vLLM backend with an input made for context
+CONTEXT_MODELS = {
+    "Qwen3-ASR": "Context: the context of the request (system turn, as the context argument of the Qwen3-ASR SDK), "
+                 "that Qwen3-ASR is trained to use as background knowledge",
 }
 
 
-def list_given(metadata):
-    """(Short name, details) of the way the list is given in a run with a list."""
+def technique(metadata):
+    """(Technique, details) of the way the list is given to the model in a run with a list."""
     template = metadata.get("contextual_biasing_template")
-    return LIST_GIVEN.get(metadata.get("backend"), ("Prompt", f"In the prompt: {template}" if template else "In the prompt"))
+    for model, details in CONTEXT_MODELS.items():
+        if model in model_name(metadata):
+            return "Context", details + (f"; text given: {template}" if template else "")
+    return TECHNIQUES.get(metadata.get("backend"), ("Prompt", "Prompt: the terms added to the instruction prompt of the model"
+                                                               + (f": {template}" if template else "")))
 
 
 def model_infos(folder):
@@ -145,7 +158,7 @@ def language_data(results, infos, excluded=(), excluded_datasets=(), excluded_se
                 **{key: infos.get(name, {}).get(key) for key in ("params", "license", "architecture", "streaming")},
             })
             if row.get("run_cb"):
-                model["list_given"] = list_given(runs[row["run_cb"]][0])
+                model["technique"] = technique(runs[row["run_cb"]][0])
             if setting.startswith("alpha"):
                 if is_other_alpha(row):
                     continue

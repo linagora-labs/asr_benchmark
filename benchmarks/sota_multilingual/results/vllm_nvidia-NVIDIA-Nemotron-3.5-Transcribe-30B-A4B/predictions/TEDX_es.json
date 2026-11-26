@@ -2015,20 +2015,6 @@
     "throughput_rtfx": 48.77,
     "prediction": "Y resulta que todo eso que yo estaba aprendiendo es lo que los mayores llaman informática creativa."
   },
-  "TEDX_es_9hUjhIfs-bw_157.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9hUjhIfs-bw.wav",
-    "id": "TEDX_es_9hUjhIfs-bw_157.1",
-    "audio_duration": 32.53,
-    "audio_offset": 157.09,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Una vez me dijeron que programar es como una obra de teatro: tenemos nuestro escenario donde están nuestros actores que actuarán entre sí según les digamos, podemos disfrazarlos para conseguir animaciones o añadir imágenes, sonidos, etc. Pensaréis: tiene muy buena pinta, pero un niño solo, en su habitación, programando, no es muy social que digamos.",
-    "language": "es",
-    "prediction_duration": 11.91652,
-    "rtf": 0.36632,
-    "throughput_rtfx": 48.77,
-    "prediction": "Una vez me dijeron que programar es como una obra de teatro. Tenemos nuestro escenario donde están nuestros actores que actuarán entre sí según les digamos. Podemos disfrazarlos para conseguir animaciones o añadir imágenes, sonidos, etcétera. Pensaréis, tiene muy buena pinta, pero un niño solo en su habitación programando no es muy social, que digamos."
-  },
   "TEDX_es_9hUjhIfs-bw_16.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9hUjhIfs-bw.wav",
     "id": "TEDX_es_9hUjhIfs-bw_16.7",
@@ -2784,20 +2770,6 @@
     "rtf": 0.46479,
     "throughput_rtfx": 48.77,
     "prediction": "A ver si suena esta canción."
-  },
-  "TEDX_es_9hUjhIfs-bw_607.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9hUjhIfs-bw.wav",
-    "id": "TEDX_es_9hUjhIfs-bw_607.0",
-    "audio_duration": 59.41,
-    "audio_offset": 606.95,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Y ahora os voy a enseñar cómo el agua puede hacer más sonidos que el que hace cuando sale del grifo.",
-    "language": "es",
-    "prediction_duration": 4.55854,
-    "rtf": 0.07673,
-    "throughput_rtfx": 48.77,
-    "prediction": "Y ahora os voy a enseñar cómo el agua puede hacer más sonidos que el que hace cuando sale del grifo."
   },
   "TEDX_es_9hUjhIfs-bw_61.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9hUjhIfs-bw.wav",
@@ -6803,20 +6775,6 @@
     "throughput_rtfx": 48.77,
     "prediction": "No es como las huellas dactilares, que es lo que te acompaña toda la vida."
   },
-  "TEDX_es_U0bRlf7xmYs_237.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/U0bRlf7xmYs.wav",
-    "id": "TEDX_es_U0bRlf7xmYs_237.7",
-    "audio_duration": 30.91,
-    "audio_offset": 237.66,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "La identidad es algo que se crea o se forja en función de los valores y las creencias que te da tu familia, te dan tus amigos y también va en función de lo que tú realmente quieres ser, y lo que tú quieres realmente ser va en función de tu motivación, del sentimiento de pertenencia que tienes con otros grupos con los que te sientes afín o identificado y también en función de las interacciones con grupos que son totalmente diferentes a ti.",
-    "language": "es",
-    "prediction_duration": 14.90836,
-    "rtf": 0.48232,
-    "throughput_rtfx": 48.77,
-    "prediction": "La identidad es algo que se crea o se forja en función de los valores y los y las creencias que da tu te da tu familia, te da también te dan tus amigos también y también va en función de lo que tú realmente quieres ser. Y lo que tú quieres realmente ser va en función de tu motivación, del del sentimiento de pertenencia que tienes con otras con otros grupos, con los que te sientes afines o identificados y también en función de las interacciones con grupos que son totalmente diferentes a ti."
-  },
   "TEDX_es_U0bRlf7xmYs_26.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/U0bRlf7xmYs.wav",
     "id": "TEDX_es_U0bRlf7xmYs_26.2",
@@ -6858,20 +6816,6 @@
     "rtf": 0.43458,
     "throughput_rtfx": 48.77,
     "prediction": "Pero es realmente significativa la ausencia de las chicas adolescentes en estos grupos de alemán, en estas actividades."
-  },
-  "TEDX_es_U0bRlf7xmYs_300.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/U0bRlf7xmYs.wav",
-    "id": "TEDX_es_U0bRlf7xmYs_300.2",
-    "audio_duration": 43.47,
-    "audio_offset": 300.22,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Pónganse en situación: estas chicas llevan mucha carga, muchos trastornos postraumáticos, debido a un éxodo, a una tierra que nadie les había prometido, han visto cómo asesinaban a sus seres queridos, han visto cómo incendiaban o bombardeaban sus casas, otras desgraciadamente también han sido testigos o víctimas de violaciones en su particular trasiego desde Afganistán, Irak y Siria camino a Europa, o camino en este caso de Alemania.",
-    "language": "es",
-    "prediction_duration": 13.79343,
-    "rtf": 0.31731,
-    "throughput_rtfx": 48.77,
-    "prediction": "Pónganse en situación. Estas chicas han experimentado, llevan mucha carga, muchos trastornos postraumáticos debido a un éxodo, a una tierra que nadie les había prometido. Han visto cómo asesinaban a sus seres queridos. Han visto cómo incendiaban o bombardeaban sus casas. Otras, desgraciadamente, también han sido testigos o víctimas de violaciones en su particular trasiego desde Afganistán, Irak e Irán camino a Europa, o camino en este caso de Alemania."
   },
   "TEDX_es_U0bRlf7xmYs_344.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/U0bRlf7xmYs.wav",
@@ -11282,20 +11226,6 @@
     "rtf": 0.41241,
     "throughput_rtfx": 48.77,
     "prediction": "Se someten a la penetración porque la penetración duele menos que los besos, las caricias, las palabras suaves."
-  },
-  "TEDX_es_iPk9VTATmGM_948.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/iPk9VTATmGM.wav",
-    "id": "TEDX_es_iPk9VTATmGM_948.0",
-    "audio_duration": 37.51,
-    "audio_offset": 947.97,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Ahora, si vamos a seguir esperando que las violaciones sean lo que muy rara vez son: un violador que es un depravado de clase baja, y no un joven universitario o un empresario que salen de levante un viernes o un sábado; si vamos a seguir esperando que las víctimas sean mujeres modositas, recatadas, que se desmayan en la escena, y no mujeres seguras de sí mismas, vamos a seguir sin poder escuchar.",
-    "language": "es",
-    "prediction_duration": 13.1429,
-    "rtf": 0.35038,
-    "throughput_rtfx": 48.77,
-    "prediction": "Si vamos a seguir esperando que las violaciones sean lo que muy rara vez son, un violador que es un depravado de clase baja y no un joven universitario o un empresario que sale en de Levante un viernes o un sábado. Si vamos a seguir esperando que las víctimas sean mujeres modositas recatadas que se desmayan en la escena y no mujeres seguras de sí mismas, vamos a seguir sin poder escuchar."
   },
   "TEDX_es_iPk9VTATmGM_98.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/iPk9VTATmGM.wav",

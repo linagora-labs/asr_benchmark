@@ -274,17 +274,6 @@
     "language": "en",
     "prediction": "Just look and see what you did."
   },
-  "CommonVoice_en_common_voice_en_125010": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/CommonVoice/cv-corpus-22.0-2025-06-20/en/clips_wav/02/common_voice_en_125010.wav",
-    "id": "CommonVoice_en_common_voice_en_125010",
-    "audio_duration": 66.552,
-    "audio_offset": 0.0,
-    "dataset": "CommonVoice_en",
-    "full_dataset": "CommonVoice_en",
-    "text": "It was such a gradual movement that he found it only by noticing the dots.",
-    "language": "en",
-    "prediction": "It was such a gradual movement that he found it only by noticing the dots.  Thank you.  Thank you."
-  },
   "CommonVoice_en_common_voice_en_125399": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/CommonVoice/cv-corpus-22.0-2025-06-20/en/clips_wav/02/common_voice_en_125399.wav",
     "id": "CommonVoice_en_common_voice_en_125399",
@@ -5729,17 +5718,6 @@
     "text": "In the historic era, these were the Mohawk Nation.",
     "language": "en",
     "prediction": "In the historic era, these were the Mohawk Nation."
-  },
-  "CommonVoice_en_common_voice_en_20290": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/CommonVoice/cv-corpus-22.0-2025-06-20/en/clips_wav/00/common_voice_en_20290.wav",
-    "id": "CommonVoice_en_common_voice_en_20290",
-    "audio_duration": 49.152,
-    "audio_offset": 0.0,
-    "dataset": "CommonVoice_en",
-    "full_dataset": "CommonVoice_en",
-    "text": "As they sat down at the only table in the place, the crystal merchant laughed.",
-    "language": "en",
-    "prediction": "As they sat down at the only table in the place, the crystal merchant laughed.  Now what?"
   },
   "CommonVoice_en_common_voice_en_202920": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/CommonVoice/cv-corpus-22.0-2025-06-20/en/clips_wav/03/common_voice_en_202920.wav",
@@ -15772,17 +15750,6 @@
     "text": "I want to do what I want to do.",
     "language": "en",
     "prediction": "I want to do what I want to do."
-  },
-  "CommonVoice_en_common_voice_en_510875": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/CommonVoice/cv-corpus-22.0-2025-06-20/en/clips_wav/04/common_voice_en_510875.wav",
-    "id": "CommonVoice_en_common_voice_en_510875",
-    "audio_duration": 68.544,
-    "audio_offset": 0.0,
-    "dataset": "CommonVoice_en",
-    "full_dataset": "CommonVoice_en",
-    "text": "\"You are almost at the end of your journey,\" said the alchemist.",
-    "language": "en",
-    "prediction": "You are almost at the end of your journey, said the alchemist.  I am healthy let me be the first to welcome you to earth  it was such a gradual movement that he found it only by noticing  the dots"
   },
   "CommonVoice_en_common_voice_en_510877": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/CommonVoice/cv-corpus-22.0-2025-06-20/en/clips_wav/04/common_voice_en_510877.wav",

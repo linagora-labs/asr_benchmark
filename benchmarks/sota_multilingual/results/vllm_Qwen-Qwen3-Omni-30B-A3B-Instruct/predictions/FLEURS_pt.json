@@ -5571,20 +5571,6 @@
     "throughput_rtfx": 57.993,
     "prediction": "Os Sundarbans foram declarados Patrimônio Mundial da UNESCO. A parte da floresta dentro do território indiano é chamada de Parque Nacional Sundarbans."
   },
-  "FLEURS_pt_16793362546560783580": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/pt_br/audio/test/16793362546560783580.wav",
-    "id": "FLEURS_pt_16793362546560783580",
-    "audio_duration": 30.18,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_pt",
-    "full_dataset": "FLEURS_pt",
-    "text": "O uso apropriado de blogs \"pode tornar os alunos mais analíticos e críticos; interagindo com os conteúdos da Internet de modo ativo, os alunos podem se posicionar no contexto dos escritos de outros, bem como definir suas próprias perspectivas sobre questões específicas Oravec, 2002.",
-    "language": "pt",
-    "prediction_duration": 25.98477,
-    "rtf": 0.86099,
-    "throughput_rtfx": 57.993,
-    "prediction": "O uso apropriado de blogs pode tornar os alunos mais analíticos e críticos, interagindo com os conteúdos da internet de modo ativo. Os alunos podem se posicionar no contexto dos escritos de outros, bem como definir suas próprias perspectivas sobre questões específicas. (ORAVEC, 2002)"
-  },
   "FLEURS_pt_16815652387215419264": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/pt_br/audio/test/16815652387215419264.wav",
     "id": "FLEURS_pt_16815652387215419264",
@@ -9070,20 +9056,6 @@
     "rtf": 0.90351,
     "throughput_rtfx": 57.993,
     "prediction": "O uso apropriado de blogs pode tornar os alunos mais analíticos e críticos. Interagindo com os conteúdos da internet de modo ativo, os alunos podem se posicionar no contexto dos escritos de outros, bem como definir suas próprias perspectivas sobre questões específicas. (ORAVEC, 2002)"
-  },
-  "FLEURS_pt_4931226475989746884": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/pt_br/audio/test/4931226475989746884.wav",
-    "id": "FLEURS_pt_4931226475989746884",
-    "audio_duration": 31.5,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_pt",
-    "full_dataset": "FLEURS_pt",
-    "text": "No entanto, esses planos tornaram-se obsoletos quase da noite para o dia, quando mais de 800 mil soldados do Exército Vermelho da União Soviética criaram as frentes bielorrussa e ucraniana após invadir as regiões orientais da Polônia em violação do Tratado de Paz de Riga, o Pacto de Não Agressão Soviética-Polonesa, e outros tratados internacionais, bilaterais e multilaterais.",
-    "language": "pt",
-    "prediction_duration": 38.10311,
-    "rtf": 1.20962,
-    "throughput_rtfx": 57.993,
-    "prediction": "No entanto, esses planos tornaram-se obsoletos quase da noite para o dia quando mais de 800 mil soldados do Exército Vermelho da União Soviética criaram as frentes Bielorussa e Ucraniana após invadir as regiões orientais da Polônia em violação do Tratado de Paz de Riga, o Pacto de Não Agressão Soviética-Polonesa e outros tratados internacionais bilaterais e multilaterais."
   },
   "FLEURS_pt_494922209427947514": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/pt_br/audio/test/494922209427947514.wav",

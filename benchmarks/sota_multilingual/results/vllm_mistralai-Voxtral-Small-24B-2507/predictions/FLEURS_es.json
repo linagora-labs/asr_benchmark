@@ -713,20 +713,6 @@
     "throughput_rtfx": 17.654,
     "prediction": "El anuncio se hizo tras la conversación telefónica que Trump mantuvo con el presidente de Turquía, Recep Tayyip Erdogan."
   },
-  "FLEURS_es_10844880591943993561": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/es_419/audio/test/10844880591943993561.wav",
-    "id": "FLEURS_es_10844880591943993561",
-    "audio_duration": 30.3,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_es",
-    "full_dataset": "FLEURS_es",
-    "text": "No obstante, estos planes cayeron en desuso casi de un día para otro, cuando más de 800 000 combatientes del Ejército Rojo de la Unión Soviética ingresaron y formaron los frentes bielorruso y ucraniano luego de invadir las regiones del este de Polonia, infringiendo el Tratado de Paz de Riga, el pacto de No Agresión soviético-polaca y otros acuerdos internacionales, bilaterales y multilaterales.",
-    "language": "es",
-    "prediction_duration": 30.73052,
-    "rtf": 1.01421,
-    "throughput_rtfx": 17.654,
-    "prediction": "No obstante, estos planes cayeron en desuso casi de un día para otro, cuando más de 80.000 combatientes del Ejército Rojo de la Unión Soviética ingresaron y formaron los frentes bielorrusos y ucranianos, luego de invadir las regiones del este de Polonia, infringiendo el Tratado de Paz de Riga, el Pacto de No Agresión Soviético-Político y otros acuerdos internacionales bilaterales y multilaterales. Gracias."
-  },
   "FLEURS_es_10854190301744279509": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/es_419/audio/test/10854190301744279509.wav",
     "id": "FLEURS_es_10854190301744279509",

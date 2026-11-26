@@ -98,17 +98,6 @@
     "language": "de",
     "prediction": "Insbesondere wird behauptet, dass man erkennen kann, ob jemand lügt, indem man minimale Veränderungen des Gesichtsausdrucks richtig deutet."
   },
-  "FLEURS_de_10171859810965764480": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/10171859810965764480.wav",
-    "id": "FLEURS_de_10171859810965764480",
-    "audio_duration": 43.38,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Die angemessene Nutzung von Blogs „kann Schülerinnen und Schüler befähigen, analytischer und kritischer zu werden; durch die aktive Reaktion auf Internetmaterialien können die Schülerinnen und Schüler ihre Positionen im Kontext der Texte anderer definieren und ihre eigenen Perspektiven zu bestimmten Themen darlegen“ Oravec, 2002.",
-    "language": "de",
-    "prediction": "Die angemessene Nutzung von Blogs kann Schülerinnen und Schüler befähigen, analytischer und kritischer zu werden. Durch die aktive Reaktion auf Internetmaterialien können die Schülerinnen und Schüler ihre Positionen im Kontext der Texte anderer definieren und ihre eigenen Perspektiven zu bestimmten Themen darlegen."
-  },
   "FLEURS_de_10229344228128634115": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/10229344228128634115.wav",
     "id": "FLEURS_de_10229344228128634115",
@@ -240,17 +229,6 @@
     "text": "Der Scotturb-Bus 403 fährt regelmäßig über Cabo da Roca nach Sintra.",
     "language": "de",
     "prediction": "Der Skotab-Bus 403 fährt regelmäßig über Cabo da Rocca nach Sintra."
-  },
-  "FLEURS_de_10376367261184486277": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/10376367261184486277.wav",
-    "id": "FLEURS_de_10376367261184486277",
-    "audio_duration": 46.5,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Ihr thermisches Verhalten ist nicht so gleichmäßig wie das großer Höhlen auf der Erde, die oft eine ziemlich konstante Temperatur haben, aber es stimmt damit überein, dass es sich um tiefe Löcher im Boden handelt\", sagte Glen Cushing vom Astrogeologie-Team des United States Geological Survey USGS und der Northern Arizona University in Flagstaff, Arizona.",
-    "language": "de",
-    "prediction": "Ihr thermisches Verhalten ist nicht so gleichmäßig wie das großer Höhlen auf der Erde, die oft eine ziemlich konstante Temperatur haben, aber es stimmt damit überein, dass es sich um tiefe Löcher im Boden handelt, sagte Glenn Cushing vom Astrogeologie-Team des United States Geological Survey, USGS, und der Northern Arizona University in Flagstaff, Arizona."
   },
   "FLEURS_de_10389623687459114198": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/10389623687459114198.wav",
@@ -901,17 +879,6 @@
     "language": "de",
     "prediction": "Berichten zufolge war er in seinen Zwanziger Jahren in einer Stellungnahme, sagte Bieber: Obwohl ich bei diesem tragischen Unfall weder anwesend noch direkt an ihm beteiligt war, sind meine Gedanken und Gerete bei der Familie des Opfers."
   },
-  "FLEURS_de_11438904996847579220": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/11438904996847579220.wav",
-    "id": "FLEURS_de_11438904996847579220",
-    "audio_duration": 36.42,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Perry erklärte, er werde „nach Texas zurückkehren, um das Ergebnis der Vorwahl von heute Abend auszuwerten und zu entscheiden, ob es in diesem Rennen einen weiterführenden Weg für mich gibt\", aber sagte später, er werde im Rennen bleiben und bei den Vorwahlen in South Carolina am 21. Januar antreten.",
-    "language": "de",
-    "prediction": "Perry erklärte, er werde nach Texas zurückkehren, um das Ergebnis der Vorwahl von heute Abend auszuwerten und zu entscheiden, ob es in diesem Rennen einen weiterführenden Weg für mich gibt, aber sagte später, er werde im Rennen bleiben und bei den Vorwahlen in South Carolina am 21. Januar antreten."
-  },
   "FLEURS_de_1144628591089987683": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/1144628591089987683.wav",
     "id": "FLEURS_de_1144628591089987683",
@@ -1209,17 +1176,6 @@
     "language": "de",
     "prediction": "Der Bericht steht fast jedem Aspekt der gegenwärtigen Politik der Exekutive im Hinblick auf den Irak äußerst kritisch gegenüber und drängt auf einen sofortigen Richtungswechsel."
   },
-  "FLEURS_de_11932235074173500388": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/11932235074173500388.wav",
-    "id": "FLEURS_de_11932235074173500388",
-    "audio_duration": 31.8,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Gegen Ende des Mittelalters begann Westeuropa langsam einen eigenen Stil zu entwickeln. Eine der wichtigsten Entwicklungen der Zeit bestand darin, dass die Menschen als Folge der Kreuzzüge damit begannen, Knöpfe zum Fixieren von Kleidung zu nutzen.",
-    "language": "de",
-    "prediction": "Gegen Ende des Mittelalters begann Westeuropa langsam, einen eigenen Stil zu entwickeln. Eine der wichtigsten Entwicklungen der Zeit bestand darin, dass die Menschen als Folge der Kreuzzüge damit begannen, Knöpfe zum Fixieren von Kleidung zu nutzen."
-  },
   "FLEURS_de_1194309087192971067": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/1194309087192971067.wav",
     "id": "FLEURS_de_1194309087192971067",
@@ -1318,17 +1274,6 @@
     "text": "Wir bauen unsere Häuser aus Pflanzen und stellen Kleidung aus Pflanzen her. Wir ernähren uns hauptsächlich von Pflanzen. Ohne Pflanzen könnten Tiere nicht überleben.",
     "language": "de",
     "prediction": "Wir bauen unsere Häuser aus Pflanzen und stellen Kleidung aus Pflanzen her. Wir ernähren uns hauptsächlich von Pflanzen. Ohne Pflanzen könnten Tiere nicht überleben."
-  },
-  "FLEURS_de_12092535744646925173": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/12092535744646925173.wav",
-    "id": "FLEURS_de_12092535744646925173",
-    "audio_duration": 35.04,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Trotzdem ist der Anteil an XDR-TB in der gesamten Gruppe der Leute mit Tuberkulose offenbar dennoch gering; 6.000 der insgesamt 330.000 Leute, die in Südafrika zu einem bestimmten Zeitpunkt angesteckt sind.",
-    "language": "de",
-    "prediction": "Trotzdem ist der Anteil an XDR-TB in der gesamten Gruppe der Leute mit Tuberkulose offenbar dennoch gering. 6000 der insgesamt 330.000 Leute, die in Südafrika zu einem bestimmten Zeitpunkt angesteckt sind."
   },
   "FLEURS_de_12096938210340365820": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/12096938210340365820.wav",
@@ -2176,17 +2121,6 @@
     "text": "Geben Sie acht, dass der Stoff nicht zu heiß wird das kann ihn schrumpfen lassen oder in extremen Fällen zu Verbrennungen führen.",
     "language": "de",
     "prediction": "Geben Sie Acht, dass der Stoff nicht zu heiß wird. Das kann ihn schrumpfen lassen oder in extremen Fällen zu Verbrennungen führen."
-  },
-  "FLEURS_de_13598528500304921206": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/13598528500304921206.wav",
-    "id": "FLEURS_de_13598528500304921206",
-    "audio_duration": 30.24,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "USA Gymnastics unterstützt den Brief des Olympischen Komitees der Vereinigten Staaten und akzeptiert es als absolute Notwendigkeit, dass sich die olympische Familie für ein sicheres Umfeld für alle unsere Sportler einsetzt.",
-    "language": "de",
-    "prediction": "USA Gymnastics unterstützt den Brief des Olympischen Komitees der Vereinigten Staaten und akzeptiert es als absolute Notwendigkeit, dass sich die olympische Familie für ein sicheres Umfeld für alle unsere Sportler einsetzt."
   },
   "FLEURS_de_13608448229851321208": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/13608448229851321208.wav",
@@ -3596,17 +3530,6 @@
     "language": "de",
     "prediction": "Die Brücke soll im September 2017 vollständig den Betrieb aufnehmen. Es wird erwartet, dass die brasilianischen Zollpunkte dann fertiggestellt sein werden."
   },
-  "FLEURS_de_16302613894874414457": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/16302613894874414457.wav",
-    "id": "FLEURS_de_16302613894874414457",
-    "audio_duration": 33.54,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Weitere Nominierungen gibt es zum Beispiel für den besten Film, die Regie, die Kameraführung, das Kostümbild, den Schnitt, die Original-Filmmusik, das Produktionsdesign, den Tonschnitt, die Tonmischung und das Original-Drehbuch.",
-    "language": "de",
-    "prediction": "Weitere Nominierungen gibt es zum Beispiel für den besten Film, die Regie, die Kameraführung, das Kostümbild, den Schnitt, die Originalfilmmusik, das Produktionsdesign, den Tonschnitt, die Tonmischung und das Originaldrehbuch."
-  },
   "FLEURS_de_16307014338962324663": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/16307014338962324663.wav",
     "id": "FLEURS_de_16307014338962324663",
@@ -4057,17 +3980,6 @@
     "text": "Nach fünf Minuten kommt Wind auf, etwa eine Minute später erreicht der Wind 70 km/h ... Dann beginnt es zu regnen, aber die Tropfen sind so hart und groß, dass sie wie Nadeln auf die Haut schlagen. Dann fiel Hagel vom Himmel, die Leute gerieten in Panik, schrien und rannten einander um.",
     "language": "de",
     "prediction": "Nach fünf Minuten kommt Wind auf, etwa eine Minute später erreicht der Wind 70 km/h Stunde. Dann beginnt es zu regnen, aber die Tropfen sind so hart und groß, dass sie wie Nadeln auf die Haut schlagen. Dann fiel Hagel vom Himmel, die Leute gerieten in Panik, schrien und rannten einander um."
-  },
-  "FLEURS_de_17094668703447110905": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/17094668703447110905.wav",
-    "id": "FLEURS_de_17094668703447110905",
-    "audio_duration": 32.46,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Zwischen den einzelnen Dynastien herrschten auch unbeständige Zeiten geteilter Provinzen. Die bekannteste dieser Perioden war die Epoche der Drei Königreiche, die 60 Jahre lang zwischen der Han- und der Jin-Dynastie stattfand.",
-    "language": "de",
-    "prediction": "Zwischen den einzelnen Dynastien herrschten auch unbeständige Zeiten geteilter Provinzen. Die bekannteste dieser Perioden war die Epoche der drei Königreiche, die 60 Jahre lang zwischen der Han und der Yin-Dynastie stattfand."
   },
   "FLEURS_de_17107064293819566066": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/17107064293819566066.wav",
@@ -6016,17 +5928,6 @@
     "language": "de",
     "prediction": "Die Oberfläche des Mondes besteht aus Gestein und Staub, die äußere Schicht des Mondes wird als Kruste bezeichnet."
   },
-  "FLEURS_de_3975961929423531534": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/3975961929423531534.wav",
-    "id": "FLEURS_de_3975961929423531534",
-    "audio_duration": 33.06,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Die Strategie erwies sich als effektiv, da sie das Land von lebenswichtigen militärischen und zivilen Lieferungen abschnitt, obwohl diese Blockade gegen das allgemein anerkannte Völkerrecht verstieß, das durch mehrere internationale Abkommen der letzten zwei Jahrhunderte kodifiziert worden war.",
-    "language": "de",
-    "prediction": "Die Strategie erwies sich als effektiv, da sie das Land von lebenswichtigen militärischen und zivilen Lieferungen abschnitt, obwohl diese Blockade gegen das allgemein anerkannte Völkerrecht verstieß, das durch mehrere internationale Abkommen der letzten zwei Jahrhunderte kodifiziert worden war."
-  },
   "FLEURS_de_3984832977459170363": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/3984832977459170363.wav",
     "id": "FLEURS_de_3984832977459170363",
@@ -6148,17 +6049,6 @@
     "language": "de",
     "prediction": "Finnland ist ein großartiges Reiseziel für Bootstouren. Das Land der Tausend Seen hat auch Tausende von Inseln, in den Seen und in den Küstenarchipelen."
   },
-  "FLEURS_de_4174379654895279374": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/4174379654895279374.wav",
-    "id": "FLEURS_de_4174379654895279374",
-    "audio_duration": 33.12,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Seit 1988 müssen Wahlurnen transparent sein, damit Wähler und Beobachter bezeugen können, dass zu Beginn der Wahl keine Umschläge vorhanden sind und dass keine Umschläge eingeworfen werden, außer jene der ordnungsgemäß gezählten und autorisierten Wähler.",
-    "language": "de",
-    "prediction": "Seit 1988 müssen Wahlurnen transparent sein, damit Wähler und Beobachter bezeugen können, dass zu Beginn der Wahl keine Umschläge vorhanden sind und dass keine Umschläge eingeworfen werden, außer jene der ordnungsgemäß gezählten und autorisierten Wähler."
-  },
   "FLEURS_de_4174605467182321596": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/4174605467182321596.wav",
     "id": "FLEURS_de_4174605467182321596",
@@ -6236,17 +6126,6 @@
     "language": "de",
     "prediction": "Leighton hatte während des Treffens mit dem Premierminister Änderungen am Umweltgesetz der Konservativen gefordert und dabei eine gründliche und vollständige Neufassung des Umweltgesetzes der Konservativenpartei verlangt."
   },
-  "FLEURS_de_4271181096460241283": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/4271181096460241283.wav",
-    "id": "FLEURS_de_4271181096460241283",
-    "audio_duration": 32.22,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Die meisten Interpretationen des technologischen Determinismus teilen zwei allgemeine Vorstellungen. Einerseits, dass die Entwicklung der Technologie selbst einem Weg folgt, der weitgehend jenseits kultureller oder politischer Einflussnahme liegt, und andererseits, dass Technologie ihrerseits „Auswirkungen“ auf Gesellschaften hat, die eher inhärent als sozial bedingt sind.",
-    "language": "de",
-    "prediction": "Die meisten Interpretationen des technologischen Determinismus teilen zwei allgemeine Vorstellungen. Einerseits, dass die Entwicklung der Technologie selbst einem Weg folgt, der weitgehend jenseits kultureller oder politischer Einflussnahme liegt, und andererseits, dass Technologie ihrerseits Auswirkungen auf Gesellschaften hat, die eher inhärent als sozial bedingt sind."
-  },
   "FLEURS_de_4283694748207898309": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/4283694748207898309.wav",
     "id": "FLEURS_de_4283694748207898309",
@@ -6268,17 +6147,6 @@
     "text": "Die am leichtesten zugänglichen Pflanzenressourcen wären die Proteine in Blättern und Hülsenfrüchten gewesen, doch diese sind für Primaten wie uns schwer verdaulich, es sei denn, sie werden gekocht.",
     "language": "de",
     "prediction": "Die am leichtesten zugänglichen Pflanzenressourcen wären die Proteine in Blättern und Hülsenfrüchten gewesen, doch diese sind für Primaten wie uns schwer verdaulich, es sei denn, sie werden gekocht."
-  },
-  "FLEURS_de_4323453320486766053": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/4323453320486766053.wav",
-    "id": "FLEURS_de_4323453320486766053",
-    "audio_duration": 40.74,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Die Unterhaltungsnachrichten-Webseite TMZ hat erfahren, dass der Fotograf sein Fahrzeug auf der anderen Seite des Sepulveda Boulevards anhielt und versuchte, Fotos von der Polizeikontrolle zu machen, bevor er die Straße überquerte und weitermachte, was den Polizeibeamten der California Highway Patrol, der die Verkehrskontrolle durchführte, veranlasste, ihn zweimal zurück über die Straße zu beordern.",
-    "language": "de",
-    "prediction": "Die Unterhaltungsnachrichtenwebseite TMZ hat erfahren, dass der Fotograf sein Fahrzeug auf der anderen Seite des Sepulveda Boulevards anhielt und versuchte, Fotos von der Polizeikontrolle zu machen, bevor er die Straße überquerte und weitermachte, was den Polizeibeamten der California Highway Patrol, der die Verkehrskontrolle durchführte, veranlasste, ihn zweimal zurück über die Straße zu beordern."
   },
   "FLEURS_de_4329683474305501390": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/4329683474305501390.wav",
@@ -6621,17 +6489,6 @@
     "language": "de",
     "prediction": "Ziegen wurden anscheinend bereits vor ungefähr 10.000 Jahren in Zagros-Gebirge im Iran domestiziert."
   },
-  "FLEURS_de_4996376112031788319": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/4996376112031788319.wav",
-    "id": "FLEURS_de_4996376112031788319",
-    "audio_duration": 31.44,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Der Australier Mitchell Gourley wurde Elfter im stehenden Super-G der Männer. Der tschechische Konkurrent Oldrich Jelinek wurde Sechzehnter im sitzenden Super-G der Männer.",
-    "language": "de",
-    "prediction": "Der Australier Mitchell Golly wurde Elfter im stehenden Super G der Männer. Der tschechische Konkurrent Aldrich Jelinek wurde 16. im 17. Super G der Männer."
-  },
   "FLEURS_de_5004631519743481392": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/5004631519743481392.wav",
     "id": "FLEURS_de_5004631519743481392",
@@ -6675,17 +6532,6 @@
     "text": "Er wurde von Wong Kan Seng, dem stellvertretenden Premierminister Singapurs, begrüßt und sprach mit Lee Hsien Loong, dem Premierminister Singapurs, über Handels- und Terrorismusangelegenheiten.",
     "language": "de",
     "prediction": "Er wurde von Wong Kang Seng, dem stellvertretenden Premierminister Singapurs, begrüßt und sprach mit Lee He Xing Long, dem Premierminister Singapurs, über Handels- und Terrorismusangelegenheiten."
-  },
-  "FLEURS_de_5067850698728578589": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/5067850698728578589.wav",
-    "id": "FLEURS_de_5067850698728578589",
-    "audio_duration": 31.08,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Auf den abgelegenen Inseln werden Kreditkarten wahrscheinlich nicht akzeptiert, wobei jedoch britische und US-amerikanische Währung angenommen werden können; erkundigen Sie sich im Voraus bei den Eigentümern, welche Zahlungsmethode akzeptiert wird.",
-    "language": "de",
-    "prediction": "Auf den abgelegenen Inseln werden Kreditkarten wahrscheinlich nicht akzeptiert, wobei jedoch britische und US-amerikanische Währung angenommen werden können. Erkundigen Sie sich im Voraus bei den Eigentümern, welche Zahlungsmethode akzeptiert wird."
   },
   "FLEURS_de_5076330092750267209": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/5076330092750267209.wav",
@@ -7039,17 +6885,6 @@
     "language": "de",
     "prediction": "Italienisch ist auch die Alltagssprache der meisten, die im Staat arbeiten, während Latein häufig bei religiösen Zeremonien verwendet wird."
   },
-  "FLEURS_de_5588377578874001231": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/5588377578874001231.wav",
-    "id": "FLEURS_de_5588377578874001231",
-    "audio_duration": 34.74,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Forscher der Princeton University in den Vereinigten Staaten und der Uppsala University in Schweden berichteten, die neue Art habe sich innerhalb von nur zwei Generationen entwickelt, obwohl man zuvor angenommen hatte, dass dieser Vorgang aufgrund der Paarung zwischen einem einheimischen Darwinfink, Geospiza fortes, und dem eingewanderten Kaktusfink, Geospiza conirostris, viel länger dauerte.",
-    "language": "de",
-    "prediction": "Forscher der Princeton University in den Vereinigten Staaten und der Uppsalay University in Schweden berichteten, die neue Art habe sich innerhalb von nur zwei Generationen entwickelt, obwohl man zuvor angenommen hatte, dass dieser Vorgang aufgrund der Paarung zwischen einem einheimischen Darwin-Fink, Geo Spizza Fortes, und dem eingewanderten Kaktusfink, Geo Spizza Coni Rostris, viel länger dauerte."
-  },
   "FLEURS_de_560223774573817283": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/560223774573817283.wav",
     "id": "FLEURS_de_560223774573817283",
@@ -7192,17 +7027,6 @@
     "text": "Nach Angaben des Gouverneursbüros handelt es sich bei neunzehn der Verletzten um Polizeibeamte.",
     "language": "de",
     "prediction": "Nach Angaben des Gouverneursbüros handelte es sich bei neunzehn der Verletzten um Polizeibeamte."
-  },
-  "FLEURS_de_5908247922590387766": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/5908247922590387766.wav",
-    "id": "FLEURS_de_5908247922590387766",
-    "audio_duration": 32.34,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Trotzdem ist der Anteil an XDR-TB in der gesamten Gruppe der Leute mit Tuberkulose offenbar dennoch gering; 6.000 der insgesamt 330.000 Leute, die in Südafrika zu einem bestimmten Zeitpunkt angesteckt sind.",
-    "language": "de",
-    "prediction": "Trotzdem ist der Anteil an XDR-TB in der gesamten Gruppe der Leute mit Tuberkulose offenbar dennoch gering. 6000 der insgesamt 330.000 Leute, die in Südafrika zu einem bestimmten Zeitpunkt angesteckt sind."
   },
   "FLEURS_de_5909758945461225882": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/5909758945461225882.wav",
@@ -7633,17 +7457,6 @@
     "language": "de",
     "prediction": "Manche Atome haben instabile Kerne, was bedeutet, dass sie schon bei geringem oder gar keinem Anstoß zerfallen."
   },
-  "FLEURS_de_6634142902560545740": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/6634142902560545740.wav",
-    "id": "FLEURS_de_6634142902560545740",
-    "audio_duration": 47.94,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Die meisten Interpretationen des technologischen Determinismus teilen zwei allgemeine Vorstellungen. Einerseits, dass die Entwicklung der Technologie selbst einem Weg folgt, der weitgehend jenseits kultureller oder politischer Einflussnahme liegt, und andererseits, dass Technologie ihrerseits „Auswirkungen“ auf Gesellschaften hat, die eher inhärent als sozial bedingt sind.",
-    "language": "de",
-    "prediction": "Die meisten Interpretationen des technologischen Determinismus teilen zwei allgemeine Vorstellungen. Einerseits, dass die Entwicklung der Technologie selbst einem Weg folgt, der weitgehend jenseits kultureller oder politischer Einflussnahme liegt, und andererseits, dass Technologie ihrerseits Auswirkungen auf Gesellschaften hat, die eher inhärent als sozial bedingt sind."
-  },
   "FLEURS_de_6652145158468483565": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/6652145158468483565.wav",
     "id": "FLEURS_de_6652145158468483565",
@@ -7687,17 +7500,6 @@
     "text": "Die derzeitige Senatorin und argentinische First Lady Cristina Fernandez de Kirchner gab gestern Abend in La Plata, einer Stadt 50 Kilometer von Buenos Aires entfernt, ihre Präsidentschaftskandidatur bekannt.",
     "language": "de",
     "prediction": "Die derzeitige Senatorin und argentinische First Lady Cristina Fernández de Kirchner gab gestern Abend in La Plata, einer Stadt 50 Kilometer von Buenos Aires entfernt, ihre Präsidentschaftskandidatur bekannt."
-  },
-  "FLEURS_de_6753945967797226570": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/6753945967797226570.wav",
-    "id": "FLEURS_de_6753945967797226570",
-    "audio_duration": 31.08,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Die Epoche, in der die Ereignisse stattfanden, wird gemeinhin als Hochmittelalter bezeichnet, ein Zeitalter in der europäischen Geschichte, das sich über das 11., 12. und 13 Jahrhundert erstreckt 1000–1300 n. Chr..",
-    "language": "de",
-    "prediction": "Die Epoche, in der die Ereignisse stattfanden, wird gemeinhin als Hochmittelalter bezeichnet, ein Zeitalter in der europäischen Geschichte, das sich über das 11., 12. und 13. Jahrhundert erstreckt, 1000 bis 1300 nach Christus."
   },
   "FLEURS_de_6754907113927429020": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/6754907113927429020.wav",
@@ -8138,17 +7940,6 @@
     "text": "Aristoteles, ein Philosoph, stellte die Theorie auf, dass alle Dinge aus einer Mischung aus einem oder mehreren von vier Elementen bestehen. Dabei handelte es sich um Erde, Wasser, Luft und Feuer.",
     "language": "de",
     "prediction": "Aristoteles, ein Philosoph, stellte die Theorie auf, dass alle Dinge aus einer Mischung aus einem oder mehreren von vier Elementen bestehen. Dabei handelte es sich um Erde, Wasser, Luft und Feuer."
-  },
-  "FLEURS_de_7532002148152092770": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/7532002148152092770.wav",
-    "id": "FLEURS_de_7532002148152092770",
-    "audio_duration": 30.18,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Mohammed war sehr stark an Dingen interessiert, die über dieses Alltagsleben hinausgingen. Er besuchte oft eine Höhle, die als „Hira“ auf dem Berg von „Nur“ Licht bekannt wurde, um zu meditieren.",
-    "language": "de",
-    "prediction": "Mohammed war sehr stark an Dingen interessiert, die über dieses Alltagsleben hinaus gingen. Er besuchte oft eine Hölle, die als Hiera auf dem Berg von Nur Licht bekannt wurde, um zu meditieren."
   },
   "FLEURS_de_7554217831301872194": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/7554217831301872194.wav",
@@ -8645,17 +8436,6 @@
     "language": "de",
     "prediction": "Die zwei Verbindungen reagieren miteinander und formen Kristalle, die laut Forschern der Hochschule die Nierentätigkeit behindern können."
   },
-  "FLEURS_de_8334129063976557987": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/8334129063976557987.wav",
-    "id": "FLEURS_de_8334129063976557987",
-    "audio_duration": 37.32,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "Eine der gängigsten Methoden zur Veranschaulichung der Wichtigkeit der Sozialisierung ist, sich auf die paar unglücklichen Fälle von Kindern zu stützen, die aufgrund von Vernachlässigung, Unglück oder vorsätzlichem Missbrauch während ihrer Kindheit nicht von Erwachsenen sozialisiert worden sind.",
-    "language": "de",
-    "prediction": "Eine der gängigsten Methoden zur Veranschaulichung der Wichtigkeit der Sozialisierung ist, sich auf die paar unglücklichen Fälle von Kindern zu stützen, die aufgrund von Vernachlässigung, Unglück oder vorsätzlichem Missbrauch während ihrer Kindheit nicht von Erwachsenen sozialisiert worden sind."
-  },
   "FLEURS_de_8385828782945353218": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/8385828782945353218.wav",
     "id": "FLEURS_de_8385828782945353218",
@@ -8952,17 +8732,6 @@
     "text": "Verkehrsfluss ist die Untersuchung der Bewegung einzelner Fahrer und Fahrzeuge zwischen zwei Punkten und der Interaktionen, die zwischen beiden stattfinden.",
     "language": "de",
     "prediction": "Verkehrsfluss ist die Untersuchung der Bewegung einzelner Fahrer und Fahrzeuge zwischen zwei Punkten und der Interaktion, die zwischen beiden stattfindet."
-  },
-  "FLEURS_de_9045243611409192005": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/9045243611409192005.wav",
-    "id": "FLEURS_de_9045243611409192005",
-    "audio_duration": 30.6,
-    "audio_offset": 0.0,
-    "dataset": "FLEURS_de",
-    "full_dataset": "FLEURS_de",
-    "text": "NextGen ist ein System, von dem die FAA behauptet, dass es Flugzeugen erlauben würde, kürzere Strecken zu fliegen und jedes Jahr Millionen Gallonen an Treibstoff zu sparen und die Kohlenstoffemissionen zu reduzieren.",
-    "language": "de",
-    "prediction": "Nextgen ist ein System, von dem die FAA behauptet, dass es Flugzeugen erlauben würde, kürzere Strecken zu fliegen und jedes Jahr Millionen Galonen an Treibstoff zu sparen und die Kohlenstoffemissionen zu reduzieren."
   },
   "FLEURS_de_9046641529414413784": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/FLEURS/de_de/audio/test/9046641529414413784.wav",

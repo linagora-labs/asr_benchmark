@@ -1,7 +1,7 @@
 {
   "LibriSpeech_test-other": {
-    "runaway": 0.03402517863218782,
-    "rtfx": 19.15295816733072,
+    "runaway": 0.034106412005457026,
+    "rtfx": 18.923451195219165,
     "rtfx_approx": true
   }
 }

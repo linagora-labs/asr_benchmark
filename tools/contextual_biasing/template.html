@@ -20,7 +20,6 @@
   h2 { margin: 40px 0 8px; font-size: 19px; }
   .muted { color: var(--muted); }
   a { color: var(--accent); }
-  .embedded { display: none; }  /* links to the other tabs of the leaderboard */
   .intro { margin: 16px 0 0; max-width: 1000px; }
   .controls { display: flex; flex-wrap: wrap; gap: 10px 32px; margin: 24px 0 12px; align-items: center; }
   .group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
@@ -68,27 +67,30 @@
   .swatch.line { width: 24px; height: 0; border-radius: 0; border-top: 4px solid var(--accent); vertical-align: 3px; }
   .tip { position: fixed; pointer-events: none; background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
          padding: 6px 10px; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,.08); white-space: nowrap; z-index: 30; }  /* above the enlarged chart */
-  /* Overview table: list columns of the same, smallest width; the change below the value */
+  /* Leaderboard table: as the tables of the leaderboard (French ASR): score columns of the same width, the
+     change below the value as the confidence interval there */
   .scroll.fit { width: fit-content; max-width: 100%; }
-  table.compact { width: auto; table-layout: fixed; }
-  table.compact th, table.compact td { padding: 5px 6px; text-align: center; white-space: normal; line-height: 1.25; }
-  table.compact td { vertical-align: top; }
+  table.compact { width: auto; }
+  table.compact th, table.compact td { padding: 8px; }
+  table.compact th { font-size: 12px; white-space: normal; }
+  table.compact th:nth-child(-n+2), table.compact td:nth-child(-n+2) { text-align: left; }
+  table.compact .score { box-sizing: border-box; width: 78px; min-width: 78px; padding-left: 3px; padding-right: 5px; text-align: right; }
+  table.compact .info { text-align: left; } table.compact td.ns { text-align: center; }
   table.compact tr.level-start td { border-top: 2px solid var(--muted); }
   td.fallback { color: var(--muted); font-style: italic; }
-  table.compact th:nth-child(-n+2), table.compact td:nth-child(-n+2) { text-align: left; overflow-wrap: anywhere; }
-  table.compact th:nth-child(n+3), table.compact td:nth-child(n+3) { padding-left: 3px; padding-right: 3px; }
-  table.compact th { font-size: 11.5px; overflow-wrap: anywhere; }
-  table.compact td { font-size: 14px; } table.compact td.info { font-size: 12.5px; }
   sup { line-height: 0; }
-  table.compact .delta { display: block; margin: 0; }
+  table.compact .delta { display: block; margin: 0; font-size: 11px; line-height: 1.2; }
   table.compact th small { font-weight: 400; color: var(--muted); }
   .caption { font-size: 13px; margin-top: 8px; }
-  table.compact th.ranked { box-shadow: inset 0 -3px 0 var(--accent); }
   /* Views of the tab */
-  .subtabs { display: flex; flex-wrap: wrap; gap: 4px 20px; margin: 28px 0 4px; border-bottom: 1px solid var(--line); }
-  .subtabs button { border: none; border-bottom: 2px solid transparent; border-radius: 0; background: none; padding: 6px 2px;
-    margin-bottom: -1px; color: var(--muted); font-weight: 600; }
-  .subtabs button[aria-pressed="true"] { background: none; color: var(--accent); border-color: var(--accent); }
+  /* Folder tabs, as the tabs of the leaderboard (a little smaller) */
+  .subtabs { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-end; margin: 28px 0 4px; border-bottom: 2px solid var(--accent); }
+  .subtabs button { padding: 8px 16px; margin-bottom: -2px; font-size: 15px; font-weight: 600; color: var(--text);
+    background: #ecebe7; border: 1px solid var(--line); border-bottom: 2px solid var(--accent); border-radius: 8px 8px 0 0;
+    transition: background .15s, color .15s; }
+  .subtabs button:hover { background: color-mix(in srgb, var(--accent) 14%, var(--surface)); color: var(--accent); }
+  .subtabs button[aria-pressed="true"] { background: var(--bg); color: var(--accent); border: 2px solid var(--accent); border-bottom-color: var(--bg); }
+  .subtabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .panels.small { grid-template-columns: repeat(auto-fill, minmax(min(460px, 100%), 1fr)); }
   #lines .panel, #panels .panel, #pareto .panel { cursor: zoom-in; }
   .zoom { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); display: flex; align-items: center; justify-content: center; z-index: 20; }
@@ -111,12 +113,11 @@
   </div>
   <div class="controls">
     <div class="group"><span class="group-label">Test set</span> <span class="group" id="dataset"></span></div>
-    <span class="muted" id="dataset-note"></span>
   </div>
   <nav class="subtabs" id="views">
     <button data-v="leaderboard" aria-pressed="true">Leaderboard</button>
-    <button data-v="pareto">Pareto front plots</button>
     <button data-v="dumbbell">Dumbbell plots</button>
+    <button data-v="pareto">Pareto front plots</button>
     <button data-v="size">Effect of the list size</button>
   </nav>
   <div class="controls">
@@ -126,7 +127,7 @@
       <button data-v="cased" title="WER, B-WER, U-WER: the case of all the words counts. F1: a list term counts as correct only if written with the case of the list. Punctuation marks are always removed">Yes</button></span></div>
   </div>
   <div class="controls" id="sort-group">
-    <div class="group"><span class="group-label" title="By WER with this list (or without list); the models whose WER is within the confidence interval of the best one are ranked by B-WER">Sort by</span> <span class="group" id="sort-by"></span></div>
+    <div class="group"><span class="group-label" title="The list given to the models that ranks them (by WER with this list, then B-WER within the confidence interval of the best WER) in the leaderboard and the plots. A click on a list in the header of the leaderboard does the same">Hotword list</span> <span class="group" id="sort-by"></span></div>
   </div>
 
   <section data-view="leaderboard">
@@ -172,10 +173,13 @@
         (between two lines), ranked by B-WER, and so on from the best of the others.</li>
     </ul></div>
     <div><h3>Models and columns</h3><ul>
-      <li><b>Sort by</b>: the list the models are ranked on, in the leaderboard and the plots. The line under the name of a model gives its decoding
+      <li><b>Hotword list</b> (or a click on a list in the header of the leaderboard): the list the models are ranked on, in the leaderboard and the plots. The line under the name of a model gives its decoding
         (if several are compared) and the software that runs it.</li>
-      <li><b>List given</b>: <i>prompt</i> (text given to the model), <i>hotwords</i> (of Whisper, at most 223 tokens) or
-        <i>boosting</i> (scores of the terms raised at decoding time, NeMo). Hover it for the details.</li>
+      <li><b>Technique</b>, how the model takes the list into account: <i>Context</i>, an input made for context, that the
+        model is trained to use as background knowledge (Qwen3-ASR, VibeVoice-ASR); <i>Prompt</i>, the text prompt of the model
+        (Granite, Nemotron, MOSS: with the template of their documentation; Whisper: the decoder prompt made for the previous
+        text, at most 223 tokens); <i>Boosting</i>, scores of the terms raised at decoding time, without training (NeMo).
+        Hover it for the text given.</li>
       <li><b>Size</b> (parameters), <b>License</b> and <b>Architecture</b>: as in the other tabs.</li>
       <li><b>RTFx</b>: on one NVIDIA DGX Spark (GB10), as the benchmark runs each model: vLLM servers with 32 to 128
         concurrent requests, NeMo and VibeVoice-ASR in batches (64; 4 to 16 with the long lists), faster-whisper one file
@@ -362,7 +366,7 @@ const TOO_LONG = {
 };
 function notSupported(all, name, list) {
   const label = baseLabel(name), info = infoOf(name);
-  if (!(MODELS[label] || {}).list_given) return "The model takes no list";
+  if (!(MODELS[label] || {}).technique) return "The model takes no list";
   const rule = TOO_LONG[label] || TOO_LONG[info.backend];
   return rule && (SIZE_CLASSES[list] || [list]).some((l) => rule.lists.includes(l)) ? `Not supported, ${rule.why}` : null;
 }
@@ -450,14 +454,12 @@ function overview() {
   const nones = models.map((x) => x.none).filter(present);
   const rankedIndex = lists.indexOf(ranked);
   // List name and size below it
-  const head = (l) => `<th class="group-start${l === ranked ? " ranked" : ""}" title="${esc([listHint(l), l === ranked && "The models are sorted on this list"].filter(Boolean).join(". "))}">` +
-    `${esc(listLabel(l))}${shownSize(l) ? `<br><small>(${shownSize(l)})</small>` : ""}${l !== NO_LIST && onlyText(l) ? `<br><small>${esc(onlyText(l))}</small>` : ""}</th>`;
-  // Fixed layout: the columns take the widths of the colgroup only with an explicit table width
-  const widths = [38, 234, ...Array(lists.length + 1).fill(66), ...MODEL_COLUMNS.map((c) => c.width)];
-  $("overview").style.width = `${widths.reduce((a, b) => a + b)}px`;
-  let html = `<colgroup>${widths.map((w) => `<col style="width: ${w}px">`).join("")}</colgroup>`;
+  // Click: ranks on this list, as the Hotword list buttons
+  const head = (l) => `<th data-rank="${esc(l)}" class="score sortable" aria-sort="${l === ranked ? "ascending" : "none"}" title="${esc([listHint(l), "Rank the models on this list"].filter(Boolean).join(". "))}">` +
+    `${l === ranked ? "▲ " : ""}${esc(listLabel(l))}${shownSize(l) ? `<br><small>(${shownSize(l)})</small>` : ""}${l !== NO_LIST && onlyText(l) ? `<br><small>${esc(onlyText(l))}</small>` : ""}</th>`;
+  let html = "";
   html += `<thead><tr><th>#</th><th>Model</th>${[NO_LIST, ...lists].map(head).join("")}` +
-    `${MODEL_COLUMNS.map((c) => `<th class="group-start" title="${esc(c.title)}">${c.label}</th>`).join("")}</tr></thead><tbody>`;
+    `${MODEL_COLUMNS.map((c, i) => `<th class="info${i ? "" : " section-start"}" title="${esc(c.title)}">${c.label}</th>`).join("")}</tr></thead><tbody>`;
   let previousLevel = null;
   const shown = { ns: false, none: false, slow: false, cut: false, approx: false, fallback: false };
   models.forEach((x, k) => {
@@ -466,7 +468,7 @@ function overview() {
     previousLevel = level;
     const noneApprox = isApprox(x.noneRow, m.key);
     shown.approx ||= noneApprox;
-    html += `<td class="group-start ${rankClass(x.none, nones, m.higher)}"${noneApprox ? ` title="${APPROX_NOTE}"` : ""}>${noneApprox ? "~" : ""}${present(x.none) ? fmt(x.none) : "—"}</td>`;
+    html += `<td class="score ${rankClass(x.none, nones, m.higher)}"${noneApprox ? ` title="${APPROX_NOTE}"` : ""}>${noneApprox ? "~" : ""}${present(x.none) ? fmt(x.none) : "—"}</td>`;
     x.cells.forEach((c, i) => {
       if (!c) {
         // No run with this list: not supported, too slow, or not run. On the ranked list, the measure
@@ -476,14 +478,14 @@ function overview() {
         const value = base && present(base[m.key]);
         shown[kind] = true;
         shown.fallback ||= !!value;
-        html += `<td class="group-start ${kind === "ns" ? "ns" : "none"}${value ? " fallback" : ""}" title="${esc(why)}${value ? ". Value without list, used for the ranking" : ""}">` +
+        html += `<td class="score ${kind === "ns" ? "ns" : "none"}${value ? " fallback" : ""}" title="${esc(why)}${value ? ". Value without list, used for the ranking" : ""}">` +
           `${value ? approxMark(base, m.key) + fmt(base[m.key]) : sign}${mark}</td>`;
         return;
       }
       const run = runOf(all, x.name, lists[i]), cut = cutNote(run, lists[i]), approx = isApprox(run, m.key + "_cb");
       shown.cut ||= !!cut;
       shown.approx ||= approx;
-      html += `<td class="group-start ${rankClass(c.value, columns[i], m.higher)}" title="Without list: ${approxMark(run, m.key)}${fmt(c.before)}${cut ? `; ${cut}` : ""}${approx ? `; ${APPROX_NOTE}` : ""}">${approx ? "~" : ""}${fmt(c.value)}${cut ? "*" : ""}<span class="delta ${changeClass(m, c.before, c.value)}">${changeText(m, c.before, c.value)}</span></td>`;
+      html += `<td class="score ${rankClass(c.value, columns[i], m.higher)}" title="Without list: ${approxMark(run, m.key)}${fmt(c.before)}${cut ? `; ${cut}` : ""}${approx ? `; ${APPROX_NOTE}` : ""}">${approx ? "~" : ""}${fmt(c.value)}${cut ? "*" : ""}<span class="delta ${changeClass(m, c.before, c.value)}">${changeText(m, c.before, c.value)}</span></td>`;
     });
     html += MODEL_COLUMNS.map((c) => c.cell(MODELS[baseLabel(x.name)] || {})).join("") + "</tr>";
   });
@@ -507,12 +509,12 @@ function overview() {
 
 // Model info columns of the table, after the lists
 const MODEL_COLUMNS = [
-  { label: "List given", width: 64, title: "How the list is given to the model",
-    cell: ({ list_given }) => (list_given ? `<td class="group-start info" title="${esc(list_given[1])}">${esc(list_given[0])}</td>` : `<td class="group-start ns" title="The model takes no list">n/s</td>`) },
-  { label: "Size", width: 48, title: "Number of parameters", cell: ({ params: n }) => `<td class="group-start info">${n ? params(n) : "—"}</td>` },
-  { label: "License", width: 76, title: "License of the weights", cell: ({ license }) => `<td class="group-start info">${license ? esc(licenseText(license)) : "—"}</td>` },
-  { label: "Architecture", width: 84, title: "Encoder: CTC / transducer decoding. Encoder-decoder: attention decoder. Audio LLM: audio encoder + LLM decoder",
-    cell: ({ architecture }) => `<td class="group-start info">${esc(architecture || "—")}</td>` },
+  { label: "Size", title: "Number of parameters", cell: ({ params: n }) => `<td class="info section-start">${n ? params(n) : "—"}</td>` },
+  { label: "Architecture", title: "Encoder: CTC / transducer decoding. Encoder-decoder: attention decoder. Audio LLM: audio encoder + LLM decoder",
+    cell: ({ architecture }) => `<td class="info">${esc(architecture || "—")}</td>` },
+  { label: "Technique", title: "How the model takes the list into account: Context (an input made for context, that the model is trained to use), Prompt (the text prompt of the model) or Boosting (scores of the terms raised at decoding time)",
+    cell: ({ technique }) => (technique ? `<td class="info" title="${esc(technique[1])}">${esc(technique[0])}</td>` : `<td class="info ns" title="The model takes no list">n/s</td>`) },
+  { label: "License", title: "License of the weights", cell: ({ license }) => `<td class="info">${license ? esc(licenseText(license)) : "—"}</td>` },
 ];
 
 // Pareto front plots, on the list of the ranking: one measure against another, highlighted (dashed line)
@@ -569,8 +571,8 @@ function pareto() {
   const styles = modelStyles();
   $("pareto").innerHTML = PARETO.map(([x, y]) => scatterPanel(styles, x, y)).join("");
   $("pareto-legend").innerHTML = modelLegend(ORDER, styles);
-  $("pareto-caption").innerHTML = RANKING.list === null ? "" : esc((RANKING.list === NO_LIST ? "Without list (Sort by), on the terms of the smallest list. " :
-    `With the list "${listLabel(RANKING.list)}" (Sort by), or without list for the models without run with it (grey outline). `) + "Dashed line: the models that no other one beats on both measures.");
+  $("pareto-caption").innerHTML = RANKING.list === null ? "" : esc((RANKING.list === NO_LIST ? "Without list, on the terms of the smallest list. " :
+    `With the list "${listLabel(RANKING.list)}" (Hotword list), or without list for the models without run with it (grey outline). `) + "Dashed line: the models that no other one beats on both measures.");
 }
 const modelLegend = (names, styles) => names.filter((n) => styles[n]).map((name) =>
   `<span style="color: ${styles[name].text}"><span class="swatch line" style="border-top-color: ${styles[name].color}"></span>${esc(name)}</span>`).join("");
@@ -761,7 +763,8 @@ function nameCell(name, styles) {
 }
 
 // One panel per measure, one line per model
-const LINE_METRICS = ["wer", "b_wer", "f1", "precision", "recall", "rtfx"];
+// All the measures, RTFx first (the effect of the list size on the speed)
+const LINE_METRICS = ["rtfx", ...METRICS.map((m) => m.key).filter((k) => k !== "rtfx")];
 function lines() {
   const all = rows(), lists = chartLists(), styles = modelStyles();
   const models = [...new Set(all.map(rowName))].sort((a, b) => ORDER.indexOf(a) - ORDER.indexOf(b));
@@ -956,10 +959,6 @@ function render() {
     const c = choices.find((x) => x.key === v);
     state.language = c.language; state.dataset = c.dataset; render();
   }, Object.fromEntries(choices.map((c) => [c.key, c.label])));
-  const set = DESCRIPTIONS.test_sets[state.dataset];
-  $("dataset-note").innerHTML = state.language === AGG ? "Mean over the test sets" : !set ? "" :
-    `<a href="${esc(set.url)}" target="_blank" rel="noopener">${esc(set.domain)}</a>; terms to recognize: ${esc(set.terms.toLowerCase())}` +
-    `<span class="embedded"> (<a href="#test-sets-contextual">details</a>)</span>`;
   buttons($("metric"), METRICS.map((m) => m.key), state.metric, (v) => { state.metric = v; render(); },
     Object.fromEntries(METRICS.map((m) => [m.key, m.label])), Object.fromEntries(METRICS.map((m) => [m.key, `${m.about}; ${better(m)}`])));
   document.querySelectorAll("#mode button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.v === state.mode));
@@ -989,6 +988,12 @@ function render() {
 document.querySelectorAll("#mode button").forEach((b) => b.addEventListener("click", () => { state.mode = b.dataset.v; render(); }));
 // A click on the label selects all the models, or none if all are selected
 $("models-label").addEventListener("click", () => { state.hidden = new Set(state.hidden.size ? [] : modelKeys()); render(); });
+$("overview").addEventListener("click", (e) => {
+  const header = e.target.closest("th[data-rank]");
+  if (!header) return;
+  state.rankList[`${state.language}|${state.dataset}`] = header.dataset.rank;
+  render();
+});
 $("views").addEventListener("click", (e) => {
   if (!e.target.dataset.v) return;
   state.view = e.target.dataset.v;

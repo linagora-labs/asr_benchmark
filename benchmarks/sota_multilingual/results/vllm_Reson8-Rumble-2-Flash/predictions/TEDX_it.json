@@ -6845,20 +6845,6 @@
     "throughput_rtfx": 580.483,
     "prediction": "Io ho i miei dubbi."
   },
-  "TEDX_it_TpJ2LjF16s8_480.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/TpJ2LjF16s8.wav",
-    "id": "TEDX_it_TpJ2LjF16s8_480.9",
-    "audio_duration": 34.26,
-    "audio_offset": 480.88,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Ho i miei dubbi perché, come vi dicevo, in un mondo del lavoro che sta cambiando in maniera fortissima, in cui le competenze sono sempre più scarse, la guerra per il talento è sempre più forte, il mondo in cui l'intelligenza artificiale, l'automatizzazione stanno cambiando il modo con cui le organizzazioni lavorano, in un mondo dove le tematiche del senso di scopo e della diversità dell'inclusione stanno rientrando al centro, in maniera prepotente, delle strategie aziendali, in un mondo dove, evidentemente, le organizzazioni sono sempre più fluide e flessibili, credo che no, non abbia molto senso.",
-    "language": "it",
-    "prediction_duration": 2.90296,
-    "rtf": 0.08473,
-    "throughput_rtfx": 580.483,
-    "prediction": "Ho i miei dubbi perché, come vi dicevo, in un mondo del lavoro che sta cambiando in maniera fortissima, in cui le competenze sono sempre più scarse, la guerra per il talento è sempre più forte, in un mondo in cui l'intelligenza artificiale e l'automatizzazione stanno cambiando il modo con cui le organizzazioni lavorano, in un mondo dove le tematiche del senso di scopo e della diversità dell'inclusione stanno rientrando al centro. In maniera prepotente delle strategie aziendali, in un mondo dove evidentemente le organizzazioni sono sempre più fluide e flessibili, credo che no, non ha molto senso."
-  },
   "TEDX_it_TpJ2LjF16s8_515.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/TpJ2LjF16s8.wav",
     "id": "TEDX_it_TpJ2LjF16s8_515.2",
@@ -7110,20 +7096,6 @@
     "rtf": 0.0668,
     "throughput_rtfx": 580.483,
     "prediction": "Ovvero pensiamo che qualunque asset, qualunque forma di valore, un domani che sia una casa, una macchina, un metallo prezioso, un oggetto di lusso, un'opera d'arte, possa essere trasformata, digitalizzata in un token che possa poi essere scambiato su questa blockchain, su questa nuova tecnologia."
-  },
-  "TEDX_it_bInuBKb-mN0_133.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/bInuBKb-mN0.wav",
-    "id": "TEDX_it_bInuBKb-mN0_133.3",
-    "audio_duration": 33.36,
-    "audio_offset": 133.32,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Per darvi qualche esempio, immaginate le aziende che lavorano nel settore tessile o nell'industria alimentare, che possono così controllare tutti i processi della filiera in chiave, ad esempio, di anticontraffazione; oppure pensiamo agli appassionati d'arte, che non possono permettersi di acquistare un quadro, ad esempio di Andy Warhol, ma possono investire in una frazione di quell'opera d'arte e possono scambiare questa frazione, questo token, con altre frazioni di opere d'arte, sempre in chiave, appunto, di investimento.",
-    "language": "it",
-    "prediction_duration": 2.47151,
-    "rtf": 0.07409,
-    "throughput_rtfx": 580.483,
-    "prediction": "Darvi qualche esempio, immaginate alle aziende che lavorano nel settore tessile o nell'industria alimentare, che possono così controllare tutti i processi della filiera in chiave di anticontraffazione, ad esempio. Oppure pensiamo agli appassionati d'arte, che non possono permettersi di acquistare un quadro, ad esempio di Andy Warhol, ma possono investire in una frazione di quell'opera d'arte e possono scambiare questa frazione, questo token, con altre frazioni di opere d'arte, sempre in chiave appunto di investimento."
   },
   "TEDX_it_bInuBKb-mN0_14.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/bInuBKb-mN0.wav",
@@ -7628,20 +7600,6 @@
     "rtf": 0.13497,
     "throughput_rtfx": 580.483,
     "prediction": "Fate che quando io mi stavo affacciando al mondo del lavoro, l'ondata tech delle startup stava appena arrivando in Europa."
-  },
-  "TEDX_it_bInuBKb-mN0_44.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/bInuBKb-mN0.wav",
-    "id": "TEDX_it_bInuBKb-mN0_44.0",
-    "audio_duration": 36.49,
-    "audio_offset": 43.96,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Se il web 1.0 era l'era in cui le aziende comunicavano direttamente con gli utenti, e appunto c'era una comunicazione, chiamiamola, bidirezionale: le aziende promuovevano, magari, i loro prodotti su Internet; e gli utenti acquistavano direttamente sull'e-commerce; e l'era del web 2.0, invece, è stata l'era in cui gli utenti hanno cominciato ad interagire tra di loro, a scambiarsi informazioni e dati sui blog, sui social media, eccetera, la blockchain permette l'introduzione dello scambio di valore senza intermediazione.",
-    "language": "it",
-    "prediction_duration": 2.50324,
-    "rtf": 0.0686,
-    "throughput_rtfx": 580.483,
-    "prediction": "Se Web 1.0 era l'era in cui le aziende comunicavano direttamente con gli utenti, appunto c'era una comunicazione che chiamiamola bidirezionale, le aziende promuovevano magari i loro prodotti su internet e gli utenti acquistavano direttamente sull'e-commerce. E l'era del Web 2.0 invece è stata l'era in cui gli utenti hanno cominciato ad interagire tra di loro, a scambiarsi informazioni e dati su blog, su social media, eccetera. La blockchain permette l'introduzione dello scambio di valore senza intermediazione."
   },
   "TEDX_it_bInuBKb-mN0_445.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/bInuBKb-mN0.wav",
@@ -11283,20 +11241,6 @@
     "throughput_rtfx": 580.483,
     "prediction": "Questo prodotto è un esempio del risultato del lavoro."
   },
-  "TEDX_it_qlZosMhZG4c_316.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/qlZosMhZG4c.wav",
-    "id": "TEDX_it_qlZosMhZG4c_316.9",
-    "audio_duration": 30.76,
-    "audio_offset": 316.92,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Ed è una valvola, un dispositivo per deviare un flusso, per uso in campo medicale – la straordinarietà di questo oggetto sta nel fatto che è stato, interamente, non solo progettato ma anche testato al computer, attraverso centinaia e centinaia di simulazioni reiterate, a cui è stato delegato il compito di identificare e vagliare il numero più alto possibile di configurazioni, di geometrie, per identificare la migliore possibile secondo una funzione-obiettivo.",
-    "language": "it",
-    "prediction_duration": 2.34861,
-    "rtf": 0.07635,
-    "throughput_rtfx": 580.483,
-    "prediction": "Ed è una valvola, un dispositivo per deviare un flusso, per uso in campo medicale. La straordinarietà di questo oggetto sale il fatto che è stato interamente non solo progettato ma anche testato al computer attraverso centinaia e centinaia di simulazioni reiterate, a cui è stato delegato il compito di identificare e vagliare il numero più alto possibile di configurazioni di geometrie per identificare la migliore possibile, secondo una funzione obiettivo."
-  },
   "TEDX_it_qlZosMhZG4c_348.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/qlZosMhZG4c.wav",
     "id": "TEDX_it_qlZosMhZG4c_348.3",
@@ -12809,20 +12753,6 @@
     "throughput_rtfx": 580.483,
     "prediction": "2 secoli dopo, un'altra rivoluzione, la denominata seconda rivoluzione industriale, con l'avvento della catena di montaggio, con un uso esteso della elettricità, che cambiò ulteriormente, creando traumi, creando fratture e poi successivo benessere. Pensate."
   },
-  "TEDX_it_zlj5sRro7P4_329.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/zlj5sRro7P4.wav",
-    "id": "TEDX_it_zlj5sRro7P4_329.1",
-    "audio_duration": 30.42,
-    "audio_offset": 329.08,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Pensate alla terza rivoluzione industriale che abbiamo vissuto credo praticamente tutti, con l'avvento di Internet, e poi l'ultima che stiamo vivendo adesso, che molti definiscono come quarta rivoluzione industriale, dove parliamo di genEtica e quella E maiuscola non è un errore tipografico, è il senso di nuove problematiche che dovremo affrontare.",
-    "language": "it",
-    "prediction_duration": 1.43845,
-    "rtf": 0.04729,
-    "throughput_rtfx": 580.483,
-    "prediction": "alla terza, alla terza rivoluzione industriale che abbiamo vissuto, credo praticamente tutti, con l'avvento di Internet. E poi, e poi l'ultima, l'ultima che stiamo vivendo adesso, che molti ci definiscono come quarta rivoluzione industriale, dove parliamo di genetica e quella E maiuscola non è un errore tipografico, è il senso di nuove problematiche che dovremmo affrontare."
-  },
   "TEDX_it_zlj5sRro7P4_359.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/zlj5sRro7P4.wav",
     "id": "TEDX_it_zlj5sRro7P4_359.5",
@@ -13467,20 +13397,6 @@
     "throughput_rtfx": 580.483,
     "prediction": "In realtà non è solo questo, perché questo ti cambia una serata in cui non sai cosa fare a casa tua."
   },
-  "TEDX_it_zlj5sRro7P4_789.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/zlj5sRro7P4.wav",
-    "id": "TEDX_it_zlj5sRro7P4_789.9",
-    "audio_duration": 32.38,
-    "audio_offset": 789.92,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "In realtà le reti 5G avranno una capacità più ampia e più potente della fibra ottica, permetteranno finalmente la guida automatica nelle automobili, permetteranno di operare a distanza con una facilità ancora maggiore e con ancora maggiore precisione, entreranno nella nostra vita, l'internet delle cose sarà una realtà perché questi oggetti potranno interagire tra di loro a velocità oggi impensabili.",
-    "language": "it",
-    "prediction_duration": 0.91831,
-    "rtf": 0.02836,
-    "throughput_rtfx": 580.483,
-    "prediction": "In realtà le reti 5G avranno una capacità più ampia e più potente della fibra ottica, permetteranno finalmente la conduzione automatica, la guida automatica nei nelle automobili, permetteranno operare a distanza con una facilità ancora maggiore e con ancora maggiore precisione. Entreranno nella nostra vita l'internet delle cose sarà una realtà, una realtà perché queste Questi oggetti potranno interagire tra di loro a velocità oggi impensabili."
-  },
   "TEDX_it_zlj5sRro7P4_80.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/zlj5sRro7P4.wav",
     "id": "TEDX_it_zlj5sRro7P4_80.5",
@@ -13774,19 +13690,5 @@
     "rtf": 0.03269,
     "throughput_rtfx": 580.483,
     "prediction": "Non hanno pregiudizi e neanche hanno paura di trasmettere, di far vedere il loro affetto."
-  },
-  "TEDX_it_zlj5sRro7P4_981.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/zlj5sRro7P4.wav",
-    "id": "TEDX_it_zlj5sRro7P4_981.3",
-    "audio_duration": 30.01,
-    "audio_offset": 981.26,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Allora, essere ottimisti forse oggi è semplicemente una cosa: è ritornare a credere nelle persone, ma non perché l'uomo è capace di creare una rete 5G o perché è capace di trasportare passeggeri con un drone, perché l'uomo è capace di fare la cosa più meravigliosa che sia mai apparsa su questa Terra: un altro essere umano.",
-    "language": "it",
-    "prediction_duration": 0.59737,
-    "rtf": 0.01991,
-    "throughput_rtfx": 580.483,
-    "prediction": "Allora, essere ottimisti forse oggi è semplicemente una cosa: è ritornare a credere nelle persone. Ma non perché le persone, l'uomo è capace di creare una rete 3G o perché è capace di portare, di trasportare passeggeri con un drone, perché l'uomo è capace di fare la cosa più meravigliosa che sia mai apparsa su questa terra: un altro essere umano."
   }
 }

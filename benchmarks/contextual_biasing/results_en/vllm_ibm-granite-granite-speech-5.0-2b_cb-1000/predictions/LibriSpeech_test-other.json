@@ -3093,19 +3093,6 @@
     "throughput_rtfx": 24.017,
     "prediction": "after a while they came to themselves and nuzhat al zaman rejoiced with exceeding joy oppression and depression left her and gladness took the mastery of her and she repeated these verses"
   },
-  "2033-164915-0004": {
-    "audio_filepath": "/home/data/audio/raw/transcript/en/LIBRISPEECH/LibriSpeech/test-other/2033/164915/2033-164915-0004.flac",
-    "id": "2033-164915-0004",
-    "audio_duration": 32.955,
-    "audio_offset": 0.0,
-    "dataset": "LibriSpeech-other",
-    "full_dataset": "LibriSpeech_test-other",
-    "text": "accordingly she told him all that had come to her since their separation at the khan and what had happened to her with the badawi how the merchant had bought her of him and had taken her to her brother sharrkan and had sold her to him how he had freed her at the time of buying how he had made a marriage contract with her and had gone in to her and how the king their sire had sent and asked for her from sharrkan",
-    "prediction_duration": 46.14353,
-    "rtf": 1.4002,
-    "throughput_rtfx": 24.017,
-    "prediction": "accordingly she told him all that had come to her since their separation at the khan and what had happened to her with the badawi how the merchant had bought her of him and had taken her to her brother sharkan and had sold her to him how he had freed her at the time of buying how he had made a marriage contract with her and had gone in to her and how the king their sire had sent and asked for her from sharkan"
-  },
   "2033-164915-0005": {
     "audio_filepath": "/home/data/audio/raw/transcript/en/LIBRISPEECH/LibriSpeech/test-other/2033/164915/2033-164915-0005.flac",
     "id": "2033-164915-0005",
@@ -7356,19 +7343,6 @@
     "rtf": 4.35977,
     "throughput_rtfx": 24.017,
     "prediction": "if marriage agrees no better with other people than it does with him i shall pray that all my friends may scape it"
-  },
-  "3080-5032-0018": {
-    "audio_filepath": "/home/data/audio/raw/transcript/en/LIBRISPEECH/LibriSpeech/test-other/3080/5032/3080-5032-0018.flac",
-    "id": "3080-5032-0018",
-    "audio_duration": 30.94,
-    "audio_offset": 0.0,
-    "dataset": "LibriSpeech-other",
-    "full_dataset": "LibriSpeech_test-other",
-    "text": "well in earnest if i were a prince that lady should be my mistress but i can give no rule to any one else and perhaps those that are in no danger of losing their hearts to her may be infinitely taken with one i should not value at all for so says the justinian wise providence has ordained it that by their different humours everybody might find something to please themselves withal without envying their neighbours",
-    "prediction_duration": 40.12654,
-    "rtf": 1.29691,
-    "throughput_rtfx": 24.017,
-    "prediction": "well in earnest if i were a prince that lady should be my mistress but so says a justinian wise providence has ordained it that by their different humours everybody might find something to please themselves withal without envying their neighbours"
   },
   "3080-5032-0019": {
     "audio_filepath": "/home/data/audio/raw/transcript/en/LIBRISPEECH/LibriSpeech/test-other/3080/5032/3080-5032-0019.flac",
@@ -16639,19 +16613,6 @@
     "throughput_rtfx": 24.017,
     "prediction": "you had better put this to the proof and i will go at once to the bargello"
   },
-  "4294-14317-0014": {
-    "audio_filepath": "/home/data/audio/raw/transcript/en/LIBRISPEECH/LibriSpeech/test-other/4294/14317/4294-14317-0014.flac",
-    "id": "4294-14317-0014",
-    "audio_duration": 34.51,
-    "audio_offset": 0.0,
-    "dataset": "LibriSpeech-other",
-    "full_dataset": "LibriSpeech_test-other",
-    "text": "i am willing to enter into competition with the ancients and feel able to surpass them for since those early days in which i made the medals of pope clement i have learned so much that i can now produce far better pieces of the kind i think i can also outdo the coins i struck for duke alessandro which are still held in high esteem in like manner i could make for you large pieces of gold and silver plate as i did so often for that noble monarch king francis of france thanks to the great conveniences he allowed me without ever losing time for the execution of colossal statues or other works of the sculptors craft",
-    "prediction_duration": 45.319,
-    "rtf": 1.31321,
-    "throughput_rtfx": 24.017,
-    "prediction": "i am willing to enter into competition with the ancients and feel able to surpass them for since those early days in which i made the medals of pope clement which are still held in high esteem in like manner i could make for you large pieces of gold and silver plate as i did so often for that noble monarch king francis of france thanks to the great conveniences he allowed me"
-  },
   "4294-14317-0015": {
     "audio_filepath": "/home/data/audio/raw/transcript/en/LIBRISPEECH/LibriSpeech/test-other/4294/14317/4294-14317-0015.flac",
     "id": "4294-14317-0015",
@@ -24972,19 +24933,6 @@
     "throughput_rtfx": 24.017,
     "prediction": "the fiacre started"
   },
-  "6070-86744-0000": {
-    "audio_filepath": "/home/data/audio/raw/transcript/en/LIBRISPEECH/LibriSpeech/test-other/6070/86744/6070-86744-0000.flac",
-    "id": "6070-86744-0000",
-    "audio_duration": 33.52,
-    "audio_offset": 0.0,
-    "dataset": "LibriSpeech-other",
-    "full_dataset": "LibriSpeech_test-other",
-    "text": "franz who seemed attracted by some invisible influence towards the count in which terror was strangely mingled felt an extreme reluctance to permit his friend to be exposed alone to the singular fascination that this mysterious personage seemed to exercise over him and therefore made no objection to albert's request but at once accompanied him to the desired spot and after a short delay the count joined them in the salon",
-    "prediction_duration": 37.99987,
-    "rtf": 1.13365,
-    "throughput_rtfx": 24.017,
-    "prediction": "franz who seemed attracted by some invisible influence towards the count in which mysterious personage seemed to exercise over him and therefore made no objection to albert's request but at once accompanied him to the desired spot and after a short delay the count joined them in the salon"
-  },
   "6070-86744-0001": {
     "audio_filepath": "/home/data/audio/raw/transcript/en/LIBRISPEECH/LibriSpeech/test-other/6070/86744/6070-86744-0001.flac",
     "id": "6070-86744-0001",
@@ -25205,19 +25153,6 @@
     "rtf": 9.56109,
     "throughput_rtfx": 24.017,
     "prediction": "uppon my honour then listen to me"
-  },
-  "6070-86744-0018": {
-    "audio_filepath": "/home/data/audio/raw/transcript/en/LIBRISPEECH/LibriSpeech/test-other/6070/86744/6070-86744-0018.flac",
-    "id": "6070-86744-0018",
-    "audio_duration": 33.645,
-    "audio_offset": 0.0,
-    "dataset": "LibriSpeech-other",
-    "full_dataset": "LibriSpeech_test-other",
-    "text": "he dwelt with considerable force and energy on the almost magical hospitality he had received from the count and the magnificence of his entertainment in the grotto of the thousand and one nights he recounted with circumstantial exactitude all the particulars of the supper the hashish the statues the dream and how at his awakening there remained no proof or trace of all these events save the small yacht seen in the distant horizon driving under full sail toward porto vecchio",
-    "prediction_duration": 45.1173,
-    "rtf": 1.34098,
-    "throughput_rtfx": 24.017,
-    "prediction": "he dwelt with considerable force and energy on the almost magical hospitality he had received from the count and the magnificence of his entertainment in the grotto of the thousand and one nights he recounted with circumstantial exactitude all the particulars of the supper the hashish the statues the dream and how at his awakening there remained no proof or trace of all these events save the small yacht seen in the distant horizon driving under full sail toward porto vecchio"
   },
   "6070-86744-0019": {
     "audio_filepath": "/home/data/audio/raw/transcript/en/LIBRISPEECH/LibriSpeech/test-other/6070/86744/6070-86744-0019.flac",
@@ -25725,19 +25660,6 @@
     "rtf": 2.7191,
     "throughput_rtfx": 24.017,
     "prediction": "these things the eyes especially with their smouldering fire might have indicated that he was to be a great american statesman or on the other hand they might simply have proved that he came from carolina or alabama"
-  },
-  "6128-63240-0008": {
-    "audio_filepath": "/home/data/audio/raw/transcript/en/LIBRISPEECH/LibriSpeech/test-other/6128/63240/6128-63240-0008.flac",
-    "id": "6128-63240-0008",
-    "audio_duration": 31.13,
-    "audio_offset": 0.0,
-    "dataset": "LibriSpeech-other",
-    "full_dataset": "LibriSpeech_test-other",
-    "text": "and yet the reader who likes a complete image who desires to read with the senses as well as with the reason is entreated not to forget that he prolonged his consonants and swallowed his vowels that he was guilty of elisions and interpolations which were equally unexpected and that his discourse was pervaded by something sultry and vast something almost african in its rich basking tone something that suggested the teeming expanse of the cotton field",
-    "prediction_duration": 46.93374,
-    "rtf": 1.50767,
-    "throughput_rtfx": 24.017,
-    "prediction": "and yet the reader who likes a complete image who desires to read with the senses as well as with the reason is entreated not to forget that he prolonged his consonants and swallowed his vowels that he was guilty of elegies and interpolations which were equally unexpected and that his discourse was pervaded by something sultry and vast something almost african in its rich basking tone"
   },
   "6128-63240-0009": {
     "audio_filepath": "/home/data/audio/raw/transcript/en/LIBRISPEECH/LibriSpeech/test-other/6128/63240/6128-63240-0009.flac",
@@ -29079,19 +29001,6 @@
     "rtf": 2.48412,
     "throughput_rtfx": 24.017,
     "prediction": "but the captain arose and tightening his girdle tucked up his skirts and after taking refuge with allah from satan the stoned climbed to the masthead whence he looked out right and left and gazing at the passengers and crew fell to buffeting his face and plucking out his beard"
-  },
-  "7018-75789-0029": {
-    "audio_filepath": "/home/data/audio/raw/transcript/en/LIBRISPEECH/LibriSpeech/test-other/7018/75789/7018-75789-0029.flac",
-    "id": "7018-75789-0029",
-    "audio_duration": 33.725,
-    "audio_offset": 0.0,
-    "dataset": "LibriSpeech-other",
-    "full_dataset": "LibriSpeech_test-other",
-    "text": "this he set in a saucer wetted with a little water and after waiting a short time smelt and tasted it and then he took out of the chest a booklet wherein he read awhile and said weeping know o ye passengers that in this book is a marvellous matter denoting that whoso cometh hither shall surely die without hope of escape for that this ocean is called the sea of the clime of the king wherein is the sepulchre of our lord solomon son of david on both be peace",
-    "prediction_duration": 52.00861,
-    "rtf": 1.54214,
-    "throughput_rtfx": 24.017,
-    "prediction": "this he set in a saucer wetted with a little water and after waiting a short time smelt and tasted it and then he took out of the chest a booklet wherein he read awhile and said weeping know o ye passengers that in this book is a marvellous matter denoting that whoso come hither shall surely die without hope of escape for that this ocean is called the sea of the clime of the king wherein is a sepulchre of our lord salomon son of david on both be peace"
   },
   "7018-75789-0030": {
     "audio_filepath": "/home/data/audio/raw/transcript/en/LIBRISPEECH/LibriSpeech/test-other/7018/75789/7018-75789-0030.flac",

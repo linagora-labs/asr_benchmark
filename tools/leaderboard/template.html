@@ -50,14 +50,20 @@
   small { font-size: 11px; opacity: .75; }
   .notes { margin-top: 20px; font-size: 14px; }
   #symbols { margin: 12px 0 0; color: var(--muted); }
-  .tabs { display: flex; flex-wrap: wrap; gap: 4px 24px; align-items: center; margin-top: 24px; border-bottom: 1px solid var(--line); }
-  .tabs a { padding: 8px 2px; margin-bottom: -1px; color: var(--muted); text-decoration: none; font-weight: 600; border-bottom: 2px solid transparent; }
-  .tabs a[aria-current="page"] { color: var(--accent); border-color: var(--accent); }
+  /* Tabs drawn as folder tabs: the others grey and raised on hover, the current one joined to the page */
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-end; margin-top: 24px; border-bottom: 2px solid var(--accent); }
+  .tabs a { padding: 10px 18px; margin-bottom: -2px; font-size: 16px; font-weight: 600; text-decoration: none; color: var(--text);
+    background: #ecebe7; border: 1px solid var(--line); border-bottom: 2px solid var(--accent); border-radius: 8px 8px 0 0;
+    transition: background .15s, color .15s; }
+  .tabs a:hover { background: color-mix(in srgb, var(--accent) 14%, var(--surface)); color: var(--accent); }
+  .tabs a[aria-current="page"] { background: var(--bg); color: var(--accent); border: 2px solid var(--accent); border-bottom-color: var(--bg); }
+  .tabs a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .tabs label { margin-left: auto; }
-  .intro { margin: 16px 0 0; }
+  .intro { margin: 16px 0 0; } .intro.muted { margin-top: 6px; }
   #tab-testsets .scroll { margin-top: 12px; }
   #tab-testsets h2 { scroll-margin-top: 12px; } #tab-testsets section:first-child h2 { margin-top: 24px; }
   #tab-testsets td.wrap { white-space: normal; min-width: 320px; }
+  #tab-testsets td.left { white-space: normal; }
   h2 { margin: 40px 0 0; font-size: 19px; }
   tr.total td { font-weight: 700; }
   .chart { position: relative; padding: 8px 8px 0; }
@@ -93,6 +99,8 @@
   <h1>Open French-Centric ASR Leaderboard</h1>
   <div class="muted" id="meta"></div>
   <p class="intro">Benchmark of open-weight speech recognition models on French, and on some European languages and Arabic. Unlike many benchmarks limited to read speech, it also covers spontaneous and conversational speech (meetings, web videos, earnings calls).</p>
+  <p class="intro muted">A suggestion, or a competitive model to add? Please open an issue on
+    <a href="https://github.com/linagora-labs/asr_benchmark/issues">GitHub</a>.</p>
 
   <nav class="tabs">
     <a href="#">French ASR</a> <a href="#multilingual" id="multilingual-link">Multilingual ASR</a> <a href="#contextual-biasing" id="contextual-link">Contextual Biasing ASR</a> <a href="#test-sets">Test sets</a>
@@ -191,7 +199,12 @@ const shownModels = () => multi() ? DATA.multilingual.models : modelsOf(state.la
 const datasetLabel = d => multi() ? `${d.name} ${d.language}` : d.name;
 const result = (m, d) => (m.scores[d.id] || {})[metricKey()];  // {wer, sub, del, ins, ci95} or undefined
 // Model info columns.
-const languagesText = l => l && l.length <= 5 ? l.join(", ") : "multi";
+// Up to 5 languages: the list; up to 8: the list and their number; more: "multilingual" and their number
+// (a model card may only give "35+")
+const languagesText = l => !l ? "—" : l.length === 1 && l[0].endsWith("+") ? `multilingual (${l[0]})`
+  : l.length <= 5 ? l.join(", ") : l.length <= 8 ? `${l.join(", ")} (${l.length})` : `multilingual (${l.length})`;
+// Displayed name of a scope (model_info.task)
+const scopeText = v => ({ Multi: "multitask" })[v] || v;
 // Hover text of the prompt sign: the prompt sent and its source.
 const promptText = m => [m.prompt && `Prompt: ${m.prompt}`, m.prompt_source && `(${m.prompt_source})`].filter(Boolean).join("\n");
 const halfWidth = r => r && r.ci95 ? (r.ci95[1] - r.ci95[0]) / 2 : null;
@@ -264,25 +277,30 @@ const languageName = l => LANGUAGES[l] || l;
 function renderOtherTestSets() {
   const fill = (id, head, body) => { document.getElementById(id).innerHTML = `<thead><tr>${head.map(h => `<th${["Type", "Terms to recognize", "Content"].includes(h) ? ' class="left"' : ""}>${h}</th>`).join("")}</tr></thead><tbody>${body}</tbody>`; };
   const meanLength = d => d.mean_seconds ?? (d.hours ? 3600 * d.hours / d.utterances : null);
-  const size = d => `<td>${d.utterances ?? "—"}</td><td>${d.hours != null ? f1(d.hours) + " h" : "—"}</td><td>${meanLength(d) != null ? f1(meanLength(d)) + " s" : "—"}</td>`;
+  const seconds = v => v != null ? f1(v) + " s" : "—";
+  // Utterances, duration, mean and median lengths, length distribution (same x scale in a table, up to a tick)
+  const binsOf = sets => { const tick = 10 / DATA.histogram_bin; return Math.ceil(Math.max(0, ...sets.map(d => (d.histogram || []).length)) / tick) * tick; };
+  const size = (d, bins) => `<td>${d.utterances ?? "—"}</td><td>${d.hours != null ? f1(d.hours) + " h" : "—"}</td><td>${seconds(meanLength(d))}</td>` +
+    `<td>${seconds(d.median_seconds)}</td><td>${d.histogram ? histogramSvg(d.histogram, bins) : "—"}</td>`;
+  const sizeHeads = ["Utterances", "Duration", "Mean length", "Median length", "Length distribution"];
   const multilingualSets = DATA.multilingual ? DATA.multilingual.datasets : [];
   document.getElementById("multilingual-sets").hidden = !multilingualSets.length;
-  fill("multilingual-table", ["Language", "Test set", "Type", "Selection", "Utterances", "Duration", "Mean length"],
+  const multilingualBins = binsOf(multilingualSets);
+  fill("multilingual-table", ["Language", "Test set", "Type", "Selection", ...sizeHeads],
     multilingualSets.map((d, i) => `<tr><td>${i && multilingualSets[i - 1].language === d.language ? "" : esc(languageName(d.language))}</td><td>${datasetLink(d)}</td>` +
-      `<td class="left">${esc(d.domain)}</td><td>${esc(d.selection)}</td>${size(d)}</tr>`).join(""));
+      `<td class="left">${esc(d.domain)}</td><td>${esc(d.selection)}</td>${size(d, multilingualBins)}</tr>`).join(""));
   document.getElementById("multilingual-sets-notes").innerHTML = `
-    <p>Test splits without duration filter, except the French ones, shared with the French benchmark. Sound events of mTEDx, e.g. "(Risas)", are removed from the references.
+    <p>Test splits, without the segments longer than 30 s (as in the French benchmark, whose French test sets are shared). Sound events of mTEDx, e.g. "(Risas)", are removed from the references.
     The exact utterances are listed in <a href="${DATA.repo}/tree/main/benchmarks/sota_multilingual/manifests">manifests</a>.</p>`;
   const sets = DATA.contextual_test_sets;
   document.getElementById("contextual-sets").hidden = !sets.length;
-  const tick = 10 / DATA.histogram_bin, bins = Math.ceil(Math.max(0, ...sets.map(d => (d.histogram || []).length)) / tick) * tick;  // up to a tick
-  fill("contextual-table", ["Test set", "Language", "Type", "Terms to recognize", "Utterances", "Duration", "Mean length", "Length distribution"],
-    sets.map(d => `<tr><td>${datasetLink(d)}</td><td>${esc(languageName(d.language))}</td><td class="left">${esc(d.domain)}</td><td class="left">${esc(d.terms)}</td>${size(d)}` +
-      `<td>${d.histogram ? histogramSvg(d.histogram, bins) : "—"}</td></tr>`).join(""));
+  const contextualBins = binsOf(sets);
+  fill("contextual-table", ["Test set", "Language", "Type", "Terms to recognize", ...sizeHeads],
+    sets.map(d => `<tr><td>${datasetLink(d)}</td><td>${esc(languageName(d.language))}</td><td class="left">${esc(d.domain)}</td><td class="left">${esc(d.terms)}</td>${size(d, contextualBins)}</tr>`).join(""));
   document.getElementById("contextual-sets-notes").innerHTML = `
-    <p>Lists given to the models, which all hold the terms to recognize and others that are not spoken (distractors):</p>`;
-  fill("contextual-lists", ["Test set", "List", "Terms", "Content"],
-    sets.flatMap(d => d.lists.map((l, i) => `<tr><td>${i ? "" : esc(d.name)}</td><td title="${esc(l.id)}">${esc(l.label)}</td><td>${Math.round(l.size).toLocaleString("en")}</td>` +
+    <p>Lists given to the models, which all hold the terms to recognize and others that are not spoken (distractors). Per-utterance lists: mean number of terms per utterance.</p>`;
+  fill("contextual-lists", ["Test set", "List", "Terms per list", "Content"],
+    sets.flatMap(d => d.lists.map((l, i) => `<tr><td>${i ? "" : esc(d.name)}</td><td title="${esc(l.id)}">${esc(l.label)}</td><td>${l.size < 1000 && l.size % 1 ? l.size.toFixed(1) : Math.round(l.size).toLocaleString("en")}</td>` +
       `<td class="left wrap">${esc(l.content)}</td></tr>`)).join(""));
 }
 
@@ -355,15 +373,15 @@ const INFO = [
                               : `<td class="muted" title="Not measured yet">—</td>` },
   { key: "params", label: "Size", sub: "parameters", sort: true, title: "Number of parameters. Sort by size",
     cell: m => `<td>${m.params ? params(m.params) : "—"}</td>` },
-  { key: "license", label: "License", title: "License of the weights",
-    cell: m => `<td class="left">${esc(m.license ? licenseText(m.license) : "—")}</td>` },
-  { key: "languages", label: "Languages", title: "Languages supported according to the model card",
-    cell: m => `<td class="left" title="${esc(m.languages ? m.languages.join(" ") : "Not listed in the model card")}">${esc(languagesText(m.languages))}</td>` },
   { key: "architecture", label: "Architecture",
     title: "Encoder: CTC / transducer decoding. Encoder-decoder: attention decoder. Audio LLM: audio encoder + LLM decoder. Streaming: model built for streaming, transcribed offline here",
     cell: m => `<td class="left">${esc([m.architecture || "—", m.streaming && "streaming"].filter(Boolean).join(" · "))}</td>` },
-  { key: "task", label: "Scope", title: "What the model is made for. ASR: transcription only. ASR/AST: transcription and speech translation. Multi: general audio tasks (QA, summarization...)",
-    cell: m => `<td class="left">${esc(m.task || "—")}</td>` },
+  { key: "task", label: "Scope", title: "What the model is made for. ASR: transcription only. ASR/AST: transcription and speech translation. multitask: general audio tasks (QA, summarization...)",
+    cell: m => `<td class="left">${esc(m.task ? scopeText(m.task) : "—")}</td>` },
+  { key: "languages", label: "Languages", title: "Languages supported according to the model card",
+    cell: m => `<td class="left" title="${esc(m.languages ? m.languages.join(" ") : "Not listed in the model card")}">${esc(languagesText(m.languages))}</td>` },
+  { key: "license", label: "License", title: "License of the weights",
+    cell: m => `<td class="left">${esc(m.license ? licenseText(m.license) : "—")}</td>` },
 ];
 // Columns that can be hidden (Columns buttons): the average rank and the model info.
 const COLUMNS = [{ key: "rank", label: "Avg rank" }, ...INFO];
@@ -411,7 +429,8 @@ function render() {
   const rankValues = column(r => r.rank);
   const values = Object.fromEntries(datasets.map(d => [d.id, column(r => (result(r.m, d) || {}).wer)]));
   // Multilingual tab: vertical bar before the first test set of each language
-  const languageStart = new Set(multi() ? datasets.filter((d, i) => !i || datasets[i - 1].language !== d.language).map(d => d.id) : []);
+  // Vertical bar before the first test set, and in the Multilingual tab before the first test set of each language
+  const languageStart = new Set(datasets.filter((d, i) => !i || (multi() && datasets[i - 1].language !== d.language)).map(d => d.id));
   const startClass = d => languageStart.has(d.id) ? " language-start" : "";
 
   // Multilingual tab: a first header row with the languages, the other columns over both rows
@@ -427,8 +446,8 @@ function render() {
   const head = `<tr><th${span}>#</th><th${span}>Model</th>${th("", "Average", `${datasets.length} test sets`, "Sort by the average", " score")}` +
     (shownColumn("rank") ? th("rank", "Avg rank", `${datasets.length} test sets`, "Sort by the average rank", " score") : "") +
     (multi() ? languages.map(l => `<th colspan="${datasets.filter(d => d.language === l).length}" class="language language-start">${esc(languageName(l))}</th>`).join("") : datasetHeads) +
-    INFO.filter(c => shownColumn(c.key)).map(c => c.sort ? th(c.key, c.label, c.sub, c.title) :
-      `<th${span} class="left" title="${esc(c.title)}">${c.label}</th>`).join("") + "</tr>" + (multi() ? `<tr>${datasetHeads}</tr>` : "");
+    INFO.filter(c => shownColumn(c.key)).map((c, i) => c.sort ? th(c.key, c.label, c.sub, c.title, i ? "" : " section-start") :
+      `<th${span} class="left${i ? "" : " section-start"}" title="${esc(c.title)}">${c.label}</th>`).join("") + "</tr>" + (multi() ? `<tr>${datasetHeads}</tr>` : "");
   let rank = 0;
   const body = rows.map(({ m, avg, rank: avgRank, key }) => {
     const name = (m.url ? `<a href="${esc(m.url)}">${esc(m.model)}</a>` : esc(m.model)) +
@@ -453,7 +472,9 @@ function render() {
                         : `<td class="score muted" title="Not evaluated on all the selected test sets">—</td>`;
     const rankCell = avgRank != null ? cell(avgRank, null, rankClass(avgRank, rankValues), "Mean of the ranks over the selected test sets")
                                      : `<td class="score muted">—</td>`;
-    const info = INFO.filter(c => shownColumn(c.key)).map(c => c.cell(m)).join("");
+    // The first column after the scores starts with a vertical bar
+    const info = INFO.filter(c => shownColumn(c.key)).map((c, i) => i ? c.cell(m) : c.cell(m).replace(/^<td( class="([^"]*)")?/,
+      (_, attr, cls) => `<td class="${cls ? cls + " " : ""}section-start"`)).join("");
     return `<tr><td>${key != null ? ++rank : ""}</td><td>${name}<br><small>${esc([m.variant, m.backend].filter(Boolean).join(" · "))}</small></td>` +
       `${avgCell}${shownColumn("rank") ? rankCell : ""}${cells}${info}</tr>`;
   }).join("");
@@ -547,7 +568,7 @@ function renderChart(rows, datasets) {
 
   const missing = (list, why) => list.length ? `<p>${why}: ${list.map(r => esc(r.m.model + (r.m.variant ? ` (${r.m.variant})` : ""))).join(", ")}.</p>` : "";
   document.getElementById("chart-notes").innerHTML =
-    `<p>Each dot is a model: its average over the test sets selected above, against its <a href="#test-sets-speed">RTFx</a> (speed). Vertical bars: 95% confidence interval of the average. Hover a dot for the details.</p>` +
+    `<p>Each dot is a model: its average over the test sets selected above, against its <a href="#test-sets-speed">RTFx</a> (speed${multi() ? ", measured on French speech for all the languages" : ""}). Vertical bars: 95% confidence interval of the average. Hover a dot for the details.</p>` +
     missing(rows.filter(r => r.avg && !r.m.rtfx), "Speed not measured yet") +
     missing(rows.filter(r => !r.avg), "Not evaluated on all the selected test sets");
 }
@@ -611,7 +632,7 @@ architectures.forEach(v => state.architecture.add(v));
 valuesOf(taskOf, TASKS).forEach(v => state.task.add(v));
 toggleButtons("filter-architecture", architectures.map(v => [v, v, `Show the ${v} models`]),
   v => state.architecture.has(v), v => flip(state.architecture, v));
-toggleButtons("filter-task", valuesOf(taskOf, TASKS).map(v => [v, v, `Show the ${v} models`]),
+toggleButtons("filter-task", valuesOf(taskOf, TASKS).map(v => [v, scopeText(v), `Show the ${scopeText(v)} models`]),
   v => state.task.has(v), v => flip(state.task, v));
 toggleButtons("columns", COLUMNS.map(c => [c.key, c.label, `Show the ${c.label} column`]),
   v => shownColumn(v), v => {
@@ -665,9 +686,9 @@ function renderNotes() {
     "Models and columns": [
       `Click a column header to sort the table. The line under the name of a model gives its variant (if any) and the software that runs it: a model can be there several times.`,
       `<b>Architecture</b>: <i>encoder</i> (CTC or transducer decoding), <i>encoder-decoder</i> (attention decoder) or <i>audio LLM</i> (audio encoder and LLM decoder); <i>streaming</i> models are transcribed offline here, which penalizes them.`,
-      `<b>Scope</b>: what the model is made for, <i>ASR</i> (transcription only), <i>ASR/AST</i> (transcription and speech translation) or <i>Multi</i> (general audio tasks).`,
+      `<b>Scope</b>: what the model is made for, <i>ASR</i> (transcription only), <i>ASR/AST</i> (transcription and speech translation) or <i>multitask</i> (general audio tasks).`,
       `<b>RTFx</b>: speed, in seconds of audio transcribed per second,${gpu ? `${gpu},` : ""} one segment at a time (<a href="#test-sets-speed">details</a>).`,
-      `<b>Size</b> (parameters), <b>License</b> and <b>Languages</b> come from the model cards.`,
+      `<b>Size</b> (parameters), <b>License</b> and <b>Languages</b> come from the model cards. Languages: their list, with their number beyond 5; beyond 8, "multilingual" and their number (hover for the list).`,
       `<b>Buttons</b>: Architecture and Scope filter the models; Columns show or hide columns. A click on the label of a group of buttons selects all of them, or none.`,
     ],
     "Data": multilingual ? [
@@ -709,7 +730,7 @@ function showTab() {
   const contextual = tab === "#contextual-biasing";
   document.getElementById("tab-board").hidden = tab !== "" && tab !== "#multilingual";
   languageSelect.parentElement.hidden = languages.length < 2 || tab === "#multilingual" || contextual;
-  document.getElementById("speed-chart").hidden = tab !== "";
+  document.getElementById("speed-chart").hidden = tab !== "" && tab !== "#multilingual";
   document.getElementById("tab-testsets").hidden = tab !== "#test-sets";
   document.getElementById("tab-contextual").hidden = !contextual;
   document.getElementById("controls").hidden = tab === "#test-sets" || contextual;  // not used by these tabs

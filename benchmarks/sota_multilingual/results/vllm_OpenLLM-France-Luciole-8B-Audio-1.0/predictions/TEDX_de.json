@@ -7545,20 +7545,6 @@
     "throughput_rtfx": 75.315,
     "prediction": "Wie heißt es hier?"
   },
-  "TEDX_de_q5Owmo3ss5E_561.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/de/Multilingual_TEDx/q5Owmo3ss5E.wav",
-    "id": "TEDX_de_q5Owmo3ss5E_561.2",
-    "audio_duration": 117.6,
-    "audio_offset": 561.17,
-    "dataset": "TEDX_de",
-    "full_dataset": "TEDX_de",
-    "text": "Versucht nicht lustig zu sein, schaut euch einfach in die Augen und tut gar nichts.",
-    "language": "de",
-    "prediction_duration": 3.70022,
-    "rtf": 0.03146,
-    "throughput_rtfx": 75.315,
-    "prediction": "(Musik) (Applaus) (Musik) (Applaus)"
-  },
   "TEDX_de_q5Owmo3ss5E_60.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/de/Multilingual_TEDx/q5Owmo3ss5E.wav",
     "id": "TEDX_de_q5Owmo3ss5E_60.7",

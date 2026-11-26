@@ -1,5 +1,5 @@
-# FLEURS (en, nl, it, de, es, pt, ar), Multilingual TEDx (it, de, es, pt, ar), VoxPopuli (en, nl), whole
-# test sets, and 10% of CommonVoice en: 3 test sets in English, 2 in the other languages.
+# FLEURS (en, nl, it, de, es, pt, ar), Multilingual TEDx (it, de, es, pt, ar), VoxPopuli (en, nl), test sets
+# (segments of 30 s at most), and 10% of CommonVoice en: 3 test sets in English, 2 in the other languages.
 # Manifests: python tools/build_manifests.py --benchmark sota_multilingual
 # On the DGX: tools/run_sota_dgx.sh PART -c benchmarks/sota_multilingual/config.yaml
 # Each dataset has its `language`: the model switches to it (language, and `prompts` of the
@@ -7,7 +7,7 @@
 # (text normalization of ssak). `languages` (per
 # entry): only the datasets of these languages, for the models that do not support them all.
 min_duration: 0
-max_duration: 1000
+max_duration: 30  # as in benchmarks/sota: some models take at most 30 s
 datasets:
   FLEURS_en:
     manifest: benchmarks/sota_multilingual/manifests/FLEURS_en.jsonl

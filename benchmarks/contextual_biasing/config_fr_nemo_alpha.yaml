@@ -6,7 +6,7 @@ datasets:
   PxSLU_dev:
     manifest: benchmarks/contextual_biasing/manifests/PxSLU_dev.jsonl
 min_duration: 0
-max_duration: 60
+max_duration: 30  # as in benchmarks/sota: some models take at most 30 s
 output_folder: benchmarks/contextual_biasing/results_fr
 compute_rtf: False
 plot_monitoring: False

@@ -13,6 +13,7 @@ The Contextual Biasing tab: the page of tools/contextual_biasing (--contextual_r
 """
 import argparse
 import json
+import math
 import re
 import statistics
 import subprocess
@@ -61,7 +62,7 @@ MULTILINGUAL_DATASETS = {
 }
 MULTILINGUAL_SELECTION = {"CommonVoice_en": "10%"}
 MULTILINGUAL_FRENCH = {"FLEURS": "FLEURS_fr", "TEDX_fr": "TEDX_fr"}  # stem in --results -> id
-MULTILINGUAL_LANGUAGES = ["fr", "en", "nl", "it", "de", "es", "pt", "ar"]  # column order
+MULTILINGUAL_LANGUAGES = ["en", "fr", "de", "it", "es", "pt", "nl", "ar"]  # column order
 METRICS = [metric + suffix for metric in ("wer", "cer") for suffix in ("_nocasepunc", "_nopunc", "_nocase", "")]
 EMPTY_WARNING = 0.01  # share of empty outputs from which the model gets a caveat
 SPECIAL_TOKEN = re.compile(r"<\|[^|]*\|>")
@@ -216,6 +217,20 @@ def is_public(exp):
     return not meta["model"].startswith(("/", ".", "~")) or bool((meta.get("model_info") or {}).get("hf"))
 
 
+def prediction_durations(folders, stem, expected):
+    """Durations (s) of the utterances of a test set, from the predictions of a run that has all
+    of them (the expected number), else of the run with the most."""
+    best = []
+    for path in sorted(p for folder in folders for p in folder.glob(f"*/predictions/{stem}.json")):
+        rows = json.loads(path.read_text(encoding="utf-8")).values()
+        durations = [row["audio_duration"] for row in rows if row.get("audio_duration")]
+        if len(durations) > len(best):
+            best = durations
+        if len(best) >= expected:
+            break
+    return best
+
+
 def multilingual(results, french_results, rtf_results=None, include_private=False, french_extra=()):
     """Models and test sets of the Multilingual tab, None without results. include_private: also
     the local checkpoints (local preview, never published); french_extra: other results folders
@@ -261,15 +276,16 @@ def multilingual(results, french_results, rtf_results=None, include_private=Fals
     for i in sorted(ids, key=order):
         prefix, language = i.rsplit("_", 1)
         name, domain, url = MULTILINGUAL_DATASETS.get(prefix, (prefix, "", None))
-        if i in MULTILINGUAL_FRENCH.values():
-            selection = "Whole, 30 s at most (as in French ASR)"
-        else:
-            selection = MULTILINGUAL_SELECTION.get(i, "Whole")
+        selection = MULTILINGUAL_SELECTION.get(i, "Whole")
+        utterances = max((m["scores"][i]["n"] or 0) for m in models if i in m["scores"])
+        stem = next((s for s, j in MULTILINGUAL_FRENCH.items() if j == i), i)
+        french = i in MULTILINGUAL_FRENCH.values()  # from the French leaderboard
+        durations = prediction_durations([french_results, *french_extra] if french else [results], stem, utterances)
         datasets.append({
             "id": i, "name": name, "domain": domain, "language": language, "url": url, "selection": selection,
             "hours": round(max((m["scores"][i]["seconds"] or 0) for m in models if i in m["scores"]) / 3600, 2) or None,
-            "utterances": max((m["scores"][i]["n"] or 0) for m in models if i in m["scores"]),
-        })
+            "utterances": utterances,
+        } | (duration_stats(durations) if len(durations) == utterances else {}))
     return {"datasets": datasets, "models": models}
 
 
@@ -316,9 +332,12 @@ def speed_set(manifest, rtf_results):
 
 
 def histogram(durations):
-    counts = [0] * (int(max(durations) // HISTOGRAM_BIN) + 1)
+    """Number of utterances per bin of HISTOGRAM_BIN seconds, ]a, b] (a segment of 30 s is in the
+    bin 28-30 s, so that the histograms of the segments of 30 s at most end at 30 s)."""
+    index = lambda d: max(0, math.ceil(d / HISTOGRAM_BIN) - 1)
+    counts = [0] * (index(max(durations)) + 1)
     for d in durations:
-        counts[int(d // HISTOGRAM_BIN)] += 1
+        counts[index(d)] += 1
     return counts
 
 
@@ -361,7 +380,6 @@ def contextual_page(results, model_info):
     # The shadow root has no html nor body: their rules go to its host
     style = re.sub(r"(?m)^  (:root|body) \{", "  :host {", style).replace("html { overflow-y: scroll; }", "")
     style += "  :host { display: block; background: none; }\n  main { max-width: none; padding: 0; }\n  h1 { display: none; }\n"
-    style += "  .embedded { display: inline; }\n"
     sets = build_page.test_sets(data)
     for d in sets:
         manifest = next((m for folder in results.values()

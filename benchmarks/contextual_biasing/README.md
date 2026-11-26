@@ -34,14 +34,15 @@ Models without a mechanism are run as baselines (scored on the same lists).
 Three test sets, chosen to cover different settings: a French domain dictionary
 (PxSLU), the standard English protocol with lists of controlled size (LibriSpeech),
 and real names in conversational English with realistic per-call lists (Contextual
-Earnings-22). Figures of the test splits as run (after the cleaning described below).
+Earnings-22). Figures of the test splits as run (after the cleaning described below, and without the
+segments longer than 30 s, which some models cannot take: 7 of LibriSpeech test-other).
 
 | | PxSLU test | LibriSpeech test-other | Contextual Earnings-22 test |
 |---|---|---|---|
 | Language | French | English | English |
 | Speech | dictated drug prescriptions, spontaneous | read audiobooks | earnings calls: conversational, many accents |
-| Size | 540 utterances, 1.47 h (mean 10 s, max 30 s) | 2,939 utterances, 5.34 h (mean 6.5 s, max 35 s) | 771 clips of 15 s from 54 calls, 3.21 h |
-| Terms to recognize (targets) | drug names: 329 occurrences in 324 utterances, 168 distinct | rare words: 5,357 occurrences in 2,140 utterances, 3,835 distinct | names of persons, companies, products: 1,392 occurrences in the 771 clips, 673 distinct |
+| Size | 540 utterances, 1.47 h (mean 10 s, max 30 s) | 2,932 utterances, 5.28 h (mean 6.5 s, max 30 s) | 771 clips of 15 s from 54 calls, 3.21 h |
+| Terms to recognize (targets) | drug names: 329 occurrences in 324 utterances, 168 distinct | rare words: 5,291 occurrences in 2,133 utterances, 3,786 distinct | names of persons, companies, products: 1,392 occurrences in the 771 clips, 673 distinct |
 | Lists run | global: `pxslu` (389 terms), `pxslu_ext` (427), `vidal` (2,753), `bdpm` (4,050), `theriaque` (8,851); per utterance: `pxslu25`, `pxslu25_ext` (25) | per utterance: `100`, `500`, `1000`, `2000` (rare words of the utterance + N distractors) | per clip: `global` (keywords of the whole call, 25 on average, 1 to 46) |
 | Distractors (list terms not spoken) | other drug names (real dictionaries) | rare words drawn at random | other names of the same call |
 | Licence | CC BY 4.0 | audio and text CC BY 4.0; lists MIT | transcripts and lists CC BY-SA 4.0 (licence of Earnings-22); audio licence not stated |
@@ -135,7 +136,7 @@ case: names ("darcy", "cain") but also uncommon words ("balsam", "squalid") and
 inflections of common ones ("sings", "grinned", "ambitions").
 
 **Advantages.** Results comparable with the published ones (B-WER, U-WER, with the
-scorer of the paper). The largest test set here (5,357 target occurrences: narrow
+scorer of the paper). The largest test set here (5,291 target occurrences: narrow
 confidence intervals). The list size is the only thing that changes between 100 and
 2,000 terms, which isolates its effect. Clean read speech: the errors come from the
 words, not from the acoustics.
@@ -229,15 +230,24 @@ Contextual Earnings-22 (earnings calls).
 
 ## Models and mechanisms
 
-| Model (backend) | How the list is given | Limits |
+Three techniques (column "Technique" of the page):
+- **Context**: an input made for context, that the model is trained to use as background
+  knowledge (Qwen3-ASR: the system turn, `context` of its SDK; VibeVoice-ASR: extra text of
+  the request).
+- **Prompt**: the text prompt of the model. Granite, Nemotron and MOSS: added to the
+  instruction prompt, with the template of their documentation. Whisper: the decoder prompt,
+  made for the previous text of the transcription and repurposed (not trained for it).
+- **Boosting**: the scores of the terms raised at decoding time, without training (NeMo).
+
+| Model (backend) | Technique: how the list is given | Limits |
 |---|---|---|
-| Whisper large-v3 / large-v3-turbo (`faster-whisper`) | `hotwords` argument (prompt tokens before the previous text, on every 30 s window) | 223 tokens |
-| Qwen3-ASR 1.7B (`vllm`) | `prompt` field, put in the system turn; template `Vocabulary: {terms}.` (the format is not documented by Qwen; this one is linto-stt's) | context length of the server |
-| Nemotron-3.5-Transcribe (`vllm`, chat endpoint) | `{prompt} Context terms: {terms}.` (model card) | |
-| Granite Speech 5.0 2B (`vllm`, chat endpoint) | `{prompt} Keywords: {terms}` (model card) | "up to 2000" keywords |
-| MOSS-Transcribe-Diarize (`vllm`) | `{prompt}热词提示：{terms}` (French runs, default Chinese prompt) or `{prompt} Hotwords: {terms}` (English), as documented in the model's GitHub examples | |
-| VibeVoice-ASR (`vibevoice-asr`) | extra context of the request | slow with long lists: an 8.3B model run with Hugging Face transformers (not vLLM), so the list is processed again with every batch, every generated token attends to it, and the batches must be made smaller to fit in memory (4 with `theriaque`). RTFx on LibriSpeech test-other: 21 without list, 5.9 with 500 terms, 1.7 with 2,000; below real time with the PxSLU dictionaries |
-| Parakeet TDT 0.6B v3, Canary 1B v2, linto-stt-fr-fastconformer (RNN-T decoder; French only) (`nemo`) | GPU phrase boosting of NeMo (boosting tree fused at decoding time, `greedy_batch`, beam search for Canary; Andrusenko et al. 2025, [arXiv:2508.07014](https://arxiv.org/abs/2508.07014)); weight `contextual_biasing_alpha` 1.0 and 2.0 (PxSLU dev with Parakeet, `config_fr_nemo_alpha.yaml`: 1.0 best F1 / false alarm trade-off, 2.0 +5 F1 with 5x false alarms) | each new list costs a rebuild of the decoding: the boosting tree is built (about 60 ms for 389 terms, 140 ms for 1,000, 0.8 s for 8,851, on a DGX Spark) and the decoding strategy is set again, and the RNN-T / TDT greedy decoding captures its CUDA graphs again at the next batch. Free with a fixed list; with a list per utterance, no batching across utterances and this cost for each one (LibriSpeech, Parakeet: RTFx about 150 without list, 11 with the 500 lists) |
+| Whisper large-v3 / large-v3-turbo (`faster-whisper`) | Prompt: `hotwords` argument (prompt tokens before the previous text, on every 30 s window) | 223 tokens |
+| Qwen3-ASR 1.7B (`vllm`) | Context: `prompt` field of the request, put by vLLM in the system turn, as the `context` of the Qwen3-ASR SDK (trained to use it as background knowledge, according to its report); text `Vocabulary: {terms}.` (the format is not documented by Qwen; this one is linto-stt's) | context length of the server |
+| Nemotron-3.5-Transcribe (`vllm`, chat endpoint) | Prompt: `{prompt} Context terms: {terms}.` (model card) | |
+| Granite Speech 5.0 2B (`vllm`, chat endpoint) | Prompt: `{prompt} Keywords: {terms}` (model card) | "up to 2000" keywords |
+| MOSS-Transcribe-Diarize (`vllm`) | Prompt: `{prompt}热词提示：{terms}` (French runs, default Chinese prompt) or `{prompt} Hotwords: {terms}` (English), as documented in the model's GitHub examples | |
+| VibeVoice-ASR (`vibevoice-asr`) | Context: extra text of the request, next to the audio (`prompt` of the transformers processor) | slow with long lists: an 8.3B model run with Hugging Face transformers (not vLLM), so the list is processed again with every batch, every generated token attends to it, and the batches must be made smaller to fit in memory (4 with `theriaque`). RTFx on LibriSpeech test-other: 21 without list, 5.9 with 500 terms, 1.7 with 2,000; below real time with the PxSLU dictionaries |
+| Parakeet TDT 0.6B v3, Canary 1B v2, linto-stt-fr-fastconformer (RNN-T decoder; French only) (`nemo`) | Boosting: GPU phrase boosting of NeMo (boosting tree fused at decoding time, `greedy_batch`, beam search for Canary; Andrusenko et al. 2025, [arXiv:2508.07014](https://arxiv.org/abs/2508.07014)); weight `contextual_biasing_alpha` 1.0 and 2.0 (PxSLU dev with Parakeet, `config_fr_nemo_alpha.yaml`: 1.0 best F1 / false alarm trade-off, 2.0 +5 F1 with 5x false alarms) | each new list costs a rebuild of the decoding: the boosting tree is built (about 60 ms for 389 terms, 140 ms for 1,000, 0.8 s for 8,851, on a DGX Spark) and the decoding strategy is set again, and the RNN-T / TDT greedy decoding captures its CUDA graphs again at the next batch. Free with a fixed list; with a list per utterance, no batching across utterances and this cost for each one (LibriSpeech, Parakeet: RTFx about 150 without list, 11 with the 500 lists) |
 | Cohere Transcribe (`vllm`) | none: baseline | |
 
 Not included: Voxtral (open weights have no mechanism; `context_bias` exists only
@@ -347,7 +357,7 @@ list only with a run with each of its lists (`SIZE_CLASSES` and `AGGREGATES` in
 `template.html`). The confidence interval of the mean WER, used by the ranking,
 combines those of the test sets as independent errors.
 
-Ranking of the leaderboard, on one list ("Sort by"; by default `pxslu`, Contextual
+Ranking of the leaderboard, on one list ("Hotword list", or a click on its header in the table; by default `pxslu`, Contextual
 Earnings-22 `global`, LibriSpeech `100`, `short` for the aggregated test sets): each model with this list, or without list
 when it has no run with it (no biasing mechanism, or list too long). First by WER, with
 a tolerance: the models whose WER is within the 95 % confidence interval of the best

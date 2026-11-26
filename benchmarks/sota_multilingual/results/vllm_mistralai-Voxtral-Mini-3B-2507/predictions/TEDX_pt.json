@@ -2589,34 +2589,6 @@
     "throughput_rtfx": 52.403,
     "prediction": "Perdão."
   },
-  "TEDX_pt_Lp7-O9jYoQw_62.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/Lp7-O9jYoQw.wav",
-    "id": "TEDX_pt_Lp7-O9jYoQw_62.8",
-    "audio_duration": 117.32,
-    "audio_offset": 62.76,
-    "dataset": "TEDX_pt",
-    "full_dataset": "TEDX_pt",
-    "text": "Somos no papel Mas não no viver Viajar sem mim Me deixar assim Tive que arranjar Alguém pra passar os dias ruins Enquanto isso Navegando eu vou sem paz Sem ter um porto Quase morto, sem um cais E eu nunca vou te esquecer, amor Mas a solidão Deixa o coração Nesse leva e traz Veja bem além Desses fatos vis Saiba, traições São bem mais sutis Se eu te troquei Não foi por maldade Amor, veja bem, arranjei alguém Chamado \"saudade\" Amor, veja bem, arranjei alguém Chamado \"saudade\" Amor, veja bem, arranjei alguém Chamado \"saudade\" ♪ Obrigada.",
-    "language": "pt",
-    "prediction_duration": 45.45846,
-    "rtf": 0.38747,
-    "throughput_rtfx": 52.403,
-    "prediction": "Somos no papel, mas não nos dizer. Viajar sem mim, me deixar assim. Tive que arranjar alguém pra passar os dias ruins. Enquanto isso, navegando, eu vou sem paz. Sem ter um porto, quase morto, sem um gás. E eu nunca vou te esquecer, amor. Mas a solidão deixa o coração nesse leve traço. Veja bem além desses fatos vis. Saiba, traições são bem mais sutis. Se eu te toquei, não foi por maldade. Amor, veja bem, arranjei alguém chamado saudade. Amor, veja bem, arranjei alguém chamado saudade. Amor, veja bem, arranjei alguém chamado saudade. Obrigado."
-  },
-  "TEDX_pt_Lp7-O9jYoQw_9.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/Lp7-O9jYoQw.wav",
-    "id": "TEDX_pt_Lp7-O9jYoQw_9.0",
-    "audio_duration": 50.74,
-    "audio_offset": 9.04,
-    "dataset": "TEDX_pt",
-    "full_dataset": "TEDX_pt",
-    "text": "♪ Veja bem, meu bem Sinto te informar Que arranjei alguém Pra me confortar Esse alguém está Quando você sai E eu só posso crer, pois sem ter você Nesses braços tais Veja bem, amor Onde está você?",
-    "language": "pt",
-    "prediction_duration": 16.80519,
-    "rtf": 0.3312,
-    "throughput_rtfx": 52.403,
-    "prediction": "Veja bem, meu bem, sinto te informar que arranjei alguém pra me confortar. E esse alguém está quando você sai. E eu só posso crer, pois sem ter você nesses braços táis. Veja bem, amor, onde se..."
-  },
   "TEDX_pt_ONGvzb5sYhY_100.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/ONGvzb5sYhY.wav",
     "id": "TEDX_pt_ONGvzb5sYhY_100.5",
@@ -7083,20 +7055,6 @@
     "throughput_rtfx": 52.403,
     "prediction": "Muito obrigada."
   },
-  "TEDX_pt_XrnUjYWs3Vc_10.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/XrnUjYWs3Vc.wav",
-    "id": "TEDX_pt_XrnUjYWs3Vc_10.0",
-    "audio_duration": 45.14,
-    "audio_offset": 10.04,
-    "dataset": "TEDX_pt",
-    "full_dataset": "TEDX_pt",
-    "text": "♪ Se o tempo permitir Eu quero descobrir lugares Os muitos que eu não vi e que de fato são milhares Se o tempo permitir eu transmitir minha verdade Partindo da quebrada cairá a maquiagem Se ele permitir, seremos fonte e diretriz Mudança no país, na música 1 milhão de bis Se o tempo permitir na vida que eu nasci Pra rua me ouvir que a voz não deixe de fluir, ó Se o tempo permitir que a gente se mantenha firme Eu falo todo o time Na fé, longe do crime Se o tempo permitir aos sentimentos bons Que fiquem onde estão guardados no coração Se o tempo permitir tudo ser natural Daremos às conquistas na moral o seu valor real Se o tempo permitir na vida eu quero mais Honrar a negritude e também nossos ancestrais.",
-    "language": "pt",
-    "prediction_duration": 50.62498,
-    "rtf": 1.12151,
-    "throughput_rtfx": 52.403,
-    "prediction": "Se o tempo permitir, eu quero descobrir lugares, os muitos que eu não vi e que de fato são milhares. Se o tempo permitir, eu transmiti minha verdade, partindo da quebrada, cairá a maquiagem. Se ele permitir, seremos fonte diretriz, mudança no país, na música, um milhão de bis. Se o tempo permitir, na vida que eu nasci, pra rua me ouvir, que a voz não deixe de fluir. Se o tempo permitir que a gente se mantenha firme, eu falo todo time, na fé, longe do crime. Se o tempo permitir, aos sentimentos bons que ficam onde estão, guardados no coração. Se o tempo permitir, tudo ser natural, daremos as conquistas na moral, o seu valor real. Se o tempo permitir, na vida eu quero mais, honrar a negritude e também nossos ancestrais."
-  },
   "TEDX_pt_XrnUjYWs3Vc_114.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/XrnUjYWs3Vc.wav",
     "id": "TEDX_pt_XrnUjYWs3Vc_114.0",
@@ -7390,20 +7348,6 @@
     "rtf": 1.37918,
     "throughput_rtfx": 52.403,
     "prediction": "Por lá, em um ano e meio, já passaram mais de 10 mil jovens. A gente sempre faz uma conta, considerando que a família brasileira tem uma média de 4 pessoas, então já foram mais de 40 mil pessoas impactadas, direto e indiretamente, por ideias de solidariedade, por ideia de um crescimento coletivo, através dessa formação cidadã e profissionalizante que esses jovens recebem."
-  },
-  "TEDX_pt_XrnUjYWs3Vc_257.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/XrnUjYWs3Vc.wav",
-    "id": "TEDX_pt_XrnUjYWs3Vc_257.1",
-    "audio_duration": 34.06,
-    "audio_offset": 257.09,
-    "dataset": "TEDX_pt",
-    "full_dataset": "TEDX_pt",
-    "text": "Em 2018, a gente, então, trouxe uma ideia que é a UPMS, que agora em 2019 se concretizou, a Universidade Popular dos Movimentos Sociais, que neste exato momento está acontecendo temporariamente na sede da FMP, Fundação Escola Superior do Ministério Público, aqui em Porto Alegre, que busca, através do saber popular, fazer emergir uma nova forma de educação dentro da academia, mas, muito mais do que isso, essa ecologia dos saberes, como a gente está fazendo aqui hoje, que é a troca, é o compartilhamento de informações pra um crescimento coletivo.",
-    "language": "pt",
-    "prediction_duration": 37.53402,
-    "rtf": 1.102,
-    "throughput_rtfx": 52.403,
-    "prediction": "em 2018, a gente então trouxe uma ideia que é a UPMS, que agora em 2019 se concretizou, a Universidade Popular dos Movimentos Sociais, que nesse exato momento está acontecendo temporariamente na sede da FMP, Fundação Escola Superior do Ministério Público, aqui em Porto Alegre, do qual busca, através do saber popular, fazer emergir uma nova forma dentro da academia, uma nova forma de educação dentro da academia, mas muito mais do que isso, essa ecologia dos saberes, igual a gente está fazendo aqui hoje, que é a troca, é o compartilhamento de informações para um crescimento coletivo."
   },
   "TEDX_pt_XrnUjYWs3Vc_291.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/XrnUjYWs3Vc.wav",
@@ -7951,20 +7895,6 @@
     "throughput_rtfx": 52.403,
     "prediction": "A gente começou a pensar isso também."
   },
-  "TEDX_pt_XrnUjYWs3Vc_611.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/XrnUjYWs3Vc.wav",
-    "id": "TEDX_pt_XrnUjYWs3Vc_611.3",
-    "audio_duration": 46.05,
-    "audio_offset": 611.27,
-    "dataset": "TEDX_pt",
-    "full_dataset": "TEDX_pt",
-    "text": "E essa lógica da multiplicação de três, ela veio em boa hora, na medida em que a gente conseguiu objetivar cada vez mais rápido esse compartilhamento de informação, seja com projetos, seja com exemplos, seja com atitudes, seja com qualquer outra forma, pra gente entender que, hoje, a minha grande meta de vida, assim como meus parceiros, que estão correndo junto, minhas parceiras também, é, nos próximos dez anos, a gente dialogar com a metade do continente da América do Sul; 300 milhões de pessoas, pra que o nosso continente seja cada vez mais forte, mais solidário entre si, seja um continente totalmente livre das amarras norte-americanas, das amarras europeias, mas, muito mais do que isso, um continente que a gente possa, de fato, dizer que esse continente faz a diferença no mundo na medida em que as pessoas vivem com dignidade.",
-    "language": "pt",
-    "prediction_duration": 50.81165,
-    "rtf": 1.1034,
-    "throughput_rtfx": 52.403,
-    "prediction": "E essa lógica da multiplicação de 13, ela veio em boa hora, na medida em que a gente conseguiu objetivar cada vez mais rápido esse compartilhamento de informação, seja com projeto, seja com exemplo, seja com atitude, seja com qualquer outra forma, para a gente entender que, hoje, a minha grande meta de vida, e assim como os meus parceiros que estão correndo junto, minhas parceiras também, é nos próximos 10 anos a gente dialogar com a metade do continente da América do Sul. 300 milhões de pessoas. Para que o nosso continente seja cada vez mais forte, mais solidário entre si, seja um continente totalmente livre das amarras norte-americanas, das amarras europeias, mas muito mais do que isso, um continente que a gente possa de fato dizer que esse continente faz a diferença no mundo na medida em que as pessoas vivem com dignidade."
-  },
   "TEDX_pt_XrnUjYWs3Vc_64.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/XrnUjYWs3Vc.wav",
     "id": "TEDX_pt_XrnUjYWs3Vc_64.2",
@@ -8426,20 +8356,6 @@
     "rtf": 1.03713,
     "throughput_rtfx": 52.403,
     "prediction": "Então, vou começar aqui falando sobre uma carta de amor de Adhemar Bogo, que ele fala sobre educação."
-  },
-  "TEDX_pt_YJB7upHIk5Y_142.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/YJB7upHIk5Y.wav",
-    "id": "TEDX_pt_YJB7upHIk5Y_142.5",
-    "audio_duration": 30.95,
-    "audio_offset": 142.52,
-    "dataset": "TEDX_pt",
-    "full_dataset": "TEDX_pt",
-    "text": "Mas na sociedade em que a gente vive, querer isso é ser um perigo, e cada vez mais, vemos sendo tratado com bombas e mordaças quem está lutando por esse tipo de educação \"perigosa\"; quem se preocupa com uma educação que ajude a pensar, a problematizar, e que use das ciências para desconstruir preconceitos, está sofrendo represália, está sofrendo perseguição, e estão tendo leis constituídas contra eles.",
-    "language": "pt",
-    "prediction_duration": 26.41384,
-    "rtf": 0.85344,
-    "throughput_rtfx": 52.403,
-    "prediction": "Mas, na sociedade que a gente vive, querer isso é ser um perigo. E cada vez mais vemos sendo tratado com bombas e mordaças quem está lutando por esse tipo de educação perigosa. Quem se preocupa com uma educação que ajude a pensar, a problematizar e que use das ciências para desconstruir preconceitos está sofrendo represália, está sofrendo perseguição e estão tendo leis constituídas contra eles."
   },
   "TEDX_pt_YJB7upHIk5Y_173.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/YJB7upHIk5Y.wav",
@@ -11535,20 +11451,6 @@
     "throughput_rtfx": 52.403,
     "prediction": "Então, o que nós resolvemos fazer foi estudar o desenvolvimento do preconceito em crianças brancas, pardas e pretas de duas cidades com características muito distintas, tanto em termos de composição racial da população, quanto em termos de características culturais, que são Porto Alegre, no Rio Grande do Sul, e Salvador, na Bahia."
   },
-  "TEDX_pt_fbRc0svwu-4_817.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/fbRc0svwu-4.wav",
-    "id": "TEDX_pt_fbRc0svwu-4_817.9",
-    "audio_duration": 34.97,
-    "audio_offset": 817.85,
-    "dataset": "TEDX_pt",
-    "full_dataset": "TEDX_pt",
-    "text": "Pessoal, os resultados que a gente encontrou com a nossa pesquisa, - nós utilizamos duas medidas implícitas de atitude e cinco medidas explícitas - foram que eles confirmaram resultados dos estudos internacionais, que dizem que independente da cor da pele da criança, independente da cor da pele da pessoa, no nosso caso, independente de a criança ser branca, parda ou preta, os níveis de preferência por brancos em relação a negros são muito altos, e eles não mudam com a idade.",
-    "language": "pt",
-    "prediction_duration": 25.48273,
-    "rtf": 0.7287,
-    "throughput_rtfx": 52.403,
-    "prediction": "Pessoal, os resultados que a gente encontrou com a nossa pesquisa, nós utilizamos duas medidas implícitas de atitude, cinco medidas explícitas. Foram que eles confirmaram resultados dos estudos internacionais, que dizem que, independente da cor da pele da criança, independente da cor da pele da pessoa, então, no nosso caso, independente da criança ser branca, parda ou preta, os níveis de preferência por brancos em relação a negros são muito altos e eles não mudam com a idade."
-  },
   "TEDX_pt_fbRc0svwu-4_85.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/fbRc0svwu-4.wav",
     "id": "TEDX_pt_fbRc0svwu-4_85.0",
@@ -11702,20 +11604,6 @@
     "rtf": 0.797,
     "throughput_rtfx": 52.403,
     "prediction": "Então, talvez o que esses resultados estejam nos dizendo é que a gente precisa voltar a nossa atenção e os nossos investimentos para combater a discriminação racial, para combater os comportamentos discriminatórios, que são, afinal das contas, o que faz com que a gente tenha uma desigualdade social tão elevada."
-  },
-  "TEDX_pt_fbRc0svwu-4_972.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/fbRc0svwu-4.wav",
-    "id": "TEDX_pt_fbRc0svwu-4_972.7",
-    "audio_duration": 34.75,
-    "audio_offset": 972.69,
-    "dataset": "TEDX_pt",
-    "full_dataset": "TEDX_pt",
-    "text": "E quem sabe assim, se a gente conseguir diminuir essa desigualdade, quem sabe crescendo em um mundo no qual não haja tanta diferença entre os grupos raciais, tanta diferença social e econômica, quem sabe crescendo em um mundo em que um grupo racial não seja tão mais valorizado do que o outro, essas crianças já comecem desde cedo, no futuro, a apresentar níveis baixos, ou quase nulos, de preferência por brancos em relação a negros.",
-    "language": "pt",
-    "prediction_duration": 23.43182,
-    "rtf": 0.6743,
-    "throughput_rtfx": 52.403,
-    "prediction": "E quem sabe assim, se a gente conseguir diminuir essa desigualdade, quem sabe crescendo em um mundo no qual não acha tanta diferença entre os grupos raciais, tanta diferença social e econômica, quem sabe crescendo em um mundo em que um grupo racial não seja tão mais valorizado do que o outro, essas crianças já começam desde cedo no futuro a apresentar níveis baixos ou quase nulos, de preferência por brancos em relação a negros."
   },
   "TEDX_pt_h5mWwJJ2drU_1015.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/pt/Multilingual_TEDx/h5mWwJJ2drU.wav",
