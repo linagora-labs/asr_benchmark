@@ -34,7 +34,10 @@
   button[aria-pressed="mixed"] { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--surface)); }
   button:disabled { opacity: .4; cursor: not-allowed; }
   /* Requirements (off by default, a model must meet all the selected ones): pill-shaped, unlike the show/hide groups */
-  #requirements button { border-radius: 999px; padding: 3px 11px; }
+  #require-languages button, #require-output button, #require-control button { border-radius: 999px; padding: 3px 11px; }
+  .link-button { border: none; background: none; padding: 4px 2px; color: var(--accent); text-decoration: underline dotted; text-underline-offset: 3px; }
+  .link-button:hover { text-decoration-style: solid; }
+  #presets { margin-left: 8px; }
   .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; margin-bottom: 12px; }
   .swatch { display: inline-block; width: 12px; height: 12px; margin-right: 5px; border-radius: 2px; vertical-align: -1px; }
   .scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
@@ -80,6 +83,7 @@
   .chart .label { fill: var(--text); font-size: 12px; } .chart .label.muted { fill: var(--muted); }
   .chart .ci { stroke: var(--muted); stroke-width: 1.5; opacity: .45; }
   .chart .front-line { fill: none; stroke: var(--accent); stroke-width: 2; opacity: .45; }
+  .chart .leader { stroke: var(--muted); stroke-width: 1; opacity: .6; }
   .chart .dot { stroke: var(--surface); stroke-width: 2; }
   .chart .dot.front { fill: var(--accent); } .chart .dot.other { fill: #a3a19b; }
   .chart .dot.hover { stroke: var(--text); }
@@ -105,12 +109,12 @@
 <main>
   <h1>Open French-Centric ASR Leaderboard</h1>
   <div class="muted" id="meta"></div>
-  <p class="intro">Benchmark of open-weight speech recognition models on French, and on some European languages and Arabic.<br>Unlike many benchmarks limited to read speech, it also covers spontaneous and conversational speech (meetings, web videos, earnings calls).</p>
+  <p class="intro">Benchmark of open-weight Automatic Speech Recognition (ASR) models on French, and on some European languages and Arabic.<br>Unlike many benchmarks limited to read speech, it also covers spontaneous and conversational speech (meetings, web videos, earnings calls).</p>
   <p class="intro muted">A suggestion, a question, or a competitive model to add? Please open an issue on
     <a href="https://github.com/linagora-labs/asr_benchmark/issues">GitHub</a>.</p>
 
   <nav class="tabs">
-    <a href="#">French ASR</a> <a href="#multilingual" id="multilingual-link">Multilingual ASR</a> <a href="#contextual-biasing" id="contextual-link">Contextual Biasing ASR</a> <a href="#test-sets">Test sets</a>
+    <a href="#">French ASR</a> <a href="#multilingual" id="multilingual-link">Multilingual ASR</a> <a href="#contextual-biasing" id="contextual-link">Custom Vocabulary ASR</a> <a href="#test-sets">Test sets</a>
     <label>Language <select id="language"></select></label>
   </nav>
   <p class="intro" id="tab-intro"></p>
@@ -124,12 +128,14 @@
       <span id="punc"><button data-v="0" aria-pressed="true" title="Punctuation marks removed">No</button> <button data-v="1" title="Each punctuation mark counts as a word">Yes</button></span></div>
     <div class="group" id="datasets-group"><span class="group-label all" data-all="datasets" title="Select all / none">Test sets</span> <span id="datasets"></span></div>
   </div>
-  <div class="controls" id="filters">
-    <div class="group"><span class="group-label all" data-all="filter-architecture" title="Select all / none">Model architecture</span> <span id="filter-architecture"></span></div>
-    <div class="group"><span class="group-label all" data-all="filter-task" title="Select all / none">Scope</span> <span id="filter-task"></span></div>
-  </div>
   <div class="controls" id="requirements">
     <div class="group"><span class="group-label hint" title="Keep only the models that support all the selected languages (model cards)">Must support</span> <span id="require-languages"></span></div>
+    <div class="group"><span class="group-label hint" title="Keep only the models whose outputs have them (measured on their outputs here)">Must output</span> <span id="require-output"></span></div>
+    <button id="advanced-toggle" class="link-button" aria-expanded="false" aria-controls="filters"></button>
+  </div>
+  <div class="controls" id="filters" hidden>
+    <div class="group"><span class="group-label all" data-all="filter-architecture" title="Select all / none">Model architecture</span> <span id="filter-architecture"></span></div>
+    <div class="group"><span class="group-label all" data-all="filter-task" title="Select all / none">Scope</span> <span id="filter-task"></span></div>
     <div class="group"><span class="group-label hint" title="Keep only the models that have all the selected features (model cards)">Language</span> <span id="require-control"></span></div>
   </div>
 
@@ -174,7 +180,7 @@
     <div class="notes" id="multilingual-sets-notes"></div>
   </section>
   <section id="contextual-sets" hidden>
-    <h2 id="test-sets-contextual">Contextual Biasing ASR</h2>
+    <h2 id="test-sets-contextual">Custom Vocabulary ASR</h2>
     <div class="scroll"><table id="contextual-table"></table></div>
     <div class="notes" id="contextual-sets-notes"></div>
     <div class="scroll"><table id="contextual-lists"></table></div>
@@ -195,7 +201,7 @@ const DATA = /*__DATA__*/null;
 const LANGUAGES = { fr: "French", en: "English", ar: "Arabic", de: "German", es: "Spanish", it: "Italian", nl: "Dutch", pt: "Portuguese" };
 // sort: id of the test set whose column orders the table, null for the average.
 const state = { language: "fr", metric: "wer", case: false, punc: false, selected: new Set(), sort: null,
-                architecture: new Set(), task: new Set(), requireLanguages: new Set(), requireControl: new Set() };
+                architecture: new Set(), task: new Set(), requireLanguages: new Set(), requireControl: new Set(), requireOutput: new Set(), advanced: false };
 
 const f1 = v => v.toFixed(1);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -224,6 +230,7 @@ const languageControl = c => !c ? ["—", "One language: not applicable"] : c ==
      : c.auto ? "the language cannot be forced" : ""].filter(Boolean).join("; ")];
 // Displayed name of a scope (model_info.task)
 const scopeText = v => ({ Multi: "multitask" })[v] || v;
+const NOT_MEASURED = `<b>Not measured</b>: long recordings (only segments of 1 to 30 s), speaker labels (who speaks when), timestamps, telephone-quality audio.`;
 // Hover text of the prompt sign: the prompt sent and its source.
 const promptText = m => [m.prompt && `Prompt: ${m.prompt}`, m.prompt_source && `(${m.prompt_source})`].filter(Boolean).join("\n");
 const halfWidth = r => r && r.ci95 ? (r.ci95[1] - r.ci95[0]) / 2 : null;
@@ -237,6 +244,9 @@ function selectLanguage(lang) {
   state.language = lang;
   selectDatasets();
 }
+// Selections by type of speech: [id, label, test sets kept, description]
+const PRESETS = [["no-read", "no read speech", d => !d.read, "speech that is not read (talks, parliament, meetings, web videos)"],
+                 ["spontaneous", "spontaneous speech only", d => !!d.spontaneous, "spontaneous speech"]];
 // Selected test sets of each tab (French ASR, Multilingual ASR), kept when going to another tab and back
 const selections = {};
 function selectDatasets() {
@@ -250,6 +260,11 @@ function selectDatasets() {
     ? languagesShown.map(l => `<div class="language-row"><button data-language="${esc(l)}" title="Select all / none of the ${esc(LANGUAGES[l] || l)} test sets">` +
         `${esc(LANGUAGES[l] || l)}</button> ${shownDatasets().filter(d => d.language === l).map(button).join(" ")}</div>`).join("")
     : shownDatasets().map(button).join(" ");
+  // Selections by type of speech, when they keep some test sets and leave out others
+  const presets = PRESETS.filter(([, , keep]) => shownDatasets().some(keep) && !shownDatasets().every(keep));
+  if (presets.length) document.getElementById("datasets").insertAdjacentHTML("beforeend", ` <span id="presets">${presets.map(([id, label, keep, what]) =>
+    `<button class="link-button" data-preset="${id}" title="Select only the test sets of ${what}: ${
+      esc([...new Set(shownDatasets().filter(keep).map(d => d.name))].join(", "))}${multi() ? " (in the languages selected)" : ""}">${label}</button>`).join(" · ")}</span>`);
   document.getElementById("datasets").classList.toggle("by-language", multi());
   document.getElementById("datasets-group").classList.toggle("by-language", multi());
   renderTestSets();
@@ -405,8 +420,13 @@ const INFO = [
   { key: "language_control", label: "Language", sub: "auto / forced",
     title: "auto: the model detects the language (+ ID: and returns it). forced: the language can be given. prompted: it can only be asked in the prompt (instruction to the model). —: model of one language",
     cell: m => { const [text, title] = languageControl(m.language_control); return `<td class="left info" title="${esc(title)}">${text}</td>`; } },
+  { key: "output", label: "Output", sub: "punct. / case", title: "What the outputs have, measured here: punctuation marks, uppercase letters (in at least half of the non-empty outputs)",
+    cell: m => { const s = outputShares(m);
+      if (!s) return `<td class="left info muted">—</td>`;
+      const text = [outputs(m, "punct") && "punct.", outputs(m, "case") && "case"].filter(Boolean).join("<br>") || "none";
+      return `<td class="left info" title="${esc(`Punctuation marks in ${Math.round(100 * s.punct)}% of the outputs, uppercase letters in ${Math.round(100 * s.case)}%`)}">${text}</td>`; } },
   { key: "license", label: "License", title: "License of the weights",
-    cell: m => `<td class="left info">${esc(m.license ? licenseText(m.license) : "—")}</td>` },
+    cell: m => `<td class="left info">${m.license ? licenseHtml(m.license) : "—"}</td>` },
 ];
 // Architecture filter: a streaming model is shown when its architecture or Streaming is selected.
 const architectureOf = m => m.architecture || "—";
@@ -419,7 +439,15 @@ const CONTROLS = [
   ["forced", "forced", "Keep the models whose language can be forced (a parameter, or the prompt)", c => !!c.force],
   ["id", "ID returned", "Keep the models that return the detected language with the transcript", c => c.auto === "returned"],
 ];
+// Punctuation and case of the outputs, measured: share of the non-empty outputs with a punctuation mark
+// (. , ? ! ; :), with an uppercase letter. A model "outputs" them from OUTPUT_SHARE of its outputs.
+const OUTPUT_SHARE = 0.5;
+const outputShares = m => m.outputs && m.outputs[0] ? { punct: m.outputs[2] / m.outputs[0], case: m.outputs[1] / m.outputs[0] } : null;
+const OUTPUTS = [["punct", "punctuation", "Keep the models that write punctuation marks"],
+                 ["case", "capitals", "Keep the models that write uppercase letters"]];
+const outputs = (m, v) => { const s = outputShares(m); return !!s && s[v] >= OUTPUT_SHARE; };
 const meetsRequirements = m => [...state.requireLanguages].every(l => supports(m, l))
+  && [...state.requireOutput].every(v => outputs(m, v))
   && CONTROLS.every(([v, , , ok]) => !state.requireControl.has(v) || (m.language_control && m.language_control !== "?" && ok(m.language_control)));
 const shownModel = m => (state.architecture.has(architectureOf(m)) || (m.streaming && state.architecture.has("Streaming")))
   && state.task.has(taskOf(m)) && meetsRequirements(m);
@@ -474,7 +502,7 @@ function render() {
   };
   const languages = multi() ? [...new Set(datasets.map(d => d.language))] : [];
   const datasetHeads = datasets.map(d => th(d.id, esc(d.name),
-      d.hours != null ? f1(d.hours) + " h" : "", `${multi() ? languageName(d.language) + ": " : ""}${d.domain}${multi() && d.selection ? ` (${d.selection})` : ""}. Sort by this test set`, " score" + startClass(d), "")).join("");
+      (d.speech ? `<i>${esc(d.speech)}</i><br>` : "") + (d.hours != null ? f1(d.hours) + " h" : ""), `${multi() ? languageName(d.language) + ": " : ""}${d.domain}${multi() && d.selection ? ` (${d.selection})` : ""}. Sort by this test set`, " score" + startClass(d), "")).join("");
   const head = `<tr><th${span}>#</th><th${span}>Model</th>${th("", "Average", `${datasets.length} test sets`, "Sort by the average", " score")}` +
     th("rank", "Avg rank", `${datasets.length} test sets`, "Sort by the average rank", " score") +
     (multi() ? languages.map(l => `<th colspan="${datasets.filter(d => d.language === l).length}" class="language language-start">${esc(languageName(l))}</th>`).join("") : datasetHeads) +
@@ -515,6 +543,7 @@ function render() {
   document.getElementById("board").innerHTML = `<thead>${head}</thead><tbody>${body || empty}</tbody>`;
   renderChart(rows, datasets);
   renderIntro();
+  renderAdvancedToggle();
 }
 
 // Average WER (same selection as the leaderboard) against RTFx, log scale.
@@ -556,17 +585,25 @@ function renderChart(rows, datasets) {
   const overlaps = b => b.x0 < L || b.x1 > W - R || b.y0 < T || b.y1 > H - B ||
     boxes.some(o => b.x0 < o.x1 && o.x0 < b.x1 && b.y0 < o.y1 && o.y0 < b.y1);
   const text = [...points].sort((a, b) => b.front - a.front || b.rtfx - a.rtfx).map(p => {
-    const name = p.m.model + (homonyms.has(p.m.model) ? ` (${p.m.variant || p.m.backend})` : "");
+    // Name without the organization (full name in the tooltip), shorter to fit
+    const short = p.m.model.split("/").pop();
+    const name = (/[-_]/.test(short) ? short : p.m.model) + (homonyms.has(p.m.model) ? ` (${p.m.variant || p.m.backend})` : "");
     const w = name.length * 6.6, cx = x(p.rtfx), cy = y(p.wer);
     const candidates = [[10, 4, "start"], [-10, 4, "end"], [0, -12, "middle"], [0, 20, "middle"],
                         [10, -10, "start"], [10, 18, "start"], [-10, -10, "end"], [-10, 18, "end"],
                         [0, -26, "middle"], [0, 34, "middle"], [-10, -24, "end"], [10, -24, "start"], [-10, 32, "end"], [10, 32, "start"]];
-    for (const [dx, dy, anchor] of candidates) {
+    // Best trade-offs always labeled: farther positions, joined to their dot by a thin line
+    const far = p.front ? [[0, -44, "middle"], [0, 52, "middle"], [24, -38, "start"], [-24, -38, "end"], [24, 46, "start"],
+                           [-24, 46, "end"], [0, -62, "middle"], [0, 70, "middle"], [36, -54, "start"], [-36, -54, "end"], [-40, 64, "end"],
+                           [40, 64, "start"], [0, -80, "middle"], [0, 88, "middle"], [-60, -76, "end"], [-60, 84, "end"],
+                           [0, -100, "middle"], [0, 106, "middle"]] : [];
+    for (const [dx, dy, anchor] of [...candidates, ...far]) {
       const x0 = cx + dx - (anchor === "end" ? w : anchor === "middle" ? w / 2 : 0);
       const box = { x0, x1: x0 + w, y0: cy + dy - 11, y1: cy + dy + 3 };
       if (overlaps(box)) continue;
       boxes.push(box);
-      return `<text class="label${p.front ? "" : " muted"}" x="${cx + dx}" y="${cy + dy}" text-anchor="${anchor}">${esc(name)}</text>`;
+      const leader = Math.abs(dy) > 34 ? `<line class="leader" x1="${cx}" y1="${cy + (dy < 0 ? -7 : 7)}" x2="${cx + dx}" y2="${cy + dy + (dy < 0 ? 4 : -12)}"/>` : "";
+      return `${leader}<text class="label${p.front ? "" : " muted"}" x="${cx + dx}" y="${cy + dy}" text-anchor="${anchor}">${esc(name)}</text>`;
     }
     return "";
   }).join("");
@@ -639,6 +676,17 @@ document.getElementById("datasets").onclick = e => {
     render();
     return;
   }
+  const preset = PRESETS.find(([id]) => id === e.target.dataset.preset);
+  if (preset) {
+    // Multilingual tab: in the languages that have a selected test set (all if none)
+    const languages = new Set(shownDatasets().filter(d => state.selected.has(d.id)).map(d => d.language));
+    const ids = shownDatasets().filter(d => preset[2](d) && (!languages.size || languages.has(d.language))).map(d => d.id);
+    state.selected.clear();
+    ids.forEach(id => state.selected.add(id));
+    document.querySelectorAll("#datasets button[data-id]").forEach(b => b.setAttribute("aria-pressed", state.selected.has(b.dataset.id)));
+    render();
+    return;
+  }
   const id = e.target.dataset.id;
   if (!id) return;
   state.selected.has(id) ? state.selected.delete(id) : state.selected.add(id);
@@ -667,10 +715,25 @@ toggleButtons("filter-architecture", architectures.map(v => [v, v, `Show the ${v
   v => state.architecture.has(v), v => flip(state.architecture, v));
 toggleButtons("filter-task", valuesOf(taskOf, TASKS).map(v => [v, scopeText(v), `Show the ${scopeText(v)} models`]),
   v => state.task.has(v), v => flip(state.task, v));
+toggleButtons("require-output", OUTPUTS, v => state.requireOutput.has(v), v => flip(state.requireOutput, v));
 toggleButtons("require-control", CONTROLS.map(([v, label, title]) => [v, label, title]),
   v => state.requireControl.has(v), v => flip(state.requireControl, v));
 // Languages of the Multilingual tab (its column order); French only there, every model of the French tab supporting it
 const REQUIRE_LANGUAGES = DATA.multilingual ? [...new Set(DATA.multilingual.datasets.map(d => d.language))] : [];
+// Advanced filters (model architecture, scope, language handling): hidden at first, the button tells
+// how many are active
+const advancedActive = () => [...document.querySelectorAll("#filter-architecture button, #filter-task button")]
+  .filter(b => b.getAttribute("aria-pressed") !== "true").length + state.requireControl.size;
+function renderAdvancedToggle() {
+  const n = advancedActive(), button = document.getElementById("advanced-toggle");
+  button.textContent = `${state.advanced ? "▾" : "▸"} Advanced filters${n ? ` (${n} active)` : ""}`;
+  button.setAttribute("aria-expanded", state.advanced);
+}
+document.getElementById("advanced-toggle").onclick = () => {
+  state.advanced = !state.advanced;
+  document.getElementById("filters").hidden = !state.advanced;
+  renderAdvancedToggle();
+};
 function renderRequirements() {
   if (!multi()) state.requireLanguages.delete("fr");
   toggleButtons("require-languages", REQUIRE_LANGUAGES.filter(l => multi() || l !== "fr")
@@ -682,7 +745,7 @@ function renderRequirements() {
 
 // A click on the label of a group of toggles selects all of them, or none if all are selected.
 document.querySelectorAll(".group-label[data-all]").forEach(label => label.onclick = () => {
-  const buttons = [...document.querySelectorAll(`#${label.dataset.all} button:not(:disabled):not([data-language])`)];
+  const buttons = [...document.querySelectorAll(`#${label.dataset.all} button:not(:disabled):not([data-language]):not(.link-button)`)];
   const allOn = buttons.every(b => b.getAttribute("aria-pressed") === "true");
   buttons.filter(b => (b.getAttribute("aria-pressed") === "true") === allOn).forEach(b => b.click());
 });
@@ -693,7 +756,7 @@ document.getElementById("meta").innerHTML = `By <a href="https://linagora.com" c
   `<a href="${DATA.repo}">${DATA.repo.replace("https://", "")}</a>`;
 
 // One line above each tab
-const sectionLinks = () => [["french", "French ASR"], ["speed", "Speed (RTFx)"], ["multilingual", "Multilingual ASR"], ["contextual", "Contextual Biasing ASR"]]
+const sectionLinks = () => [["french", "French ASR"], ["speed", "Speed (RTFx)"], ["multilingual", "Multilingual ASR"], ["contextual", "Custom Vocabulary ASR"]]
   .filter(([id]) => !document.getElementById(`test-sets-${id}`).parentElement.hidden)
   .map(([id, label]) => `<a href="#test-sets-${id}">${label}</a>`).join(" · ");
 function renderIntro() {
@@ -729,15 +792,18 @@ function renderNotes() {
       `<b>RTFx</b>: speed, in seconds of audio transcribed per second,${gpu ? `${gpu},` : ""} one segment at a time (<a href="#test-sets-speed">details</a>).`,
       `<b>Size</b> (parameters), <b>License</b> and <b>Languages</b> come from the model cards. Languages: their list, with their number beyond 5; beyond 8, <i>multilingual</i> and their number (hover for the list).`,
       `<b>Language</b>: <i>auto</i> when the model detects the language (<i>auto + ID</i>: and returns the detected language with the transcript), <i>forced</i> when the language can be given (a parameter, or a language field documented for the prompt), <i>prompted</i> when it can only be asked in an instruction of the prompt, how well it is followed not being documented; — for the models of one language. From the model cards.`,
-      `<b>Buttons</b>: Model architecture and Scope filter the models. A click on the label of a group of buttons selects all of them, or none.`,
-      `<b>Must support</b> and <b>Language</b> (rounded buttons, none selected at first) keep only the models that meet all the selected requirements: the languages they support, and their language handling (see the Language column; <i>forced</i> includes <i>prompted</i>). From the model cards; a card that only gives a number of languages (Gemma: 35+, 140+) is taken as supporting each of them.`,
+      `<b>Output</b>: <i>punct.</i> and <i>case</i> when at least half of the non-empty outputs of the model have a punctuation mark (. , ? ! ; :) or an uppercase letter, measured on its outputs here, with the prompt used (hover for the shares); <i>none</i> for neither.`,
+      `<b>Buttons</b>: Model architecture, Scope and Language (under Advanced filters) filter the models. A click on the label of a group of buttons selects all of them, or none.`,
+      `<b>Must support</b>, <b>Must output</b> and <b>Language</b> (rounded buttons, none selected at first) keep only the models that meet all the selected requirements: the languages they support, punctuation and case in their outputs (see the Output column), and their language handling (see the Language column; <i>forced</i> includes <i>prompted</i>). From the model cards; a card that only gives a number of languages (Gemma: 35+, 140+) is taken as supporting each of them.`,
     ],
     "Data": multilingual ? [
       `Models that support several languages, on FLEURS, mTEDx, VoxPopuli and Common Voice (<a href="#test-sets-multilingual">details</a>). The language of the test set is given to the models that take one (in their prompt, or as a parameter).`,
+      NOT_MEASURED,
       ...(arabic ? [`<b>Arabic</b> is not selected at first: ${arabic} of the ${DATA.multilingual.models.length} models support it, and the others would have no average.`] : []),
       `Results and configuration: <a href="${DATA.repo}/tree/main/${folder}">${folder}</a>. Raw data: <a href="leaderboard.json">leaderboard.json</a>.`,
     ] : [
       `Segments of 1 to 30 s, from public French corpora and one internal corpus of web videos (<a href="#test-sets-french">details</a>).`,
+      NOT_MEASURED,
       `Results and configuration: <a href="${DATA.repo}/tree/main/${folder}">${folder}</a>. Raw data: <a href="leaderboard.json">leaderboard.json</a>.`,
     ],
   };
@@ -775,7 +841,7 @@ function showTab() {
   document.getElementById("tab-testsets").hidden = tab !== "#test-sets";
   document.getElementById("tab-contextual").hidden = !contextual;
   document.getElementById("controls").hidden = tab === "#test-sets" || contextual;  // not used by these tabs
-  document.getElementById("filters").hidden = tab === "#test-sets" || contextual;
+  document.getElementById("filters").hidden = tab === "#test-sets" || contextual || !state.advanced;
   document.getElementById("requirements").hidden = tab === "#test-sets" || contextual;
   renderRequirements();
   document.getElementById("tab-intro").hidden = contextual;  // its page has its own

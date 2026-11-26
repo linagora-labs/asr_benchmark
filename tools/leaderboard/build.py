@@ -38,6 +38,12 @@ DATASETS = {
     "SUMM-RE": ("SUMM-RE", "Spontaneous meetings", "fr", "https://huggingface.co/datasets/linagora/SUMM-RE"),
     "YouTubeFr_split6": ("YouTubeFr", "Web videos", "fr", None),
 }
+# Type of speech, under the name of the test set (both tabs, by prefix in the Multilingual one); the
+# read and spontaneous ones make the "no read speech" and "spontaneous speech only" selections
+SPEECH = {"FLEURS": "read", "CommonVoice": "read", "MLS_Facebook_french": "audiobooks", "TEDX": "talks",
+          "TEDX_fr": "talks", "Voxpopuli": "parliament", "SUMM-RE": "meetings", "YouTubeFr_split6": "web videos"}
+SPONTANEOUS = {"SUMM-RE", "YouTubeFr_split6"}
+READ = {"FLEURS", "CommonVoice", "MLS_Facebook_french"}  # by prefix in the Multilingual tab
 # Shown on hover of the name of the test sets without a link
 DATASET_NOTES = {
     "YouTubeFr_split6": "Internal corpus of French YouTube videos",
@@ -69,6 +75,7 @@ LANGUAGE_NAMES = {"en": "English", "fr": "French", "de": "German", "it": "Italia
 METRICS = [metric + suffix for metric in ("wer", "cer") for suffix in ("_nocasepunc", "_nopunc", "_nocase", "")]
 EMPTY_WARNING = 0.01  # share of empty outputs from which the model gets a caveat
 SPECIAL_TOKEN = re.compile(r"<\|[^|]*\|>")
+PUNCTUATION = re.compile(r"[.,?!;:]")
 
 
 def dataset_info(stem):
@@ -76,6 +83,7 @@ def dataset_info(stem):
     name, domain, language, url = DATASETS.get(stem.replace("_max30", ""), (stem, "", DEFAULT_LANGUAGE, None))
     return {"name": name, "domain": domain, "language": language, "url": url,
             "note": DATASET_NOTES.get(stem.replace("_max30", "")),
+            "speech": SPEECH.get(stem.replace("_max30", "")), "spontaneous": stem in SPONTANEOUS, "read": stem in READ,
             "selection": SELECTION.get(stem, (None, None))[0],
             "selection_note": SELECTION.get(stem, (None, None))[1]}
 
@@ -149,10 +157,13 @@ def language_control(name, languages):
     return "?"
 
 
-def count_empty(pred_file):
-    """Outputs with no letter or digit left once the special tokens (<|...|>) are removed."""
-    rows = json.loads(pred_file.read_text(encoding="utf-8")).values()
-    return sum(not any(c.isalnum() for c in SPECIAL_TOKEN.sub("", row.get("prediction") or "")) for row in rows)
+def output_counts(pred_file):
+    """[empty outputs (no letter or digit left once the special tokens <|...|> are removed), other
+    outputs, those with an uppercase letter, those with a punctuation mark]"""
+    texts = [SPECIAL_TOKEN.sub("", row.get("prediction") or "") for row in json.loads(pred_file.read_text(encoding="utf-8")).values()]
+    filled = [t for t in texts if any(c.isalnum() for c in t)]
+    return [len(texts) - len(filled), len(filled), sum(any(c.isupper() for c in t) for t in filled),
+            sum(bool(PUNCTUATION.search(t)) for t in filled)]
 
 
 def empty_note(scores):
@@ -195,7 +206,7 @@ def model_entry(exp, rtf_results=None, info_from=None):
     hf = info.get("hf") or display
     url = f"https://huggingface.co/{hf}" if "/" in hf and not hf.startswith(("/", ".", "~")) else None
     rtfx, hardware, rtf_backend, rtf_note = speed(exp, rtf_results, model)
-    scores = {}
+    scores, outputs = {}, [0, 0, 0]  # outputs: non-empty, with an uppercase letter, with a punctuation mark
     for perf_file in sorted((exp / "performances").glob("*.json")):
         perf = json.loads(perf_file.read_text(encoding="utf-8"))
         scores[perf_file.stem] = {
@@ -208,7 +219,9 @@ def model_entry(exp, rtf_results=None, info_from=None):
         scores[perf_file.stem]["seconds"] = perf.get("duration")
         pred_file = exp / "predictions" / perf_file.name
         if pred_file.exists():
-            scores[perf_file.stem]["empty"] = count_empty(pred_file)
+            empty, *counts = output_counts(pred_file)
+            scores[perf_file.stem]["empty"] = empty
+            outputs = [a + b for a, b in zip(outputs, counts)]
     return {
         "id": exp.name,
         "model": name,
@@ -232,6 +245,7 @@ def model_entry(exp, rtf_results=None, info_from=None):
         "prompt_source": info.get("prompt_source"),
         "merge_as": info.get("merge_as"),  # one row for several models (e.g. one model per language)
         "scores": scores,
+        "outputs": outputs if outputs[0] else None,  # punctuation and case of the outputs (page: shares)
     }
 
 
@@ -251,6 +265,8 @@ def merge_rows(models):
         else:
             group = groups[name]
             group["scores"] |= m["scores"]
+            if m.get("outputs"):
+                group["outputs"] = [a + b for a, b in zip(group.get("outputs") or [0, 0, 0], m["outputs"])]
             group["languages"] += [l for l in m["languages"] or [] if l not in group["languages"]]
     for name, group in groups.items():
         note = "One model per language, each scored on the test sets of its language"
@@ -342,6 +358,7 @@ def multilingual(results, french_results, rtf_results=None, include_private=Fals
         durations = prediction_durations([french_results, *french_extra] if french else [results], stem, utterances)
         datasets.append({
             "id": i, "name": name, "domain": domain, "language": language, "url": url, "selection": selection,
+            "speech": SPEECH.get(prefix), "read": prefix in READ,
             "hours": round(max((m["scores"][i]["seconds"] or 0) for m in models if i in m["scores"]) / 3600, 2) or None,
             "utterances": utterances,
         } | (duration_stats(durations) if len(durations) == utterances else {}))

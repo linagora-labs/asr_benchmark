@@ -75,3 +75,16 @@ function setUpTables(root) {
 // Model info
 const params = n => n >= 1e9 ? `${(n / 1e9).toFixed(n < 1e10 ? 1 : 0)}B` : `${Math.round(n / 1e6)}M`;
 const licenseText = l => ({ "apache-2.0": "Apache-2.0", gemma: "Gemma" })[l] || l.toUpperCase();
+// Official text of the licenses, linked from their name
+const LICENSE_URLS = {
+  "apache-2.0": "https://www.apache.org/licenses/LICENSE-2.0",
+  mit: "https://opensource.org/license/mit",
+  "cc-by-4.0": "https://creativecommons.org/licenses/by/4.0/",
+  "cc-by-nc-4.0": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "openmdw-1.1": "https://openmdw.ai/license/1-1/",
+  gemma: "https://ai.google.dev/gemma/terms",
+};
+const licenseHtml = l => {
+  const text = String(licenseText(l)).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  return LICENSE_URLS[l] ? `<a href="${LICENSE_URLS[l]}" target="_blank" rel="noopener">${text}</a>` : text;
+};
