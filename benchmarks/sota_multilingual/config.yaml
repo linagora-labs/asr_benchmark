@@ -6,7 +6,7 @@
 # entry) before transcribing the dataset, without being reloaded, and the scoring uses it
 # (text normalization of ssak). `languages` (per
 # entry): only the datasets of these languages, for the models that do not support them all.
-min_duration: 0
+min_duration: 1  # as in benchmarks/sota: shorter segments are not representative
 max_duration: 30  # as in benchmarks/sota: some models take at most 30 s
 datasets:
   FLEURS_en:

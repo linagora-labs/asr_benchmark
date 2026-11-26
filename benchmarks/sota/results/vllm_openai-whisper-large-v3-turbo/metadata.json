@@ -158,10 +158,11 @@
             "ha",
             "ba",
             "jw",
-            "su"
+            "su",
+            "yue"
         ],
         "architecture": "Encoder-decoder",
-        "task": "ASR",
+        "task": "ASR/AST",
         "streaming": false
     }
 }

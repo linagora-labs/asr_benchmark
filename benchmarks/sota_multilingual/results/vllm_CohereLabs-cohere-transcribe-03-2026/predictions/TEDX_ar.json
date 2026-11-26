@@ -41,34 +41,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "قبل تخديره بثواني"
   },
-  "TEDX_ar_U7yWsUX5TLY_11.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_11.5",
-    "audio_duration": 0.94,
-    "audio_offset": 11.5,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "طموحة وجامعية.",
-    "language": "ar",
-    "prediction_duration": 0.83155,
-    "rtf": 0.88462,
-    "throughput_rtfx": 119.084,
-    "prediction": "طموحه وجامعيه"
-  },
-  "TEDX_ar_U7yWsUX5TLY_110.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_110.1",
-    "audio_duration": 0.44,
-    "audio_offset": 110.1,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "- ما اسمك؟",
-    "language": "ar",
-    "prediction_duration": 0.78529,
-    "rtf": 1.78475,
-    "throughput_rtfx": 119.084,
-    "prediction": "ماذا"
-  },
   "TEDX_ar_U7yWsUX5TLY_110.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_110.5",
@@ -138,34 +110,6 @@
     "rtf": 0.49807,
     "throughput_rtfx": 119.084,
     "prediction": "عمليه استئصال بالكليه اليسرى"
-  },
-  "TEDX_ar_U7yWsUX5TLY_127.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_127.8",
-    "audio_duration": 0.78,
-    "audio_offset": 127.81,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "أنا نور إسلييم،",
-    "language": "ar",
-    "prediction_duration": 0.81064,
-    "rtf": 1.03929,
-    "throughput_rtfx": 119.084,
-    "prediction": "انا نور سليم"
-  },
-  "TEDX_ar_U7yWsUX5TLY_129.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_129.3",
-    "audio_duration": 0.69,
-    "audio_offset": 129.33,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "طالبة صيدلة،",
-    "language": "ar",
-    "prediction_duration": 0.78928,
-    "rtf": 1.14389,
-    "throughput_rtfx": 119.084,
-    "prediction": "صيده"
   },
   "TEDX_ar_U7yWsUX5TLY_13.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -335,20 +279,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "ومسؤوليات اقتصاديه وما لا ذلك"
   },
-  "TEDX_ar_U7yWsUX5TLY_158.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_158.7",
-    "audio_duration": 0.57,
-    "audio_offset": 158.66,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "مجردّ بشر،",
-    "language": "ar",
-    "prediction_duration": 0.78698,
-    "rtf": 1.38068,
-    "throughput_rtfx": 119.084,
-    "prediction": "بشر"
-  },
   "TEDX_ar_U7yWsUX5TLY_159.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_159.8",
@@ -418,20 +348,6 @@
     "rtf": 0.23214,
     "throughput_rtfx": 119.084,
     "prediction": "العرف التاني هو الموت والغلطه"
-  },
-  "TEDX_ar_U7yWsUX5TLY_176.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_176.4",
-    "audio_duration": 0.97,
-    "audio_offset": 176.38,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "ثمنها حياة.",
-    "language": "ar",
-    "prediction_duration": 0.80553,
-    "rtf": 0.83044,
-    "throughput_rtfx": 119.084,
-    "prediction": "تمامها حياه"
   },
   "TEDX_ar_U7yWsUX5TLY_179.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -503,20 +419,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "انا فعليا هون حتى اشارككم فن"
   },
-  "TEDX_ar_U7yWsUX5TLY_195.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_195.8",
-    "audio_duration": 0.69,
-    "audio_offset": 195.85,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "فنّ بسيط،",
-    "language": "ar",
-    "prediction_duration": 0.77766,
-    "rtf": 1.12704,
-    "throughput_rtfx": 119.084,
-    "prediction": "بسيط"
-  },
   "TEDX_ar_U7yWsUX5TLY_196.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_196.8",
@@ -587,20 +489,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "من خلال خطابي هذا هحكي عده قصص"
   },
-  "TEDX_ar_U7yWsUX5TLY_210.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_210.1",
-    "audio_duration": 0.83,
-    "audio_offset": 210.06,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "وأتمنى منكم،",
-    "language": "ar",
-    "prediction_duration": 0.78317,
-    "rtf": 0.94358,
-    "throughput_rtfx": 119.084,
-    "prediction": "اتمنى منكم"
-  },
   "TEDX_ar_U7yWsUX5TLY_210.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_210.9",
@@ -670,20 +558,6 @@
     "rtf": 0.26226,
     "throughput_rtfx": 119.084,
     "prediction": "مع ابقاء كليتها اليمنى في جسمها"
-  },
-  "TEDX_ar_U7yWsUX5TLY_222.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_222.2",
-    "audio_duration": 0.8,
-    "audio_offset": 222.18,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "وكان من الممكن،",
-    "language": "ar",
-    "prediction_duration": 0.77533,
-    "rtf": 0.96916,
-    "throughput_rtfx": 119.084,
-    "prediction": "وكان ممكن"
   },
   "TEDX_ar_U7yWsUX5TLY_223.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -853,20 +727,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "فوحده من صديقاتي بتحكي لي"
   },
-  "TEDX_ar_U7yWsUX5TLY_253.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_253.9",
-    "audio_duration": 0.32,
-    "audio_offset": 253.92,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "قالت لي:",
-    "language": "ar",
-    "prediction_duration": 0.76194,
-    "rtf": 2.38105,
-    "throughput_rtfx": 119.084,
-    "prediction": "وقالوا لي"
-  },
   "TEDX_ar_U7yWsUX5TLY_254.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_254.2",
@@ -880,20 +740,6 @@
     "rtf": 0.31433,
     "throughput_rtfx": 119.084,
     "prediction": "عرفتي شو صار مع مرض خالي"
-  },
-  "TEDX_ar_U7yWsUX5TLY_256.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_256.9",
-    "audio_duration": 0.41,
-    "audio_offset": 256.88,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "\" أجبتها أنا:",
-    "language": "ar",
-    "prediction_duration": 0.74892,
-    "rtf": 1.82664,
-    "throughput_rtfx": 119.084,
-    "prediction": "قل هلا"
   },
   "TEDX_ar_U7yWsUX5TLY_257.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -1007,20 +853,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "الدكتوره النسائيه التي لها قبل ما تيجي يجيبي معك كل الادويه اللي كنت تاخديهم خلال حملك"
   },
-  "TEDX_ar_U7yWsUX5TLY_290.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_290.6",
-    "audio_duration": 0.76,
-    "audio_offset": 290.55,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "وذهبت إليها،",
-    "language": "ar",
-    "prediction_duration": 1.24131,
-    "rtf": 1.6333,
-    "throughput_rtfx": 119.084,
-    "prediction": "نجاحت"
-  },
   "TEDX_ar_U7yWsUX5TLY_291.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_291.9",
@@ -1063,20 +895,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "سالت الام اذا كانت عم تاخده خلال حملها"
   },
-  "TEDX_ar_U7yWsUX5TLY_298.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_298.5",
-    "audio_duration": 0.56,
-    "audio_offset": 298.53,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "فأجابتها الأم :",
-    "language": "ar",
-    "prediction_duration": 1.24419,
-    "rtf": 2.22176,
-    "throughput_rtfx": 119.084,
-    "prediction": "عجبتها ب"
-  },
   "TEDX_ar_U7yWsUX5TLY_299.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_299.1",
@@ -1105,48 +923,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "والكل متامل انها تطلع بحاله صحيه افضل"
   },
-  "TEDX_ar_U7yWsUX5TLY_301.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_301.7",
-    "audio_duration": 0.36,
-    "audio_offset": 301.7,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "أجابتها:",
-    "language": "ar",
-    "prediction_duration": 1.22341,
-    "rtf": 3.39835,
-    "throughput_rtfx": 119.084,
-    "prediction": "ايضا"
-  },
-  "TEDX_ar_U7yWsUX5TLY_302.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_302.1",
-    "audio_duration": 0.88,
-    "audio_offset": 302.06,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "نعم من طبيبة،",
-    "language": "ar",
-    "prediction_duration": 1.26536,
-    "rtf": 1.43791,
-    "throughput_rtfx": 119.084,
-    "prediction": "انا عم من دكتوره"
-  },
-  "TEDX_ar_U7yWsUX5TLY_303.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_303.4",
-    "audio_duration": 0.4,
-    "audio_offset": 303.43,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "قالت لها:",
-    "language": "ar",
-    "prediction_duration": 1.2309,
-    "rtf": 3.07724,
-    "throughput_rtfx": 119.084,
-    "prediction": "عالتلاته"
-  },
   "TEDX_ar_U7yWsUX5TLY_303.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_303.8",
@@ -1161,34 +937,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "في عهد بنتك سليمه"
   },
-  "TEDX_ar_U7yWsUX5TLY_305.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_305.5",
-    "audio_duration": 0.53,
-    "audio_offset": 305.53,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "قالت :",
-    "language": "ar",
-    "prediction_duration": 1.24455,
-    "rtf": 2.34821,
-    "throughput_rtfx": 119.084,
-    "prediction": "قالتلها انا"
-  },
-  "TEDX_ar_U7yWsUX5TLY_306.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_306.1",
-    "audio_duration": 0.31,
-    "audio_offset": 306.06,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لا،",
-    "language": "ar",
-    "prediction_duration": 1.21723,
-    "rtf": 3.92655,
-    "throughput_rtfx": 119.084,
-    "prediction": "لا"
-  },
   "TEDX_ar_U7yWsUX5TLY_306.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_306.4",
@@ -1202,20 +950,6 @@
     "rtf": 1.02583,
     "throughput_rtfx": 119.084,
     "prediction": "عندها فتحه في سقف الحل"
-  },
-  "TEDX_ar_U7yWsUX5TLY_308.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_308.6",
-    "audio_duration": 0.95,
-    "audio_offset": 308.56,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "قالت لها الطبيبة،",
-    "language": "ar",
-    "prediction_duration": 1.25993,
-    "rtf": 1.32625,
-    "throughput_rtfx": 119.084,
-    "prediction": "قلتلها على الدكتوره"
   },
   "TEDX_ar_U7yWsUX5TLY_309.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -1245,20 +979,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "ممكن يؤدي الى شفه ارنبيه كيف ما حدا خبرك"
   },
-  "TEDX_ar_U7yWsUX5TLY_322.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_322.4",
-    "audio_duration": 0.81,
-    "audio_offset": 322.39,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "\" في الواقع،",
-    "language": "ar",
-    "prediction_duration": 1.22246,
-    "rtf": 1.5092,
-    "throughput_rtfx": 119.084,
-    "prediction": "الفكره"
-  },
   "TEDX_ar_U7yWsUX5TLY_324.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_324.6",
@@ -1272,20 +992,6 @@
     "rtf": 0.33047,
     "throughput_rtfx": 119.084,
     "prediction": "انه حتى انه فعليا كل اللي كانوا قاعدين بهاي الجلسه"
-  },
-  "TEDX_ar_U7yWsUX5TLY_329.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_329.1",
-    "audio_duration": 0.88,
-    "audio_offset": 329.06,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "قاموا بلوم الطبيبة،",
-    "language": "ar",
-    "prediction_duration": 1.23687,
-    "rtf": 1.40554,
-    "throughput_rtfx": 119.084,
-    "prediction": "لام الدكتوره"
   },
   "TEDX_ar_U7yWsUX5TLY_330.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -1329,20 +1035,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "فعليا كنت عم بلوم الدكتوره لوصفه الدواء"
   },
-  "TEDX_ar_U7yWsUX5TLY_34.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_34.6",
-    "audio_duration": 0.32,
-    "audio_offset": 34.6,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لكن،",
-    "language": "ar",
-    "prediction_duration": 1.21369,
-    "rtf": 3.79277,
-    "throughput_rtfx": 119.084,
-    "prediction": "ولكن"
-  },
   "TEDX_ar_U7yWsUX5TLY_34.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_34.9",
@@ -1356,20 +1048,6 @@
     "rtf": 0.36013,
     "throughput_rtfx": 119.084,
     "prediction": "للاسف اخرجت ساره من غرفه العمليات"
-  },
-  "TEDX_ar_U7yWsUX5TLY_342.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_342.4",
-    "audio_duration": 0.87,
-    "audio_offset": 342.38,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "وكنت أيضاً،",
-    "language": "ar",
-    "prediction_duration": 1.22787,
-    "rtf": 1.41135,
-    "throughput_rtfx": 119.084,
-    "prediction": "وكنت ايضا"
   },
   "TEDX_ar_U7yWsUX5TLY_343.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -1454,20 +1132,6 @@
     "rtf": 0.20906,
     "throughput_rtfx": 119.084,
     "prediction": "ومع انه ما في اشي ممكن يبرر لا للدكتوره ولا للصيدلاني خطاهم"
-  },
-  "TEDX_ar_U7yWsUX5TLY_365.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_365.3",
-    "audio_duration": 0.6,
-    "audio_offset": 365.28,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لكن أيضاً،",
-    "language": "ar",
-    "prediction_duration": 1.22413,
-    "rtf": 2.04022,
-    "throughput_rtfx": 119.084,
-    "prediction": "بس برضو"
   },
   "TEDX_ar_U7yWsUX5TLY_366.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -1581,20 +1245,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "يمكن انها تكون خطيره"
   },
-  "TEDX_ar_U7yWsUX5TLY_393.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_393.0",
-    "audio_duration": 0.98,
-    "audio_offset": 392.97,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "على سبيل المثال،",
-    "language": "ar",
-    "prediction_duration": 1.21838,
-    "rtf": 1.24324,
-    "throughput_rtfx": 119.084,
-    "prediction": "على سبيل المثال"
-  },
   "TEDX_ar_U7yWsUX5TLY_394.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_394.3",
@@ -1693,20 +1343,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "لو طلبناه من اي صيدليه"
   },
-  "TEDX_ar_U7yWsUX5TLY_41.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_41.3",
-    "audio_duration": 0.98,
-    "audio_offset": 41.27,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "في تلك اللحظة كان السؤال :",
-    "language": "ar",
-    "prediction_duration": 1.24971,
-    "rtf": 1.27522,
-    "throughput_rtfx": 119.084,
-    "prediction": "يعني السؤال بلحظه هاذي"
-  },
   "TEDX_ar_U7yWsUX5TLY_411.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_411.7",
@@ -1777,20 +1413,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "انه هاي المعده صدوق افيدريل موجوده بكتير عدد من الادويه"
   },
-  "TEDX_ar_U7yWsUX5TLY_42.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_42.2",
-    "audio_duration": 0.57,
-    "audio_offset": 42.25,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لماذا؟",
-    "language": "ar",
-    "prediction_duration": 1.18357,
-    "rtf": 2.07644,
-    "throughput_rtfx": 119.084,
-    "prediction": "ليش"
-  },
   "TEDX_ar_U7yWsUX5TLY_422.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_422.7",
@@ -1819,34 +1441,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "بحيث ان الامعاء الدقيقه والغليظه بتكون خارجه من بطنه عند الولاده"
   },
-  "TEDX_ar_U7yWsUX5TLY_43.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_43.1",
-    "audio_duration": 0.93,
-    "audio_offset": 43.1,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لماذا توفيت سارة؟",
-    "language": "ar",
-    "prediction_duration": 0.83548,
-    "rtf": 0.89837,
-    "throughput_rtfx": 119.084,
-    "prediction": "ليش اتوفت شارع"
-  },
-  "TEDX_ar_U7yWsUX5TLY_435.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_435.8",
-    "audio_duration": 0.43,
-    "audio_offset": 435.75,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "يمكن أيضاً،",
-    "language": "ar",
-    "prediction_duration": 0.80905,
-    "rtf": 1.88152,
-    "throughput_rtfx": 119.084,
-    "prediction": "برضه"
-  },
   "TEDX_ar_U7yWsUX5TLY_436.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_436.2",
@@ -1874,20 +1468,6 @@
     "rtf": 0.42013,
     "throughput_rtfx": 119.084,
     "prediction": "ما هو عمليه مثل عمليات استئصال الكلى بزمننا الحاضر اصبحت فعلا عمليه سهله"
-  },
-  "TEDX_ar_U7yWsUX5TLY_441.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_441.9",
-    "audio_duration": 0.28,
-    "audio_offset": 441.9,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "إذن أنا،",
-    "language": "ar",
-    "prediction_duration": 0.80839,
-    "rtf": 2.88709,
-    "throughput_rtfx": 119.084,
-    "prediction": "فانا"
   },
   "TEDX_ar_U7yWsUX5TLY_442.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -2001,20 +1581,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "وفعلا دلونا على شخص ضخم جدا"
   },
-  "TEDX_ar_U7yWsUX5TLY_462.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_462.9",
-    "audio_duration": 0.89,
-    "audio_offset": 462.92,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "من ثلاثة طوابق،",
-    "language": "ar",
-    "prediction_duration": 0.81435,
-    "rtf": 0.915,
-    "throughput_rtfx": 119.084,
-    "prediction": "عن ثلاث طوابق"
-  },
   "TEDX_ar_U7yWsUX5TLY_463.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_463.8",
@@ -2028,20 +1594,6 @@
     "rtf": 0.5513,
     "throughput_rtfx": 119.084,
     "prediction": "اناس مختصه بالاسنان"
-  },
-  "TEDX_ar_U7yWsUX5TLY_466.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_466.8",
-    "audio_duration": 0.46,
-    "audio_offset": 466.76,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "ذهبنا،",
-    "language": "ar",
-    "prediction_duration": 0.78917,
-    "rtf": 1.71558,
-    "throughput_rtfx": 119.084,
-    "prediction": "احنا"
   },
   "TEDX_ar_U7yWsUX5TLY_467.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -2155,20 +1707,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "احنا مش بس قادرين على استئصال كلها"
   },
-  "TEDX_ar_U7yWsUX5TLY_492.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_492.2",
-    "audio_duration": 0.77,
-    "audio_offset": 492.17,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "والطبيب الرابع،",
-    "language": "ar",
-    "prediction_duration": 0.79724,
-    "rtf": 1.03537,
-    "throughput_rtfx": 119.084,
-    "prediction": "الدكتور الرابع"
-  },
   "TEDX_ar_U7yWsUX5TLY_492.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_492.9",
@@ -2197,20 +1735,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "جمعوا الدكاتره بالغرفه وبلشوا يحكوا"
   },
-  "TEDX_ar_U7yWsUX5TLY_499.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_499.7",
-    "audio_duration": 0.75,
-    "audio_offset": 499.74,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "وكلما سألناهم،",
-    "language": "ar",
-    "prediction_duration": 0.77999,
-    "rtf": 1.03999,
-    "throughput_rtfx": 119.084,
-    "prediction": "زي ما نسالهم"
-  },
   "TEDX_ar_U7yWsUX5TLY_500.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_500.5",
@@ -2225,20 +1749,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "انه ليش طيبتكم تعملوا هيك"
   },
-  "TEDX_ar_U7yWsUX5TLY_503.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_503.1",
-    "audio_duration": 0.5,
-    "audio_offset": 503.11,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "يقولون لنا:",
-    "language": "ar",
-    "prediction_duration": 0.78416,
-    "rtf": 1.56832,
-    "throughput_rtfx": 119.084,
-    "prediction": "كلنا مش حنعمل"
-  },
   "TEDX_ar_U7yWsUX5TLY_503.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_503.6",
@@ -2252,34 +1762,6 @@
     "rtf": 0.35612,
     "throughput_rtfx": 119.084,
     "prediction": "انا بنشرح لكم هلا عشر شنو طب"
-  },
-  "TEDX_ar_U7yWsUX5TLY_505.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_505.9",
-    "audio_duration": 0.62,
-    "audio_offset": 505.91,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "أنا في تلك اللحظة،",
-    "language": "ar",
-    "prediction_duration": 0.7706,
-    "rtf": 1.24291,
-    "throughput_rtfx": 119.084,
-    "prediction": "لحظه"
-  },
-  "TEDX_ar_U7yWsUX5TLY_506.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_506.5",
-    "audio_duration": 0.75,
-    "audio_offset": 506.53,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "قلت في نفسي صحيح،",
-    "language": "ar",
-    "prediction_duration": 0.77476,
-    "rtf": 1.03301,
-    "throughput_rtfx": 119.084,
-    "prediction": "يعني عنجد"
   },
   "TEDX_ar_U7yWsUX5TLY_507.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -2308,34 +1790,6 @@
     "rtf": 0.50952,
     "throughput_rtfx": 119.084,
     "prediction": "شرحوا لنا بشكل عام"
-  },
-  "TEDX_ar_U7yWsUX5TLY_512.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_512.8",
-    "audio_duration": 0.72,
-    "audio_offset": 512.82,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "ماذا سيحدث،",
-    "language": "ar",
-    "prediction_duration": 0.7776,
-    "rtf": 1.07999,
-    "throughput_rtfx": 119.084,
-    "prediction": "شو حلصير"
-  },
-  "TEDX_ar_U7yWsUX5TLY_513.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_513.8",
-    "audio_duration": 0.93,
-    "audio_offset": 513.76,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "و الإحداثيات،",
-    "language": "ar",
-    "prediction_duration": 0.77433,
-    "rtf": 0.83261,
-    "throughput_rtfx": 119.084,
-    "prediction": "والاحداثيات"
   },
   "TEDX_ar_U7yWsUX5TLY_514.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -2378,20 +1832,6 @@
     "rtf": 0.49657,
     "throughput_rtfx": 119.084,
     "prediction": "اكتشف عنها الدكتور الاعصاب اللي ما كان موجود يوم الاجتماع الاول"
-  },
-  "TEDX_ar_U7yWsUX5TLY_525.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_525.4",
-    "audio_duration": 0.73,
-    "audio_offset": 525.36,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لم يفهم شيئاً،",
-    "language": "ar",
-    "prediction_duration": 0.76899,
-    "rtf": 1.05341,
-    "throughput_rtfx": 119.084,
-    "prediction": "وتلخبط"
   },
   "TEDX_ar_U7yWsUX5TLY_526.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -2449,20 +1889,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "يعنى فى شئ غلط"
   },
-  "TEDX_ar_U7yWsUX5TLY_534.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_534.9",
-    "audio_duration": 0.88,
-    "audio_offset": 534.86,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "تأكد من الكمبيوتر،",
-    "language": "ar",
-    "prediction_duration": 0.76701,
-    "rtf": 0.8716,
-    "throughput_rtfx": 119.084,
-    "prediction": "من الكمبيوتر"
-  },
   "TEDX_ar_U7yWsUX5TLY_536.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_536.2",
@@ -2477,20 +1903,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "اكتشف انه فعلا صوره مش لماما اصلا"
   },
-  "TEDX_ar_U7yWsUX5TLY_539.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_539.5",
-    "audio_duration": 0.98,
-    "audio_offset": 539.49,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "بعد الصدمة،",
-    "language": "ar",
-    "prediction_duration": 0.75251,
-    "rtf": 0.76786,
-    "throughput_rtfx": 119.084,
-    "prediction": "الصدمه"
-  },
   "TEDX_ar_U7yWsUX5TLY_540.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_540.7",
@@ -2504,20 +1916,6 @@
     "rtf": 0.59376,
     "throughput_rtfx": 119.084,
     "prediction": "ماما تقول له طيب"
-  },
-  "TEDX_ar_U7yWsUX5TLY_542.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_542.0",
-    "audio_duration": 0.21,
-    "audio_offset": 541.98,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "\"حسناً،",
-    "language": "ar",
-    "prediction_duration": 0.75574,
-    "rtf": 3.59875,
-    "throughput_rtfx": 119.084,
-    "prediction": "بحلو"
   },
   "TEDX_ar_U7yWsUX5TLY_542.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -2617,20 +2015,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "بندوله مضاد حيوي وانت هتنقصها"
   },
-  "TEDX_ar_U7yWsUX5TLY_558.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_558.3",
-    "audio_duration": 0.74,
-    "audio_offset": 558.32,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "طبعاً،",
-    "language": "ar",
-    "prediction_duration": 0.74101,
-    "rtf": 1.00137,
-    "throughput_rtfx": 119.084,
-    "prediction": "فعليا"
-  },
   "TEDX_ar_U7yWsUX5TLY_559.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_559.1",
@@ -2687,48 +2071,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "حكيتي معاشي"
   },
-  "TEDX_ar_U7yWsUX5TLY_565.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_565.1",
-    "audio_duration": 0.53,
-    "audio_offset": 565.07,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "قالت لي :",
-    "language": "ar",
-    "prediction_duration": 1.24794,
-    "rtf": 2.3546,
-    "throughput_rtfx": 119.084,
-    "prediction": "الي رحت عندنا"
-  },
-  "TEDX_ar_U7yWsUX5TLY_565.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_565.6",
-    "audio_duration": 0.93,
-    "audio_offset": 565.6,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "\" ذهبت إليه،",
-    "language": "ar",
-    "prediction_duration": 1.20808,
-    "rtf": 1.29902,
-    "throughput_rtfx": 119.084,
-    "prediction": "اين انت"
-  },
-  "TEDX_ar_U7yWsUX5TLY_566.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_566.5",
-    "audio_duration": 0.33,
-    "audio_offset": 566.55,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "وقلت له :",
-    "language": "ar",
-    "prediction_duration": 1.22706,
-    "rtf": 3.71838,
-    "throughput_rtfx": 119.084,
-    "prediction": "قلت له"
-  },
   "TEDX_ar_U7yWsUX5TLY_566.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_566.9",
@@ -2771,62 +2113,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "او الدكاتره ما حدا نبه"
   },
-  "TEDX_ar_U7yWsUX5TLY_574.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_574.0",
-    "audio_duration": 0.33,
-    "audio_offset": 573.96,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "قال لها،",
-    "language": "ar",
-    "prediction_duration": 1.20349,
-    "rtf": 3.64694,
-    "throughput_rtfx": 119.084,
-    "prediction": "شهاده"
-  },
-  "TEDX_ar_U7yWsUX5TLY_574.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_574.3",
-    "audio_duration": 0.25,
-    "audio_offset": 574.29,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "\" لا بأس،",
-    "language": "ar",
-    "prediction_duration": 1.19224,
-    "rtf": 4.76894,
-    "throughput_rtfx": 119.084,
-    "prediction": "اه"
-  },
-  "TEDX_ar_U7yWsUX5TLY_575.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_575.1",
-    "audio_duration": 0.95,
-    "audio_offset": 575.12,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لن نعيدها مرة ثانية،",
-    "language": "ar",
-    "prediction_duration": 1.24397,
-    "rtf": 1.30944,
-    "throughput_rtfx": 119.084,
-    "prediction": "ثاني مره ما بنعيد"
-  },
-  "TEDX_ar_U7yWsUX5TLY_576.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_576.1",
-    "audio_duration": 0.63,
-    "audio_offset": 576.07,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "إن شاء الله\".",
-    "language": "ar",
-    "prediction_duration": 1.21049,
-    "rtf": 1.92141,
-    "throughput_rtfx": 119.084,
-    "prediction": "ان شاء الله"
-  },
   "TEDX_ar_U7yWsUX5TLY_577.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_577.3",
@@ -2840,20 +2126,6 @@
     "rtf": 1.06141,
     "throughput_rtfx": 119.084,
     "prediction": "وهيك انت تحت القصه"
-  },
-  "TEDX_ar_U7yWsUX5TLY_581.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_581.4",
-    "audio_duration": 0.47,
-    "audio_offset": 581.36,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "في الواقع،",
-    "language": "ar",
-    "prediction_duration": 1.19573,
-    "rtf": 2.54411,
-    "throughput_rtfx": 119.084,
-    "prediction": "شكرا"
   },
   "TEDX_ar_U7yWsUX5TLY_582.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -2897,20 +2169,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "قرروا ان يقللوا من هاي الاخطاء الطبيه"
   },
-  "TEDX_ar_U7yWsUX5TLY_59.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_59.0",
-    "audio_duration": 0.68,
-    "audio_offset": 58.97,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "السؤال كان،",
-    "language": "ar",
-    "prediction_duration": 1.20607,
-    "rtf": 1.77364,
-    "throughput_rtfx": 119.084,
-    "prediction": "السؤال كان"
-  },
   "TEDX_ar_U7yWsUX5TLY_59.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_59.6",
@@ -2924,20 +2182,6 @@
     "rtf": 1.10348,
     "throughput_rtfx": 119.084,
     "prediction": "لماذا توفت ساره"
-  },
-  "TEDX_ar_U7yWsUX5TLY_591.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_591.8",
-    "audio_duration": 0.41,
-    "audio_offset": 591.8,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "كيف؟",
-    "language": "ar",
-    "prediction_duration": 1.19005,
-    "rtf": 2.90256,
-    "throughput_rtfx": 119.084,
-    "prediction": "كيف"
   },
   "TEDX_ar_U7yWsUX5TLY_592.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -3023,48 +2267,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "تخبروا او افطؤوا"
   },
-  "TEDX_ar_U7yWsUX5TLY_617.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_617.1",
-    "audio_duration": 0.88,
-    "audio_offset": 617.12,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "إذا كان نتيجة إهمال،",
-    "language": "ar",
-    "prediction_duration": 1.22286,
-    "rtf": 1.38962,
-    "throughput_rtfx": 119.084,
-    "prediction": "نتيجه اهمال"
-  },
-  "TEDX_ar_U7yWsUX5TLY_618.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_618.0",
-    "audio_duration": 0.24,
-    "audio_offset": 618.0,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "طبعاً.",
-    "language": "ar",
-    "prediction_duration": 1.18641,
-    "rtf": 4.94339,
-    "throughput_rtfx": 119.084,
-    "prediction": "وين"
-  },
-  "TEDX_ar_U7yWsUX5TLY_619.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_619.3",
-    "audio_duration": 0.41,
-    "audio_offset": 619.33,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "عفواً،",
-    "language": "ar",
-    "prediction_duration": 1.19566,
-    "rtf": 2.91624,
-    "throughput_rtfx": 119.084,
-    "prediction": "افهم"
-  },
   "TEDX_ar_U7yWsUX5TLY_619.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_619.7",
@@ -3078,20 +2280,6 @@
     "rtf": 0.56535,
     "throughput_rtfx": 119.084,
     "prediction": "اذا كانت نتيجه خطا بشري"
-  },
-  "TEDX_ar_U7yWsUX5TLY_622.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_622.7",
-    "audio_duration": 0.98,
-    "audio_offset": 622.67,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "إذا أعلموهم بها،",
-    "language": "ar",
-    "prediction_duration": 1.2148,
-    "rtf": 1.23959,
-    "throughput_rtfx": 119.084,
-    "prediction": "اذا خبروا عنها"
   },
   "TEDX_ar_U7yWsUX5TLY_623.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -3359,34 +2547,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "كل معلومه ممكن تنقذ حياتك"
   },
-  "TEDX_ar_U7yWsUX5TLY_688.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_688.3",
-    "audio_duration": 0.35,
-    "audio_offset": 688.29,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "شكراً.",
-    "language": "ar",
-    "prediction_duration": 1.16999,
-    "rtf": 3.34283,
-    "throughput_rtfx": 119.084,
-    "prediction": "شكرا"
-  },
-  "TEDX_ar_U7yWsUX5TLY_74.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_74.6",
-    "audio_duration": 0.72,
-    "audio_offset": 74.6,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "خطأ طبي.",
-    "language": "ar",
-    "prediction_duration": 1.18918,
-    "rtf": 1.65164,
-    "throughput_rtfx": 119.084,
-    "prediction": "خطا طبي"
-  },
   "TEDX_ar_U7yWsUX5TLY_76.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_76.9",
@@ -3400,34 +2560,6 @@
     "rtf": 0.47761,
     "throughput_rtfx": 119.084,
     "prediction": "وكتير منسمع عن حالات مثل هيك اخطاء طبيه"
-  },
-  "TEDX_ar_U7yWsUX5TLY_79.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_79.9",
-    "audio_duration": 0.82,
-    "audio_offset": 79.87,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "الكثير من الناس،",
-    "language": "ar",
-    "prediction_duration": 1.1874,
-    "rtf": 1.44804,
-    "throughput_rtfx": 119.084,
-    "prediction": "يا ماناس"
-  },
-  "TEDX_ar_U7yWsUX5TLY_8.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_8.2",
-    "audio_duration": 0.53,
-    "audio_offset": 8.18,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "سارة.",
-    "language": "ar",
-    "prediction_duration": 1.16495,
-    "rtf": 2.19803,
-    "throughput_rtfx": 119.084,
-    "prediction": "شارع"
   },
   "TEDX_ar_U7yWsUX5TLY_80.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
@@ -3485,20 +2617,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "بنت عشرينيه جميله"
   },
-  "TEDX_ar_U7yWsUX5TLY_91.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
-    "id": "TEDX_ar_U7yWsUX5TLY_91.7",
-    "audio_duration": 0.9,
-    "audio_offset": 91.67,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "قام الغرب،",
-    "language": "ar",
-    "prediction_duration": 2.37098,
-    "rtf": 2.63442,
-    "throughput_rtfx": 119.084,
-    "prediction": "قام الغرب"
-  },
   "TEDX_ar_U7yWsUX5TLY_92.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/U7yWsUX5TLY.wav",
     "id": "TEDX_ar_U7yWsUX5TLY_92.6",
@@ -3526,20 +2644,6 @@
     "rtf": 1.12356,
     "throughput_rtfx": 119.084,
     "prediction": "بتاخد من الوقت اقل من دقيقه"
-  },
-  "TEDX_ar_VDJ88bKCi-A_105.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_105.9",
-    "audio_duration": 0.12,
-    "audio_offset": 105.88,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "طفل:",
-    "language": "ar",
-    "prediction_duration": 2.3557,
-    "rtf": 19.63083,
-    "throughput_rtfx": 119.084,
-    "prediction": "ماما"
   },
   "TEDX_ar_VDJ88bKCi-A_106.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
@@ -3597,20 +2701,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "الغرفه بقى والغرفه بتاعتي هنا ندقله هناك اخر واحده"
   },
-  "TEDX_ar_VDJ88bKCi-A_12.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_12.0",
-    "audio_duration": 0.68,
-    "audio_offset": 12.04,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "السلام عليكم.",
-    "language": "ar",
-    "prediction_duration": 2.3589,
-    "rtf": 3.46897,
-    "throughput_rtfx": 119.084,
-    "prediction": "السلام عليكم"
-  },
   "TEDX_ar_VDJ88bKCi-A_122.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
     "id": "TEDX_ar_VDJ88bKCi-A_122.1",
@@ -3625,20 +2715,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "اين تذهب الى المدينه"
   },
-  "TEDX_ar_VDJ88bKCi-A_139.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_139.3",
-    "audio_duration": 0.47,
-    "audio_offset": 139.31,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "فارس:",
-    "language": "ar",
-    "prediction_duration": 2.36084,
-    "rtf": 5.02306,
-    "throughput_rtfx": 119.084,
-    "prediction": "ابي عشان"
-  },
   "TEDX_ar_VDJ88bKCi-A_139.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
     "id": "TEDX_ar_VDJ88bKCi-A_139.8",
@@ -3652,48 +2728,6 @@
     "rtf": 0.92267,
     "throughput_rtfx": 119.084,
     "prediction": "شباب شباب"
-  },
-  "TEDX_ar_VDJ88bKCi-A_14.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_14.8",
-    "audio_duration": 0.93,
-    "audio_offset": 14.78,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "في الحقيقة،",
-    "language": "ar",
-    "prediction_duration": 2.35896,
-    "rtf": 2.53651,
-    "throughput_rtfx": 119.084,
-    "prediction": "حقيقه انا"
-  },
-  "TEDX_ar_VDJ88bKCi-A_146.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_146.9",
-    "audio_duration": 0.18,
-    "audio_offset": 146.89,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "فارس:",
-    "language": "ar",
-    "prediction_duration": 2.34803,
-    "rtf": 13.04462,
-    "throughput_rtfx": 119.084,
-    "prediction": "تمام"
-  },
-  "TEDX_ar_VDJ88bKCi-A_147.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_147.1",
-    "audio_duration": 0.52,
-    "audio_offset": 147.07,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "هذا لحافي،",
-    "language": "ar",
-    "prediction_duration": 2.37001,
-    "rtf": 4.55771,
-    "throughput_rtfx": 119.084,
-    "prediction": "لما تتحرك"
   },
   "TEDX_ar_VDJ88bKCi-A_147.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
@@ -3722,20 +2756,6 @@
     "rtf": 0.43727,
     "throughput_rtfx": 119.084,
     "prediction": "توقعت انه لما نجيب في تيدكس حاتكلم عن مشروع افطار تلميذ"
-  },
-  "TEDX_ar_VDJ88bKCi-A_150.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_150.3",
-    "audio_duration": 0.44,
-    "audio_offset": 150.29,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": ".",
-    "language": "ar",
-    "prediction_duration": 2.33132,
-    "rtf": 5.29846,
-    "throughput_rtfx": 119.084,
-    "prediction": "ها"
   },
   "TEDX_ar_VDJ88bKCi-A_158.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
@@ -4045,20 +3065,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "قلت لهم دي للفتاه قال لي"
   },
-  "TEDX_ar_VDJ88bKCi-A_304.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_304.1",
-    "audio_duration": 0.27,
-    "audio_offset": 304.06,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "\" أجابوا:",
-    "language": "ar",
-    "prediction_duration": 2.29909,
-    "rtf": 8.51516,
-    "throughput_rtfx": 119.084,
-    "prediction": "لا"
-  },
   "TEDX_ar_VDJ88bKCi-A_304.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
     "id": "TEDX_ar_VDJ88bKCi-A_304.3",
@@ -4325,20 +3331,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "المطلوب منهم ان يكون التعليم مقابل للغزار"
   },
-  "TEDX_ar_VDJ88bKCi-A_399.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_399.9",
-    "audio_duration": 0.61,
-    "audio_offset": 399.93,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "تلقّى الدرس،",
-    "language": "ar",
-    "prediction_duration": 2.3249,
-    "rtf": 3.81132,
-    "throughput_rtfx": 119.084,
-    "prediction": "خد حصتك"
-  },
   "TEDX_ar_VDJ88bKCi-A_40.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
     "id": "TEDX_ar_VDJ88bKCi-A_40.4",
@@ -4352,20 +3344,6 @@
     "rtf": 0.27487,
     "throughput_rtfx": 119.084,
     "prediction": "لكن صراحه المشروع داوي اللي لنا مشروع اكبر"
-  },
-  "TEDX_ar_VDJ88bKCi-A_401.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_401.2",
-    "audio_duration": 0.61,
-    "audio_offset": 401.23,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "كُل الوجبة،",
-    "language": "ar",
-    "prediction_duration": 2.26494,
-    "rtf": 3.71302,
-    "throughput_rtfx": 119.084,
-    "prediction": "اقول"
   },
   "TEDX_ar_VDJ88bKCi-A_401.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
@@ -4394,20 +3372,6 @@
     "rtf": 0.70627,
     "throughput_rtfx": 119.084,
     "prediction": "فكان واحده من نجاحات المشروع انه احنا جيناهم في بيئتهم ما انتزعناهم ولا وديناهم حته اخرى"
-  },
-  "TEDX_ar_VDJ88bKCi-A_410.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_410.0",
-    "audio_duration": 0.63,
-    "audio_offset": 410.0,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "كمرحلة أولى،",
-    "language": "ar",
-    "prediction_duration": 1.66719,
-    "rtf": 2.64633,
-    "throughput_rtfx": 119.084,
-    "prediction": "مرحله اولى"
   },
   "TEDX_ar_VDJ88bKCi-A_411.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
@@ -4590,20 +3554,6 @@
     "rtf": 0.63896,
     "throughput_rtfx": 119.084,
     "prediction": "الاطعام دي اخذناه من المثل بتاعك كمعجيني ما في زولبييني وده مثل سوداني معروف"
-  },
-  "TEDX_ar_VDJ88bKCi-A_493.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_493.4",
-    "audio_duration": 0.98,
-    "audio_offset": 493.35,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "وهو مثل سوداني معروف.",
-    "language": "ar",
-    "prediction_duration": 1.61641,
-    "rtf": 1.6494,
-    "throughput_rtfx": 119.084,
-    "prediction": "بعد ان"
   },
   "TEDX_ar_VDJ88bKCi-A_494.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
@@ -5053,20 +4003,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "الحمد لله من عاملناو قمنا ادينا الشباب الفائزين لحد العشرين مليون مليون ميه يعني مدرجه كانت الجوائز"
   },
-  "TEDX_ar_VDJ88bKCi-A_67.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_67.2",
-    "audio_duration": 0.15,
-    "audio_offset": 67.18,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "-فارس:",
-    "language": "ar",
-    "prediction_duration": 1.56753,
-    "rtf": 10.45017,
-    "throughput_rtfx": 119.084,
-    "prediction": "ها"
-  },
   "TEDX_ar_VDJ88bKCi-A_67.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
     "id": "TEDX_ar_VDJ88bKCi-A_67.3",
@@ -5207,20 +4143,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "ده الجانب الصحي"
   },
-  "TEDX_ar_VDJ88bKCi-A_71.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_71.8",
-    "audio_duration": 0.21,
-    "audio_offset": 71.83,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "-طفل:",
-    "language": "ar",
-    "prediction_duration": 1.53904,
-    "rtf": 7.32878,
-    "throughput_rtfx": 119.084,
-    "prediction": "هلا"
-  },
   "TEDX_ar_VDJ88bKCi-A_710.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
     "id": "TEDX_ar_VDJ88bKCi-A_710.3",
@@ -5277,20 +4199,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "نعم نعم"
   },
-  "TEDX_ar_VDJ88bKCi-A_722.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_722.0",
-    "audio_duration": 0.96,
-    "audio_offset": 721.97,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "وإسمها اثنان لواحد،",
-    "language": "ar",
-    "prediction_duration": 2.53433,
-    "rtf": 2.63992,
-    "throughput_rtfx": 119.084,
-    "prediction": "اسمعتو فورم"
-  },
   "TEDX_ar_VDJ88bKCi-A_724.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
     "id": "TEDX_ar_VDJ88bKCi-A_724.0",
@@ -5332,20 +4240,6 @@
     "rtf": 1.04904,
     "throughput_rtfx": 119.084,
     "prediction": "تجيب تطلع الشباب ديال من الفقر والحمد لله"
-  },
-  "TEDX_ar_VDJ88bKCi-A_738.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_738.3",
-    "audio_duration": 0.46,
-    "audio_offset": 738.27,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "الحمد لله،",
-    "language": "ar",
-    "prediction_duration": 2.48101,
-    "rtf": 5.3935,
-    "throughput_rtfx": 119.084,
-    "prediction": "بالله عندك"
   },
   "TEDX_ar_VDJ88bKCi-A_738.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
@@ -5402,20 +4296,6 @@
     "rtf": 1.01599,
     "throughput_rtfx": 119.084,
     "prediction": "لانه بعد شهر ماشي السعوديه لانو جاتوا اغامه"
-  },
-  "TEDX_ar_VDJ88bKCi-A_77.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_77.5",
-    "audio_duration": 0.35,
-    "audio_offset": 77.52,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "فارس:",
-    "language": "ar",
-    "prediction_duration": 2.46769,
-    "rtf": 7.05054,
-    "throughput_rtfx": 119.084,
-    "prediction": "لا ماسك"
   },
   "TEDX_ar_VDJ88bKCi-A_77.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
@@ -5543,20 +4423,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "شويه شويه الارباح بتاعته سنتحكم فيها نحن لكي نعالجوا منا لكي نعلموا منا بعد ثلاث سنه"
   },
-  "TEDX_ar_VDJ88bKCi-A_88.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_88.2",
-    "audio_duration": 0.7,
-    "audio_offset": 88.24,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "حسناً.",
-    "language": "ar",
-    "prediction_duration": 2.45364,
-    "rtf": 3.50519,
-    "throughput_rtfx": 119.084,
-    "prediction": "يا حمد"
-  },
   "TEDX_ar_VDJ88bKCi-A_882.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
     "id": "TEDX_ar_VDJ88bKCi-A_882.0",
@@ -5641,20 +4507,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "ستتصوره عن البطيخ بتذاكر وستاكل البطيخ بقروش"
   },
-  "TEDX_ar_VDJ88bKCi-A_909.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
-    "id": "TEDX_ar_VDJ88bKCi-A_909.5",
-    "audio_duration": 0.97,
-    "audio_offset": 909.54,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "جزاكم الله خيراً.",
-    "language": "ar",
-    "prediction_duration": 2.47907,
-    "rtf": 2.55574,
-    "throughput_rtfx": 119.084,
-    "prediction": "جزاكم الله خير"
-  },
   "TEDX_ar_VDJ88bKCi-A_910.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/VDJ88bKCi-A.wav",
     "id": "TEDX_ar_VDJ88bKCi-A_910.9",
@@ -5710,20 +4562,6 @@
     "rtf": 0.10152,
     "throughput_rtfx": 119.084,
     "prediction": "ان كيف بدهم يتعاملوا معي"
-  },
-  "TEDX_ar_XAW3SoGevgg_107.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
-    "id": "TEDX_ar_XAW3SoGevgg_107.3",
-    "audio_duration": 0.78,
-    "audio_offset": 107.26,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "في النهاية،",
-    "language": "ar",
-    "prediction_duration": 1.21018,
-    "rtf": 1.55152,
-    "throughput_rtfx": 119.084,
-    "prediction": "وصلنا الى مكان"
   },
   "TEDX_ar_XAW3SoGevgg_108.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
@@ -5822,20 +4660,6 @@
     "rtf": 0.84583,
     "throughput_rtfx": 119.084,
     "prediction": "لكن ما في اشي ناقصني"
-  },
-  "TEDX_ar_XAW3SoGevgg_129.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
-    "id": "TEDX_ar_XAW3SoGevgg_129.8",
-    "audio_duration": 0.93,
-    "audio_offset": 129.79,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "يقولون \"ما هذا؟",
-    "language": "ar",
-    "prediction_duration": 1.22292,
-    "rtf": 1.31497,
-    "throughput_rtfx": 119.084,
-    "prediction": "كلهم يتهزوا على"
   },
   "TEDX_ar_XAW3SoGevgg_130.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
@@ -6159,20 +4983,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "لكن العمر حيبين"
   },
-  "TEDX_ar_XAW3SoGevgg_213.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
-    "id": "TEDX_ar_XAW3SoGevgg_213.7",
-    "audio_duration": 0.84,
-    "audio_offset": 213.69,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "سنرى في النهاية.",
-    "language": "ar",
-    "prediction_duration": 1.16446,
-    "rtf": 1.38626,
-    "throughput_rtfx": 119.084,
-    "prediction": "الشاطر من مين"
-  },
   "TEDX_ar_XAW3SoGevgg_216.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
     "id": "TEDX_ar_XAW3SoGevgg_216.7",
@@ -6341,20 +5151,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "انا مبسوط لحضوركم اشكالوا وانواع مختلفه من الحضور"
   },
-  "TEDX_ar_XAW3SoGevgg_265.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
-    "id": "TEDX_ar_XAW3SoGevgg_265.1",
-    "audio_duration": 0.9,
-    "audio_offset": 265.14,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "الحمدلله،",
-    "language": "ar",
-    "prediction_duration": 1.17296,
-    "rtf": 1.30329,
-    "throughput_rtfx": 119.084,
-    "prediction": "الحمد لله رب العالمين"
-  },
   "TEDX_ar_XAW3SoGevgg_267.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
     "id": "TEDX_ar_XAW3SoGevgg_267.1",
@@ -6368,20 +5164,6 @@
     "rtf": 0.28884,
     "throughput_rtfx": 119.084,
     "prediction": "وصارت زوجتي حامل طبعا وانتظرت البنت الاولى"
-  },
-  "TEDX_ar_XAW3SoGevgg_272.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
-    "id": "TEDX_ar_XAW3SoGevgg_272.5",
-    "audio_duration": 0.49,
-    "audio_offset": 272.47,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "كانت جميلة،",
-    "language": "ar",
-    "prediction_duration": 1.11584,
-    "rtf": 2.27722,
-    "throughput_rtfx": 119.084,
-    "prediction": "القمر"
   },
   "TEDX_ar_XAW3SoGevgg_273.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
@@ -6551,34 +5333,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "في كل فلسطين ما كان"
   },
-  "TEDX_ar_XAW3SoGevgg_309.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
-    "id": "TEDX_ar_XAW3SoGevgg_309.9",
-    "audio_duration": 0.99,
-    "audio_offset": 309.85,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لم أجد تقريبًا.",
-    "language": "ar",
-    "prediction_duration": 1.07077,
-    "rtf": 1.08159,
-    "throughput_rtfx": 119.084,
-    "prediction": "فيه تقريبا"
-  },
-  "TEDX_ar_XAW3SoGevgg_310.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
-    "id": "TEDX_ar_XAW3SoGevgg_310.9",
-    "audio_duration": 0.87,
-    "audio_offset": 310.87,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "ما العمل!",
-    "language": "ar",
-    "prediction_duration": 0.98672,
-    "rtf": 1.13416,
-    "throughput_rtfx": 119.084,
-    "prediction": "ايش بدي اعمل"
-  },
   "TEDX_ar_XAW3SoGevgg_313.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
     "id": "TEDX_ar_XAW3SoGevgg_313.1",
@@ -6648,20 +5402,6 @@
     "rtf": 0.38392,
     "throughput_rtfx": 119.084,
     "prediction": "فجاه احد اصدقائي دلني على جمعيه اطفالنا للصم"
-  },
-  "TEDX_ar_XAW3SoGevgg_332.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
-    "id": "TEDX_ar_XAW3SoGevgg_332.0",
-    "audio_duration": 0.92,
-    "audio_offset": 332.0,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "قابلت المديرة،",
-    "language": "ar",
-    "prediction_duration": 1.77417,
-    "rtf": 1.92844,
-    "throughput_rtfx": 119.084,
-    "prediction": "قابله المديره"
   },
   "TEDX_ar_XAW3SoGevgg_333.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
@@ -7195,20 +5935,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "وطبعا في ناس كتير ناطقين ما قدروا يصلوا للي انا وصلته"
   },
-  "TEDX_ar_XAW3SoGevgg_487.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
-    "id": "TEDX_ar_XAW3SoGevgg_487.2",
-    "audio_duration": 0.71,
-    "audio_offset": 487.2,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "وبالآخر،",
-    "language": "ar",
-    "prediction_duration": 1.77109,
-    "rtf": 2.4945,
-    "throughput_rtfx": 119.084,
-    "prediction": "وبالاخر الحمد لله"
-  },
   "TEDX_ar_XAW3SoGevgg_487.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
     "id": "TEDX_ar_XAW3SoGevgg_487.9",
@@ -7363,20 +6089,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "التي كنت لا اريد ان تعاني مني"
   },
-  "TEDX_ar_XAW3SoGevgg_521.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
-    "id": "TEDX_ar_XAW3SoGevgg_521.3",
-    "audio_duration": 0.73,
-    "audio_offset": 521.27,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "هي معلمة الآن،",
-    "language": "ar",
-    "prediction_duration": 1.71276,
-    "rtf": 2.34624,
-    "throughput_rtfx": 119.084,
-    "prediction": "هي بمعلم"
-  },
   "TEDX_ar_XAW3SoGevgg_522.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
     "id": "TEDX_ar_XAW3SoGevgg_522.7",
@@ -7418,20 +6130,6 @@
     "rtf": 1.68237,
     "throughput_rtfx": 119.084,
     "prediction": "عن المجتمع كله ام"
-  },
-  "TEDX_ar_XAW3SoGevgg_529.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
-    "id": "TEDX_ar_XAW3SoGevgg_529.9",
-    "audio_duration": 0.93,
-    "audio_offset": 529.89,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "كيف ذلك!",
-    "language": "ar",
-    "prediction_duration": 1.69489,
-    "rtf": 1.82247,
-    "throughput_rtfx": 119.084,
-    "prediction": "كيف"
   },
   "TEDX_ar_XAW3SoGevgg_530.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
@@ -7530,20 +6228,6 @@
     "rtf": 0.7656,
     "throughput_rtfx": 119.084,
     "prediction": "شكرا شكرا لحضوركم جميعا"
-  },
-  "TEDX_ar_XAW3SoGevgg_567.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
-    "id": "TEDX_ar_XAW3SoGevgg_567.3",
-    "audio_duration": 0.52,
-    "audio_offset": 567.32,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "شكرًا لكم.",
-    "language": "ar",
-    "prediction_duration": 4.3998,
-    "rtf": 8.46115,
-    "throughput_rtfx": 119.084,
-    "prediction": "شكرا لكم"
   },
   "TEDX_ar_XAW3SoGevgg_60.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/XAW3SoGevgg.wav",
@@ -7825,20 +6509,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "نتيجه الاختيارات بتتاثر باختيارات الاخرين"
   },
-  "TEDX_ar_uz6GpKZkWRc_362.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_362.3",
-    "audio_duration": 0.52,
-    "audio_offset": 362.27,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "فمثلاً،",
-    "language": "ar",
-    "prediction_duration": 4.35419,
-    "rtf": 8.37344,
-    "throughput_rtfx": 119.084,
-    "prediction": "يعني ما ساهم"
-  },
   "TEDX_ar_uz6GpKZkWRc_362.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
     "id": "TEDX_ar_uz6GpKZkWRc_362.8",
@@ -7867,20 +6537,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "اروح ثاني يوم"
   },
-  "TEDX_ar_uz6GpKZkWRc_369.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_369.5",
-    "audio_duration": 0.21,
-    "audio_offset": 369.53,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "ولكن،",
-    "language": "ar",
-    "prediction_duration": 4.34224,
-    "rtf": 20.67735,
-    "throughput_rtfx": 119.084,
-    "prediction": "نعم"
-  },
   "TEDX_ar_uz6GpKZkWRc_369.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
     "id": "TEDX_ar_uz6GpKZkWRc_369.7",
@@ -7908,20 +6564,6 @@
     "rtf": 2.95831,
     "throughput_rtfx": 119.084,
     "prediction": "سيبقى ثاني يوم هو اللي زحمه"
-  },
-  "TEDX_ar_uz6GpKZkWRc_373.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_373.4",
-    "audio_duration": 0.57,
-    "audio_offset": 373.41,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "في هذه الحالة،",
-    "language": "ar",
-    "prediction_duration": 4.3554,
-    "rtf": 7.64106,
-    "throughput_rtfx": 119.084,
-    "prediction": "لازم انا عملت"
   },
   "TEDX_ar_uz6GpKZkWRc_374.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
@@ -7978,20 +6620,6 @@
     "rtf": 2.17185,
     "throughput_rtfx": 119.084,
     "prediction": "ان الادوات اللي بتستخدم في هذا المجال"
-  },
-  "TEDX_ar_uz6GpKZkWRc_384.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_384.6",
-    "audio_duration": 0.89,
-    "audio_offset": 384.57,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "نظرية الألعاب.",
-    "language": "ar",
-    "prediction_duration": 4.3582,
-    "rtf": 4.89686,
-    "throughput_rtfx": 119.084,
-    "prediction": "ونظريه الالعاب"
   },
   "TEDX_ar_uz6GpKZkWRc_387.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
@@ -8147,20 +6775,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "وما بتقول ان في اتنين اتقبض عليهم"
   },
-  "TEDX_ar_uz6GpKZkWRc_426.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_426.3",
-    "audio_duration": 0.71,
-    "audio_offset": 426.31,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "يسرقان سيارة.",
-    "language": "ar",
-    "prediction_duration": 4.3479,
-    "rtf": 6.1238,
-    "throughput_rtfx": 119.084,
-    "prediction": "اسراء وعربيه"
-  },
   "TEDX_ar_uz6GpKZkWRc_427.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
     "id": "TEDX_ar_uz6GpKZkWRc_427.9",
@@ -8189,20 +6803,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "عشان ما يسمعوش بعض"
   },
-  "TEDX_ar_uz6GpKZkWRc_432.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_432.6",
-    "audio_duration": 0.84,
-    "audio_offset": 432.65,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "إذا أنكر كلاهما،",
-    "language": "ar",
-    "prediction_duration": 4.33635,
-    "rtf": 5.16232,
-    "throughput_rtfx": 119.084,
-    "prediction": "لو الاثنين"
-  },
   "TEDX_ar_uz6GpKZkWRc_434.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
     "id": "TEDX_ar_uz6GpKZkWRc_434.2",
@@ -8230,20 +6830,6 @@
     "rtf": 4.35246,
     "throughput_rtfx": 119.084,
     "prediction": "ويتجنبوا اي عقود"
-  },
-  "TEDX_ar_uz6GpKZkWRc_438.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_438.1",
-    "audio_duration": 0.92,
-    "audio_offset": 438.08,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "و لكن إذا اعترفا،",
-    "language": "ar",
-    "prediction_duration": 4.34751,
-    "rtf": 4.72555,
-    "throughput_rtfx": 119.084,
-    "prediction": "لو الاثنين اعترفوا"
   },
   "TEDX_ar_uz6GpKZkWRc_439.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
@@ -8315,34 +6901,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "التصرف اللي بيحقق لهم المصلحه في هذه الحاله"
   },
-  "TEDX_ar_uz6GpKZkWRc_454.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_454.2",
-    "audio_duration": 0.84,
-    "audio_offset": 454.17,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "ما ينفع لكليهما،",
-    "language": "ar",
-    "prediction_duration": 1.98251,
-    "rtf": 2.36013,
-    "throughput_rtfx": 119.084,
-    "prediction": "هما الاثنين وهما"
-  },
-  "TEDX_ar_uz6GpKZkWRc_455.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_455.0",
-    "audio_duration": 0.63,
-    "audio_offset": 455.01,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "هو أن ينكرا.",
-    "language": "ar",
-    "prediction_duration": 1.94589,
-    "rtf": 3.08871,
-    "throughput_rtfx": 119.084,
-    "prediction": "ما ينكره"
-  },
   "TEDX_ar_uz6GpKZkWRc_455.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
     "id": "TEDX_ar_uz6GpKZkWRc_455.8",
@@ -8398,48 +6956,6 @@
     "rtf": 1.33183,
     "throughput_rtfx": 119.084,
     "prediction": "والله لو لم يعترف"
-  },
-  "TEDX_ar_uz6GpKZkWRc_469.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_469.3",
-    "audio_duration": 0.48,
-    "audio_offset": 469.33,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "فسوف أكون حرا،",
-    "language": "ar",
-    "prediction_duration": 1.9276,
-    "rtf": 4.01584,
-    "throughput_rtfx": 119.084,
-    "prediction": "لا لا"
-  },
-  "TEDX_ar_uz6GpKZkWRc_470.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_470.6",
-    "audio_duration": 0.81,
-    "audio_offset": 470.65,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "و إذا فعل،",
-    "language": "ar",
-    "prediction_duration": 1.96482,
-    "rtf": 2.42571,
-    "throughput_rtfx": 119.084,
-    "prediction": "فلو هو اعترف"
-  },
-  "TEDX_ar_uz6GpKZkWRc_471.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_471.5",
-    "audio_duration": 0.63,
-    "audio_offset": 471.46,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "فسنسجن كلبنا.",
-    "language": "ar",
-    "prediction_duration": 1.96637,
-    "rtf": 3.12122,
-    "throughput_rtfx": 119.084,
-    "prediction": "ولكنهم كشف"
   },
   "TEDX_ar_uz6GpKZkWRc_474.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
@@ -8595,20 +7111,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "بس كانوا كل الشركات تجاهل في نفس المجال"
   },
-  "TEDX_ar_uz6GpKZkWRc_514.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_514.1",
-    "audio_duration": 0.61,
-    "audio_offset": 514.09,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "و لكن في النهاية،",
-    "language": "ar",
-    "prediction_duration": 1.96485,
-    "rtf": 3.22107,
-    "throughput_rtfx": 119.084,
-    "prediction": "شركه واحده بس"
-  },
   "TEDX_ar_uz6GpKZkWRc_514.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
     "id": "TEDX_ar_uz6GpKZkWRc_514.7",
@@ -8622,20 +7124,6 @@
     "rtf": 1.25181,
     "throughput_rtfx": 119.084,
     "prediction": "هي اللي بتوصل للنتيجه"
-  },
-  "TEDX_ar_uz6GpKZkWRc_517.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_517.4",
-    "audio_duration": 0.98,
-    "audio_offset": 517.4,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "جاعلة باقي الشركات،",
-    "language": "ar",
-    "prediction_duration": 1.96866,
-    "rtf": 2.00883,
-    "throughput_rtfx": 119.084,
-    "prediction": "تكسروا تكسروا"
   },
   "TEDX_ar_uz6GpKZkWRc_518.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
@@ -8721,20 +7209,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "هل ده يبقى كافي ان انا اوصل للنتيجه اللي انا عايزها"
   },
-  "TEDX_ar_uz6GpKZkWRc_541.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_541.0",
-    "audio_duration": 0.55,
-    "audio_offset": 541.03,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "أحياناً،",
-    "language": "ar",
-    "prediction_duration": 1.90291,
-    "rtf": 3.45983,
-    "throughput_rtfx": 119.084,
-    "prediction": "ساعات"
-  },
   "TEDX_ar_uz6GpKZkWRc_543.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
     "id": "TEDX_ar_uz6GpKZkWRc_543.4",
@@ -8748,34 +7222,6 @@
     "rtf": 0.60319,
     "throughput_rtfx": 119.084,
     "prediction": "ممكن اختياراتي تتعارض مع مصالح ناس"
-  },
-  "TEDX_ar_uz6GpKZkWRc_546.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_546.7",
-    "audio_duration": 0.77,
-    "audio_offset": 546.68,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "الأقوى مني.",
-    "language": "ar",
-    "prediction_duration": 1.93829,
-    "rtf": 2.51726,
-    "throughput_rtfx": 119.084,
-    "prediction": "اقوى مني"
-  },
-  "TEDX_ar_uz6GpKZkWRc_547.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_547.7",
-    "audio_duration": 0.52,
-    "audio_offset": 547.71,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "فمثلا،",
-    "language": "ar",
-    "prediction_duration": 1.94254,
-    "rtf": 3.73566,
-    "throughput_rtfx": 119.084,
-    "prediction": "عرضني مثلا"
   },
   "TEDX_ar_uz6GpKZkWRc_549.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
@@ -8903,20 +7349,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "المركبيه"
   },
-  "TEDX_ar_uz6GpKZkWRc_574.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_574.0",
-    "audio_duration": 0.93,
-    "audio_offset": 574.0,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "بسبب المنافسة،",
-    "language": "ar",
-    "prediction_duration": 1.92188,
-    "rtf": 2.06654,
-    "throughput_rtfx": 119.084,
-    "prediction": "علشان المنافسه"
-  },
   "TEDX_ar_uz6GpKZkWRc_575.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
     "id": "TEDX_ar_uz6GpKZkWRc_575.3",
@@ -9043,20 +7475,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "السواقين بقوا بيسووا اسرع عشان حاسوا بالطمانينه"
   },
-  "TEDX_ar_uz6GpKZkWRc_609.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_609.2",
-    "audio_duration": 0.97,
-    "audio_offset": 609.23,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "ولكن معدل الحوادث زاد.",
-    "language": "ar",
-    "prediction_duration": 1.37779,
-    "rtf": 1.4204,
-    "throughput_rtfx": 119.084,
-    "prediction": "ونسبه الحوادث ذاته"
-  },
   "TEDX_ar_uz6GpKZkWRc_610.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
     "id": "TEDX_ar_uz6GpKZkWRc_610.2",
@@ -9168,20 +7586,6 @@
     "rtf": 0.64623,
     "throughput_rtfx": 119.084,
     "prediction": "واحد يبدا بحثه وما يكملوش واحد اخر ياخده ويوصل"
-  },
-  "TEDX_ar_uz6GpKZkWRc_647.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_647.3",
-    "audio_duration": 0.37,
-    "audio_offset": 647.26,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "و يكمله،",
-    "language": "ar",
-    "prediction_duration": 1.30811,
-    "rtf": 3.53544,
-    "throughput_rtfx": 119.084,
-    "prediction": "ومن"
   },
   "TEDX_ar_uz6GpKZkWRc_647.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
@@ -9421,34 +7825,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "انها يدرك هذه الحقيقه"
   },
-  "TEDX_ar_uz6GpKZkWRc_706.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_706.7",
-    "audio_duration": 0.96,
-    "audio_offset": 706.73,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لن ييأس،",
-    "language": "ar",
-    "prediction_duration": 1.29025,
-    "rtf": 1.34401,
-    "throughput_rtfx": 119.084,
-    "prediction": "مش هيياس"
-  },
-  "TEDX_ar_uz6GpKZkWRc_707.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_707.7",
-    "audio_duration": 0.97,
-    "audio_offset": 707.72,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "وسيحاول ثانياً،",
-    "language": "ar",
-    "prediction_duration": 1.29952,
-    "rtf": 1.33971,
-    "throughput_rtfx": 119.084,
-    "prediction": "سيحاول تاني"
-  },
   "TEDX_ar_uz6GpKZkWRc_708.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
     "id": "TEDX_ar_uz6GpKZkWRc_708.9",
@@ -9476,20 +7852,6 @@
     "rtf": 0.76434,
     "throughput_rtfx": 119.084,
     "prediction": "وفرصه احسن للنجاح"
-  },
-  "TEDX_ar_uz6GpKZkWRc_715.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/uz6GpKZkWRc.wav",
-    "id": "TEDX_ar_uz6GpKZkWRc_715.1",
-    "audio_duration": 0.38,
-    "audio_offset": 715.08,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "شكراً.",
-    "language": "ar",
-    "prediction_duration": 1.28329,
-    "rtf": 3.37709,
-    "throughput_rtfx": 119.084,
-    "prediction": "نعم"
   },
   "TEDX_ar_wFK0ccfE3to_10.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wFK0ccfE3to.wav",
@@ -9911,34 +8273,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "ساعات العمل الطويله تبدو حتما للافضل"
   },
-  "TEDX_ar_wFK0ccfE3to_222.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wFK0ccfE3to.wav",
-    "id": "TEDX_ar_wFK0ccfE3to_222.4",
-    "audio_duration": 0.56,
-    "audio_offset": 222.42,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "بالنسبة لمن؟",
-    "language": "ar",
-    "prediction_duration": 0.59963,
-    "rtf": 1.07076,
-    "throughput_rtfx": 119.084,
-    "prediction": "بالنسبه لمن"
-  },
-  "TEDX_ar_wFK0ccfE3to_223.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wFK0ccfE3to.wav",
-    "id": "TEDX_ar_wFK0ccfE3to_223.0",
-    "audio_duration": 0.76,
-    "audio_offset": 222.98,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لليابانيين.",
-    "language": "ar",
-    "prediction_duration": 0.6,
-    "rtf": 0.78948,
-    "throughput_rtfx": 119.084,
-    "prediction": "لليابانيين"
-  },
   "TEDX_ar_wFK0ccfE3to_224.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wFK0ccfE3to.wav",
     "id": "TEDX_ar_wFK0ccfE3to_224.5",
@@ -10135,20 +8469,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "او الجاهل في كبت المراه و حرمانها من التعليم و التطور"
   },
-  "TEDX_ar_wFK0ccfE3to_278.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wFK0ccfE3to.wav",
-    "id": "TEDX_ar_wFK0ccfE3to_278.7",
-    "audio_duration": 0.98,
-    "audio_offset": 278.7,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لربما هناك طريقة،",
-    "language": "ar",
-    "prediction_duration": 0.61079,
-    "rtf": 0.62326,
-    "throughput_rtfx": 119.084,
-    "prediction": "ربما هناك طريقه"
-  },
   "TEDX_ar_wFK0ccfE3to_280.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wFK0ccfE3to.wav",
     "id": "TEDX_ar_wFK0ccfE3to_280.4",
@@ -10176,20 +8496,6 @@
     "rtf": 0.07958,
     "throughput_rtfx": 119.084,
     "prediction": "فلا نجحف حق الواقع ولا نغفل عنصر التجديد والتغيير اللازم لمواكبه العصر"
-  },
-  "TEDX_ar_wFK0ccfE3to_289.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wFK0ccfE3to.wav",
-    "id": "TEDX_ar_wFK0ccfE3to_289.0",
-    "audio_duration": 0.58,
-    "audio_offset": 289.0,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "إن الإنسان،",
-    "language": "ar",
-    "prediction_duration": 0.24237,
-    "rtf": 0.41788,
-    "throughput_rtfx": 119.084,
-    "prediction": "الانسان"
   },
   "TEDX_ar_wFK0ccfE3to_289.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wFK0ccfE3to.wav",
@@ -10260,20 +8566,6 @@
     "rtf": 0.27594,
     "throughput_rtfx": 119.084,
     "prediction": "لمشكله ما ويعمم كل سلبياتها ولا يرى الايجابيات"
-  },
-  "TEDX_ar_wFK0ccfE3to_304.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wFK0ccfE3to.wav",
-    "id": "TEDX_ar_wFK0ccfE3to_304.3",
-    "audio_duration": 0.76,
-    "audio_offset": 304.32,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "ليس لعدم وجودها،",
-    "language": "ar",
-    "prediction_duration": 1.06899,
-    "rtf": 1.40657,
-    "throughput_rtfx": 119.084,
-    "prediction": "عدم وجودها"
   },
   "TEDX_ar_wFK0ccfE3to_305.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wFK0ccfE3to.wav",
@@ -10680,20 +8972,6 @@
     "rtf": 0.20744,
     "throughput_rtfx": 119.084,
     "prediction": "بسبب الفعل ابتعاث تسع فتيات من بناتنا الى ماليزيا حيث حصلنا على شهاده الماجستير من هناك"
-  },
-  "TEDX_ar_wFK0ccfE3to_4.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wFK0ccfE3to.wav",
-    "id": "TEDX_ar_wFK0ccfE3to_4.0",
-    "audio_duration": 0.7,
-    "audio_offset": 3.97,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "السلام عليكم.",
-    "language": "ar",
-    "prediction_duration": 1.00787,
-    "rtf": 1.43981,
-    "throughput_rtfx": 119.084,
-    "prediction": "السلام عليكم"
   },
   "TEDX_ar_wFK0ccfE3to_40.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wFK0ccfE3to.wav",
@@ -11325,20 +9603,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "و الحلول للعقبات التي تواجه الطامحين في التعليم"
   },
-  "TEDX_ar_wFK0ccfE3to_548.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wFK0ccfE3to.wav",
-    "id": "TEDX_ar_wFK0ccfE3to_548.0",
-    "audio_duration": 0.63,
-    "audio_offset": 548.01,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "وشكرًا لكم.",
-    "language": "ar",
-    "prediction_duration": 1.21759,
-    "rtf": 1.93269,
-    "throughput_rtfx": 119.084,
-    "prediction": "وشكرا لكم"
-  },
   "TEDX_ar_wFK0ccfE3to_56.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wFK0ccfE3to.wav",
     "id": "TEDX_ar_wFK0ccfE3to_56.6",
@@ -11479,20 +9743,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "وانا كرسام من الشغل للبيت من البيت للشغل"
   },
-  "TEDX_ar_wMiIS9Huwko_111.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
-    "id": "TEDX_ar_wMiIS9Huwko_111.1",
-    "audio_duration": 0.83,
-    "audio_offset": 111.13,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "ومتزوج.",
-    "language": "ar",
-    "prediction_duration": 1.20683,
-    "rtf": 1.45402,
-    "throughput_rtfx": 119.084,
-    "prediction": "ومتزوج"
-  },
   "TEDX_ar_wMiIS9Huwko_112.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
     "id": "TEDX_ar_wMiIS9Huwko_112.1",
@@ -11563,20 +9813,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "وهاي الصوره كنت استخدمها مع زميلاتي في الجامعه لكي اثبت لهم اني يوما ما كنت امور"
   },
-  "TEDX_ar_wMiIS9Huwko_147.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
-    "id": "TEDX_ar_wMiIS9Huwko_147.9",
-    "audio_duration": 0.31,
-    "audio_offset": 147.95,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "كنت \"cute\".",
-    "language": "ar",
-    "prediction_duration": 1.19341,
-    "rtf": 3.84972,
-    "throughput_rtfx": 119.084,
-    "prediction": "ونقول"
-  },
   "TEDX_ar_wMiIS9Huwko_149.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
     "id": "TEDX_ar_wMiIS9Huwko_149.3",
@@ -11590,20 +9826,6 @@
     "rtf": 0.53836,
     "throughput_rtfx": 119.084,
     "prediction": "في هاي المرحله بدا حبي وعشقي لفن الكركتير"
-  },
-  "TEDX_ar_wMiIS9Huwko_15.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
-    "id": "TEDX_ar_wMiIS9Huwko_15.2",
-    "audio_duration": 0.48,
-    "audio_offset": 15.2,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "مرحبًا.",
-    "language": "ar",
-    "prediction_duration": 1.20052,
-    "rtf": 2.50107,
-    "throughput_rtfx": 119.084,
-    "prediction": "مرحبا"
   },
   "TEDX_ar_wMiIS9Huwko_155.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
@@ -11787,34 +10009,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "في الشان الدولي العربي"
   },
-  "TEDX_ar_wMiIS9Huwko_21.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
-    "id": "TEDX_ar_wMiIS9Huwko_21.6",
-    "audio_duration": 0.96,
-    "audio_offset": 21.58,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "رسام كاريكاتير.",
-    "language": "ar",
-    "prediction_duration": 1.20866,
-    "rtf": 1.25902,
-    "throughput_rtfx": 119.084,
-    "prediction": "رسام كتير كتير"
-  },
-  "TEDX_ar_wMiIS9Huwko_212.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
-    "id": "TEDX_ar_wMiIS9Huwko_212.1",
-    "audio_duration": 0.79,
-    "audio_offset": 212.11,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "أو المحلي.",
-    "language": "ar",
-    "prediction_duration": 1.18924,
-    "rtf": 1.50536,
-    "throughput_rtfx": 119.084,
-    "prediction": "المحلي"
-  },
   "TEDX_ar_wMiIS9Huwko_214.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
     "id": "TEDX_ar_wMiIS9Huwko_214.0",
@@ -11982,20 +10176,6 @@
     "rtf": 0.1106,
     "throughput_rtfx": 119.084,
     "prediction": "محمد صلاح قضى على الاسلامفوبيا في ليفربول محمد صلاح هو الامل بالنسبه لملايين من الاطفال والشباب"
-  },
-  "TEDX_ar_wMiIS9Huwko_25.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
-    "id": "TEDX_ar_wMiIS9Huwko_25.1",
-    "audio_duration": 0.47,
-    "audio_offset": 25.05,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "بدايةً،",
-    "language": "ar",
-    "prediction_duration": 1.3251,
-    "rtf": 2.81937,
-    "throughput_rtfx": 119.084,
-    "prediction": "بدايتها"
   },
   "TEDX_ar_wMiIS9Huwko_26.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
@@ -12235,20 +10415,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "هذه البنايه المهدوره بسبب فن الكركتير تحولت الى عمل فني"
   },
-  "TEDX_ar_wMiIS9Huwko_350.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
-    "id": "TEDX_ar_wMiIS9Huwko_350.4",
-    "audio_duration": 0.6,
-    "audio_offset": 350.37,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "برلين:",
-    "language": "ar",
-    "prediction_duration": 1.29246,
-    "rtf": 2.1541,
-    "throughput_rtfx": 119.084,
-    "prediction": "برلين"
-  },
   "TEDX_ar_wMiIS9Huwko_351.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
     "id": "TEDX_ar_wMiIS9Huwko_351.0",
@@ -12276,20 +10442,6 @@
     "rtf": 0.32633,
     "throughput_rtfx": 119.084,
     "prediction": "كان يوما ما يرمز في الحرب والكراهيه والبغضاء"
-  },
-  "TEDX_ar_wMiIS9Huwko_359.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
-    "id": "TEDX_ar_wMiIS9Huwko_359.2",
-    "audio_duration": 0.57,
-    "audio_offset": 359.24,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لاحقًا،",
-    "language": "ar",
-    "prediction_duration": 1.29022,
-    "rtf": 2.26354,
-    "throughput_rtfx": 119.084,
-    "prediction": "لاحقا"
   },
   "TEDX_ar_wMiIS9Huwko_359.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
@@ -12668,20 +10820,6 @@
     "rtf": 0.65787,
     "throughput_rtfx": 119.084,
     "prediction": "يكون في مثلا موسيقى انزل جميل على الساحه"
-  },
-  "TEDX_ar_wMiIS9Huwko_501.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
-    "id": "TEDX_ar_wMiIS9Huwko_501.9",
-    "audio_duration": 0.63,
-    "audio_offset": 501.9,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "بريشته فقط.",
-    "language": "ar",
-    "prediction_duration": 2.23137,
-    "rtf": 3.54185,
-    "throughput_rtfx": 119.084,
-    "prediction": "الاحتلال"
   },
   "TEDX_ar_wMiIS9Huwko_504.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/wMiIS9Huwko.wav",
@@ -13383,20 +11521,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "ولكن انا لا اعرف ما تقفل التجنيد وباخد ميتين جنيه في صيدليه عندنا في المنصور"
   },
-  "TEDX_ar_xunu__AO9C8_138.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
-    "id": "TEDX_ar_xunu__AO9C8_138.3",
-    "audio_duration": 0.97,
-    "audio_offset": 138.26,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "ماذا لديك لتقدمه لابنتي؟",
-    "language": "ar",
-    "prediction_duration": 3.67223,
-    "rtf": 3.7858,
-    "throughput_rtfx": 119.084,
-    "prediction": "هذي امتحنتك ايه يا ابني"
-  },
   "TEDX_ar_xunu__AO9C8_140.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
     "id": "TEDX_ar_xunu__AO9C8_140.7",
@@ -13410,20 +11534,6 @@
     "rtf": 0.88119,
     "throughput_rtfx": 119.084,
     "prediction": "قلت له يا شادي انت خليك صادق مع الرجل وقول الكلمتين ويعني ايه حتى لو الموضوع ما تركش وما تركش مشاكل قلت له يا عمي"
-  },
-  "TEDX_ar_xunu__AO9C8_148.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
-    "id": "TEDX_ar_xunu__AO9C8_148.7",
-    "audio_duration": 0.63,
-    "audio_offset": 148.7,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "يا عمي،",
-    "language": "ar",
-    "prediction_duration": 2.57997,
-    "rtf": 4.09519,
-    "throughput_rtfx": 119.084,
-    "prediction": "ام"
   },
   "TEDX_ar_xunu__AO9C8_149.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
@@ -13565,20 +11675,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "بكل بساطه انت عندك مجموعه من الاسئله جواك"
   },
-  "TEDX_ar_xunu__AO9C8_234.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
-    "id": "TEDX_ar_xunu__AO9C8_234.9",
-    "audio_duration": 0.58,
-    "audio_offset": 234.91,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "بعضها كبير:",
-    "language": "ar",
-    "prediction_duration": 3.62227,
-    "rtf": 6.2453,
-    "throughput_rtfx": 119.084,
-    "prediction": "الاسئله دي يا جماعه"
-  },
   "TEDX_ar_xunu__AO9C8_235.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
     "id": "TEDX_ar_xunu__AO9C8_235.5",
@@ -13620,20 +11716,6 @@
     "rtf": 2.08074,
     "throughput_rtfx": 119.084,
     "prediction": "هي رومانسيه"
-  },
-  "TEDX_ar_xunu__AO9C8_243.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
-    "id": "TEDX_ar_xunu__AO9C8_243.4",
-    "audio_duration": 0.97,
-    "audio_offset": 243.38,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "\" \"لماذا يقتل الناس بعضهم البعض؟",
-    "language": "ar",
-    "prediction_duration": 3.64275,
-    "rtf": 3.75541,
-    "throughput_rtfx": 119.084,
-    "prediction": "ليه الناس بتقتل بعضها"
   },
   "TEDX_ar_xunu__AO9C8_244.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
@@ -13690,20 +11772,6 @@
     "rtf": 1.20542,
     "throughput_rtfx": 119.084,
     "prediction": "التمدد الزمني اللي بيقولوه في فيلم الانترستيلر ده"
-  },
-  "TEDX_ar_xunu__AO9C8_256.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
-    "id": "TEDX_ar_xunu__AO9C8_256.2",
-    "audio_duration": 0.73,
-    "audio_offset": 256.25,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "\" في النهاية،",
-    "language": "ar",
-    "prediction_duration": 3.57116,
-    "rtf": 4.892,
-    "throughput_rtfx": 119.084,
-    "prediction": "في الاخر"
   },
   "TEDX_ar_xunu__AO9C8_257.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
@@ -13859,48 +11927,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "اسمو اميل او في التربيه او مش مال الكلمه كده و بيترغم عربي كده كتاب اميل بعلما زين ربي و لنا واحد من اعظم كتب التربيه لتعاملت بتاريخ البشري رجل حتى لدق مالك امام اوالله"
   },
-  "TEDX_ar_xunu__AO9C8_338.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
-    "id": "TEDX_ar_xunu__AO9C8_338.6",
-    "audio_duration": 0.32,
-    "audio_offset": 338.57,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "الستة!",
-    "language": "ar",
-    "prediction_duration": 3.55068,
-    "rtf": 11.09587,
-    "throughput_rtfx": 119.084,
-    "prediction": "طيب"
-  },
-  "TEDX_ar_xunu__AO9C8_340.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
-    "id": "TEDX_ar_xunu__AO9C8_340.2",
-    "audio_duration": 0.89,
-    "audio_offset": 340.16,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لم يكترث!",
-    "language": "ar",
-    "prediction_duration": 3.59797,
-    "rtf": 4.04266,
-    "throughput_rtfx": 119.084,
-    "prediction": "كانش بيعدي يعني"
-  },
-  "TEDX_ar_xunu__AO9C8_345.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
-    "id": "TEDX_ar_xunu__AO9C8_345.5",
-    "audio_duration": 0.67,
-    "audio_offset": 345.53,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "\"ألبرت أينشتاين\" .",
-    "language": "ar",
-    "prediction_duration": 3.59303,
-    "rtf": 5.36274,
-    "throughput_rtfx": 119.084,
-    "prediction": "كنت اينشتاين"
-  },
   "TEDX_ar_xunu__AO9C8_36.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
     "id": "TEDX_ar_xunu__AO9C8_36.1",
@@ -14055,34 +12081,6 @@
     "throughput_rtfx": 119.084,
     "prediction": "انها هذه القراءه"
   },
-  "TEDX_ar_xunu__AO9C8_441.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
-    "id": "TEDX_ar_xunu__AO9C8_441.9",
-    "audio_duration": 0.3,
-    "audio_offset": 441.93,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "عالم مستمر.",
-    "language": "ar",
-    "prediction_duration": 3.56096,
-    "rtf": 11.86987,
-    "throughput_rtfx": 119.084,
-    "prediction": "وما علمت"
-  },
-  "TEDX_ar_xunu__AO9C8_442.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
-    "id": "TEDX_ar_xunu__AO9C8_442.2",
-    "audio_duration": 0.76,
-    "audio_offset": 442.23,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لا!",
-    "language": "ar",
-    "prediction_duration": 3.52995,
-    "rtf": 4.64467,
-    "throughput_rtfx": 119.084,
-    "prediction": "لا"
-  },
   "TEDX_ar_xunu__AO9C8_443.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
     "id": "TEDX_ar_xunu__AO9C8_443.7",
@@ -14110,20 +12108,6 @@
     "rtf": 0.63286,
     "throughput_rtfx": 119.084,
     "prediction": "بجمله لون فى سوى الزوجه يعني الجحيم هو الاخرون"
-  },
-  "TEDX_ar_xunu__AO9C8_491.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
-    "id": "TEDX_ar_xunu__AO9C8_491.8",
-    "audio_duration": 0.43,
-    "audio_offset": 491.76,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "أي أنتم!",
-    "language": "ar",
-    "prediction_duration": 3.54543,
-    "rtf": 8.24518,
-    "throughput_rtfx": 119.084,
-    "prediction": "اجوبه انت"
   },
   "TEDX_ar_xunu__AO9C8_494.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
@@ -14236,20 +12220,6 @@
     "rtf": 0.76337,
     "throughput_rtfx": 119.084,
     "prediction": "سنكمل الكلام القراءه مش موضه"
-  },
-  "TEDX_ar_xunu__AO9C8_567.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
-    "id": "TEDX_ar_xunu__AO9C8_567.1",
-    "audio_duration": 0.97,
-    "audio_offset": 567.14,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لا تأتي مع السترة.",
-    "language": "ar",
-    "prediction_duration": 3.40617,
-    "rtf": 3.51152,
-    "throughput_rtfx": 119.084,
-    "prediction": "مش بتيجي مع الجكت"
   },
   "TEDX_ar_xunu__AO9C8_569.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
@@ -14404,20 +12374,6 @@
     "rtf": 0.66076,
     "throughput_rtfx": 119.084,
     "prediction": "هناك مشكله كبيره انا اواجهها مع ناس كثير من الجمهور اللي اتكلم معه دائما"
-  },
-  "TEDX_ar_xunu__AO9C8_654.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
-    "id": "TEDX_ar_xunu__AO9C8_654.0",
-    "audio_duration": 0.15,
-    "audio_offset": 654.0,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "لا،",
-    "language": "ar",
-    "prediction_duration": 3.35079,
-    "rtf": 22.33863,
-    "throughput_rtfx": 119.084,
-    "prediction": "لا"
   },
   "TEDX_ar_xunu__AO9C8_654.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
@@ -14670,20 +12626,6 @@
     "rtf": 0.70882,
     "throughput_rtfx": 119.084,
     "prediction": "يعني لو قرات فلسفه وضعيه مثلا او اتجاه ما في علم النفس"
-  },
-  "TEDX_ar_xunu__AO9C8_84.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",
-    "id": "TEDX_ar_xunu__AO9C8_84.7",
-    "audio_duration": 0.27,
-    "audio_offset": 84.69,
-    "dataset": "TEDX_ar",
-    "full_dataset": "TEDX_ar",
-    "text": "تحطيمك!",
-    "language": "ar",
-    "prediction_duration": 3.31794,
-    "rtf": 12.28867,
-    "throughput_rtfx": 119.084,
-    "prediction": "شخصيه"
   },
   "TEDX_ar_xunu__AO9C8_89.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/ar/Multilingual_TEDx/xunu__AO9C8.wav",

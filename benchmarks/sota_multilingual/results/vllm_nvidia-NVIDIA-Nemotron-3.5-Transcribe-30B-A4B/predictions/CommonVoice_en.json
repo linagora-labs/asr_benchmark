@@ -2365,20 +2365,6 @@
     "throughput_rtfx": 63.077,
     "prediction": "The child put on his pajamas."
   },
-  "CommonVoice_en_common_voice_en_17838841": {
-    "audio_filepath": "/home/data/audio/raw/transcript/multilang/CommonVoice/cv-corpus-22.0-2025-06-20/en/clips_wav/11/common_voice_en_17838841.wav",
-    "id": "CommonVoice_en_common_voice_en_17838841",
-    "audio_duration": 0.576,
-    "audio_offset": 0.0,
-    "dataset": "CommonVoice_en",
-    "full_dataset": "CommonVoice_en",
-    "text": "Wait a minute!",
-    "language": "en",
-    "prediction_duration": 2.03024,
-    "rtf": 3.52472,
-    "throughput_rtfx": 63.077,
-    "prediction": "Wait a minute."
-  },
   "CommonVoice_en_common_voice_en_17839372": {
     "audio_filepath": "/home/data/audio/raw/transcript/multilang/CommonVoice/cv-corpus-22.0-2025-06-20/en/clips_wav/11/common_voice_en_17839372.wav",
     "id": "CommonVoice_en_common_voice_en_17839372",

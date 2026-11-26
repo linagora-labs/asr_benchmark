@@ -43,17 +43,6 @@
     "language": "es",
     "prediction": "nuestro genoma el genoma humano está constituido por cuatro letras que se repiten tres mil millones de veces"
   },
-  "TEDX_es_051ObIQbmVs_139.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
-    "id": "TEDX_es_051ObIQbmVs_139.9",
-    "audio_duration": 0.81,
-    "audio_offset": 139.94,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¡Increíble!",
-    "language": "es",
-    "prediction": "es increíble"
-  },
   "TEDX_es_051ObIQbmVs_141.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
     "id": "TEDX_es_051ObIQbmVs_141.7",
@@ -219,17 +208,6 @@
     "language": "es",
     "prediction": "tiene que ver y mucho"
   },
-  "TEDX_es_051ObIQbmVs_241.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
-    "id": "TEDX_es_051ObIQbmVs_241.7",
-    "audio_duration": 0.92,
-    "audio_offset": 241.66,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¡Y cuánto!",
-    "language": "es",
-    "prediction": "il quanto"
-  },
   "TEDX_es_051ObIQbmVs_243.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
     "id": "TEDX_es_051ObIQbmVs_243.4",
@@ -384,17 +362,6 @@
     "language": "es",
     "prediction": "llegó a cordoba un grupo de mujeres y hombres antropólogos y antropólogas del equipo argentino de antropología forense que venían caminando por argentina exhumando fosas buscando causa de muerte analizando esos huesos tratando de identificarlos y restituirlos a las familias"
   },
-  "TEDX_es_051ObIQbmVs_35.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
-    "id": "TEDX_es_051ObIQbmVs_35.4",
-    "audio_duration": 0.67,
-    "audio_offset": 35.39,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¡Che!",
-    "language": "es",
-    "prediction": "c'è"
-  },
   "TEDX_es_051ObIQbmVs_355.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
     "id": "TEDX_es_051ObIQbmVs_355.2",
@@ -405,17 +372,6 @@
     "text": "Ellos venían caminando no solo en la Argentina, sino por muchos países del mundo.",
     "language": "es",
     "prediction": "ellos venían caminando no solo en argentina sino por muchos países del mundo"
-  },
-  "TEDX_es_051ObIQbmVs_36.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
-    "id": "TEDX_es_051ObIQbmVs_36.1",
-    "audio_duration": 0.82,
-    "audio_offset": 36.09,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¡Vos!",
-    "language": "es",
-    "prediction": "vos"
   },
   "TEDX_es_051ObIQbmVs_360.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
@@ -449,17 +405,6 @@
     "text": "Un amigo en común nos reunió en su casa.",
     "language": "es",
     "prediction": "un amigo común nos juntó nos reunió en su casa"
-  },
-  "TEDX_es_051ObIQbmVs_375.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
-    "id": "TEDX_es_051ObIQbmVs_375.9",
-    "audio_duration": 0.55,
-    "audio_offset": 375.85,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¿Qué hicimos?",
-    "language": "es",
-    "prediction": "qué hicimos"
   },
   "TEDX_es_051ObIQbmVs_377.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
@@ -648,17 +593,6 @@
     "language": "es",
     "prediction": "también en otros continentes áfrica por ejemplo la sudáfrica que encarceló a mandela"
   },
-  "TEDX_es_051ObIQbmVs_538.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
-    "id": "TEDX_es_051ObIQbmVs_538.4",
-    "audio_duration": 0.92,
-    "audio_offset": 538.41,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Y en Asia.",
-    "language": "es",
-    "prediction": "y en asia"
-  },
   "TEDX_es_051ObIQbmVs_542.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
     "id": "TEDX_es_051ObIQbmVs_542.1",
@@ -669,28 +603,6 @@
     "text": "Parece todo maravilloso, ¿no?",
     "language": "es",
     "prediction": "parece todo maravilloso no"
-  },
-  "TEDX_es_051ObIQbmVs_543.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
-    "id": "TEDX_es_051ObIQbmVs_543.6",
-    "audio_duration": 0.97,
-    "audio_offset": 543.62,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Todo nos fue bien.",
-    "language": "es",
-    "prediction": "todo no fue bien"
-  },
-  "TEDX_es_051ObIQbmVs_545.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
-    "id": "TEDX_es_051ObIQbmVs_545.0",
-    "audio_duration": 0.77,
-    "audio_offset": 544.96,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Pero no es así.",
-    "language": "es",
-    "prediction": "pero no es así"
   },
   "TEDX_es_051ObIQbmVs_546.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
@@ -923,17 +835,6 @@
     "language": "es",
     "prediction": "algunos son desaparecidos que están vivos producto de tráfico de niños robo de bebés tráfico de personas adopciones ilegales"
   },
-  "TEDX_es_051ObIQbmVs_692.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
-    "id": "TEDX_es_051ObIQbmVs_692.2",
-    "audio_duration": 0.96,
-    "audio_offset": 692.16,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Se paró.",
-    "language": "es",
-    "prediction": "separo"
-  },
   "TEDX_es_051ObIQbmVs_693.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
     "id": "TEDX_es_051ObIQbmVs_693.9",
@@ -999,17 +900,6 @@
     "text": "Obsesivamente insistir para tratar de producir una nueva identidad, para poder reescribir de nuevo un nombre, devolverlo a una familia, terminar con los años de espera, de incertidumbre, de angustia y para que esa madre pequeñita se pueda encontrar de nuevo con su hijo, aun estando ya su hijo muerto.",
     "language": "es",
     "prediction": "obsesivamente insistir para tratar de producir una nueva identidad para poder reescribir de nuevo un nombre devolverla a una familia terminar con los años de espera de incertidumbre de angustia y para que esa madre pequeñita se pueda encontrar de nuevo con su hijo aun estando ya su hijo muerto"
-  },
-  "TEDX_es_051ObIQbmVs_757.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
-    "id": "TEDX_es_051ObIQbmVs_757.3",
-    "audio_duration": 0.63,
-    "audio_offset": 757.28,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Muchas gracias.",
-    "language": "es",
-    "prediction": "muito obrigado"
   },
   "TEDX_es_051ObIQbmVs_82.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/051ObIQbmVs.wav",
@@ -1264,17 +1154,6 @@
     "language": "es",
     "prediction": "muy importante que la peligrosidad del virus se potencia con la desinformación"
   },
-  "TEDX_es_9VA26uZPqYA_235.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9VA26uZPqYA.wav",
-    "id": "TEDX_es_9VA26uZPqYA_235.5",
-    "audio_duration": 0.62,
-    "audio_offset": 235.53,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Se los explico.",
-    "language": "es",
-    "prediction": "me explico"
-  },
   "TEDX_es_9VA26uZPqYA_236.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9VA26uZPqYA.wav",
     "id": "TEDX_es_9VA26uZPqYA_236.7",
@@ -1318,17 +1197,6 @@
     "text": "Por lo tanto, podemos haber aprendido de una vez que debemos manejarnos con la verdad.",
     "language": "es",
     "prediction": "tanto podemos haber aprendido de una vez que la verdad es con la cual debemos manejarnos por no"
-  },
-  "TEDX_es_9VA26uZPqYA_285.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9VA26uZPqYA.wav",
-    "id": "TEDX_es_9VA26uZPqYA_285.7",
-    "audio_duration": 0.76,
-    "audio_offset": 285.7,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Por más que nos duela.",
-    "language": "es",
-    "prediction": "más que nos duela"
   },
   "TEDX_es_9VA26uZPqYA_288.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9VA26uZPqYA.wav",
@@ -1395,17 +1263,6 @@
     "text": "Sí, al final del túnel, nos espera el sol.",
     "language": "es",
     "prediction": "y al final del túnel nos espera el sol"
-  },
-  "TEDX_es_9VA26uZPqYA_337.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9VA26uZPqYA.wav",
-    "id": "TEDX_es_9VA26uZPqYA_337.8",
-    "audio_duration": 0.27,
-    "audio_offset": 337.79,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Gracias.",
-    "language": "es",
-    "prediction": "que es"
   },
   "TEDX_es_9VA26uZPqYA_36.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9VA26uZPqYA.wav",
@@ -1759,17 +1616,6 @@
     "language": "es",
     "prediction": "me divertí tanto programándolo y me ayudaba tanto para aprendérmelo que se lo dije a mi profesora y le pedí si podíamos verlo en clase que quería mostrárselo a todos"
   },
-  "TEDX_es_9hUjhIfs-bw_334.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9hUjhIfs-bw.wav",
-    "id": "TEDX_es_9hUjhIfs-bw_334.0",
-    "audio_duration": 0.74,
-    "audio_offset": 333.98,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Y así fue.",
-    "language": "es",
-    "prediction": "ya si fue"
-  },
   "TEDX_es_9hUjhIfs-bw_335.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9hUjhIfs-bw.wav",
     "id": "TEDX_es_9hUjhIfs-bw_335.0",
@@ -1956,17 +1802,6 @@
     "text": "Siempre intentamos ganarnos unas partidas extras, acabando antes los deberes, ordenando nuestra habitación, lo que sea por pasar al siguiente nivel o superar nuestra puntuación anterior.",
     "language": "es",
     "prediction": "siempre intentamos ganarnos unas partidas extras acaban dantes los deberes ordenando nuestra habitación lo que sea por pasar al siguiente nivel o superar nuestra puntuación anterior"
-  },
-  "TEDX_es_9hUjhIfs-bw_463.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9hUjhIfs-bw.wav",
-    "id": "TEDX_es_9hUjhIfs-bw_463.8",
-    "audio_duration": 0.9,
-    "audio_offset": 463.77,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¿unos cables?",
-    "language": "es",
-    "prediction": "unos cables"
   },
   "TEDX_es_9hUjhIfs-bw_465.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9hUjhIfs-bw.wav",
@@ -2265,17 +2100,6 @@
     "language": "es",
     "prediction": "et voilà la tigre"
   },
-  "TEDX_es_9hUjhIfs-bw_757.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9hUjhIfs-bw.wav",
-    "id": "TEDX_es_9hUjhIfs-bw_757.4",
-    "audio_duration": 0.59,
-    "audio_offset": 757.42,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "No, no suenas.",
-    "language": "es",
-    "prediction": "no sueñas"
-  },
   "TEDX_es_9hUjhIfs-bw_758.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9hUjhIfs-bw.wav",
     "id": "TEDX_es_9hUjhIfs-bw_758.6",
@@ -2462,17 +2286,6 @@
     "text": "Muchas gracias por vuestra atención.",
     "language": "es",
     "prediction": "muchas gracias por vuestra atención"
-  },
-  "TEDX_es_9hUjhIfs-bw_855.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/9hUjhIfs-bw.wav",
-    "id": "TEDX_es_9hUjhIfs-bw_855.5",
-    "audio_duration": 0.71,
-    "audio_offset": 855.51,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Hasta pronto.",
-    "language": "es",
-    "prediction": "hasta ahora"
   },
   "TEDX_es_C82IwCttOlM_10.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/C82IwCttOlM.wav",
@@ -2683,17 +2496,6 @@
     "language": "es",
     "prediction": "qué significan estos números"
   },
-  "TEDX_es_HLIJkmy3vy8_1035.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_1035.5",
-    "audio_duration": 0.93,
-    "audio_offset": 1035.55,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "\", preguntó Sabino.",
-    "language": "es",
-    "prediction": "yo le pregunto a sabino"
-  },
   "TEDX_es_HLIJkmy3vy8_1037.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
     "id": "TEDX_es_HLIJkmy3vy8_1037.1",
@@ -2870,17 +2672,6 @@
     "language": "es",
     "prediction": "le preguntó pepe horacio cuando lo vio"
   },
-  "TEDX_es_HLIJkmy3vy8_1145.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_1145.4",
-    "audio_duration": 0.39,
-    "audio_offset": 1145.42,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "\"¡Ay!",
-    "language": "es",
-    "prediction": "ai"
-  },
   "TEDX_es_HLIJkmy3vy8_1145.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
     "id": "TEDX_es_HLIJkmy3vy8_1145.9",
@@ -2891,17 +2682,6 @@
     "text": "Pepe\" dijo Horacio llorando.",
     "language": "es",
     "prediction": "pepe dijo horacio llorando"
-  },
-  "TEDX_es_HLIJkmy3vy8_1147.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_1147.8",
-    "audio_duration": 0.86,
-    "audio_offset": 1147.84,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "\"Ay, Pepe.",
-    "language": "es",
-    "prediction": "ah il pepe"
   },
   "TEDX_es_HLIJkmy3vy8_1149.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
@@ -2990,17 +2770,6 @@
     "text": "\"¿Y tu proyecto de helado?\"",
     "language": "es",
     "prediction": "y tu proyecto de helado"
-  },
-  "TEDX_es_HLIJkmy3vy8_1173.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_1173.5",
-    "audio_duration": 0.74,
-    "audio_offset": 1173.51,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "preguntó Pepe.",
-    "language": "es",
-    "prediction": "y preguntó pepe"
   },
   "TEDX_es_HLIJkmy3vy8_1174.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
@@ -3189,17 +2958,6 @@
     "language": "es",
     "prediction": "a esos carros se iban subiendo muchos vecinos y otros hacían una fila larga esperando para subir"
   },
-  "TEDX_es_HLIJkmy3vy8_1239.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_1239.6",
-    "audio_duration": 0.55,
-    "audio_offset": 1239.59,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "\"¡Moncho!\"",
-    "language": "es",
-    "prediction": "monchio"
-  },
   "TEDX_es_HLIJkmy3vy8_1240.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
     "id": "TEDX_es_HLIJkmy3vy8_1240.1",
@@ -3233,17 +2991,6 @@
     "language": "es",
     "prediction": "a tu bar"
   },
-  "TEDX_es_HLIJkmy3vy8_1246.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_1246.4",
-    "audio_duration": 0.93,
-    "audio_offset": 1246.39,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "A La Luna\".",
-    "language": "es",
-    "prediction": "a la luna"
-  },
   "TEDX_es_HLIJkmy3vy8_1247.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
     "id": "TEDX_es_HLIJkmy3vy8_1247.6",
@@ -3276,17 +3023,6 @@
     "text": "Regreso: gratis\".",
     "language": "es",
     "prediction": "regreso gratis"
-  },
-  "TEDX_es_HLIJkmy3vy8_1256.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_1256.3",
-    "audio_duration": 0.8,
-    "audio_offset": 1256.34,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "\"¡Pero Moncho!\"",
-    "language": "es",
-    "prediction": "pero un monje"
   },
   "TEDX_es_HLIJkmy3vy8_1257.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
@@ -3408,17 +3144,6 @@
     "text": "Muchas gracias.",
     "language": "es",
     "prediction": "muchas gracias"
-  },
-  "TEDX_es_HLIJkmy3vy8_137.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_137.8",
-    "audio_duration": 0.97,
-    "audio_offset": 137.8,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "No había ni un bar.",
-    "language": "es",
-    "prediction": "no había ni un bar"
   },
   "TEDX_es_HLIJkmy3vy8_139.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
@@ -3563,28 +3288,6 @@
     "language": "es",
     "prediction": "todo el mundo lo miró"
   },
-  "TEDX_es_HLIJkmy3vy8_220.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_220.0",
-    "audio_duration": 0.61,
-    "audio_offset": 219.98,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "\"¡Qué buena idea!\"",
-    "language": "es",
-    "prediction": "qué buena idea"
-  },
-  "TEDX_es_HLIJkmy3vy8_220.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_220.6",
-    "audio_duration": 0.93,
-    "audio_offset": 220.59,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "dijeron algunos.",
-    "language": "es",
-    "prediction": "dijeron algunos"
-  },
   "TEDX_es_HLIJkmy3vy8_221.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
     "id": "TEDX_es_HLIJkmy3vy8_221.9",
@@ -3694,17 +3397,6 @@
     "text": "Tiene mucho sentido.",
     "language": "es",
     "prediction": "tiene mucho sentido"
-  },
-  "TEDX_es_HLIJkmy3vy8_278.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_278.9",
-    "audio_duration": 0.91,
-    "audio_offset": 278.94,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¡Muy bien, Pepe!\"",
-    "language": "es",
-    "prediction": "muy bien pepe"
   },
   "TEDX_es_HLIJkmy3vy8_280.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
@@ -4080,17 +3772,6 @@
     "language": "es",
     "prediction": "lo único que tenían estos vecinos eran papelitos de otra gente"
   },
-  "TEDX_es_HLIJkmy3vy8_48.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_48.6",
-    "audio_duration": 0.73,
-    "audio_offset": 48.6,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Y mi hija me miraba.",
-    "language": "es",
-    "prediction": "y mi hija me miraba"
-  },
   "TEDX_es_HLIJkmy3vy8_482.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
     "id": "TEDX_es_HLIJkmy3vy8_482.5",
@@ -4101,17 +3782,6 @@
     "text": "Uno de estos vecinos, Ramón, se quejó en voz alta: \"¡Caramba!\"",
     "language": "es",
     "prediction": "uno de estos vecinos ramón se quejó en voz alta caramba"
-  },
-  "TEDX_es_HLIJkmy3vy8_486.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_486.9",
-    "audio_duration": 0.49,
-    "audio_offset": 486.86,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "dijo.",
-    "language": "es",
-    "prediction": "dijo"
   },
   "TEDX_es_HLIJkmy3vy8_487.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
@@ -4388,17 +4058,6 @@
     "language": "es",
     "prediction": "las doce monedas que va a pagar pepe cuando el bar funcione o las veinte monedas que dice moncho que va a pagar cuando haga viajes a la luna se llaman valor nominal del bono"
   },
-  "TEDX_es_HLIJkmy3vy8_628.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_628.6",
-    "audio_duration": 0.86,
-    "audio_offset": 628.65,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Y Nina me miró así.",
-    "language": "es",
-    "prediction": "y nina me miró así"
-  },
   "TEDX_es_HLIJkmy3vy8_630.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
     "id": "TEDX_es_HLIJkmy3vy8_630.8",
@@ -4519,28 +4178,6 @@
     "text": "\"¿Cuántas monedas cuestan?\"",
     "language": "es",
     "prediction": "cuántas monedas cuestan"
-  },
-  "TEDX_es_HLIJkmy3vy8_699.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_699.0",
-    "audio_duration": 0.96,
-    "audio_offset": 699.04,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "preguntó Sabino.",
-    "language": "es",
-    "prediction": "preguntó sabino"
-  },
-  "TEDX_es_HLIJkmy3vy8_700.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_700.4",
-    "audio_duration": 0.86,
-    "audio_offset": 700.37,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "\"¡Nada de monedas!\"",
-    "language": "es",
-    "prediction": "nada de monedas"
   },
   "TEDX_es_HLIJkmy3vy8_701.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
@@ -4872,17 +4509,6 @@
     "language": "es",
     "prediction": "y qué decir de moncho"
   },
-  "TEDX_es_HLIJkmy3vy8_898.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_898.1",
-    "audio_duration": 0.89,
-    "audio_offset": 898.08,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Pobre Moncho.",
-    "language": "es",
-    "prediction": "pobre moncho"
-  },
   "TEDX_es_HLIJkmy3vy8_899.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
     "id": "TEDX_es_HLIJkmy3vy8_899.6",
@@ -4927,28 +4553,6 @@
     "language": "es",
     "prediction": "hasta que apareció kike con una gran idea"
   },
-  "TEDX_es_HLIJkmy3vy8_918.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_918.8",
-    "audio_duration": 0.4,
-    "audio_offset": 918.8,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "\"¡Oigan!\"",
-    "language": "es",
-    "prediction": "o higan"
-  },
-  "TEDX_es_HLIJkmy3vy8_919.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_919.2",
-    "audio_duration": 0.82,
-    "audio_offset": 919.2,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "dijo Quique.",
-    "language": "es",
-    "prediction": "y dijo quique"
-  },
   "TEDX_es_HLIJkmy3vy8_920.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
     "id": "TEDX_es_HLIJkmy3vy8_920.8",
@@ -4970,17 +4574,6 @@
     "text": "Yo les puedo vender \"tranquilidad de Quique\" para esos papelitos.",
     "language": "es",
     "prediction": "pero yo les puedo vender tranquilidad de que aquí que para eso papelitos"
-  },
-  "TEDX_es_HLIJkmy3vy8_929.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_929.3",
-    "audio_duration": 0.81,
-    "audio_offset": 929.28,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "\"¿Y eso qué es?",
-    "language": "es",
-    "prediction": "y eso que"
   },
   "TEDX_es_HLIJkmy3vy8_93.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
@@ -5037,17 +4630,6 @@
     "language": "es",
     "prediction": "aunque moncho fracase"
   },
-  "TEDX_es_HLIJkmy3vy8_946.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_946.6",
-    "audio_duration": 0.89,
-    "audio_offset": 946.6,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "preguntaron todos.",
-    "language": "es",
-    "prediction": "y preguntaron todos"
-  },
   "TEDX_es_HLIJkmy3vy8_947.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
     "id": "TEDX_es_HLIJkmy3vy8_947.6",
@@ -5058,17 +4640,6 @@
     "text": "\"¡Aunque fracase!",
     "language": "es",
     "prediction": "aunque fracase"
-  },
-  "TEDX_es_HLIJkmy3vy8_949.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
-    "id": "TEDX_es_HLIJkmy3vy8_949.0",
-    "audio_duration": 0.66,
-    "audio_offset": 948.96,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "\", dijo Quique.",
-    "language": "es",
-    "prediction": "dijo quique"
   },
   "TEDX_es_HLIJkmy3vy8_949.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/HLIJkmy3vy8.wav",
@@ -6335,28 +5906,6 @@
     "language": "es",
     "prediction": "pero por qué te pusiste en esta situación"
   },
-  "TEDX_es_a0G1K1A269Y_222.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/a0G1K1A269Y.wav",
-    "id": "TEDX_es_a0G1K1A269Y_222.9",
-    "audio_duration": 0.8,
-    "audio_offset": 222.88,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¿Cómo estás hoy?",
-    "language": "es",
-    "prediction": "cómo estás hoy"
-  },
-  "TEDX_es_a0G1K1A269Y_225.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/a0G1K1A269Y.wav",
-    "id": "TEDX_es_a0G1K1A269Y_225.0",
-    "audio_duration": 0.48,
-    "audio_offset": 224.97,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Esto.",
-    "language": "es",
-    "prediction": "eso"
-  },
   "TEDX_es_a0G1K1A269Y_226.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/a0G1K1A269Y.wav",
     "id": "TEDX_es_a0G1K1A269Y_226.3",
@@ -6544,17 +6093,6 @@
     "language": "es",
     "prediction": "cada uno de nosotros tenemos que arriesgados y tender la mano y preguntar cómo estás hoy"
   },
-  "TEDX_es_a0G1K1A269Y_366.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/a0G1K1A269Y.wav",
-    "id": "TEDX_es_a0G1K1A269Y_366.6",
-    "audio_duration": 0.55,
-    "audio_offset": 366.55,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Gracias.",
-    "language": "es",
-    "prediction": "gracias"
-  },
   "TEDX_es_a0G1K1A269Y_46.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/a0G1K1A269Y.wav",
     "id": "TEDX_es_a0G1K1A269Y_46.6",
@@ -6632,17 +6170,6 @@
     "language": "es",
     "prediction": "mientras caminaba por los pasillos y los pisos miraba las imágenes y las historias"
   },
-  "TEDX_es_dyLvm7yXjPo_101.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/dyLvm7yXjPo.wav",
-    "id": "TEDX_es_dyLvm7yXjPo_101.2",
-    "audio_duration": 0.73,
-    "audio_offset": 101.23,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¿Con qué?",
-    "language": "es",
-    "prediction": "aunque"
-  },
   "TEDX_es_dyLvm7yXjPo_102.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/dyLvm7yXjPo.wav",
     "id": "TEDX_es_dyLvm7yXjPo_102.2",
@@ -6654,17 +6181,6 @@
     "language": "es",
     "prediction": "con lo que tenés"
   },
-  "TEDX_es_dyLvm7yXjPo_105.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/dyLvm7yXjPo.wav",
-    "id": "TEDX_es_dyLvm7yXjPo_105.0",
-    "audio_duration": 0.21,
-    "audio_offset": 104.96,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¡Ay!",
-    "language": "es",
-    "prediction": "i"
-  },
   "TEDX_es_dyLvm7yXjPo_105.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/dyLvm7yXjPo.wav",
     "id": "TEDX_es_dyLvm7yXjPo_105.5",
@@ -6675,17 +6191,6 @@
     "text": "Veo un espejo en mi mano.",
     "language": "es",
     "prediction": "veo un espejo en mi mano"
-  },
-  "TEDX_es_dyLvm7yXjPo_109.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/dyLvm7yXjPo.wav",
-    "id": "TEDX_es_dyLvm7yXjPo_109.4",
-    "audio_duration": 0.28,
-    "audio_offset": 109.41,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¡Ah!",
-    "language": "es",
-    "prediction": "ah"
   },
   "TEDX_es_dyLvm7yXjPo_110.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/dyLvm7yXjPo.wav",
@@ -7116,17 +6621,6 @@
     "language": "es",
     "prediction": "y es lo que tenés"
   },
-  "TEDX_es_dyLvm7yXjPo_264.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/dyLvm7yXjPo.wav",
-    "id": "TEDX_es_dyLvm7yXjPo_264.9",
-    "audio_duration": 0.84,
-    "audio_offset": 264.93,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "La vida.",
-    "language": "es",
-    "prediction": "la habilidad"
-  },
   "TEDX_es_dyLvm7yXjPo_267.3": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/dyLvm7yXjPo.wav",
     "id": "TEDX_es_dyLvm7yXjPo_267.3",
@@ -7314,17 +6808,6 @@
     "language": "es",
     "prediction": "hoy es mi día"
   },
-  "TEDX_es_dyLvm7yXjPo_339.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/dyLvm7yXjPo.wav",
-    "id": "TEDX_es_dyLvm7yXjPo_339.8",
-    "audio_duration": 0.84,
-    "audio_offset": 339.82,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Gracias.",
-    "language": "es",
-    "prediction": "gracias"
-  },
   "TEDX_es_dyLvm7yXjPo_35.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/dyLvm7yXjPo.wav",
     "id": "TEDX_es_dyLvm7yXjPo_35.5",
@@ -7489,17 +6972,6 @@
     "text": "Cuando alguien se acerca y me dice: \"quiero danzar\".",
     "language": "es",
     "prediction": "cuando alguien se acerca y me dice quiero bailar"
-  },
-  "TEDX_es_dyLvm7yXjPo_98.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/dyLvm7yXjPo.wav",
-    "id": "TEDX_es_dyLvm7yXjPo_98.2",
-    "audio_duration": 0.33,
-    "audio_offset": 98.24,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Claro.",
-    "language": "es",
-    "prediction": "chao"
   },
   "TEDX_es_dyLvm7yXjPo_99.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/dyLvm7yXjPo.wav",
@@ -8425,17 +7897,6 @@
     "language": "es",
     "prediction": "como se viste ella y las amigas las mini los escotes"
   },
-  "TEDX_es_iPk9VTATmGM_542.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/iPk9VTATmGM.wav",
-    "id": "TEDX_es_iPk9VTATmGM_542.8",
-    "audio_duration": 0.64,
-    "audio_offset": 542.75,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¿Qué esperás?",
-    "language": "es",
-    "prediction": "gracias"
-  },
   "TEDX_es_iPk9VTATmGM_545.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/iPk9VTATmGM.wav",
     "id": "TEDX_es_iPk9VTATmGM_545.5",
@@ -8898,17 +8359,6 @@
     "language": "es",
     "prediction": "cero coma ocho raro entre los que me incluyo"
   },
-  "TEDX_es_jej8qlzlAGw_129.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/jej8qlzlAGw.wav",
-    "id": "TEDX_es_jej8qlzlAGw_129.8",
-    "audio_duration": 0.7,
-    "audio_offset": 129.82,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¿Qué son los del ataque?",
-    "language": "es",
-    "prediction": "los del ataque"
-  },
   "TEDX_es_jej8qlzlAGw_131.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/jej8qlzlAGw.wav",
     "id": "TEDX_es_jej8qlzlAGw_131.9",
@@ -8920,17 +8370,6 @@
     "language": "es",
     "prediction": "que son matemáticos que te dicen que esa pregunta no tiene sentido porque las matemáticas tienen un sentido propio en sí mismas son un edificio bellísimo que tiene una lógica propia que se construye y que no hace falta que uno esté siempre mirando las posibles aplicaciones"
   },
-  "TEDX_es_jej8qlzlAGw_146.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/jej8qlzlAGw.wav",
-    "id": "TEDX_es_jej8qlzlAGw_146.2",
-    "audio_duration": 0.98,
-    "audio_offset": 146.19,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¿Para qué sirve la poesía?",
-    "language": "es",
-    "prediction": "qué sirve la poesía"
-  },
   "TEDX_es_jej8qlzlAGw_147.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/jej8qlzlAGw.wav",
     "id": "TEDX_es_jej8qlzlAGw_147.2",
@@ -8941,17 +8380,6 @@
     "text": "¿Para qué sirve el amor?",
     "language": "es",
     "prediction": "para qué sirve el amor"
-  },
-  "TEDX_es_jej8qlzlAGw_148.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/jej8qlzlAGw.wav",
-    "id": "TEDX_es_jej8qlzlAGw_148.6",
-    "audio_duration": 0.98,
-    "audio_offset": 148.56,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¿Para qué sirve la vida misma?",
-    "language": "es",
-    "prediction": "y sirve la vida misma"
   },
   "TEDX_es_jej8qlzlAGw_149.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/jej8qlzlAGw.wav",
@@ -9404,17 +8832,6 @@
     "language": "es",
     "prediction": "bueno los matemáticos nos dedicamos a hacer teoremas"
   },
-  "TEDX_es_jej8qlzlAGw_372.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/jej8qlzlAGw.wav",
-    "id": "TEDX_es_jej8qlzlAGw_372.0",
-    "audio_duration": 0.86,
-    "audio_offset": 372.03,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Verdades eternas.",
-    "language": "es",
-    "prediction": "eternas"
-  },
   "TEDX_es_jej8qlzlAGw_373.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/jej8qlzlAGw.wav",
     "id": "TEDX_es_jej8qlzlAGw_373.8",
@@ -9480,17 +8897,6 @@
     "text": "Podría usar cuadrados, ¿verdad?",
     "language": "es",
     "prediction": "cuadrados verdad podríamos"
-  },
-  "TEDX_es_jej8qlzlAGw_394.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/jej8qlzlAGw.wav",
-    "id": "TEDX_es_jej8qlzlAGw_394.9",
-    "audio_duration": 0.76,
-    "audio_offset": 394.87,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Podría usar triángulos.",
-    "language": "es",
-    "prediction": "triángulos"
   },
   "TEDX_es_jej8qlzlAGw_396.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/jej8qlzlAGw.wav",
@@ -9668,17 +9074,6 @@
     "language": "es",
     "prediction": "quién no tiene un ostia de otro troncado en casa"
   },
-  "TEDX_es_jej8qlzlAGw_493.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/jej8qlzlAGw.wav",
-    "id": "TEDX_es_jej8qlzlAGw_493.6",
-    "audio_duration": 0.84,
-    "audio_offset": 493.6,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Aunque sea de plástico.",
-    "language": "es",
-    "prediction": "que sea de plástico no"
-  },
   "TEDX_es_jej8qlzlAGw_494.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/jej8qlzlAGw.wav",
     "id": "TEDX_es_jej8qlzlAGw_494.4",
@@ -9689,17 +9084,6 @@
     "text": "Nene, trae el octaedro truncado, que vienen visitas.",
     "language": "es",
     "prediction": "trae los trastes a tu cuarto que vienen visitas"
-  },
-  "TEDX_es_jej8qlzlAGw_496.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/jej8qlzlAGw.wav",
-    "id": "TEDX_es_jej8qlzlAGw_496.7",
-    "audio_duration": 0.68,
-    "audio_offset": 496.69,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¡Todo el mundo tiene!",
-    "language": "es",
-    "prediction": "mundart werden"
   },
   "TEDX_es_jej8qlzlAGw_497.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/jej8qlzlAGw.wav",
@@ -9998,17 +9382,6 @@
     "language": "es",
     "prediction": "bueno mi madre dice que soy muy raro pero lo que quiero que os diga es el tipo de cine que más me gusta con el que más disfruto con sus personajes con sus historias"
   },
-  "TEDX_es_wCPPrDCCn_k_145.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_145.2",
-    "audio_duration": 0.95,
-    "audio_offset": 145.25,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Te llegan al corazón.",
-    "language": "es",
-    "prediction": "que lleguen al corazón"
-  },
   "TEDX_es_wCPPrDCCn_k_146.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
     "id": "TEDX_es_wCPPrDCCn_k_146.5",
@@ -10130,17 +9503,6 @@
     "language": "es",
     "prediction": "todo esto cambió un día en el que yo irónicamente salgo del cine y me llega un mensaje privado a twitter hola buscamos un chico chica en valladolid que nos cubra esta edición de la seminci"
   },
-  "TEDX_es_wCPPrDCCn_k_200.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_200.6",
-    "audio_duration": 0.72,
-    "audio_offset": 200.57,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¿Te apuntarías?\".",
-    "language": "es",
-    "prediction": "te apuntarías"
-  },
   "TEDX_es_wCPPrDCCn_k_202.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
     "id": "TEDX_es_wCPPrDCCn_k_202.2",
@@ -10151,28 +9513,6 @@
     "text": "¿Y qué iba a decir yo a 7 días del mejor cine de autor de Europa y encima gratis?",
     "language": "es",
     "prediction": "y que iba a recibir yo a siete días el mejor cine de autor de europa en cima gratis"
-  },
-  "TEDX_es_wCPPrDCCn_k_207.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_207.4",
-    "audio_duration": 0.69,
-    "audio_offset": 207.38,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Pues: \"Por supuesto.",
-    "language": "es",
-    "prediction": "pues por supuesto"
-  },
-  "TEDX_es_wCPPrDCCn_k_208.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_208.1",
-    "audio_duration": 0.8,
-    "audio_offset": 208.07,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Contad conmigo\".",
-    "language": "es",
-    "prediction": "contáds conmigo"
   },
   "TEDX_es_wCPPrDCCn_k_210.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
@@ -10361,17 +9701,6 @@
     "language": "es",
     "prediction": "eso de la seminci fue el año pasado"
   },
-  "TEDX_es_wCPPrDCCn_k_291.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_291.2",
-    "audio_duration": 0.99,
-    "audio_offset": 291.21,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¿Qué ha pasado este año?",
-    "language": "es",
-    "prediction": "y ha pasado este año"
-  },
   "TEDX_es_wCPPrDCCn_k_293.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
     "id": "TEDX_es_wCPPrDCCn_k_293.4",
@@ -10438,39 +9767,6 @@
     "language": "es",
     "prediction": "mucha gente cuando les digo que escribo para una página web me dice prácticamente todos te pagan"
   },
-  "TEDX_es_wCPPrDCCn_k_342.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_342.3",
-    "audio_duration": 0.54,
-    "audio_offset": 342.29,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Pues...",
-    "language": "es",
-    "prediction": "pues"
-  },
-  "TEDX_es_wCPPrDCCn_k_344.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_344.8",
-    "audio_duration": 0.64,
-    "audio_offset": 344.8,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Pues no.",
-    "language": "es",
-    "prediction": "pois não"
-  },
-  "TEDX_es_wCPPrDCCn_k_345.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_345.5",
-    "audio_duration": 0.8,
-    "audio_offset": 345.47,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¿Por qué me van a pagar?",
-    "language": "es",
-    "prediction": "por qué no van a parís"
-  },
   "TEDX_es_wCPPrDCCn_k_347.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
     "id": "TEDX_es_wCPPrDCCn_k_347.9",
@@ -10536,17 +9832,6 @@
     "text": "Si no, serás feliz con tu trabajo, que creo que es lo más importante.",
     "language": "es",
     "prediction": "si no tendrás la felicidad con tu trabajo que yo creo que es lo más importante"
-  },
-  "TEDX_es_wCPPrDCCn_k_374.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_374.6",
-    "audio_duration": 0.23,
-    "audio_offset": 374.58,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "¿No?",
-    "language": "es",
-    "prediction": "no"
   },
   "TEDX_es_wCPPrDCCn_k_375.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
@@ -10624,17 +9909,6 @@
     "text": "Escribes genial.",
     "language": "es",
     "prediction": "escribes genial"
-  },
-  "TEDX_es_wCPPrDCCn_k_429.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_429.3",
-    "audio_duration": 0.83,
-    "audio_offset": 429.33,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Me encanta\".",
-    "language": "es",
-    "prediction": "me encanta"
   },
   "TEDX_es_wCPPrDCCn_k_430.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
@@ -10735,17 +10009,6 @@
     "language": "es",
     "prediction": "el cine ha sido mi mayor pasión en los últimos cinco o seis años"
   },
-  "TEDX_es_wCPPrDCCn_k_482.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_482.2",
-    "audio_duration": 0.74,
-    "audio_offset": 482.16,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "No os fieis.",
-    "language": "es",
-    "prediction": "no os fiéis"
-  },
   "TEDX_es_wCPPrDCCn_k_483.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
     "id": "TEDX_es_wCPPrDCCn_k_483.1",
@@ -10779,17 +10042,6 @@
     "language": "es",
     "prediction": "pero lejos de todo esto como ya he dicho es felicidades"
   },
-  "TEDX_es_wCPPrDCCn_k_494.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_494.3",
-    "audio_duration": 0.88,
-    "audio_offset": 494.32,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Escribes genial.",
-    "language": "es",
-    "prediction": "escribiras genialmente"
-  },
   "TEDX_es_wCPPrDCCn_k_495.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
     "id": "TEDX_es_wCPPrDCCn_k_495.2",
@@ -10811,17 +10063,6 @@
     "text": "Es lo más bonito que me pueden decir en la vida, siendo un introvertido.",
     "language": "es",
     "prediction": "para mí lo más bonito que me pueden decir en la vida siendo un introvertido"
-  },
-  "TEDX_es_wCPPrDCCn_k_503.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_503.9",
-    "audio_duration": 0.73,
-    "audio_offset": 503.95,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Muchas gracias.",
-    "language": "es",
-    "prediction": "muchas gracias"
   },
   "TEDX_es_wCPPrDCCn_k_52.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
@@ -10878,17 +10119,6 @@
     "language": "es",
     "prediction": "ya lo he dicho no soy bueno interactuando con la gente pero sí soy muy bueno observando"
   },
-  "TEDX_es_wCPPrDCCn_k_72.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_72.2",
-    "audio_duration": 0.99,
-    "audio_offset": 72.16,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "Me encanta observar.",
-    "language": "es",
-    "prediction": "me encanta observarse"
-  },
   "TEDX_es_wCPPrDCCn_k_73.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
     "id": "TEDX_es_wCPPrDCCn_k_73.2",
@@ -10899,17 +10129,6 @@
     "text": "Disfruto mucho viendo a la gente hablar, interactuar entre ellos, pasear, sin ser un cotilla.",
     "language": "es",
     "prediction": "la duda disfruta muchísimo viendo a la gente hablar interactuar entre ellos pasear sin ser un cotilla"
-  },
-  "TEDX_es_wCPPrDCCn_k_78.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",
-    "id": "TEDX_es_wCPPrDCCn_k_78.8",
-    "audio_duration": 0.95,
-    "audio_offset": 78.83,
-    "dataset": "TEDX_es",
-    "full_dataset": "TEDX_es",
-    "text": "No penséis mal.",
-    "language": "es",
-    "prediction": "no os penséis mal"
   },
   "TEDX_es_wCPPrDCCn_k_81.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/es/Multilingual_TEDx/wCPPrDCCn_k.wav",

@@ -223,20 +223,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "Non lo so, però sono sicuro che l'uomo e la donna che ci andranno sono già nati."
   },
-  "TEDX_it_7TqiEZn5uBE_1091.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/7TqiEZn5uBE.wav",
-    "id": "TEDX_it_7TqiEZn5uBE_1091.4",
-    "audio_duration": 0.32,
-    "audio_offset": 1091.44,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Grazie.",
-    "language": "it",
-    "prediction_duration": 2.85674,
-    "rtf": 8.92732,
-    "throughput_rtfx": 39.914,
-    "prediction": "Grazie."
-  },
   "TEDX_it_7TqiEZn5uBE_110.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/7TqiEZn5uBE.wav",
     "id": "TEDX_it_7TqiEZn5uBE_110.2",
@@ -320,20 +306,6 @@
     "rtf": 3.23022,
     "throughput_rtfx": 39.914,
     "prediction": "chi è che lo avrebbe immaginato?"
-  },
-  "TEDX_it_7TqiEZn5uBE_156.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/7TqiEZn5uBE.wav",
-    "id": "TEDX_it_7TqiEZn5uBE_156.0",
-    "audio_duration": 0.55,
-    "audio_offset": 156.0,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Nessuno.",
-    "language": "it",
-    "prediction_duration": 3.03195,
-    "rtf": 5.51265,
-    "throughput_rtfx": 39.914,
-    "prediction": "Nessuno."
   },
   "TEDX_it_7TqiEZn5uBE_156.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/7TqiEZn5uBE.wav",
@@ -572,20 +544,6 @@
     "rtf": 2.68707,
     "throughput_rtfx": 39.914,
     "prediction": "Questo fa parte di un quadro più generale in cui imitiamo la natura."
-  },
-  "TEDX_it_7TqiEZn5uBE_237.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/7TqiEZn5uBE.wav",
-    "id": "TEDX_it_7TqiEZn5uBE_237.2",
-    "audio_duration": 0.57,
-    "audio_offset": 237.18,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Be’, certo!",
-    "language": "it",
-    "prediction_duration": 3.24443,
-    "rtf": 5.69198,
-    "throughput_rtfx": 39.914,
-    "prediction": "Beh, certamente."
   },
   "TEDX_it_7TqiEZn5uBE_238.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/7TqiEZn5uBE.wav",
@@ -1567,20 +1525,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "Ci sono degli organismi che riescono a far questo."
   },
-  "TEDX_it_7TqiEZn5uBE_711.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/7TqiEZn5uBE.wav",
-    "id": "TEDX_it_7TqiEZn5uBE_711.0",
-    "audio_duration": 0.94,
-    "audio_offset": 711.03,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Pensate ad esempio al cactus.",
-    "language": "it",
-    "prediction_duration": 2.67956,
-    "rtf": 2.8506,
-    "throughput_rtfx": 39.914,
-    "prediction": "per esempio il cactus"
-  },
   "TEDX_it_7TqiEZn5uBE_712.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/7TqiEZn5uBE.wav",
     "id": "TEDX_it_7TqiEZn5uBE_712.7",
@@ -1818,20 +1762,6 @@
     "rtf": 1.62458,
     "throughput_rtfx": 39.914,
     "prediction": "per esempio una superficie di plastica ispirata alla foglia di loto che abbiamo fatto semplicemente con questa topologia invisibile all'occhio nudo, l'interazione col fluido cambia drammaticamente."
-  },
-  "TEDX_it_7TqiEZn5uBE_847.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/7TqiEZn5uBE.wav",
-    "id": "TEDX_it_7TqiEZn5uBE_847.7",
-    "audio_duration": 0.83,
-    "audio_offset": 847.69,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Eccezionale!",
-    "language": "it",
-    "prediction_duration": 2.54578,
-    "rtf": 3.06721,
-    "throughput_rtfx": 39.914,
-    "prediction": "Eccezionale."
   },
   "TEDX_it_7TqiEZn5uBE_849.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/7TqiEZn5uBE.wav",
@@ -2364,20 +2294,6 @@
     "rtf": 1.7374,
     "throughput_rtfx": 39.914,
     "prediction": "Vi lascio con le parole di un uomo che parla da femminista."
-  },
-  "TEDX_it_AILi62xo7j8_1168.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/AILi62xo7j8.wav",
-    "id": "TEDX_it_AILi62xo7j8_1168.9",
-    "audio_duration": 0.48,
-    "audio_offset": 1168.94,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Grazie.",
-    "language": "it",
-    "prediction_duration": 2.18769,
-    "rtf": 4.55769,
-    "throughput_rtfx": 39.914,
-    "prediction": "Grazie."
   },
   "TEDX_it_AILi62xo7j8_1206.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/AILi62xo7j8.wav",
@@ -3149,20 +3065,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "Uno studio condotto su 6000 aziende danesi con un amministratore delegato uomo ha mostrato che quando al capo nasce una figlia femmina primogenita, il gap retributivo in azienda diminuisce perché le retribuzioni delle donne salgono più rapidamente di quelle degli uomini."
   },
-  "TEDX_it_AILi62xo7j8_57.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/AILi62xo7j8.wav",
-    "id": "TEDX_it_AILi62xo7j8_57.6",
-    "audio_duration": 0.87,
-    "audio_offset": 57.58,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Ma non lo sono.",
-    "language": "it",
-    "prediction_duration": 2.56111,
-    "rtf": 2.9438,
-    "throughput_rtfx": 39.914,
-    "prediction": "Ma non lo sono."
-  },
   "TEDX_it_AILi62xo7j8_573.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/AILi62xo7j8.wav",
     "id": "TEDX_it_AILi62xo7j8_573.2",
@@ -3933,20 +3835,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "guardate questi testi."
   },
-  "TEDX_it_AILi62xo7j8_964.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/AILi62xo7j8.wav",
-    "id": "TEDX_it_AILi62xo7j8_964.7",
-    "audio_duration": 0.82,
-    "audio_offset": 964.71,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Non solo mamme.",
-    "language": "it",
-    "prediction_duration": 2.521,
-    "rtf": 3.07438,
-    "throughput_rtfx": 39.914,
-    "prediction": "non solo mamme."
-  },
   "TEDX_it_AILi62xo7j8_966.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/AILi62xo7j8.wav",
     "id": "TEDX_it_AILi62xo7j8_966.5",
@@ -4548,20 +4436,6 @@
     "rtf": 1.92602,
     "throughput_rtfx": 39.914,
     "prediction": "Andrea era gentile, lo è anche adesso. Mi riempie di botte e poi mi abbraccia, dice d'amarmi."
-  },
-  "TEDX_it_RjY6MZUGiHQ_314.4": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/RjY6MZUGiHQ.wav",
-    "id": "TEDX_it_RjY6MZUGiHQ_314.4",
-    "audio_duration": 0.87,
-    "audio_offset": 314.43,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Succede spesso.",
-    "language": "it",
-    "prediction_duration": 2.65825,
-    "rtf": 3.05546,
-    "throughput_rtfx": 39.914,
-    "prediction": "Succede spesso."
   },
   "TEDX_it_RjY6MZUGiHQ_316.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/RjY6MZUGiHQ.wav",
@@ -5207,20 +5081,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "Ora lascia ti racconti come ho trovato il coraggio per andare dai carabinieri e denunciare Andrea."
   },
-  "TEDX_it_RjY6MZUGiHQ_596.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/RjY6MZUGiHQ.wav",
-    "id": "TEDX_it_RjY6MZUGiHQ_596.3",
-    "audio_duration": 0.94,
-    "audio_offset": 596.29,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Lì per lì non volevo.",
-    "language": "it",
-    "prediction_duration": 3.90773,
-    "rtf": 4.15716,
-    "throughput_rtfx": 39.914,
-    "prediction": "Lì per lì non volevo."
-  },
   "TEDX_it_RjY6MZUGiHQ_597.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/RjY6MZUGiHQ.wav",
     "id": "TEDX_it_RjY6MZUGiHQ_597.8",
@@ -5318,20 +5178,6 @@
     "rtf": 1.8313,
     "throughput_rtfx": 39.914,
     "prediction": "Avevo preso la mia decisione."
-  },
-  "TEDX_it_RjY6MZUGiHQ_619.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/RjY6MZUGiHQ.wav",
-    "id": "TEDX_it_RjY6MZUGiHQ_619.3",
-    "audio_duration": 0.77,
-    "audio_offset": 619.31,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Per Francesca.",
-    "language": "it",
-    "prediction_duration": 2.03755,
-    "rtf": 2.64617,
-    "throughput_rtfx": 39.914,
-    "prediction": "Per Francesca."
   },
   "TEDX_it_RjY6MZUGiHQ_620.1": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/RjY6MZUGiHQ.wav",
@@ -5739,20 +5585,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "quella che s'è inventata tutto."
   },
-  "TEDX_it_RjY6MZUGiHQ_759.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/RjY6MZUGiHQ.wav",
-    "id": "TEDX_it_RjY6MZUGiHQ_759.6",
-    "audio_duration": 0.82,
-    "audio_offset": 759.6,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Mi ha querelato.",
-    "language": "it",
-    "prediction_duration": 2.19815,
-    "rtf": 2.68067,
-    "throughput_rtfx": 39.914,
-    "prediction": "correlato."
-  },
   "TEDX_it_RjY6MZUGiHQ_76.8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/RjY6MZUGiHQ.wav",
     "id": "TEDX_it_RjY6MZUGiHQ_76.8",
@@ -5976,20 +5808,6 @@
     "rtf": 2.15045,
     "throughput_rtfx": 39.914,
     "prediction": "Non ti chiedo niente. Volevo solo raccontarti com'è andata. Tutto qui."
-  },
-  "TEDX_it_RjY6MZUGiHQ_843.9": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/RjY6MZUGiHQ.wav",
-    "id": "TEDX_it_RjY6MZUGiHQ_843.9",
-    "audio_duration": 0.55,
-    "audio_offset": 843.88,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "In Chiesa?",
-    "language": "it",
-    "prediction_duration": 2.37224,
-    "rtf": 4.31316,
-    "throughput_rtfx": 39.914,
-    "prediction": "in chiesa."
   },
   "TEDX_it_RjY6MZUGiHQ_844.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/RjY6MZUGiHQ.wav",
@@ -6229,20 +6047,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "Quindi da questo punto di vista siamo un po' in difficoltà a costruire le competenze che vogliamo vedere nelle nostre organizzazioni nel futuro."
   },
-  "TEDX_it_TpJ2LjF16s8_121.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/TpJ2LjF16s8.wav",
-    "id": "TEDX_it_TpJ2LjF16s8_121.5",
-    "audio_duration": 0.85,
-    "audio_offset": 121.52,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Le rincorriamo.",
-    "language": "it",
-    "prediction_duration": 3.37998,
-    "rtf": 3.97645,
-    "throughput_rtfx": 39.914,
-    "prediction": "le rincorriamo."
-  },
   "TEDX_it_TpJ2LjF16s8_123.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/TpJ2LjF16s8.wav",
     "id": "TEDX_it_TpJ2LjF16s8_123.5",
@@ -6340,20 +6144,6 @@
     "rtf": 2.6929,
     "throughput_rtfx": 39.914,
     "prediction": "Ma non ero vestito così, quindi non avevo la camicia e la giacca."
-  },
-  "TEDX_it_TpJ2LjF16s8_206.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/TpJ2LjF16s8.wav",
-    "id": "TEDX_it_TpJ2LjF16s8_206.2",
-    "audio_duration": 0.91,
-    "audio_offset": 206.2,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Che cosa vuol dire?",
-    "language": "it",
-    "prediction_duration": 3.20139,
-    "rtf": 3.51801,
-    "throughput_rtfx": 39.914,
-    "prediction": "Che cosa vuol dire?"
   },
   "TEDX_it_TpJ2LjF16s8_207.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/TpJ2LjF16s8.wav",
@@ -6971,20 +6761,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "che si fa, non certamente un posto dove si va."
   },
-  "TEDX_it_TpJ2LjF16s8_578.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/TpJ2LjF16s8.wav",
-    "id": "TEDX_it_TpJ2LjF16s8_578.6",
-    "audio_duration": 0.47,
-    "audio_offset": 578.65,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Grazie.",
-    "language": "it",
-    "prediction_duration": 2.33069,
-    "rtf": 4.95892,
-    "throughput_rtfx": 39.914,
-    "prediction": "Grazie."
-  },
   "TEDX_it_TpJ2LjF16s8_65.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/TpJ2LjF16s8.wav",
     "id": "TEDX_it_TpJ2LjF16s8_65.5",
@@ -7348,20 +7124,6 @@
     "rtf": 1.83851,
     "throughput_rtfx": 39.914,
     "prediction": "Così abbiamo fatto un sondaggio negli Stati Uniti, che è uno dei nostri mercati, su più di 3000 persone in un range di età dai 24 ai 74 anni."
-  },
-  "TEDX_it_bInuBKb-mN0_303.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/bInuBKb-mN0.wav",
-    "id": "TEDX_it_bInuBKb-mN0_303.8",
-    "audio_duration": 0.92,
-    "audio_offset": 303.82,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Indovinate un po'?",
-    "language": "it",
-    "prediction_duration": 3.11955,
-    "rtf": 3.39082,
-    "throughput_rtfx": 39.914,
-    "prediction": "Indovinate un po'?"
   },
   "TEDX_it_bInuBKb-mN0_305.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/bInuBKb-mN0.wav",
@@ -8287,20 +8049,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "Questo è quello che noi come aziende ci dobbiamo proporre di fare."
   },
-  "TEDX_it_bInuBKb-mN0_822.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/bInuBKb-mN0.wav",
-    "id": "TEDX_it_bInuBKb-mN0_822.2",
-    "audio_duration": 0.83,
-    "audio_offset": 822.21,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "E noi individui?",
-    "language": "it",
-    "prediction_duration": 1.97257,
-    "rtf": 2.37659,
-    "throughput_rtfx": 39.914,
-    "prediction": "E noi individui"
-  },
   "TEDX_it_bInuBKb-mN0_823.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/bInuBKb-mN0.wav",
     "id": "TEDX_it_bInuBKb-mN0_823.4",
@@ -8511,20 +8259,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "adesso, adesso questo è il momento."
   },
-  "TEDX_it_bInuBKb-mN0_915.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/bInuBKb-mN0.wav",
-    "id": "TEDX_it_bInuBKb-mN0_915.0",
-    "audio_duration": 0.58,
-    "audio_offset": 914.96,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Grazie.",
-    "language": "it",
-    "prediction_duration": 2.42065,
-    "rtf": 4.17354,
-    "throughput_rtfx": 39.914,
-    "prediction": "Grazie."
-  },
   "TEDX_it_pRLMJnMo3zI_1002.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
     "id": "TEDX_it_pRLMJnMo3zI_1002.6",
@@ -8538,20 +8272,6 @@
     "rtf": 1.54807,
     "throughput_rtfx": 39.914,
     "prediction": "E nessun muro, nessuna barriera al mondo, per quanto grande la possano costruire, nessuna barriera al mondo mai impedirà all'essere umano di muoversi e di spostarsi."
-  },
-  "TEDX_it_pRLMJnMo3zI_1014.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
-    "id": "TEDX_it_pRLMJnMo3zI_1014.7",
-    "audio_duration": 0.32,
-    "audio_offset": 1014.7,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Grazie.",
-    "language": "it",
-    "prediction_duration": 2.41853,
-    "rtf": 7.55792,
-    "throughput_rtfx": 39.914,
-    "prediction": "Grazie."
   },
   "TEDX_it_pRLMJnMo3zI_108.7": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
@@ -8777,20 +8497,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "2244 chilocalorie sono la media in Guatemala."
   },
-  "TEDX_it_pRLMJnMo3zI_215.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
-    "id": "TEDX_it_pRLMJnMo3zI_215.7",
-    "audio_duration": 0.79,
-    "audio_offset": 215.71,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "La media.",
-    "language": "it",
-    "prediction_duration": 1.85903,
-    "rtf": 2.35321,
-    "throughput_rtfx": 39.914,
-    "prediction": "la media."
-  },
   "TEDX_it_pRLMJnMo3zI_216.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
     "id": "TEDX_it_pRLMJnMo3zI_216.9",
@@ -9001,20 +8707,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "il business dell'anno."
   },
-  "TEDX_it_pRLMJnMo3zI_300.5": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
-    "id": "TEDX_it_pRLMJnMo3zI_300.5",
-    "audio_duration": 0.88,
-    "audio_offset": 300.48,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Ci prova, Juan.",
-    "language": "it",
-    "prediction_duration": 1.86132,
-    "rtf": 2.11514,
-    "throughput_rtfx": 39.914,
-    "prediction": "ci prova Juan."
-  },
   "TEDX_it_pRLMJnMo3zI_301.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
     "id": "TEDX_it_pRLMJnMo3zI_301.9",
@@ -9084,20 +8776,6 @@
     "rtf": 2.20531,
     "throughput_rtfx": 39.914,
     "prediction": "non ce la può fare."
-  },
-  "TEDX_it_pRLMJnMo3zI_324.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
-    "id": "TEDX_it_pRLMJnMo3zI_324.0",
-    "audio_duration": 0.9,
-    "audio_offset": 324.04,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Allora che fa?",
-    "language": "it",
-    "prediction_duration": 2.86473,
-    "rtf": 3.18304,
-    "throughput_rtfx": 39.914,
-    "prediction": "E allora che fa?"
   },
   "TEDX_it_pRLMJnMo3zI_325.4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
@@ -9294,20 +8972,6 @@
     "rtf": 2.23255,
     "throughput_rtfx": 39.914,
     "prediction": "Perché vi racconto tutto questo?"
-  },
-  "TEDX_it_pRLMJnMo3zI_402.8": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
-    "id": "TEDX_it_pRLMJnMo3zI_402.8",
-    "audio_duration": 0.76,
-    "audio_offset": 402.75,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "E perché io?",
-    "language": "it",
-    "prediction_duration": 2.1243,
-    "rtf": 2.79513,
-    "throughput_rtfx": 39.914,
-    "prediction": "E perché io?"
   },
   "TEDX_it_pRLMJnMo3zI_403.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
@@ -9575,20 +9239,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "e quindi non riuscivano a costruire la ferrovia. Insomma, era complicato, era un casino."
   },
-  "TEDX_it_pRLMJnMo3zI_515.6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
-    "id": "TEDX_it_pRLMJnMo3zI_515.6",
-    "audio_duration": 0.93,
-    "audio_offset": 515.64,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Allora cosa fecero?",
-    "language": "it",
-    "prediction_duration": 2.84639,
-    "rtf": 3.06064,
-    "throughput_rtfx": 39.914,
-    "prediction": "Allora cosa fecero?"
-  },
   "TEDX_it_pRLMJnMo3zI_517.0": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
     "id": "TEDX_it_pRLMJnMo3zI_517.0",
@@ -9700,20 +9350,6 @@
     "rtf": 2.40997,
     "throughput_rtfx": 39.914,
     "prediction": "hai accesso alle migliori scuole,"
-  },
-  "TEDX_it_pRLMJnMo3zI_552.3": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
-    "id": "TEDX_it_pRLMJnMo3zI_552.3",
-    "audio_duration": 0.64,
-    "audio_offset": 552.26,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "ai migliori ospedali.",
-    "language": "it",
-    "prediction_duration": 1.94642,
-    "rtf": 3.04128,
-    "throughput_rtfx": 39.914,
-    "prediction": "Ai migliori."
   },
   "TEDX_it_pRLMJnMo3zI_552.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
@@ -10666,20 +10302,6 @@
     "rtf": 2.56834,
     "throughput_rtfx": 39.914,
     "prediction": "mentre ero dietro un cactus che vomitavo, mi prese per una spalla e mi disse: \\\"Oh, guarda che ti lasciano qui\\\"."
-  },
-  "TEDX_it_pRLMJnMo3zI_930.7": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
-    "id": "TEDX_it_pRLMJnMo3zI_930.7",
-    "audio_duration": 0.63,
-    "audio_offset": 930.7,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Ti devi muovere”.",
-    "language": "it",
-    "prediction_duration": 2.84002,
-    "rtf": 4.50797,
-    "throughput_rtfx": 39.914,
-    "prediction": "ti devi muovere."
   },
   "TEDX_it_pRLMJnMo3zI_933.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/pRLMJnMo3zI.wav",
@@ -11899,20 +11521,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "La scuola dovrebbe fare conoscere e sperimentare quelle tecnologie più rilevanti del nostro tempo: parlo di blockchain, di programmazione, di Internet of Things, di big data, di robotica, di materiali intelligenti, di intelligenza artificiale."
   },
-  "TEDX_it_qlZosMhZG4c_751.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/qlZosMhZG4c.wav",
-    "id": "TEDX_it_qlZosMhZG4c_751.2",
-    "audio_duration": 0.95,
-    "audio_offset": 751.16,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "E potrei continuare.",
-    "language": "it",
-    "prediction_duration": 2.78791,
-    "rtf": 2.93464,
-    "throughput_rtfx": 39.914,
-    "prediction": "e potrei continuare."
-  },
   "TEDX_it_qlZosMhZG4c_752.9": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/qlZosMhZG4c.wav",
     "id": "TEDX_it_qlZosMhZG4c_752.9",
@@ -12333,20 +11941,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "che se si vuole veramente cambiare il mondo è semplicemente questione di essere la miglior versione di noi stessi."
   },
-  "TEDX_it_zlj5sRro7P4_1034.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/zlj5sRro7P4.wav",
-    "id": "TEDX_it_zlj5sRro7P4_1034.0",
-    "audio_duration": 0.24,
-    "audio_offset": 1034.02,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Grazie",
-    "language": "it",
-    "prediction_duration": 2.30609,
-    "rtf": 9.60872,
-    "throughput_rtfx": 39.914,
-    "prediction": "Grazie."
-  },
   "TEDX_it_zlj5sRro7P4_116.2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/zlj5sRro7P4.wav",
     "id": "TEDX_it_zlj5sRro7P4_116.2",
@@ -12598,20 +12192,6 @@
     "rtf": 1.75867,
     "throughput_rtfx": 39.914,
     "prediction": "Beh, no, secco no. Diciamo, ci serve qualche secondo in più."
-  },
-  "TEDX_it_zlj5sRro7P4_233.2": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/zlj5sRro7P4.wav",
-    "id": "TEDX_it_zlj5sRro7P4_233.2",
-    "audio_duration": 0.96,
-    "audio_offset": 233.23,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "L'avete trovata?",
-    "language": "it",
-    "prediction_duration": 2.94601,
-    "rtf": 3.06876,
-    "throughput_rtfx": 39.914,
-    "prediction": "L'avete trovata?"
   },
   "TEDX_it_zlj5sRro7P4_237.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/zlj5sRro7P4.wav",
@@ -13103,20 +12683,6 @@
     "throughput_rtfx": 39.914,
     "prediction": "una cosa incredibile, non prevista neanche dagli scienziati più ottimisti: che questo prezzo scende in maniera velocissima e oggi la mappatura che costava pochi anni fa 100 milioni di dollari oggi costa meno di un tablet. È alla portata di tantissime persone."
   },
-  "TEDX_it_zlj5sRro7P4_618.0": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/zlj5sRro7P4.wav",
-    "id": "TEDX_it_zlj5sRro7P4_618.0",
-    "audio_duration": 0.68,
-    "audio_offset": 618.01,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "Cosa è successo?",
-    "language": "it",
-    "prediction_duration": 2.39658,
-    "rtf": 3.52439,
-    "throughput_rtfx": 39.914,
-    "prediction": "È successo."
-  },
   "TEDX_it_zlj5sRro7P4_619.5": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/zlj5sRro7P4.wav",
     "id": "TEDX_it_zlj5sRro7P4_619.5",
@@ -13522,20 +13088,6 @@
     "rtf": 0.96577,
     "throughput_rtfx": 39.914,
     "prediction": "Sono persone innanzitutto oneste. Ed è una parola rivoluzionaria in quest'epoca. Sono persone normali. Non è che un ottimista c'ha una paresi"
-  },
-  "TEDX_it_zlj5sRro7P4_894.1": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/zlj5sRro7P4.wav",
-    "id": "TEDX_it_zlj5sRro7P4_894.1",
-    "audio_duration": 0.37,
-    "audio_offset": 894.13,
-    "dataset": "TEDX_it",
-    "full_dataset": "TEDX_it",
-    "text": "No!",
-    "language": "it",
-    "prediction_duration": 1.71748,
-    "rtf": 4.64183,
-    "throughput_rtfx": 39.914,
-    "prediction": "No."
   },
   "TEDX_it_zlj5sRro7P4_894.6": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/it/Multilingual_TEDx/zlj5sRro7P4.wav",

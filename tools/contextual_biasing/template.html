@@ -189,7 +189,7 @@
     <div><h3>Data</h3><ul>
       <li><b>Terms</b>: all the terms to recognize are in the lists, with others that are not spoken. What happens when
         a spoken term is missing from the list is not measured.</li>
-      <li><b>English</b>, <b>French and English</b>: mean over the test sets (each weighs the same),
+      <li>Test sets &ldquo;<b>English</b>&rdquo; and &ldquo;<b>French and English</b>&rdquo;: mean over their test sets (each weighs the same),
         by size class of the lists: <i>short</i> (25 names, call keywords, 100 distractors), <i>medium</i> (389 names,
         500 distractors), <i>long</i> (drug dictionaries, 1,000 and 2,000 distractors). In English, only LibriSpeech has
         medium and long lists: their values are not comparable with the ones of the short lists (compare the changes). In the line charts, a dotted line joins them, only to follow a model.</li>
@@ -338,14 +338,14 @@ function tableModels(all) {
 
 // Lists of the faster-whisper hotwords that are cut (at most 223 tokens)
 const CUT_LISTS = { "faster-whisper": {
-  "100": "hotwords cut to 223 tokens (about 60 % of the list reach the model)",
+  "100": "hotwords cut to 223 tokens (about 60% of the list reach the model)",
   "pxslu": "hotwords cut to 223 tokens (the first 51 of the 389 names, in alphabetical order, reach the model)",
   "pxslu_ext": "hotwords cut to 223 tokens (the first 49 of the 427 names, in alphabetical order, reach the model)",
   "pxslu_upper": "hotwords cut to 223 tokens (the first 42 of the 389 names in capitals, in alphabetical order, reach the model)",
 } };
 // The same for the runs with the terms separated by spaces (setting "spaces")
 const CUT_LISTS_SPACES = { "faster-whisper": {
-  "100": "hotwords cut to 223 tokens (about 84 % of the list reach the model)",
+  "100": "hotwords cut to 223 tokens (about 84% of the list reach the model)",
   "pxslu": "hotwords cut to 223 tokens (the first 63 of the 389 names, in alphabetical order, reach the model)",
 } };
 function cutNote(row, list) {

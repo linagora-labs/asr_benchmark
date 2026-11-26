@@ -41,7 +41,7 @@ LISTS = {
     "vidal": ("Vidal", "Drug names of the Vidal database, and the 389 names (private list: its terms of use forbid to share it)"),
     "bdpm": ("BDPM", "Drug names of the French public drug database, and the 389 names"),
     "theriaque": ("Thériaque", "Drug names of the Thériaque database, and the 389 names (private list: its terms of use forbid to share it)"),
-    "global": ("Call keywords", "For each clip: the keywords of the whole call, about 7 % of them spoken in the clip"),
+    "global": ("Call keywords", "For each clip: the keywords of the whole call, of which 15.5% on average are spoken in the clip (median: 6.5%)"),
     "100": ("100 distractors", "For each utterance: its rare words (1.8 on average, the terms to recognize), and 100 other rare words drawn at random"),
     "500": ("500 distractors", "For each utterance: its rare words (1.8 on average, the terms to recognize), and 500 other rare words drawn at random"),
     "1000": ("1,000 distractors", "For each utterance: its rare words (1.8 on average, the terms to recognize), and 1,000 other rare words drawn at random (about 2 fewer on average in the released lists, probably duplicates removed)"),

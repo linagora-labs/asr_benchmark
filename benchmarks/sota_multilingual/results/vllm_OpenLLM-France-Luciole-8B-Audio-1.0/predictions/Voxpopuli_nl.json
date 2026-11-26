@@ -475,20 +475,6 @@
     "throughput_rtfx": 78.323,
     "prediction": "Die zegt ook ieder systeem is het beste systeem."
   },
-  "Voxpopuli_nl_20090311-0900-PLENARY-20-nl_20090311-21:13:31_16": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/nl/VoxPopuli/20090311-0900-PLENARY-20-nl_20090311-21:13:31_16.wav",
-    "id": "Voxpopuli_nl_20090311-0900-PLENARY-20-nl_20090311-21:13:31_16",
-    "audio_duration": 0.56,
-    "audio_offset": 0.0,
-    "dataset": "Voxpopuli_nl",
-    "full_dataset": "Voxpopuli_nl",
-    "text": "Dat kan natuurlijk niet.",
-    "language": "nl",
-    "prediction_duration": 4.34148,
-    "rtf": 7.75265,
-    "throughput_rtfx": 78.323,
-    "prediction": "En plus,"
-  },
   "Voxpopuli_nl_20090311-0900-PLENARY-20-nl_20090311-21:13:31_2": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/nl/VoxPopuli/20090311-0900-PLENARY-20-nl_20090311-21:13:31_2.wav",
     "id": "Voxpopuli_nl_20090311-0900-PLENARY-20-nl_20090311-21:13:31_2",
@@ -3484,20 +3470,6 @@
     "rtf": 0.83525,
     "throughput_rtfx": 78.323,
     "prediction": "Dit kan enkel door terug te grijpen naar echte eigen middelen."
-  },
-  "Voxpopuli_nl_20101019-0900-PLENARY-11-nl_20101019-18:14:25_20": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/nl/VoxPopuli/20101019-0900-PLENARY-11-nl_20101019-18:14:25_20.wav",
-    "id": "Voxpopuli_nl_20101019-0900-PLENARY-11-nl_20101019-18:14:25_20",
-    "audio_duration": 0.74,
-    "audio_offset": 0.0,
-    "dataset": "Voxpopuli_nl",
-    "full_dataset": "Voxpopuli_nl",
-    "text": "tweeduizendveertien",
-    "language": "nl",
-    "prediction_duration": 1.26946,
-    "rtf": 1.71549,
-    "throughput_rtfx": 78.323,
-    "prediction": "13."
   },
   "Voxpopuli_nl_20101110-0900-PLENARY-10-nl_20101110-17:20:50_11": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/nl/VoxPopuli/20101110-0900-PLENARY-10-nl_20101110-17:20:50_11.wav",
@@ -8049,20 +8021,6 @@
     "throughput_rtfx": 78.323,
     "prediction": "Een stap vooruit om twee stappen achteruit te zetten."
   },
-  "Voxpopuli_nl_20141021-0900-PLENARY-11-nl_20141021-17:19:09_13": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/nl/VoxPopuli/20141021-0900-PLENARY-11-nl_20141021-17:19:09_13.wav",
-    "id": "Voxpopuli_nl_20141021-0900-PLENARY-11-nl_20141021-17:19:09_13",
-    "audio_duration": 0.84,
-    "audio_offset": 0.0,
-    "dataset": "Voxpopuli_nl",
-    "full_dataset": "Voxpopuli_nl",
-    "text": "Het is een totaalpakket.",
-    "language": "nl",
-    "prediction_duration": 1.31464,
-    "rtf": 1.56504,
-    "throughput_rtfx": 78.323,
-    "prediction": "Het pakket is ook"
-  },
   "Voxpopuli_nl_20141021-0900-PLENARY-11-nl_20141021-17:19:09_4": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/nl/VoxPopuli/20141021-0900-PLENARY-11-nl_20141021-17:19:09_4.wav",
     "id": "Voxpopuli_nl_20141021-0900-PLENARY-11-nl_20141021-17:19:09_4",
@@ -8118,20 +8076,6 @@
     "rtf": 0.66595,
     "throughput_rtfx": 78.323,
     "prediction": "En uiteindelijk mag over anderhalf jaar niet nog eens die Russische druk beloond worden."
-  },
-  "Voxpopuli_nl_20141021-0900-PLENARY-16-nl_20141021-22:35:16_6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/nl/VoxPopuli/20141021-0900-PLENARY-16-nl_20141021-22:35:16_6.wav",
-    "id": "Voxpopuli_nl_20141021-0900-PLENARY-16-nl_20141021-22:35:16_6",
-    "audio_duration": 0.8,
-    "audio_offset": 0.0,
-    "dataset": "Voxpopuli_nl",
-    "full_dataset": "Voxpopuli_nl",
-    "text": "Dat kan niet gebeuren.",
-    "language": "nl",
-    "prediction_duration": 1.29401,
-    "rtf": 1.61751,
-    "throughput_rtfx": 78.323,
-    "prediction": "Dat moet gebeuren."
   },
   "Voxpopuli_nl_20141021-0900-PLENARY-5-nl_20141021-10:37:07_10": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/nl/VoxPopuli/20141021-0900-PLENARY-5-nl_20141021-10:37:07_10.wav",
@@ -10134,20 +10078,6 @@
     "rtf": 0.98377,
     "throughput_rtfx": 78.323,
     "prediction": "We moeten concreet werk maken van die zaak en we zullen daar ook snel aan beginnen en we gaan daarvoor de tools gebruiken, de instrumenten die we ter beschikking hebben."
-  },
-  "Voxpopuli_nl_20170119-0900-PLENARY-3-nl_20170119-10:29:17_15": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/nl/VoxPopuli/20170119-0900-PLENARY-3-nl_20170119-10:29:17_15.wav",
-    "id": "Voxpopuli_nl_20170119-0900-PLENARY-3-nl_20170119-10:29:17_15",
-    "audio_duration": 0.9,
-    "audio_offset": 0.0,
-    "dataset": "Voxpopuli_nl",
-    "full_dataset": "Voxpopuli_nl",
-    "text": "Wetgevend?",
-    "language": "nl",
-    "prediction_duration": 1.52275,
-    "rtf": 1.69194,
-    "throughput_rtfx": 78.323,
-    "prediction": "Dat is het punt."
   },
   "Voxpopuli_nl_20170119-0900-PLENARY-3-nl_20170119-10:29:17_18": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/nl/VoxPopuli/20170119-0900-PLENARY-3-nl_20170119-10:29:17_18.wav",
@@ -14881,20 +14811,6 @@
     "throughput_rtfx": 78.323,
     "prediction": "Ik denk dat dat nu speelt in de discussie over migratie. Angela Merkel noemt dat flexibele solidariteit."
   },
-  "Voxpopuli_nl_20180613-0900-PLENARY-6-nl_20180613-11:37:10_11": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/nl/VoxPopuli/20180613-0900-PLENARY-6-nl_20180613-11:37:10_11.wav",
-    "id": "Voxpopuli_nl_20180613-0900-PLENARY-6-nl_20180613-11:37:10_11",
-    "audio_duration": 0.86,
-    "audio_offset": 0.0,
-    "dataset": "Voxpopuli_nl",
-    "full_dataset": "Voxpopuli_nl",
-    "text": "Denkt u eens mee.",
-    "language": "nl",
-    "prediction_duration": 1.34005,
-    "rtf": 1.55819,
-    "throughput_rtfx": 78.323,
-    "prediction": "Wie is er uit?"
-  },
   "Voxpopuli_nl_20180613-0900-PLENARY-6-nl_20180613-11:37:10_12": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/nl/VoxPopuli/20180613-0900-PLENARY-6-nl_20180613-11:37:10_12.wav",
     "id": "Voxpopuli_nl_20180613-0900-PLENARY-6-nl_20180613-11:37:10_12",
@@ -15118,20 +15034,6 @@
     "rtf": 1.66392,
     "throughput_rtfx": 78.323,
     "prediction": "Ik hoop dat we nog wat meer landen in de Raad meekrijgen."
-  },
-  "Voxpopuli_nl_20180613-0900-PLENARY-6-nl_20180613-12:32:40_6": {
-    "audio_filepath": "/home/data/audio/converted_audios/transcript/nl/VoxPopuli/20180613-0900-PLENARY-6-nl_20180613-12:32:40_6.wav",
-    "id": "Voxpopuli_nl_20180613-0900-PLENARY-6-nl_20180613-12:32:40_6",
-    "audio_duration": 0.84,
-    "audio_offset": 0.0,
-    "dataset": "Voxpopuli_nl",
-    "full_dataset": "Voxpopuli_nl",
-    "text": "Dat is nog een klus.",
-    "language": "nl",
-    "prediction_duration": 1.13051,
-    "rtf": 1.34585,
-    "throughput_rtfx": 78.323,
-    "prediction": "Je conclus."
   },
   "Voxpopuli_nl_20180613-0900-PLENARY-6-nl_20180613-12:32:40_8": {
     "audio_filepath": "/home/data/audio/converted_audios/transcript/nl/VoxPopuli/20180613-0900-PLENARY-6-nl_20180613-12:32:40_8.wav",

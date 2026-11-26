@@ -312,7 +312,7 @@ function renderOtherTestSets() {
     multilingualSets.map((d, i) => `<tr><td>${i && multilingualSets[i - 1].language === d.language ? "" : esc(languageName(d.language))}</td><td>${datasetLink(d)}</td>` +
       `<td class="left">${esc(d.domain)}</td><td>${esc(d.selection)}</td>${size(d, multilingualBins)}</tr>`).join(""));
   document.getElementById("multilingual-sets-notes").innerHTML = `
-    <p>Test splits, without the segments longer than 30 s (as in the French benchmark, whose French test sets are shared). Sound events of mTEDx, e.g. "(Risas)", are removed from the references.
+    <p>Test splits, with only the segments of 1 to 30 s (as in the French benchmark, whose French test sets are shared). Sound events of mTEDx, e.g. "(Risas)", are removed from the references.
     The exact utterances are listed in <a href="${DATA.repo}/tree/main/benchmarks/sota_multilingual/manifests">manifests</a>.</p>`;
   const sets = DATA.contextual_test_sets;
   document.getElementById("contextual-sets").hidden = !sets.length;

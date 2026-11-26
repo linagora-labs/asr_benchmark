@@ -162,7 +162,7 @@ files). Test: 772 clips (771 used: one flagged by the dataset is left out), dev:
 
 **Hotwords.** Two lists per clip:
 - `global` (run): the keywords of the whole call (25 on average, 1 to 46), of which
-  about 7 % are spoken in the clip. It is what a system could get from the context
+  15.5% on average are spoken in the clip (median: 6.5%). It is what a system could get from the context
   of a meeting (participants, companies, products), and its distractors are
   realistic: other names of the same call.
 - `local`: only the keywords spoken in the clip (the targets). Not run: an oracle
@@ -260,7 +260,7 @@ List sizes (tokens): PxSLU `pxslu25` at most ~130 (~160 in capitals), `pxslu` ~1
 Earnings-22 at most 161. The configs leave out the lists a model cannot take
 (Whisper: `pxslu25`, the Contextual Earnings-22 lists, and two lists given anyway and
 cut to their first 223 tokens, unrelated to the targets as the lists are sorted
-alphabetically: the LibriSpeech N=100 lists, ~60 % of each, and `pxslu`, its first 51
+alphabetically: the LibriSpeech N=100 lists, ~60% of each, and `pxslu`, its first 51
 names of 389, and `pxslu_upper`, its first 42 names in capitals; Granite: no list above 16k
 tokens). NeMo with the LibriSpeech N=500, 1000 and 2000 lists at alpha 1.0 only (the boosting
 tree is rebuilt for each utterance: about 40 min per run on test-other).
@@ -360,7 +360,7 @@ combines those of the test sets as independent errors.
 Ranking of the leaderboard, on one list ("Hotword list", or a click on its header in the table; by default `pxslu`, Contextual
 Earnings-22 `global`, LibriSpeech `100`, `short` for the aggregated test sets): each model with this list, or without list
 when it has no run with it (no biasing mechanism, or list too long). First by WER, with
-a tolerance: the models whose WER is within the 95 % confidence interval of the best
+a tolerance: the models whose WER is within the 95% confidence interval of the best
 WER form a level, and the next level starts from the best of the others; within a
 level, by B-WER (the measure of the literature, in the unit of the WER, which counts
 both the missed terms and the inserted list words).
@@ -416,7 +416,7 @@ normalizations (`nocasepunc`: without case; `cased`: with case):
   list term, and on the other words; an inserted word counts in B-WER if it
   belongs to a list term. With multi-word terms, a word is biased only when it is
   part of an occurrence of a term. The errors are those of the WER, split in two
-  (before its cap at 100 % per utterance).
+  (before its cap at 100% per utterance).
 - `false_alarms` (and per hour): occurrences of list terms in the prediction
   beyond their count in the reference (e.g. distractors written although not
   spoken), at most one per term and utterance.
@@ -426,7 +426,7 @@ predictions, not stored in `performances/`): the percentage of utterances whose
 transcription has more than twice as many words as the reference, plus 10 (loops,
 invented sentences, prompt recited). A few such outputs weigh a lot on B-WER
 (inserted list terms count in it), FA/h and WER: e.g. on PxSLU test, Qwen3-ASR
-recites the start of the `bdpm` list in 2 of the 540 utterances (B-WER above 100 %),
+recites the start of the `bdpm` list in 2 of the 540 utterances (B-WER above 100%),
 and 18 transcriptions of MOSS run away with `pxslu`.
 
 RTFx (seconds of audio per second of processing; `report.py` and the page), for each

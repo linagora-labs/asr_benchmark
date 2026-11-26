@@ -118,7 +118,8 @@
             "ha",
             "ba",
             "jw",
-            "su"
+            "su",
+            "yue"
         ],
         "architecture": "Encoder-decoder",
         "task": "ASR/AST",

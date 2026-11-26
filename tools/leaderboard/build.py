@@ -48,7 +48,7 @@ SELECTION = {
     "MLS_Facebook_french": ("50%", None),
     "TEDX_fr": ("Whole", None),
     "Voxpopuli": ("50%", None),
-    "SUMM-RE": ("50%", "Segments of 4 s or more only"),
+    "SUMM-RE": ("8.5%", "Half of the 3,002 segments of 4 to 30 s (1,453 of the 17,113 segments of the split)"),
     "YouTubeFr_split6": ("Whole", None),
     "FLEURS": ("Whole", None),
 }
@@ -64,6 +64,8 @@ MULTILINGUAL_DATASETS = {
 MULTILINGUAL_SELECTION = {"CommonVoice_en": "10%"}
 MULTILINGUAL_FRENCH = {"FLEURS": "FLEURS_fr", "TEDX_fr": "TEDX_fr"}  # stem in --results -> id
 MULTILINGUAL_LANGUAGES = ["en", "fr", "de", "it", "es", "pt", "nl", "ar"]  # column order
+LANGUAGE_NAMES = {"en": "English", "fr": "French", "de": "German", "it": "Italian", "es": "Spanish", "pt": "Portuguese",
+                  "nl": "Dutch", "ar": "Arabic"}
 METRICS = [metric + suffix for metric in ("wer", "cer") for suffix in ("_nocasepunc", "_nopunc", "_nocase", "")]
 EMPTY_WARNING = 0.01  # share of empty outputs from which the model gets a caveat
 SPECIAL_TOKEN = re.compile(r"<\|[^|]*\|>")
@@ -172,6 +174,9 @@ def model_entry(exp, rtf_results=None, info_from=None):
         meta["model_info"] = (meta.get("model_info") or {}) | other
     # faster-whisper takes OpenAI size names ("large-v3"): show the original model.
     display = f"openai/whisper-{model}" if backend == "faster-whisper" and "/" not in model else model
+    # The spelling of the Hugging Face repo when the run used another case (e.g. gemma-3n-e4b-it)
+    if (hf_id := (meta.get("model_info") or {}).get("hf")) and hf_id.lower() == display.lower():
+        display = hf_id
     # vLLM serves local checkpoints (model is a path) under served_model_name: show it,
     # or the Hugging Face repo of the checkpoint (model_info.hf) when there is one.
     info = meta.get("model_info") or {}
@@ -294,6 +299,17 @@ def multilingual(results, french_results, rtf_results=None, include_private=Fals
         elif meta.get("extra_bodies"):
             entry["prompt"] = "\n".join(f"{lang}: {json.dumps(body, ensure_ascii=False)}" for lang, body in meta["extra_bodies"].items())
             entry["prompt_source"] = "model card (vLLM chat): no text prompt, the language of the test set forced in the request"
+        elif not meta.get("prompt") and entry["prompt"]:
+            # Prompt of the French run (model_info): here the run gives the language of each test set,
+            # which the default prompt names in place of French (e.g. vLLM's Qwen3-Omni prompt)
+            languages = sorted({stem.rsplit("_", 1)[1] for stem in entry["scores"]}, key=lambda l: (
+                MULTILINGUAL_LANGUAGES.index(l) if l in MULTILINGUAL_LANGUAGES else len(MULTILINGUAL_LANGUAGES), l))
+            if "French" in entry["prompt"]:
+                entry["prompt"] = "\n".join(f"{lang}: {entry['prompt'].replace('French', LANGUAGE_NAMES.get(lang, lang))}"
+                                            for lang in languages)
+                entry["prompt_source"] = f"{entry['prompt_source'] or 'default prompt'}, with the language of the test set"
+            else:
+                entry["prompt"] = entry["prompt_source"] = None  # not known for the other languages
         french = next((f / exp.name for f in (french_results, *french_extra) if (f / exp.name / "metadata.json").exists()),
                       french_results / exp.name)
         if (french / "metadata.json").exists():

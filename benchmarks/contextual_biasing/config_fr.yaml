@@ -139,8 +139,8 @@ benchmarks:
     contextual_biasing_template: "{prompt}热词提示：{terms}"
 
   # --- VibeVoice-ASR (transformers): extra context of the request. Smaller batches
-  # for the long lists (12k to 38k tokens per request); theriaque is not run: too slow
-  # (about 0.14 times real time, 10 hours).
+  # for the long lists (12k to 38k tokens per request); theriaque: slow (about 0.14 times
+  # real time, about 10 hours), run last.
   - backend: vibevoice-asr
     model: microsoft/VibeVoice-ASR-HF
     dtype: bfloat16
@@ -151,11 +151,11 @@ benchmarks:
     dtype: bfloat16
     batch_size: 8
     contextual_biasing: [bdpm, vidal]
-  # - backend: vibevoice-asr
-  #   model: microsoft/VibeVoice-ASR-HF
-  #   dtype: bfloat16
-  #   batch_size: 4
-  #   contextual_biasing: theriaque
+  - backend: vibevoice-asr
+    model: microsoft/VibeVoice-ASR-HF
+    dtype: bfloat16
+    batch_size: 4
+    contextual_biasing: theriaque
 
   # --- NeMo phrase boosting (GPU-PB, decoding-time boosting tree; greedy_batch
   # decoding, beam for Canary). alpha (boosting weight): 1.0 and 2.0 for every model.
