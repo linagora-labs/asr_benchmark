@@ -114,6 +114,8 @@ def speed(exp, rtf_results, model=None):
     return ((round(audio / compute, 1) if compute else None), meta.get("device_name") or meta.get("device"),
             meta.get("backend"), (meta.get("model_info") or {}).get("rtf_note"))
 HISTOGRAM_BIN = 2  # seconds, durations histogram of the test sets
+# Runs (folder names) left out of the page and of the cards, except their own card (highlight)
+EXCLUDED_RUNS = {"nemo_linagora-linto-stt-fr-fastconformer_decoder-rnnt"}
 
 # Language control of the multilingual models, from their model cards: (pattern on the model
 # name, (automatic detection, forced language)), the automatic detection being True, "returned"
@@ -470,6 +472,8 @@ def build(results, manifest, output, rtf_results=None, rtf_manifest=None, cards=
           include_private=False, french_extra=(), contextual_results=None):
     experiments = sorted(p for p in results.iterdir() if (p / "metadata.json").exists())
     models = [model_entry(exp, rtf_results) for exp in experiments]
+    excluded = [m for m in models if m["id"] in EXCLUDED_RUNS]
+    models = [m for m in models if m["id"] not in EXCLUDED_RUNS]
     for m in models:
         m.pop("merge_as", None)  # rows merged in the Multilingual tab only
     durations = manifest_durations(manifest)
@@ -520,7 +524,7 @@ def build(results, manifest, output, rtf_results=None, rtf_manifest=None, cards=
         template = template.replace("<!--__CONTEXTUAL_PAGE__-->", html).replace("/*__CONTEXTUAL_SCRIPT__*/null", script)
     (output / "index.html").write_text(template, encoding="utf-8")
     print(f"{len(models)} models x {len(datasets)} datasets -> {output}/index.html")
-    build_cards(cards, data, output, SITE_URL)
+    build_cards(cards, data, output, SITE_URL, excluded)
 
 
 if __name__ == "__main__":

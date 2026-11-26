@@ -42,7 +42,7 @@ import subprocess
 from html import escape
 
 FONT = "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
-COLORS = {"first": "#5dade2", "second": "#82e0aa", "second-last": "#fdcb6e", "last": "#e74c3c"}
+COLORS = {"first": "#5aa2d8", "second": "#b3d3ee", "second-last": "#fdc590", "last": "#f98b3e"}
 TEXT, MUTED, LINE, ACCENT, BG, HIGHLIGHT = "#1d1d1b", "#6b6a66", "#e6e4df", "#1f6f78", "#ffffff", "#eef5f6"
 METRIC_LABELS = {metric + suffix: f"{metric.upper()} (%), {label}" for metric in ("wer", "cer") for suffix, label in (
     ("_nocasepunc", "without case and punctuation"), ("_nopunc", "case, without punctuation"),
@@ -327,8 +327,9 @@ def to_png(svg):
     return True
 
 
-def build_cards(config, data, output, site_url):
-    """Draws the cards of `config` (cards.json) into <output>/cards/, with their index.json."""
+def build_cards(config, data, output, site_url, excluded=()):
+    """Draws the cards of `config` (cards.json) into <output>/cards/, with their index.json. excluded: models left
+    out of the page (and of the other cards), drawn in their own card only (the one that highlights them)."""
     if not config or not config.exists():
         return
     specs = json.loads(config.read_text(encoding="utf-8"))
@@ -338,7 +339,8 @@ def build_cards(config, data, output, site_url):
     for card, spec in specs.items():
         if not re.fullmatch(r"[\w.-]+", card):
             raise ValueError(f"card name {card!r}: letters, digits, '_', '-' and '.' only (file name)")
-        svg, shown_models = render_card(spec, data, card)
+        own = [m for m in excluded if {m["id"], m["model"]} & set(spec.get("highlight") or [])]
+        svg, shown_models = render_card(spec, data | {"models": data["models"] + own} if own else data, card)
         (folder / f"{card}.svg").write_text(svg, encoding="utf-8")
         png = to_png(folder / f"{card}.svg")
         index[card] = {"url": f"{site_url}cards/{card}.svg", "png": f"{site_url}cards/{card}.png" if png else None,

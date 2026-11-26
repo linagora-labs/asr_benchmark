@@ -357,7 +357,7 @@ list only with a run with each of its lists (`SIZE_CLASSES` and `AGGREGATES` in
 `template.html`). The confidence interval of the mean WER, used by the ranking,
 combines those of the test sets as independent errors.
 
-Ranking of the leaderboard, on one list ("Hotword list", or a click on its header in the table; by default `pxslu`, Contextual
+Ranking of the leaderboard, on one list ("Vocabulary", or a click on its header in the table; by default `pxslu`, Contextual
 Earnings-22 `global`, LibriSpeech `100`, `short` for the aggregated test sets): each model with this list, or without list
 when it has no run with it (no biasing mechanism, or list too long). First by WER, with
 a tolerance: the models whose WER is within the 95% confidence interval of the best

@@ -75,6 +75,33 @@ function setUpTables(root) {
 // Model info
 const params = n => n >= 1e9 ? `${(n / 1e9).toFixed(n < 1e10 ? 1 : 0)}B` : `${Math.round(n / 1e6)}M`;
 const licenseText = l => ({ "apache-2.0": "Apache-2.0", gemma: "Gemma" })[l] || l.toUpperCase();
+// Nickname of a model: its name without the organization, and without what tells apart no other model here
+// (version date, "-it", "-HF"...); the full name is on hover and behind the link
+const NICKNAMES = {
+  "cohere-transcribe-03-2026": "cohere-transcribe",
+  "Hojo-ASR-Multi-V1": "Hojo-ASR-Multi",
+  "Luciole-1B-Audio-1.0": "Luciole-1B-Audio",
+  "Luciole-8B-Audio-1.0": "Luciole-8B-Audio",
+  "Luciole-23B-Audio-1.0": "Luciole-23B-Audio",
+  "NVIDIA-Nemotron-3.5-Transcribe-30B-A4B": "Nemotron-3.5-Transcribe-30B",
+  "Qwen3-Omni-30B-A3B-Instruct": "Qwen3-Omni-30B",
+  "whisper-large-v3-french-distil-dec16": "whisper-large-v3-french-distil",
+  "gemma-3n-E4B-it": "gemma-3n-E4B",
+  "gemma-4-E2B-it": "gemma-4-E2B",
+  "gemma-4-E4B-it": "gemma-4-E4B",
+  "stt-1b-en_fr-trfs": "kyutai-stt-1b-en_fr",
+  "VibeVoice-ASR-HF": "VibeVoice-ASR",
+  "Voxtral-Mini-3B-2507": "Voxtral-Mini-3B",
+  "Voxtral-Mini-4B-Realtime-2602": "Voxtral-Mini-4B-Realtime",
+  "Voxtral-Small-24B-2507": "Voxtral-Small-24B",
+};
+// The organization kept when the rest says too little alone (e.g. BuzzASR/french); a suffix in
+// parentheses (e.g. " (beam 5)") kept
+const nickname = name => {
+  const [, base, suffix = ""] = String(name).match(/^(.*?)( \(.*\))?$/);
+  const short = base.split("/").pop();
+  return (NICKNAMES[short] || (/[-_]/.test(short) ? short : base)) + suffix;
+};
 // Official text of the licenses, linked from their name
 const LICENSE_URLS = {
   "apache-2.0": "https://www.apache.org/licenses/LICENSE-2.0",

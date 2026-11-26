@@ -34,10 +34,10 @@ TEST_SETS = {
 LISTS = {
     "pxslu25": ("25 names", "For each utterance: the ones of the 389 names that are spoken in it, and others of them drawn at random"),
     "pxslu25_ext": ("25 names (ext.)", "The same, with the 427 names"),
-    "pxslu25_upper": ("25 names (caps)", "The same 25 names, in capitals: does the model follow the case of the list?"),
+    "pxslu25_upper": ("25 names (caps)", "The same 25 names, in capitals: does the model follow the case of the vocabulary?"),
     "pxslu": ("389 names", "Drug names of the corpus: mostly brands, and some molecules (active substances)"),
     "pxslu_ext": ("427 names", "The 389 names, and 38 others spoken in the test set: 33 molecules (e.g. paracétamol) and 5 brands"),
-    "pxslu_upper": ("389 names (caps)", "The same 389 names, in capitals: does the model follow the case of the list?"),
+    "pxslu_upper": ("389 names (caps)", "The same 389 names, in capitals: does the model follow the case of the vocabulary?"),
     "vidal": ("Vidal", "Drug names of the Vidal database, and the 389 names (private list: its terms of use forbid to share it)"),
     "bdpm": ("BDPM", "Drug names of the French public drug database, and the 389 names"),
     "theriaque": ("Thériaque", "Drug names of the Thériaque database, and the 389 names (private list: its terms of use forbid to share it)"),

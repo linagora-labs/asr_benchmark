@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Custom Vocabulary ASR Benchmark</title>
-<meta name="description" content="Recognition of list terms by speech recognition models without and with a contextual biasing list.">
+<meta name="description" content="Recognition of vocabulary terms by speech recognition models without and with a custom vocabulary (contextual biasing).">
 <style>
   /* Same look as tools/leaderboard/template.html (light theme only). */
   :root { color-scheme: light; --bg: #fbfbfa; --surface: #fff; --text: #1d1d1b; --muted: #6b6a66; --line: #e6e4df;
@@ -52,10 +52,11 @@
   .notes { font-size: 14px; max-width: 1000px; }
   .notes li { margin: 4px 0; }
   /* Rank colors of each column (same as the ASR leaderboard). */
-  .first { background: #5dade2; } .second { background: #82e0aa; }
-  .second-last { background: #fdcb6e; } .last { background: #e74c3c; }
+  .first { background: #5aa2d8; } .second { background: #b3d3ee; }
+  .second-last { background: #fdc590; } .last { background: #f98b3e; }
   td.first, td.second, td.second-last, td.last { color: #1d1d1b; }
-  td.first .delta, td.second .delta, td.second-last .delta, td.last .delta { color: #1d1d1b; opacity: .75; }
+  /* Blue (better) / orange (worse): distinct with color blindness; the change not faded on them (contrast) */
+  td.first .delta, td.second .delta, td.second-last .delta, td.last .delta { color: #1d1d1b; }
   .swatch.rank { border-radius: 2px; }
   td.avg { font-weight: 700; }
   /* Charts. Series colors: categorical palette, fixed order (validated: CVD and
@@ -84,6 +85,10 @@
   .caption { font-size: 13px; margin-top: 8px; }
   /* Views of the tab */
   /* Folder tabs, as the tabs of the leaderboard (a little smaller) */
+  /* Effect of vocabulary size: a model highlighted (hover of its line, points or legend), the others faded */
+  #lines.highlighting .series:not(.hl) { opacity: .12; }
+  #lines-legend span[data-model] { cursor: default; }
+  #lines-legend.highlighting span[data-model]:not(.hl) { opacity: .35; }
   .subtabs { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-end; margin: 28px 0 4px; border-bottom: 2px solid var(--accent); }
   .subtabs button { padding: 8px 16px; margin-bottom: -2px; font-size: 15px; font-weight: 600; color: var(--text);
     background: #ecebe7; border: 1px solid var(--line); border-bottom: 2px solid var(--accent); border-radius: 8px 8px 0 0;
@@ -118,24 +123,25 @@
     <button data-v="leaderboard" aria-pressed="true">Leaderboard</button>
     <button data-v="dumbbell">Dumbbell plots</button>
     <button data-v="pareto">Pareto front plots</button>
-    <button data-v="size">Effect of the list size</button>
+    <button data-v="size">Effect of vocabulary size</button>
   </nav>
   <div class="controls">
     <div class="group" id="metric-group"><span class="group-label">Metric</span> <span class="group" id="metric"></span></div>
     <div class="group"><span class="group-label">Case sensitive</span> <span class="group" id="mode">
       <button data-v="nocasepunc" aria-pressed="true" title="Case ignored. Punctuation marks are always removed">No</button>
-      <button data-v="cased" title="WER, B-WER, U-WER: the case of all the words counts. F1: a list term counts as correct only if written with the case of the list. Punctuation marks are always removed">Yes</button></span></div>
+      <button data-v="cased" title="WER, B-WER, U-WER: the case of all the words counts. F1: a vocabulary term counts as correct only if written with the case of the vocabulary. Punctuation marks are always removed">Yes</button></span></div>
   </div>
   <div class="controls" id="sort-group">
-    <div class="group"><span class="group-label" title="The list given to the models that ranks them (by WER with this list, then B-WER within the confidence interval of the best WER) in the leaderboard and the plots. A click on a list in the header of the leaderboard does the same">Hotword list</span> <span class="group" id="sort-by"></span></div>
+    <div class="group"><span class="group-label" title="The vocabulary given to the models that ranks them (by WER with this vocabulary, then B-WER within the confidence interval of the best WER) in the leaderboard and the plots. A click on a vocabulary in the header of the leaderboard does the same">Vocabulary</span> <span class="group" id="sort-by"></span></div>
   </div>
 
   <section data-view="leaderboard">
-  <div class="legend">
+  <div class="scroll fit"><table id="overview" class="compact sticky-first"></table></div>
+  <!-- After the table: the colors of the ranks, then the symbols -->
+  <div class="legend" id="ranks" style="margin: 12px 0 0">
     <span><span class="swatch rank first"></span>1st</span> <span><span class="swatch rank second"></span>2nd</span>
     <span><span class="swatch rank second-last"></span>Second to last</span> <span><span class="swatch rank last"></span>Last</span>
   </div>
-  <div class="scroll fit"><table id="overview" class="compact sticky-first"></table></div>
   <div class="legend muted" id="symbols"></div>
   <div class="muted caption" id="overview-caption"></div>
   </section>
@@ -149,7 +155,7 @@
   <section data-view="dumbbell" hidden>
   <div class="legend" id="panels-legend">
     <span><svg width="64" height="14" style="vertical-align:-2px"><line x1="7" x2="55" y1="7" y2="7" stroke="var(--muted)" stroke-width="2.5"/><circle cx="7" cy="7" r="4.5" fill="var(--muted)"/><path d="M55,0.5 L56.8,5 L61.5,5.2 L57.8,8.1 L59.1,12.7 L55,10 L50.9,12.7 L52.2,8.1 L48.5,5.2 L53.2,5 Z" fill="var(--muted)"/></svg>
-      From the model without list (dot) to the model with the list (star), in the order of the leaderboard</span>
+      From the model without vocabulary (dot) to the model with the vocabulary (star), in the order of the leaderboard</span>
   </div>
   <div class="panels" id="panels"></div>
   </section>
@@ -157,8 +163,8 @@
   <section data-view="size" hidden>
   <div class="legend" id="lines-legend"></div>
   <div class="panels small" id="lines"></div>
-  <div class="muted caption">Each model without list, then with each list given to it, from the smallest list to the
-    largest. A line stops where the model has no run with the list.<br>Hollow points: the same list given in capitals (to
+  <div class="muted caption">Each model without vocabulary, then with each vocabulary given to it, from the smallest to the
+    largest. A line stops where the model has no run with the vocabulary.<br>Hollow points: the same vocabulary given in capitals (to
     read with "Case sensitive").</div>
   </section>
 
@@ -173,9 +179,9 @@
         (between two lines), ranked by B-WER, and so on from the best of the others.</li>
     </ul></div>
     <div><h3>Models and columns</h3><ul>
-      <li><b>Hotword list</b> (or a click on a list in the header of the leaderboard): the list the models are ranked on, in the leaderboard and the plots. The line under the name of a model gives its decoding
+      <li><b>Vocabulary</b> (or a click on a vocabulary in the header of the leaderboard): the vocabulary the models are ranked on, in the leaderboard and the plots. The line under the name of a model gives its decoding
         (if several are compared) and the software that runs it.</li>
-      <li><b>Technique</b>, how the model takes the list into account: <i>Context</i>, an input made for context, that the
+      <li><b>Technique</b>, how the model takes the vocabulary into account: <i>Context</i>, an input made for context, that the
         model is trained to use as background knowledge (Qwen3-ASR, VibeVoice-ASR); <i>Prompt</i>, the text prompt of the model
         (Granite, Nemotron, MOSS: with the template of their documentation; Whisper: the decoder prompt made for the previous
         text, at most 223 tokens); <i>Boosting</i>, scores of the terms raised at decoding time, without training (NeMo).
@@ -187,13 +193,13 @@
         RTFx of the other tabs. A list given in the prompt is processed with every request: the longer the list, the slower.</li>
     </ul></div>
     <div><h3>Data</h3><ul>
-      <li><b>Terms</b>: all the terms to recognize are in the lists, with others that are not spoken. What happens when
-        a spoken term is missing from the list is not measured.</li>
+      <li><b>Terms</b>: all the terms to recognize are in the vocabularies, with others that are not spoken. What happens when
+        a spoken term is missing from the vocabulary is not measured.</li>
       <li>Test sets &ldquo;<b>English</b>&rdquo; and &ldquo;<b>French and English</b>&rdquo;: mean over their test sets (each weighs the same),
         by size class of the lists: <i>short</i> (25 names, call keywords, 100 distractors), <i>medium</i> (389 names,
         500 distractors), <i>long</i> (drug dictionaries, 1,000 and 2,000 distractors). In English, only LibriSpeech has
         medium and long lists: their values are not comparable with the ones of the short lists (compare the changes). In the line charts, a dotted line joins them, only to follow a model.</li>
-      <li>Two of the lists (Vidal, Th&eacute;riaque) are private: the runs with them are published without their transcriptions.</li>
+      <li>Two of the vocabularies (Vidal, Th&eacute;riaque) are private: the runs with them are published without their transcriptions.</li>
       <li>Results and configuration:
         <a href="https://github.com/linagora-labs/asr_benchmark/tree/main/benchmarks/contextual_biasing">benchmarks/contextual_biasing</a>.</li>
     </ul></div>
@@ -214,16 +220,16 @@ const DESCRIPTIONS = /*__INFO__*/null;  // test sets and lists (TEST_SETS and LI
 const LANGUAGES = { fr: "French", en: "English" };
 const METRICS = [
   { key: "wer", label: "WER", higher: false, about: "word error rate of the whole transcription, in %" },
-  { key: "b_wer", label: "B-WER", higher: false, about: "word error rate on the words of the list terms (biased words)" },
+  { key: "b_wer", label: "B-WER", higher: false, about: "word error rate on the words of the vocabulary terms (biased words)" },
   { key: "u_wer", label: "U-WER", higher: false, about: "word error rate on the other words (unbiased words)" },
-  { key: "f1", label: "F1", higher: true, about: "harmonic mean of the precision and the recall of the list terms" },
-  { key: "recall", label: "Recall", higher: true, about: "share of the spoken list terms that the model writes" },
-  { key: "precision", label: "Precision", higher: true, about: "share of the list terms written by the model that are spoken" },
+  { key: "f1", label: "F1", higher: true, about: "harmonic mean of the precision and the recall of the vocabulary terms" },
+  { key: "recall", label: "Recall", higher: true, about: "share of the spoken vocabulary terms that the model writes" },
+  { key: "precision", label: "Precision", higher: true, about: "share of the vocabulary terms written by the model that are spoken" },
   { key: "false_alarms_per_hour", label: "False alarms/h", higher: false, unbounded: true,
-    about: "list terms written although not spoken, per hour of audio (at most one per term and utterance, as in F1 and precision)" },
+    about: "vocabulary terms written although not spoken, per hour of audio (at most one per term and utterance, as in F1 and precision)" },
   { key: "runaway", label: "Runaway", higher: false, unbounded: true,
     about: "percentage of the utterances whose transcription has more than twice as many words as the reference, plus 10 (loops, " +
-      "invented sentences, list recited). A few of them weigh a lot on B-WER, WER and false alarms" },
+      "invented sentences, vocabulary recited). A few of them weigh a lot on B-WER, WER and false alarms" },
   { key: "rtfx", label: "RTFx", higher: true, unbounded: true, log: true, about: "seconds of audio transcribed per second (speed)" },
 ];
 // RTFx taken from the benchmark logs (time of the whole run, model loading included):
@@ -315,11 +321,11 @@ function onlyText(list) {
   return row ? row.only_text : "";
 }
 // Name of a list as shown, its size when the name does not already tell it, and its hover text
-const CLASS_LABELS = { short: "Short lists", medium: "Medium lists", long: "Long lists" };
-const listLabel = (list) => list === NO_LIST ? "No list" : CLASS_LABELS[list] || (DESCRIPTIONS.lists[list] || [list])[0];
+const CLASS_LABELS = { short: "Small vocabularies", medium: "Medium vocabularies", long: "Large vocabularies" };
+const listLabel = (list) => list === NO_LIST ? "No vocabulary" : CLASS_LABELS[list] || (DESCRIPTIONS.lists[list] || [list])[0];
 const shownSize = (list) => (list !== NO_LIST && sizeLabel(list) && !listLabel(list).split(" ").includes(sizeLabel(list)) ? sizeLabel(list) : "");
 const listTitle = (list) => listLabel(list) + (shownSize(list) ? ` (${shownSize(list)})` : "");
-const listHint = (list) => (DESCRIPTIONS.lists[list] ? `${DESCRIPTIONS.lists[list][1]} (list "${list}")` : "");
+const listHint = (list) => (DESCRIPTIONS.lists[list] ? `${DESCRIPTIONS.lists[list][1]} (id "${list}")` : "");
 // Order of the models (best first), from the overview, used by the charts
 let ORDER = [];
 const byOrder = (a, b) => ORDER.indexOf(rowName(a)) - ORDER.indexOf(rowName(b)) || rowName(a).localeCompare(rowName(b));
@@ -338,14 +344,14 @@ function tableModels(all) {
 
 // Lists of the faster-whisper hotwords that are cut (at most 223 tokens)
 const CUT_LISTS = { "faster-whisper": {
-  "100": "hotwords cut to 223 tokens (about 60% of the list reach the model)",
+  "100": "hotwords cut to 223 tokens (about 60% of the vocabulary reaches the model)",
   "pxslu": "hotwords cut to 223 tokens (the first 51 of the 389 names, in alphabetical order, reach the model)",
   "pxslu_ext": "hotwords cut to 223 tokens (the first 49 of the 427 names, in alphabetical order, reach the model)",
   "pxslu_upper": "hotwords cut to 223 tokens (the first 42 of the 389 names in capitals, in alphabetical order, reach the model)",
 } };
 // The same for the runs with the terms separated by spaces (setting "spaces")
 const CUT_LISTS_SPACES = { "faster-whisper": {
-  "100": "hotwords cut to 223 tokens (about 84% of the list reach the model)",
+  "100": "hotwords cut to 223 tokens (about 84% of the vocabulary reaches the model)",
   "pxslu": "hotwords cut to 223 tokens (the first 63 of the 389 names, in alphabetical order, reach the model)",
 } };
 function cutNote(row, list) {
@@ -361,16 +367,16 @@ const TOO_SLOW = {
 };
 // Lists that a model cannot take, by label or backend (n/s in the empty cells, as for the models that take no list)
 const TOO_LONG = {
-  "faster-whisper": { lists: ["vidal", "bdpm", "theriaque", "500", "1000", "2000"], why: "list too long: at most 223 tokens" },
-  "granite-speech-5.0-2b": { lists: ["vidal", "bdpm", "theriaque"], why: "list too long: up to 2,000 keywords (model card)" },
+  "faster-whisper": { lists: ["vidal", "bdpm", "theriaque", "500", "1000", "2000"], why: "vocabulary too long: at most 223 tokens" },
+  "granite-speech-5.0-2b": { lists: ["vidal", "bdpm", "theriaque"], why: "vocabulary too long: up to 2,000 keywords (model card)" },
 };
 function notSupported(all, name, list) {
   const label = baseLabel(name), info = infoOf(name);
-  if (!(MODELS[label] || {}).technique) return "The model takes no list";
+  if (!(MODELS[label] || {}).technique) return "The model takes no vocabulary";
   const rule = TOO_LONG[label] || TOO_LONG[info.backend];
   return rule && (SIZE_CLASSES[list] || [list]).some((l) => rule.lists.includes(l)) ? `Not supported, ${rule.why}` : null;
 }
-const SLOW_NOTE = "not run (yet) for time, too slow with this list; not a limit of the model";
+const SLOW_NOTE = "not run (yet) for time, too slow with this vocabulary; not a limit of the model";
 function tooSlow(all, name, list) {
   const row = all.find((r) => rowName(r) === name || r.label === baseLabel(name));
   const rule = row && TOO_SLOW[row.backend];
@@ -383,7 +389,7 @@ function noRun(all, name, list) {
   const ns = notSupported(all, name, list), slow = !ns && tooSlow(all, name, list);
   return ns ? { kind: "ns", sign: "n/s", why: ns }
     : slow ? { kind: "slow", sign: "—", mark: "<sup>†</sup>", why: `${SLOW_NOTE}. ${slow}` }
-    : { kind: "none", sign: "—", why: "Not run with this list" };
+    : { kind: "none", sign: "—", why: "Not run with this vocabulary" };
 }
 
 // List the leaderboard is ranked on (per test set), by default the main setting
@@ -454,8 +460,8 @@ function overview() {
   const nones = models.map((x) => x.none).filter(present);
   const rankedIndex = lists.indexOf(ranked);
   // List name and size below it
-  // Click: ranks on this list, as the Hotword list buttons
-  const head = (l) => `<th data-rank="${esc(l)}" class="score sortable" aria-sort="${l === ranked ? "ascending" : "none"}" title="${esc([listHint(l), "Rank the models on this list"].filter(Boolean).join(". "))}">` +
+  // Click: ranks on this list, as the Vocabulary buttons
+  const head = (l) => `<th data-rank="${esc(l)}" class="score sortable" aria-sort="${l === ranked ? "ascending" : "none"}" title="${esc([listHint(l), "Rank the models on this vocabulary"].filter(Boolean).join(". "))}">` +
     `${l === ranked ? "▲ " : ""}${esc(listLabel(l))}${shownSize(l) ? `<br><small>(${shownSize(l)})</small>` : ""}${l !== NO_LIST && onlyText(l) ? `<br><small>${esc(onlyText(l))}</small>` : ""}</th>`;
   let html = "";
   html += `<thead><tr><th>#</th><th>Model</th>${[NO_LIST, ...lists].map(head).join("")}` +
@@ -478,30 +484,30 @@ function overview() {
         const value = base && present(base[m.key]);
         shown[kind] = true;
         shown.fallback ||= !!value;
-        html += `<td class="score ${kind === "ns" ? "ns" : "none"}${value ? " fallback" : ""}" title="${esc(why)}${value ? ". Value without list, used for the ranking" : ""}">` +
+        html += `<td class="score ${kind === "ns" ? "ns" : "none"}${value ? " fallback" : ""}" title="${esc(why)}${value ? ". Value without vocabulary, used for the ranking" : ""}">` +
           `${value ? approxMark(base, m.key) + fmt(base[m.key]) : sign}${mark}</td>`;
         return;
       }
       const run = runOf(all, x.name, lists[i]), cut = cutNote(run, lists[i]), approx = isApprox(run, m.key + "_cb");
       shown.cut ||= !!cut;
       shown.approx ||= approx;
-      html += `<td class="score ${rankClass(c.value, columns[i], m.higher)}" title="Without list: ${approxMark(run, m.key)}${fmt(c.before)}${cut ? `; ${cut}` : ""}${approx ? `; ${APPROX_NOTE}` : ""}">${approx ? "~" : ""}${fmt(c.value)}${cut ? "*" : ""}<span class="delta ${changeClass(m, c.before, c.value)}">${changeText(m, c.before, c.value)}</span></td>`;
+      html += `<td class="score ${rankClass(c.value, columns[i], m.higher)}" title="Without vocabulary: ${approxMark(run, m.key)}${fmt(c.before)}${cut ? `; ${cut}` : ""}${approx ? `; ${APPROX_NOTE}` : ""}">${approx ? "~" : ""}${fmt(c.value)}${cut ? "*" : ""}<span class="delta ${changeClass(m, c.before, c.value)}">${changeText(m, c.before, c.value)}</span></td>`;
     });
     html += MODEL_COLUMNS.map((c) => c.cell(MODELS[baseLabel(x.name)] || {})).join("") + "</tr>";
   });
   $("overview").innerHTML = html + "</tbody>";
   $("symbols").innerHTML = [
-    `Below a value: ${m.log ? "ratio" : "change"} from the model without list`,
-    shown.ns && '<span class="swatch rank ns"></span>n/s: no list, or not one so long, supported by the model (hover it)',
+    `Below a value: ${m.log ? "ratio" : "change"} from the model without vocabulary`,
+    shown.ns && '<span class="swatch rank ns"></span>n/s: no vocabulary, or not one so large, supported by the model (hover it)',
     shown.none && "—: not run",
-    shown.slow && "<sup>†</sup>: too slow to be run with this list (hover it)",
-    shown.cut && "*: list cut to 223 tokens (limit of Whisper)",
+    shown.slow && "<sup>†</sup>: too slow to be run with this vocabulary (hover it)",
+    shown.cut && "*: vocabulary cut to 223 tokens (limit of Whisper)",
     shown.approx && `~: ${APPROX_NOTE}`,
-    shown.fallback && "<i>Italic</i>: value without list, used for the ranking",
+    shown.fallback && "<i>Italic</i>: value without vocabulary, used for the ranking",
     models.some((x) => isNemo(x.name)) && `<sup>‡</sup>: ${NEMO_NOTE.replace(/\.$/, "")}`,
   ].filter(Boolean).map((s) => `<span>${s}</span>`).join("");
   $("overview-caption").innerHTML = ranked === null ? "" : [
-    `${m.label}: ${m.about}; ${better(m)}. Each list is scored on its own terms ("No list": on the terms of the smallest list).`,
+    `${m.label}: ${m.about}; ${better(m)}. Each vocabulary is scored on its own terms ("No vocabulary": on the terms of the smallest vocabulary).`,
     `Ranked on "${listLabel(ranked)}" by (WER, B-WER), with a line between the levels of WER that the confidence intervals tell apart.`,
     state.language === AGG ? aggregateNote(all, lists) : "",
   ].filter(Boolean).map(esc).join("<br>");
@@ -512,8 +518,8 @@ const MODEL_COLUMNS = [
   { label: "Size", title: "Number of parameters", cell: ({ params: n }) => `<td class="info section-start">${n ? params(n) : "—"}</td>` },
   { label: "Architecture", title: "Encoder: CTC / transducer decoding. Encoder-decoder: attention decoder. Audio LLM: audio encoder + LLM decoder",
     cell: ({ architecture }) => `<td class="info">${esc(architecture || "—")}</td>` },
-  { label: "Technique", title: "How the model takes the list into account: Context (an input made for context, that the model is trained to use), Prompt (the text prompt of the model) or Boosting (scores of the terms raised at decoding time)",
-    cell: ({ technique }) => (technique ? `<td class="info" title="${esc(technique[1])}">${esc(technique[0])}</td>` : `<td class="info ns" title="The model takes no list">n/s</td>`) },
+  { label: "Technique", title: "How the model takes the vocabulary into account: Context (an input made for context, that the model is trained to use), Prompt (the text prompt of the model) or Boosting (scores of the terms raised at decoding time)",
+    cell: ({ technique }) => (technique ? `<td class="info" title="${esc(technique[1])}">${esc(technique[0])}</td>` : `<td class="info ns" title="The model takes no vocabulary">n/s</td>`) },
   { label: "License", title: "License of the weights", cell: ({ license }) => `<td class="info">${license ? licenseHtml(license) : "—"}</td>` },
 ];
 
@@ -559,7 +565,7 @@ function scatterPanel(styles, xKey, yKey) {
   const outs = { up: 0, right: 0 };
   for (const e of entries) {
     const s = styles[e.name] || { color: "var(--muted)" }, onFront = front.includes(e);
-    const text = `${e.name}${e.fallback ? " (no list)" : ""}: ${xm.label} ${fmt(e.x)}, ${ym.label} ${fmt(e.y)}`;
+    const text = `${nickname(e.name)}${e.fallback ? " (no vocabulary)" : ""}: ${xm.label} ${fmt(e.x)}, ${ym.label} ${fmt(e.y)}`;
     if (e.y > ay.max) { svg += outArrow(ax.at(e.x), top, "up", e.y, s.color, text, outs.up++); continue; }
     if (e.x > ax.max) { svg += outArrow(width - right, ay.at(e.y), "right", e.x, s.color, text, outs.right++); continue; }
     svg += `<circle cx="${ax.at(e.x)}" cy="${ay.at(e.y)}" r="${onFront ? 6.5 : 5}" fill="${s.color}" stroke="${e.fallback ? "var(--muted)" : "var(--surface)"}" stroke-width="2" ${tip(text)}/>`;
@@ -571,11 +577,11 @@ function pareto() {
   const styles = modelStyles();
   $("pareto").innerHTML = PARETO.map(([x, y]) => scatterPanel(styles, x, y)).join("");
   $("pareto-legend").innerHTML = modelLegend(ORDER, styles);
-  $("pareto-caption").innerHTML = RANKING.list === null ? "" : esc((RANKING.list === NO_LIST ? "Without list, on the terms of the smallest list. " :
-    `With the list "${listLabel(RANKING.list)}" (Hotword list), or without list for the models without run with it (grey outline). `) + "Dashed line: the models that no other one beats on both measures.");
+  $("pareto-caption").innerHTML = RANKING.list === null ? "" : esc((RANKING.list === NO_LIST ? "Without vocabulary, on the terms of the smallest vocabulary. " :
+    `With the vocabulary "${listLabel(RANKING.list)}", or without vocabulary for the models without run with it (grey outline). `) + "Dashed line: the models that no other one beats on both measures.");
 }
 const modelLegend = (names, styles) => names.filter((n) => styles[n]).map((name) =>
-  `<span style="color: ${styles[name].text}"><span class="swatch line" style="border-top-color: ${styles[name].color}"></span>${esc(name)}</span>`).join("");
+  `<span data-model="${esc(name)}" style="color: ${styles[name].text}"><span class="swatch line" style="border-top-color: ${styles[name].color}"></span>${esc(nickname(name))}</span>`).join("");
 
 // Range of a linear axis: from the best to the worst value, without the worst outliers
 // (above Q3 + 3 IQR for the measures where lower is better, see axisMax; below Q1 - 3 IQR
@@ -596,11 +602,11 @@ const STAR = Array.from({ length: 10 }, (_, i) => {
 const star = (cx, cy, r) => `M${STAR.map(([dx, dy]) => `${(cx + r * dx).toFixed(1)},${(cy + r * dy).toFixed(1)}`).join("L")}Z`;
 
 // Each model from its value without list (dot) to its value with the list (star)
-function panel(list, listRows, m, styles) {
+// values: those of all the panels, so that they share their scale
+function panel(list, listRows, m, styles, values) {
   const sorted = [...listRows].sort(byOrder);
-  const left = 20 + 7.1 * Math.max(...sorted.map((r) => rowName(r).length));  // the names
+  const left = 20 + 7.1 * Math.max(...sorted.map((r) => nickname(rowName(r)).length));  // the names
   const width = left + 320, right = 16, rowH = 24, top = 8, axisH = 26;
-  const values = sorted.flatMap((r) => [r[m.key], r[m.key + "_cb"]]).filter(present);
   const height = top + sorted.length * rowH + axisH;
   let x, ticks, min = -Infinity, max = Infinity;
   if (m.log) {
@@ -615,7 +621,7 @@ function panel(list, listRows, m, styles) {
     ticks = [];
     for (let v = Math.ceil(min / step) * step; v <= max; v += step) ticks.push(+v.toPrecision(6));
   }
-  let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(m.label)} without and with the list ${esc(listLabel(list))}">`;
+  let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(m.label)} without and with the vocabulary ${esc(listLabel(list))}">`;
   for (const t of ticks) {
     svg += `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="${top}" y2="${top + sorted.length * rowH}"/>`;
     svg += `<text class="tick" x="${x(t)}" y="${height - 8}" text-anchor="middle">${t}</text>`;
@@ -624,8 +630,8 @@ function panel(list, listRows, m, styles) {
   sorted.forEach((r, i) => {
     const y = top + i * rowH + rowH / 2, a = r[m.key], b = r[m.key + "_cb"], name = rowName(r);
     const s = styles[name] || { color: "var(--muted)", text: "var(--text)" };
-    const text = `${name}, without list: ${fmt(a)}${present(b) ? `, with ${listLabel(list)}: ${fmt(b)}` : ""}`;
-    svg += `<text x="${left - 8}" y="${y + 4}" text-anchor="end" font-size="13.5" fill="${s.text}">${esc(name)}</text>`;
+    const text = `${nickname(name)}, without vocabulary: ${fmt(a)}${present(b) ? `, with ${listLabel(list)}: ${fmt(b)}` : ""}`;
+    svg += `<text x="${left - 8}" y="${y + 4}" text-anchor="end" font-size="13.5" fill="${s.text}">${esc(nickname(name))}</text>`;
     if (present(a) && present(b) && a !== b) {
       svg += `<line x1="${x(a)}" x2="${x(b)}" y1="${y}" y2="${y}" stroke="${s.color}" stroke-width="2.5" stroke-opacity=".6"/>`;
     }
@@ -641,9 +647,10 @@ function panel(list, listRows, m, styles) {
 }
 
 function panels() {
-  const m = metric(), all = rows(), styles = modelStyles();
-  $("panels").innerHTML = runLists(all)
-    .map((l) => panel(l, all.filter((r) => r.list === l), m, styles)).join("");
+  const m = metric(), all = rows(), styles = modelStyles(), lists = runLists(all);
+  // One scale for all the panels (the same measure), from the values they show
+  const values = all.filter((r) => lists.includes(r.list)).flatMap((r) => [r[m.key], r[m.key + "_cb"]]).filter(present);
+  $("panels").innerHTML = lists.map((l) => panel(l, all.filter((r) => r.list === l), m, styles, values)).join("");
 }
 
 // ---- Charts
@@ -745,7 +752,7 @@ function modelStyles() {
   return styles;
 }
 // Boosting weight of the NeMo models (see nemo_alpha in build_page.py)
-const NEMO_NOTE = "NeMo phrase boosting: weight 2 for the lists of less than 100 terms, 1 for the others (as in linto-stt).";
+const NEMO_NOTE = "NeMo phrase boosting: weight 2 for the vocabularies of less than 100 terms, 1 for the others (as in linto-stt).";
 let INFO = null;
 function infoOf(name) {  // a row of the model, for its backend and URL
   INFO ||= Object.fromEntries(allRows().map((r) => [rowName(r), r]));
@@ -755,9 +762,9 @@ const isNemo = (name) => infoOf(name).backend === "nemo";
 // Name of a model in its color, with a link to its model card, and its decoding and software below
 function nameCell(name, styles) {
   const { url, backend, label } = infoOf(name), model = MODELS[label] || {};
-  const text = esc(model.name || name);
+  const full = model.name || name, text = esc(nickname(full));
   return `<td style="color: ${(styles[name] || {}).text || "inherit"}">` +
-    (url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${text}</a>` : text) +
+    (url ? `<a href="${esc(url)}" target="_blank" rel="noopener" title="${esc(full)}">${text}</a>` : `<span title="${esc(full)}">${text}</span>`) +
     (isNemo(name) ? ` <sup title="${esc(NEMO_NOTE)}">‡</sup>` : "") +
     `<br><small>${esc([model.variant, backend].filter(Boolean).join(" · "))}</small></td>`;
 }
@@ -768,7 +775,7 @@ const LINE_METRICS = ["rtfx", ...METRICS.map((m) => m.key).filter((k) => k !== "
 function lines() {
   const all = rows(), lists = chartLists(), styles = modelStyles();
   const models = [...new Set(all.map(rowName))].sort((a, b) => ORDER.indexOf(a) - ORDER.indexOf(b));
-  const xs = ["No list", ...lists];
+  const xs = ["No vocabulary", ...lists];
   const series = (name, key) => [
     lists.length ? baselineOf(all, name, lists[0], key) : null,
     ...lists.map((l) => (runOf(all, name, l) || {})[key + "_cb"]),
@@ -798,23 +805,25 @@ function lines() {
     // Values out of the scale: arrows at the top, stacked per list
     const outs = {};
     const point = (cx, v, i, color, text, circle) => (v > max ? outArrow(cx, top, "up", v, color, text, (outs[i] = (outs[i] || 0) + 1) - 1) : circle);
-    let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(m.label)} of each model by list">`;
+    let svg = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(m.label)} of each model by vocabulary">`;
     for (const v of ticks) svg += `<line class="grid" x1="${left}" x2="${width - right}" y1="${y(v)}" y2="${y(v)}"/><text class="tick" x="${left - 5}" y="${y(v) + 4}" text-anchor="end">${+v.toPrecision(6)}</text>`;
     xs.forEach((_, i) => {
       under[i].forEach((line, k) => { svg += `<text class="tick" x="${x(i)}" y="${height - bottom + 16 + 14 * k}" text-anchor="middle"${xs.length > 7 ? ' style="font-size: 10px"' : ""}>${esc(line)}</text>`; });
     });
     for (const name of models) {
       const s = styles[name], vals = series(name, key);
+      svg += `<g class="series" data-model="${esc(name)}">`;  // highlighted on hover (with its legend)
       // Same list in capitals: hollow point next to the list, joined to it by a dotted line
       lists.forEach((l, i) => {
         const up = (runOf(all, name, `${l}_upper`) || {})[key + "_cb"];
         if (!present(up)) return;
         const xu = x(i + 1) + 9;
         if (present(vals[i + 1])) svg += `<line x1="${x(i + 1)}" x2="${xu}" y1="${y(vals[i + 1])}" y2="${y(up)}" stroke="${s.color}" stroke-width="1.5" stroke-dasharray="2 2"/>`;
-        const text = `${name}, with ${listLabel(l)} in capitals: ${m.label} ${fmt(up)}`;
+        const text = `${nickname(name)}, with ${listLabel(l)} in capitals: ${m.label} ${fmt(up)}`;
         svg += point(xu, up, i + 1, s.color, text, `<circle cx="${xu}" cy="${y(up)}" r="4" fill="var(--surface)" stroke="${s.color}" stroke-width="2" ${tip(text)}/>`);
       });
-      svg += `<g><path d="${path(vals.map((v, i) => (present(v) ? [x(i), y(v)] : null)))}" fill="none" stroke="${s.color}" stroke-width="2"/>`;
+      svg += `<path d="${path(vals.map((v, i) => (present(v) ? [x(i), y(v)] : null)))}" fill="none" stroke="transparent" stroke-width="12" pointer-events="stroke"/>`;  // wider target for the hover
+      svg += `<path d="${path(vals.map((v, i) => (present(v) ? [x(i), y(v)] : null)))}" fill="none" stroke="${s.color}" stroke-width="2"/>`;
       // Between lists measured on other test sets: a dotted line, only to follow the model
       vals.forEach((v, i) => {
         if (i > 0 && !sameSets(i) && present(v) && present(vals[i - 1]) && v <= max && vals[i - 1] <= max)
@@ -822,14 +831,29 @@ function lines() {
       });
       vals.forEach((v, i) => {
         if (!present(v)) return;
-        const text = `${name}, ${xs[i] === "No list" ? "no list" : `with ${listLabel(xs[i])}`}: ${m.label} ${fmt(v)}`;
+        const text = `${nickname(name)}, ${xs[i] === "No vocabulary" ? "no vocabulary" : `with ${listLabel(xs[i])}`}: ${m.label} ${fmt(v)}`;
         svg += point(x(i), v, i, s.color, text, `<circle cx="${x(i)}" cy="${y(v)}" r="4.5" fill="${s.color}" stroke="var(--surface)" stroke-width="2" ${tip(text)}/>`);
       });
       svg += "</g>";
     }
     return `<div class="panel"><h3>${esc(m.label)} <span class="muted" style="font-weight:400">(${better(m)}${m.log ? ", log scale" : ""})</span></h3>${svg}</svg></div>`;
   }).join("");
-  $("lines-legend").innerHTML = `<span><svg width="30" height="12" style="vertical-align:-1px"><circle cx="6" cy="6" r="4" fill="var(--muted)"/><circle cx="22" cy="6" r="3.5" fill="none" stroke="var(--muted)" stroke-width="2"/></svg>List in its usual case / in capitals</span>` + modelLegend(models, styles);
+  $("lines-legend").innerHTML = `<span><svg width="30" height="12" style="vertical-align:-1px"><circle cx="6" cy="6" r="4" fill="var(--muted)"/><circle cx="22" cy="6" r="3.5" fill="none" stroke="var(--muted)" stroke-width="2"/></svg>Vocabulary in its usual case / in capitals</span>` + modelLegend(models, styles);
+}
+
+// Effect of vocabulary size: hover of a model (line, point or legend) highlights it in every panel
+function highlight(name) {
+  for (const box of [$("lines"), $("lines-legend")]) {
+    box.classList.toggle("highlighting", name !== null);
+    box.querySelectorAll("[data-model]").forEach((e) => e.classList.toggle("hl", e.dataset.model === name));
+  }
+}
+for (const box of ["lines", "lines-legend"]) {
+  $(box).addEventListener("mouseover", (e) => {
+    const item = e.target.closest && e.target.closest("[data-model]");
+    highlight(item ? item.dataset.model : null);
+  });
+  $(box).addEventListener("mouseleave", () => highlight(null));
 }
 
 // Click on a chart: enlarged copy, with the legend of its section
@@ -973,7 +997,7 @@ function render() {
     const s = styles[k], on = !hidden.has(k);
     const style = !s ? "" : on ? `background: ${s.color}; border-color: ${s.color}; color: ${textOn(s.color)}`
       : `color: ${s.text}; border-color: ${s.color}`;
-    return `<button data-v="${esc(k)}" aria-pressed="${on}" style="${style}">${esc(k)}</button>`;
+    return `<button data-v="${esc(k)}" aria-pressed="${on}" style="${style}">${esc(nickname(k))}</button>`;
   }).join(" ");
   $("models").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
     hidden.has(b.dataset.v) ? hidden.delete(b.dataset.v) : hidden.add(b.dataset.v);
