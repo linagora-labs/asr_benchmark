@@ -12,6 +12,7 @@ French FLEURS and TEDx of the same models from --results.
 The Contextual Biasing tab: the page of tools/contextual_biasing (--contextual_results).
 """
 import argparse
+import base64
 import json
 import math
 import re
@@ -104,6 +105,47 @@ def speed(exp, rtf_results, model=None):
             meta.get("backend"), (meta.get("model_info") or {}).get("rtf_note"))
 HISTOGRAM_BIN = 2  # seconds, durations histogram of the test sets
 
+# Language control of the multilingual models, from their model cards: (pattern on the model
+# name, (automatic detection, forced language)), the automatic detection being True, "returned"
+# (True, and the detected language comes with the transcript) or False, the forced language "yes"
+# (a language parameter or a documented language field), "prompt" (only an instruction in the
+# prompt) or None. The models of one language have none (shown as not applicable).
+LANGUAGE_CONTROL = [
+    (r"^openai/whisper-", ("returned", "yes")),
+    (r"^nvidia/canary-", (False, "yes")),
+    (r"parakeet-(tdt-0\.6b-v3|redux|ultra)$", (True, None)),
+    (r"^nvidia/nemotron-labs-unified-asr-", (True, "yes")),
+    (r"^nvidia/nemotron-3\.5-asr-streaming-", ("returned", "yes")),  # <xx-XX> tag after the transcript
+    (r"^nvidia/NVIDIA-Nemotron-3\.5-Transcribe-", (True, "yes")),
+    (r"^mistralai/Voxtral-(Mini-3B|Small-24B)-2507$", (True, "yes")),
+    (r"^mistralai/Voxtral-Mini-4B-Realtime-", (True, None)),
+    (r"^CohereLabs/cohere-transcribe-", (False, "yes")),
+    (r"^Qwen/Qwen3-ASR-", ("returned", "yes")),
+    (r"^Qwen/Qwen3-Omni-", (True, "prompt")),
+    (r"^Reson8/Rumble-", ("returned", "yes")),  # "language <Name><asr_text>"
+    (r"^ibm-granite/granite-speech-5\.", (True, "yes")),
+    (r"^ibm-granite/granite-speech-[34]\.", (True, "prompt")),
+    (r"^google/gemma-", (True, "prompt")),
+    (r"^OpenLLM-France/Luciole-", (True, "prompt")),
+    (r"^OpenMOSS-Team/MOSS-", (True, "prompt")),
+    (r"^Edge0/ARK-ASR-", (True, "prompt")),
+    (r"^HojoAI/Hojo-ASR-", (True, None)),
+    (r"^kyutai/stt-1b-en_fr", (True, None)),
+    (r"^microsoft/VibeVoice-ASR", (True, None)),
+]
+
+
+def language_control(name, languages):
+    """{"auto": bool | "returned", "force": "yes" | "prompt" | None} of a multilingual model, None for a model
+    of one language, "?" when the table above does not have the model."""
+    if languages is not None and len(languages) <= 1 and not (languages and languages[0].endswith("+")):
+        return None
+    for pattern, (auto, force) in LANGUAGE_CONTROL:
+        if re.search(pattern, name):
+            return {"auto": auto, "force": force}
+    print(f"Warning: no language control for {name} (LANGUAGE_CONTROL)", file=sys.stderr)
+    return "?"
+
 
 def count_empty(pred_file):
     """Outputs with no letter or digit left once the special tokens (<|...|>) are removed."""
@@ -174,6 +216,7 @@ def model_entry(exp, rtf_results=None, info_from=None):
         "architecture": info.get("architecture"),  # Encoder | Encoder-decoder | Audio LLM
         "streaming": info.get("streaming"),
         "task": info.get("task"),  # ASR | ASR/AST | Multi
+        "language_control": language_control(name, info.get("languages")),
         "rtfx": rtfx,
         "hardware": hardware,
         "rtf_backend": rtf_backend if rtf_backend != backend else None,  # set when timed with another backend
@@ -438,6 +481,8 @@ def build(results, manifest, output, rtf_results=None, rtf_manifest=None, cards=
     for kind in ("css", "js"):  # before the data
         template = template.replace(f"/*__COMMON_{kind.upper()}__*/", (HERE / f"common.{kind}").read_text(encoding="utf-8"))
     template = template.replace("/*__DATA__*/null", payload)
+    logo = base64.b64encode((HERE / "linagora_logo.svg").read_bytes()).decode()
+    template = template.replace("/*__LOGO__*/", f"data:image/svg+xml;base64,{logo}")
     if html:  # after the data of this page (the other page comes with its own)
         template = template.replace("<!--__CONTEXTUAL_PAGE__-->", html).replace("/*__CONTEXTUAL_SCRIPT__*/null", script)
     (output / "index.html").write_text(template, encoding="utf-8")

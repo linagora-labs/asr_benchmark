@@ -192,7 +192,7 @@
       <li><b>English</b>, <b>French and English</b>: mean over the test sets (each weighs the same),
         by size class of the lists: <i>short</i> (25 names, call keywords, 100 distractors), <i>medium</i> (389 names,
         500 distractors), <i>long</i> (drug dictionaries, 1,000 and 2,000 distractors). In English, only LibriSpeech has
-        medium and long lists: their values are not comparable with the ones of the short lists (compare the changes).</li>
+        medium and long lists: their values are not comparable with the ones of the short lists (compare the changes). In the line charts, a dotted line joins them, only to follow a model.</li>
       <li>Two of the lists (Vidal, Th&eacute;riaque) are private: the runs with them are published without their transcriptions.</li>
       <li>Results and configuration:
         <a href="https://github.com/linagora-labs/asr_benchmark/tree/main/benchmarks/contextual_biasing">benchmarks/contextual_biasing</a>.</li>
@@ -815,6 +815,11 @@ function lines() {
         svg += point(xu, up, i + 1, s.color, text, `<circle cx="${xu}" cy="${y(up)}" r="4" fill="var(--surface)" stroke="${s.color}" stroke-width="2" ${tip(text)}/>`);
       });
       svg += `<g><path d="${path(vals.map((v, i) => (present(v) ? [x(i), y(v)] : null)))}" fill="none" stroke="${s.color}" stroke-width="2"/>`;
+      // Between lists measured on other test sets: a dotted line, only to follow the model
+      vals.forEach((v, i) => {
+        if (i > 0 && !sameSets(i) && present(v) && present(vals[i - 1]) && v <= max && vals[i - 1] <= max)
+          svg += `<line x1="${x(i - 1)}" x2="${x(i)}" y1="${y(vals[i - 1])}" y2="${y(v)}" stroke="${s.color}" stroke-width="1.5" stroke-dasharray="1 4" stroke-linecap="round" opacity=".8"/>`;
+      });
       vals.forEach((v, i) => {
         if (!present(v)) return;
         const text = `${name}, ${xs[i] === "No list" ? "no list" : `with ${listLabel(xs[i])}`}: ${m.label} ${fmt(v)}`;
