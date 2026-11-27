@@ -185,7 +185,7 @@
         model is trained to use as background knowledge (Qwen3-ASR, VibeVoice-ASR); <i>Prompt</i>, the text prompt of the model
         (Granite, Nemotron, MOSS: with the template of their documentation; Whisper: the decoder prompt made for the previous
         text, at most 223 tokens); <i>Boosting</i>, scores of the terms raised at decoding time, without training (NeMo).
-        Hover it for the text given.</li>
+        Hover over it for the text given.</li>
       <li><b>Size</b> (parameters), <b>License</b> and <b>Architecture</b>: as in the other tabs.</li>
       <li><b>RTFx</b>: on one NVIDIA DGX Spark (GB10), as the benchmark runs each model: vLLM servers with 32 to 128
         concurrent requests, NeMo and VibeVoice-ASR in batches (64; 4 to 16 with the long lists), faster-whisper one file
@@ -496,9 +496,9 @@ function overview() {
   $("overview").innerHTML = html + "</tbody>";
   $("symbols").innerHTML = [
     `Below a value: ${m.log ? "ratio" : "change"} from the model without vocabulary`,
-    shown.ns && '<span class="swatch rank ns"></span>n/s: no vocabulary, or not one so large, supported by the model (hover it)',
+    shown.ns && '<span class="swatch rank ns"></span>n/s: no vocabulary, or not one so large, supported by the model (hover over it)',
     shown.none && "—: not run",
-    shown.slow && "<sup>†</sup>: too slow to be run with this vocabulary (hover it)",
+    shown.slow && "<sup>†</sup>: too slow to be run with this vocabulary (hover over it)",
     shown.cut && "*: vocabulary cut to 223 tokens (limit of Whisper)",
     shown.approx && `~: ${APPROX_NOTE}`,
     shown.fallback && "<i>Italic</i>: value without vocabulary, used for the ranking",

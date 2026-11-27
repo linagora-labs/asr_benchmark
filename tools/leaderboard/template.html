@@ -140,7 +140,7 @@
     <div class="group"><span class="group-label">With punctuation marks</span>
       <span id="punc"><button data-v="0" aria-pressed="true" title="Punctuation marks removed">No</button> <button data-v="1" title="Each punctuation mark counts as a word">Yes</button></span></div>
     <div class="group"><span class="group-label">Confidence intervals</span>
-      <span id="ci"><button data-v="0" aria-pressed="true" title="Hidden (on hover of a score)">No</button> <button data-v="1" title="Half-width of the 95% confidence interval under each score">Yes</button></span></div>
+      <span id="ci"><button data-v="0" aria-pressed="true" title="Hidden (shown when hovering over a score)">No</button> <button data-v="1" title="Half-width of the 95% confidence interval under each score">Yes</button></span></div>
     <div class="group" id="datasets-group"><span class="group-label all" data-all="datasets" title="Select all / none">Test sets</span> <span id="datasets"></span></div>
   </div>
   <div class="controls" id="requirements">
@@ -325,7 +325,7 @@ function renderTestSets() {
     (total ? row("Total", "", "", total, "total") : "");
   document.getElementById("testsets").innerHTML = `<thead>${head}</thead><tbody>${body}</tbody>`;
   document.getElementById("testsets-notes").innerHTML =
-    `<p>Only segments of 1 to 30 s are kept (longer ones are dropped, not cut); some test sets are then subsampled: the selection column gives the share of the test split kept (hover for details). ` +
+    `<p>Only segments of 1 to 30 s are kept (longer ones are dropped, not cut); some test sets are then subsampled: the selection column gives the share of the test split kept (hover over it for details). ` +
     `The exact utterances and reference transcripts are listed in <a href="${DATA.repo}/blob/main/benchmarks/sota/manifest.jsonl">manifest.jsonl</a>.</p>`;
   renderSpeedSet(bins);
 }
@@ -665,7 +665,7 @@ function renderChart(rows, datasets) {
 
   const missing = (list, why) => list.length ? `<p>${why}: ${list.map(r => esc(r.m.model + (r.m.variant ? ` (${r.m.variant})` : ""))).join(", ")}.</p>` : "";
   document.getElementById("chart-notes").innerHTML =
-    `<p>Each dot is a model: its average over the test sets selected above, against its <a href="#test-sets-speed">RTFx</a> (speed${multi() ? ", measured on French speech for all the languages" : ""}). Vertical bars: 95% confidence interval of the average. Hover a dot for the details.</p>` +
+    `<p>Each dot is a model: its average over the test sets selected above, against its <a href="#test-sets-speed">RTFx</a> (speed${multi() ? ", measured on French speech for all the languages" : ""}). Vertical bars: 95% confidence interval of the average. Hover over a dot for the details.</p>` +
     missing(rows.filter(r => r.avg && !r.m.rtfx), "Speed not measured yet") +
     missing(rows.filter(r => !r.avg), "Not evaluated on all the selected test sets");
 }
@@ -798,29 +798,29 @@ function renderIntro() {
 function renderNotes() {
   const multilingual = multi(), gpu = DATA.speed_set && DATA.speed_set.hardware.length ? ` on one ${esc(DATA.speed_set.hardware.join(", "))} GPU` : "";
   document.getElementById("symbols").innerHTML = [
-    "±: half-width of the 95% confidence interval (Confidence intervals: Yes, or on hover of a score)", "⚠️: caveat on the model or its speed (hover it)", "💬: run with a text prompt (hover it)",
+    "±: half-width of the 95% confidence interval (Confidence intervals: Yes, or when hovering over a score)", "⚠️: caveat on the model or its speed (hover over it)", "💬: run with a text prompt (hover over it)",
     ...(multilingual ? ['<span class="swatch ns"></span>n/s: language not supported by the model'] : []), "—: not evaluated or not measured",
   ].map(s => `<span>${s}</span>`).join("");
   const arabic = multilingual ? DATA.multilingual.models.filter(m => Object.keys(m.scores).some(id => id.endsWith("_ar"))).length : 0;
   const folder = multilingual ? "benchmarks/sota_multilingual" : "benchmarks/sota";
   const groups = {
     "Scores": [
-      `<b>WER</b> (word error rate) and <b>CER</b> (character error rate): in %, lower is better. Hover a score for its confidence interval (bootstrap over the utterances) and its substitutions, deletions and insertions.`,
+      `<b>WER</b> (word error rate) and <b>CER</b> (character error rate): in %, lower is better. Hover over a score for its confidence interval (bootstrap over the utterances) and its substitutions, deletions and insertions.`,
       `<b>Normalization</b>: references and transcriptions are normalized in the same way (with <a href="https://github.com/linagora-labs/ssak">ssak</a>) before they are compared: numbers, symbols and units in words, hesitations such as "euh" removed, apostrophes and dashes ignored.` +
         (multilingual ? ` In Arabic: diacritics removed, alef forms merged.` : ""),
       `<b>Case sensitive</b>, <b>With punctuation marks</b>: ignored by default. With "Yes", they count as errors, and the test sets whose references do not have them are left out. A capital letter at the start of a transcription is not an error when the reference has none.`,
-      `<b>Cap</b>: the errors of a segment count at most as many as the words (or characters) of its reference, so that a few hallucinated segments do not inflate a score on their own. The excess is removed from the insertions.`,
+      `<b>Cap</b>: a segment counts at most 100% of errors. A model that hallucinates (e.g. repeats a phrase in a loop) can insert many more words than its reference has, which would give that segment a WER far above 100% and let it weigh on the score of the whole test set. So the errors of each segment are capped at the number of words (or characters) of its reference, by removing the excess insertions.`,
       `<b>Average</b>: mean of the scores on the selected test sets. A model not evaluated on all of them has none: unselect a test set to compare it.`,
       `<b>Avg rank</b>: mean of the ranks of the model on each selected test set (1 = best), among the models that have an average. Unlike in the average, a test set with high error rates does not weigh more than the others.`,
     ],
     "Models and columns": [
       `Click a column header to sort the table. The line under the name of a model gives its variant (if any) and the software that runs it: a model can be there several times.`,
       `<b>RTFx</b>: speed, in seconds of audio transcribed per second,${gpu ? `${gpu},` : ""} one segment at a time (<a href="#test-sets-speed">details</a>).`,
-      `<b>Size</b> (parameters), <b>License</b> and <b>Languages</b> come from the model cards. Languages: their list, with their number beyond 5; beyond 8, <i>multilingual</i> and their number (hover for the list).`,
+      `<b>Size</b> (parameters), <b>License</b> and <b>Languages</b> come from the model cards. Languages: their list, with their number beyond 5; beyond 8, <i>multilingual</i> and their number (hover over it for the list).`,
       `<b>Language</b>: <i>auto</i> when the model detects the language (<i>auto + ID</i>: and returns the detected language with the transcript), <i>forced</i> when the language can be given (a parameter, or a language field documented for the prompt), <i>prompted</i> when it can only be asked in an instruction of the prompt, how well it is followed not being documented; — for the models of one language. From the model cards.`,
       `<b>Scope</b>: what the model is made for, <i>ASR</i> (transcription only), <i>ASR/AST</i> (transcription and speech translation) or <i>multitask</i> (general audio tasks).`,
       `<b>Architecture</b>: <i>encoder</i> (CTC or transducer decoding), <i>encoder-decoder</i> (attention decoder) or <i>audio LLM</i> (audio encoder and LLM decoder); <i>streaming</i> models are transcribed offline here, which penalizes them.`,
-      `<b>Output</b>: <i>punct.</i> and <i>case</i> when at least half of the non-empty outputs of the model have a punctuation mark (. , ? ! ; :) or an uppercase letter, measured on its outputs here, with the prompt used (hover for the shares); <i>none</i> for neither.`,
+      `<b>Output</b>: <i>punct.</i> and <i>case</i> when at least half of the non-empty outputs of the model have a punctuation mark (. , ? ! ; :) or an uppercase letter, measured on its outputs here, with the prompt used (hover over it for the shares); <i>none</i> for neither.`,
       `<b>Buttons</b>: Language handling, Scope and Model architecture (under Advanced filters) filter the models. A click on the label of a group of buttons selects all of them, or none.`,
       `<b>Must support</b>, <b>Must output</b> and <b>Language handling</b> (rounded buttons, none selected at first) keep only the models that meet all the selected requirements: the languages they support, punctuation and case in their outputs (see the Output column), and their language handling (see the Language column; <i>forced</i> includes <i>prompted</i>). From the model cards; a card that only gives a number of languages (Gemma: 35+, 140+) is taken as supporting each of them.`,
     ],
