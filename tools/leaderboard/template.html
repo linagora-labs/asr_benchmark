@@ -200,6 +200,10 @@
     <div class="notes" id="contextual-sets-notes"></div>
     <div class="scroll"><table id="contextual-lists"></table></div>
   </section>
+  <section id="citations-section" hidden>
+    <h2 id="test-sets-citations">Citations</h2>
+    <ul class="notes" id="citations"></ul>
+  </section>
   </section>
 </main>
 
@@ -299,9 +303,10 @@ function histogramSvg(counts, bins) {
       `${t}${t === bins * step ? " s" : ""}</text>`).join("") + "</svg>";
 }
 
-// Test set name, linked to its source when public.
-const datasetLink = d => d.url ? `<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.name)}</a>` :
-  d.note ? `<span class="hint" title="${esc(d.note)}">${esc(d.name)}</span>` : esc(d.name);
+// Test set name (acronym expanded), linked to its source when public.
+const fullName = d => (DATA.full_names || {})[d.name] || d.name;
+const datasetLink = d => d.url ? `<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(fullName(d))}</a>` :
+  d.note ? `<span class="hint" title="${esc(d.note)}">${esc(fullName(d))}</span>` : esc(fullName(d));
 
 // Share of the test split kept, its details (extra filter, removed segments) on hover.
 const selectionCell = d => !d.selection ? "—" : !d.selection_note ? esc(d.selection) :
@@ -353,8 +358,13 @@ function renderOtherTestSets() {
   document.getElementById("contextual-sets-notes").innerHTML = `
     <p>Vocabularies given to the models, which all hold the terms to recognize and others that are not spoken (distractors). Per-utterance vocabularies: mean number of terms per utterance.</p>`;
   fill("contextual-lists", ["Test set", "Vocabulary", "Terms per vocabulary", "Content"],
-    sets.flatMap(d => d.lists.map((l, i) => `<tr><td>${i ? "" : esc(d.name)}</td><td title="${esc(l.id)}">${esc(l.label)}</td><td>${l.size < 1000 && l.size % 1 ? l.size.toFixed(1) : Math.round(l.size).toLocaleString("en")}</td>` +
+    sets.flatMap(d => d.lists.map((l, i) => `<tr><td>${i ? "" : esc(fullName(d))}</td><td title="${esc(l.id)}">${esc(l.label)}</td><td>${l.size < 1000 && l.size % 1 ? l.size.toFixed(1) : Math.round(l.size).toLocaleString("en")}</td>` +
       `<td class="left wrap">${esc(l.content)}</td></tr>`)).join(""));
+  // Papers of the test sets
+  const citations = DATA.citations || [];
+  document.getElementById("citations-section").hidden = !citations.length;
+  document.getElementById("citations").innerHTML = citations.map(c =>
+    `<li>${esc(c.sets)}: ${esc(c.authors)}, "<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title)}</a>"</li>`).join("");
 }
 
 // Segments the RTFx is measured on (separate from the test sets), per source test set.
@@ -774,7 +784,7 @@ document.getElementById("meta").innerHTML = `By <a href="https://linagora.com" c
   `<a href="${DATA.repo}">${DATA.repo.replace("https://", "")}</a>`;
 
 // One line above each tab
-const sectionLinks = () => [["french", "French ASR"], ["speed", "Speed (RTFx)"], ["multilingual", "Multilingual ASR"], ["contextual", "Custom Vocabulary ASR"]]
+const sectionLinks = () => [["french", "French ASR"], ["speed", "Speed (RTFx)"], ["multilingual", "Multilingual ASR"], ["contextual", "Custom Vocabulary ASR"], ["citations", "Citations"]]
   .filter(([id]) => !document.getElementById(`test-sets-${id}`).parentElement.hidden)
   .map(([id, label]) => `<a href="#test-sets-${id}">${label}</a>`).join(" · ");
 function renderIntro() {

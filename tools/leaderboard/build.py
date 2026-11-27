@@ -7,7 +7,7 @@ Writes <output>/index.html, <output>/leaderboard.json and the result cards of ca
     python tools/leaderboard/build.py --results X --manifest M --output Y
 
 The Multilingual tab: benchmarks/sota_multilingual/results (--multilingual_results), plus the
-French FLEURS and TEDx of the same models from --results.
+French FLEURS and mTEDx of the same models from --results.
 
 The Contextual Biasing tab: the page of tools/contextual_biasing (--contextual_results).
 """
@@ -33,11 +33,42 @@ DATASETS = {
     "FLEURS": ("FLEURS", "Read Wikipedia sentences", "fr", "https://huggingface.co/datasets/google/fleurs"),
     "CommonVoice": ("Common Voice 22.0", "Read speech", "fr", "https://commonvoice.mozilla.org/en/datasets"),
     "MLS_Facebook_french": ("MLS", "Read audiobooks", "fr", "https://openslr.org/94/"),
-    "TEDX_fr": ("TEDx", "Prepared talks", "fr", "https://www.openslr.org/100/"),
+    "TEDX_fr": ("mTEDx", "Prepared talks", "fr", "https://www.openslr.org/100/"),
     "Voxpopuli": ("VoxPopuli", "Parliament speeches", "fr", "https://huggingface.co/datasets/facebook/voxpopuli"),
     "SUMM-RE": ("SUMM-RE", "Spontaneous meetings", "fr", "https://huggingface.co/datasets/linagora/SUMM-RE"),
     "YouTubeFr_split6": ("YouTubeFr", "Web videos", "fr", None),
 }
+# Names of the test sets with their acronym expanded, in the Test sets tab (by display name)
+FULL_NAMES = {
+    "MLS": "MLS (Multilingual LibriSpeech)",
+    "mTEDx": "mTEDx (Multilingual TEDx)",
+}
+# Papers of the test sets, in the Citations section of the Test sets tab: (test sets, authors and year, title, URL)
+CITATIONS = [
+    ("FLEURS", "Conneau et al. (2022)", "FLEURS: Few-shot Learning Evaluation of Universal Representations of Speech",
+     "https://arxiv.org/abs/2205.12446"),
+    ("Common Voice", "Ardila et al. (2020)", "Common Voice: A Massively-Multilingual Speech Corpus",
+     "https://aclanthology.org/2020.lrec-1.520/"),
+    ("MLS", "Pratap et al. (2020)", "MLS: A Large-Scale Multilingual Dataset for Speech Research",
+     "https://arxiv.org/abs/2012.03411"),
+    ("mTEDx", "Salesky et al. (2021)", "The Multilingual TEDx Corpus for Speech Recognition and Translation",
+     "https://arxiv.org/abs/2102.01757"),
+    ("VoxPopuli", "Wang et al. (2021)", "VoxPopuli: A Large-Scale Multilingual Speech Corpus for Representation Learning, "
+     "Semi-Supervised Learning and Interpretation", "https://aclanthology.org/2021.acl-long.80/"),
+    ("SUMM-RE", "Hunter et al. (2024)", "SUMM-RE: A corpus of French meeting-style conversations",
+     "https://aclanthology.org/2024.jeptalnrecital-taln.35/"),
+    ("PxSLU", "Kocabiyikoglu et al. (2022)", "A Spoken Drug Prescription Dataset in French for Spoken Language Understanding",
+     "https://aclanthology.org/2022.lrec-1.109/"),
+    ("Contextual Earnings-22", "Durmus et al. (2026)",
+     "Contextual Earnings-22: A Speech Recognition Benchmark with Custom Vocabulary in the Wild", "https://arxiv.org/abs/2604.07354"),
+    ("Contextual Earnings-22 (source corpus, Earnings-22)", "Del Rio et al. (2022)",
+     "Earnings-22: A Practical Benchmark for Accents in the Wild", "https://arxiv.org/abs/2203.15591"),
+    ("LibriSpeech", "Panayotov et al. (2015)", "Librispeech: An ASR corpus based on public domain audio books",
+     "https://doi.org/10.1109/ICASSP.2015.7178964"),
+    ("LibriSpeech test-other (vocabularies)", "Le et al. (2021)",
+     "Contextualized Streaming End-to-End Speech Recognition with Trie-Based Deep Biasing and Shallow Fusion",
+     "https://arxiv.org/abs/2104.02194"),
+]
 # Type of speech, under the name of the test set (both tabs, by prefix in the Multilingual one); the
 # read and spontaneous ones make the "no read speech" and "spontaneous speech only" selections
 SPEECH = {"FLEURS": "read", "CommonVoice": "read", "MLS_Facebook_french": "audiobooks", "TEDX": "talks",
@@ -509,6 +540,8 @@ def build(results, manifest, output, rtf_results=None, rtf_manifest=None, cards=
         "models": models,
         "multilingual": multilingual(multilingual_results, results, rtf_results, include_private, french_extra),
         "contextual_test_sets": contextual_sets,
+        "full_names": FULL_NAMES,
+        "citations": [{"sets": sets, "authors": authors, "title": title, "url": url} for sets, authors, title, url in CITATIONS],
     }
     output.mkdir(parents=True, exist_ok=True)
     (output / "leaderboard.json").write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")

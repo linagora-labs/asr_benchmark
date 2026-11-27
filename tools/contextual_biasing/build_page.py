@@ -22,13 +22,13 @@ MODES = ["nocasepunc", "cased"]
 # Descriptions shown on the page (and in the Test sets tab of the leaderboard)
 TEST_SETS = {
     "PxSLU_test": {"name": "PxSLU", "language": "fr", "domain": "Dictated drug prescriptions", "terms": "Drug names",
-                   "url": "https://arxiv.org/abs/2207.08292"},
+                   "url": "https://doi.org/10.5281/zenodo.6482586"},
     "ContextualEarnings22_test": {"name": "Contextual Earnings-22", "language": "en",
                                   "domain": "Earnings calls (conversations, many accents)",
                                   "terms": "Names of persons, companies and products",
-                                  "url": "https://arxiv.org/abs/2604.07354"},
+                                  "url": "https://huggingface.co/datasets/argmaxinc/contextual-earnings22"},
     "LibriSpeech_test-other": {"name": "LibriSpeech test-other", "language": "en", "domain": "Read audiobooks",
-                               "terms": "Rare words", "url": "https://arxiv.org/abs/2104.02194"},
+                               "terms": "Rare words", "url": "https://www.openslr.org/12/"},
 }
 # Label and content of the lists (the keys are in the hover texts)
 LISTS = {
