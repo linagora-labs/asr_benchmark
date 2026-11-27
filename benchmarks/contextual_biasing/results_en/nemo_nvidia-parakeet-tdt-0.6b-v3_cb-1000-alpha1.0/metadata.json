@@ -12,7 +12,7 @@
   "decoder": "ctc",
   "contextual_biasing_context_score": 1.0,
   "contextual_biasing_depth_scaling": 2.0,
-  "input_manifest": "/tmp/manifest_wl03mz3x.jsonl",
+  "input_manifest": "/tmp/manifest_orfo3_nq.jsonl",
   "save_predictions": false,
   "save_alignments": true,
   "compute_latency": false,
@@ -20,13 +20,20 @@
   "input_audios_paths": "",
   "word_timestamps": true,
   "contextual_biasing_tree_time_ms": {
-    "count": 5559,
-    "first": 70.2,
-    "median": 140.1,
-    "max": 4289.3,
-    "total": 2098743.5
+    "count": 2932,
+    "first": 69.4,
+    "median": 84.8,
+    "max": 899.1,
+    "total": 403030.7
   },
   "model_info": {
     "params": 627008134
+  },
+  "transcription_time": {
+    "LibriSpeech_test-other": {
+      "seconds": 1608.42,
+      "audio_seconds": 18999.15,
+      "files": 2932
+    }
   }
 }

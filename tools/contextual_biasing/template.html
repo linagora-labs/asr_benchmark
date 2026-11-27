@@ -362,9 +362,7 @@ function cutNote(row, list) {
 
 // Runs not done (yet) because the model is too slow with the list, not because the
 // model cannot take it: marked in the empty cells, by backend and list, with the reason
-const TOO_SLOW = {
-  "vibevoice-asr": { lists: ["theriaque"], why: "VibeVoice-ASR with Thériaque: about 10 h for 1.4 h of audio" },
-};
+const TOO_SLOW = {};
 // Lists that a model cannot take, by label or backend (n/s in the empty cells, as for the models that take no list)
 const TOO_LONG = {
   "faster-whisper": { lists: ["vidal", "bdpm", "theriaque", "500", "1000", "2000"], why: "vocabulary too long: at most 223 tokens" },
