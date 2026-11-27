@@ -4,6 +4,8 @@ Toolkit to benchmark various speech recognition APIs (NeMo, Whisper...) and visu
 
 🏆 **[Open French-Centric ASR Leaderboard](https://linagora-labs.github.io/asr_benchmark/)**
 
+A suggestion, a question, or a competitive model to add? Please open an [issue on GitHub](https://github.com/linagora-labs/asr_benchmark/issues).
+
 ## How to bench
 
 ```
@@ -123,3 +125,22 @@ For a new model, fill `model_info` in its `metadata.json` with `tools/fill_model
 Benchmark of ASR models for the french language used to make the [LinTO STT FR Fastconformer Huggingface page](https://huggingface.co/linagora/linto_stt_fr_fastconformer). The datasets used in the benchmark are : Common Voice, Multilingual LibriSpeech, Voxpopuli, SUMM-RE, TEDx and YouTube.
 
 See the results [here](benchmarks/linto_stt_fr_fastconformer/README.md)
+
+## License
+
+This project is licensed under the GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later); see [LICENSE](LICENSE).
+
+## Citation
+
+To cite this repository (benchmark toolkit and leaderboard):
+
+```bibtex
+@misc{asr_benchmark,
+  author       = {Bert, Audran and Louradour, J{\'e}r{\^o}me},
+  title        = {{ASR Benchmark}: an Open French-Centric Benchmark of Speech Recognition Models},
+  year         = {2024},
+  publisher    = {GitHub},
+  organization = {LINAGORA},
+  howpublished = {\url{https://github.com/linagora-labs/asr_benchmark}},
+}
+```

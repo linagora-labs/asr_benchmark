@@ -4,7 +4,9 @@ version = "0.1.1"
 description = "Package for benching french ASR models. It supports Whisper, NeMo, vLLM and Transformers. It can compute WER, RTF and measure hardware usage."
 authors = [
     { name = "Audran Bert", email = "abert@linagora.com" },
+    { name = "Jérôme Louradour", email = "jlouradour@linagora.com" },
 ]
+license = "AGPL-3.0-or-later"
 requires-python = ">=3.10,<3.13"
 # Core: only what every benchmark run imports (benchmarker.py, benchmark_manager,
 # utils/benchmark, interfaces.py) plus the third-party modules ssak imports at the
@@ -127,7 +129,7 @@ tools = [
 ]
 
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
